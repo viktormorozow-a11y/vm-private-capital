@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.3 Returns.1</title>
+<title>VM Private Capital — Wealth Studio v7.3 History.1</title>
 <style>
 
 :root{
@@ -661,7 +661,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:1300px){.insight-metric-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.insight-grid.two-col{grid-template-columns:1fr}.insights-symbol{display:none}}@media(max-width:650px){.insight-metric-grid{grid-template-columns:1fr}.insight-exit-head,.insight-exit-meta{flex-direction:column}.plan-info-grid{grid-template-columns:1fr}}
 
 
-/* v7.3 Returns */
+/* v7.3 History */
 .cloud-card{border-color:rgba(95,190,150,.18)!important;background:linear-gradient(145deg,rgba(95,190,150,.055),rgba(255,255,255,.018))!important}
 .cloud-card-copy{min-width:0}.cloud-card-copy b,.cloud-card-copy div{overflow-wrap:anywhere}
 .cloud-account-btn{width:100%;margin-top:11px;font-size:10px}
@@ -679,7 +679,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:600px){.cloud-action-grid{grid-template-columns:1fr}.cloud-user-line{flex-direction:column}}
 
 
-/* v7.3 Returns Gate */
+/* v7.3 History Gate */
 body.auth-locked{overflow:hidden}
 #authGate{
   position:fixed;inset:0;z-index:99999;
@@ -709,24 +709,31 @@ body.auth-locked{overflow:hidden}
 #appShell.auth-hidden{visibility:hidden;pointer-events:none;user-select:none}
 
 
-/* v7.3 Return History */
-.metric-grid.return-metrics{grid-template-columns:repeat(5,minmax(0,1fr))}
-.period-cell{min-width:112px}
-.period-cell b{display:block;font-size:13px}
-.period-cell span{display:block;font-size:10px;margin-top:3px;color:var(--muted)}
-.annual-history-panel{margin-top:16px}
-.annual-summary-table th,.annual-summary-table td{white-space:nowrap}
-.annual-year{font-weight:750}
-.annual-breakdown{display:grid;gap:8px;margin-top:12px}
-.year-breakdown-card{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:rgba(255,255,255,.012)}
-.year-breakdown-head{display:grid;grid-template-columns:90px 1fr 1fr;gap:10px;align-items:center;padding:10px 12px;background:rgba(255,255,255,.02)}
-.year-breakdown-head b{font-size:13px}.year-breakdown-head span{font-size:10px;color:var(--muted)}
-.year-breakdown-rows{display:grid}
-.year-breakdown-row{display:grid;grid-template-columns:minmax(140px,1.6fr) 115px 105px 115px;gap:10px;padding:9px 12px;border-top:1px solid rgba(255,255,255,.045);align-items:center}
-.year-breakdown-row span{font-size:10px;color:var(--muted)}.year-breakdown-row b{font-size:11px}
-@media(max-width:1350px){.metric-grid.return-metrics{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:900px){.metric-grid.return-metrics{grid-template-columns:repeat(2,1fr)}.year-breakdown-row{grid-template-columns:1.4fr 1fr 1fr}.year-breakdown-row .hide-small{display:none}}
-@media(max-width:650px){.metric-grid.return-metrics{grid-template-columns:1fr}.year-breakdown-head{grid-template-columns:70px 1fr}.year-breakdown-head .hide-small{display:none}.year-breakdown-row{grid-template-columns:1fr 1fr}}
+/* v7.3 — historical return engine */
+.history-analysis-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-bottom:14px}
+.history-analysis-panel{overflow:hidden}
+.recon-list{display:grid;gap:8px}
+.recon-item{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.018)}
+.recon-item b{font-size:11px}.recon-item span{font-size:10px;color:var(--muted)}
+.recon-item.warn{border-color:rgba(235,185,82,.28);background:rgba(235,185,82,.045)}
+.recon-item.bad{border-color:rgba(255,105,125,.25);background:rgba(255,105,125,.04)}
+.recon-pill{font-size:9px;padding:4px 7px;border-radius:999px;border:1px solid var(--line2);white-space:nowrap}
+.return-na{color:var(--muted)!important}
+.return-table-note{margin-top:8px;color:var(--muted);font-size:10px;line-height:1.45}
+.year-return-card{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:10px}
+.year-return-head{display:grid;grid-template-columns:100px 1fr 1fr;gap:10px;padding:10px 12px;background:rgba(255,255,255,.025);align-items:center}
+.year-return-head b{font-size:12px}.year-return-head span{font-size:10px;color:var(--muted)}
+.year-return-row{display:grid;grid-template-columns:1.4fr repeat(4,minmax(90px,.7fr));gap:10px;padding:9px 12px;border-top:1px solid var(--line);align-items:center;font-size:10px}
+.year-return-row .pname b{display:block;font-size:10px}.year-return-row .pname span{color:var(--muted);font-size:9px}
+.event-kind{display:inline-flex;padding:3px 7px;border-radius:999px;border:1px solid var(--line2);font-size:9px;white-space:nowrap}
+.event-transfer{color:#9fc7ff}.event-dividend{color:var(--good)}.event-fee{color:#ff9cab}
+.flow-help{grid-column:1/-1;color:var(--muted);font-size:9px;line-height:1.45;padding:9px 10px;border:1px solid var(--line);border-radius:9px}
+#fTransferToWrap{display:none}
+@media(max-width:900px){
+ .history-analysis-grid{grid-template-columns:1fr}
+ .year-return-row{grid-template-columns:1.2fr repeat(2,1fr)}
+ .year-return-row > :nth-child(4),.year-return-row > :nth-child(5){display:none}
+}
 
 </style>
 </head>
@@ -771,7 +778,7 @@ body.auth-locked{overflow:hidden}
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.3 Returns</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.3 History</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -847,29 +854,24 @@ body.auth-locked{overflow:hidden}
         </div>
       </div>
 
-      <div class="metric-grid return-metrics">
+      <div class="metric-grid">
         <div class="metric-card reveal">
-          <div id="mCurrentYearLabel" class="metric-label">Доход с начала года</div>
+          <div class="metric-label">Инвестиционный результат YTD</div>
           <div id="mYtd" class="metric">€0</div>
           <div id="mYtdPct" class="metric-sub"></div>
         </div>
         <div class="metric-card reveal delay1">
-          <div id="mPrevYearLabel" class="metric-label">Доход за прошлый год</div>
-          <div id="mPrevYear" class="metric">€0</div>
-          <div id="mPrevYearPct" class="metric-sub"></div>
-        </div>
-        <div class="metric-card reveal delay2">
-          <div class="metric-label">Доход за всё время</div>
+          <div class="metric-label">Результат с начала учёта</div>
           <div id="mAll" class="metric">€0</div>
           <div id="mAllPct" class="metric-sub"></div>
         </div>
-        <div class="metric-card reveal delay3">
-          <div class="metric-label">Прогноз капитала на конец года</div>
+        <div class="metric-card reveal delay2">
+          <div class="metric-label">Прогноз на конец года</div>
           <div id="mYearEnd" class="metric">€0</div>
           <div id="mYearEndSub" class="metric-sub"></div>
         </div>
-        <div class="metric-card reveal">
-          <div id="mFlowsLabel" class="metric-label">Внешние потоки с начала года</div>
+        <div class="metric-card reveal delay3">
+          <div class="metric-label">Внешние потоки YTD</div>
           <div id="mFlows" class="metric">€0</div>
           <div class="metric-sub">пополнения минус снятия</div>
         </div>
@@ -919,7 +921,7 @@ body.auth-locked{overflow:hidden}
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Портфель</th><th>Владелец</th><th>Сейчас</th><th id="thCurrentYear">Текущий год</th><th id="thPrevYear">Прошлый год</th><th>Всё время</th><th>Доля</th><th></th></tr></thead>
+            <thead><tr><th>Портфель</th><th>Владелец</th><th>Сейчас</th><th>YTD €</th><th>YTD %</th><th>Доля</th><th></th></tr></thead>
             <tbody id="portfolioSummaryBody"></tbody>
           </table>
         </div>
@@ -934,12 +936,32 @@ body.auth-locked{overflow:hidden}
     </section>
 
     <section id="view-history" class="view">
+      <div class="history-analysis-grid">
+        <div class="panel history-analysis-panel">
+          <div class="panel-head"><div><div class="eyebrow">RETURN HISTORY</div><h2>Доход по годам</h2><div class="muted small">Доход = изменение стоимости минус движения капитала. Внутренние переводы не меняют общий результат.</div></div></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Год</th><th>Капитал на начало*</th><th>Внешние потоки</th><th>Инвест. доход</th><th>Доходность</th><th>Капитал на конец*</th></tr></thead>
+              <tbody id="annualReturnBody"></tbody>
+            </table>
+          </div>
+          <div class="return-table-note">* Для каждого портфеля используются его собственные первая и последняя доступные оценки периода. Если двух оценок нет, доходность не выдумывается и показывается «—».</div>
+        </div>
+        <div class="panel history-analysis-panel">
+          <div class="panel-head"><div><div class="eyebrow">DATA CONTROL</div><h2>Проверка истории</h2><div class="muted small">Автоматически ищет дубликаты, непарные переводы и разрывы между годами.</div></div></div>
+          <div id="historyDiagnostics" class="recon-list"></div>
+        </div>
+      </div>
+      <div class="panel history-analysis-panel" style="margin-bottom:14px">
+        <div class="panel-head"><div><div class="eyebrow">BY PORTFOLIO</div><h2>По портфелям и годам</h2></div></div>
+        <div id="portfolioYearReturns"></div>
+      </div>
       <div class="panel">
         <div class="panel-head">
           <div><div class="eyebrow">LEDGER</div><h2>История данных</h2></div>
           <div class="row">
             <label class="btn secondary file-btn" id="historyImportBtn">Импорт JSON</label>
-            <button class="btn secondary" id="addFlowBtn">＋ Пополнение / вывод</button>
+            <button class="btn secondary" id="addFlowBtn">＋ Денежное событие</button>
             <button class="btn primary" id="addSnapshotBtn">＋ Оценка</button>
           </div>
         </div>
@@ -1058,23 +1080,6 @@ body.auth-locked{overflow:hidden}
         <div class="panel"><div class="panel-head"><div><div class="eyebrow">ASSET STRUCTURE</div><h2>Структура капитала</h2></div></div><div id="insightAssetStructure"></div></div>
         <div class="panel"><div class="panel-head"><div><div class="eyebrow">PLAN CHECK</div><h2>Базовый план в цифрах</h2></div></div><div id="insightPlanCheck"></div></div>
       </div>
-      <div class="panel annual-history-panel">
-        <div class="panel-head">
-          <div>
-            <div class="eyebrow">RETURN HISTORY</div>
-            <h2>Доход по всем годам</h2>
-            <div class="muted small">Фактический инвестиционный результат по сохранённым оценкам: изменение стоимости минус внешние пополнения/снятия.</div>
-          </div>
-        </div>
-        <div class="table-wrap">
-          <table class="annual-summary-table">
-            <thead><tr><th>Год</th><th>Капитал на начало</th><th>Внешние потоки</th><th>Инвестиционный доход</th><th>Доходность</th><th>Капитал на конец</th></tr></thead>
-            <tbody id="annualHistoryBody"></tbody>
-          </table>
-        </div>
-        <div class="panel-head compact-top"><div><div class="eyebrow">BY PORTFOLIO</div><h2>По портфелям и годам</h2></div></div>
-        <div id="annualPortfolioBreakdown" class="annual-breakdown"></div>
-      </div>
     </section>
 
     <section id="view-reports" class="view">
@@ -1188,6 +1193,10 @@ function normalizeState(raw){
  s.portfolios=Array.isArray(s.portfolios)?s.portfolios:[];
  s.snapshots=Array.isArray(s.snapshots)?s.snapshots:[];
  s.flows=Array.isArray(s.flows)?s.flows:[];
+ s.flows=s.flows.map(f=>{
+   const legacyType=Number(f.amount)>=0?'contribution':'withdrawal';
+   return {...f,flowType:f.flowType||legacyType,transferId:f.transferId||''};
+ });
  s.withdrawalRules=Array.isArray(s.withdrawalRules)?s.withdrawalRules:[];
  s.settings={...d.settings,...(s.settings||{})};
  s.taxSettings={...d.taxSettings,...(s.taxSettings||{})};
@@ -1238,7 +1247,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.3 Returns';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.3 History';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -1524,74 +1533,85 @@ function dateWithAgeDate(d){return d?`${formatDateFromDate(d)} <span class="age-
 const parseDate=s=>{const m=String(s||'').trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);if(!m)return null;const d=+m[1],mo=+m[2],y=+m[3],dt=new Date(y,mo-1,d);if(dt.getFullYear()!=y||dt.getMonth()!=mo-1||dt.getDate()!=d)return null;return `${y}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`};
 function toast(t){const el=q('toast');el.textContent=t;el.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),2200)}
 
-function latestValue(pid,at=null){const rows=state.snapshots.filter(x=>x.portfolioId===pid&&(!at||x.date<=at)).sort((a,b)=>a.date.localeCompare(b.date));return rows.length?Number(rows.at(-1).value):0}
-function firstValue(pid,from=null){const rows=state.snapshots.filter(x=>x.portfolioId===pid&&(!from||x.date>=from)).sort((a,b)=>a.date.localeCompare(b.date));return rows.length?Number(rows[0].value):0}
-function flowsBetween(pid,from,to){return state.flows.filter(x=>x.portfolioId===pid&&x.date>=from&&x.date<=to).reduce((s,x)=>s+Number(x.amount),0)}
-function portfolioPerf(pid,from){
- const end=latestValue(pid),atStart=latestValue(pid,from),start=atStart||firstValue(pid,from),flow=flowsBetween(pid,from,todayISO()),profit=end-start-flow;
- return{start,end,flow,profit,pct:start?profit/start*100:0}
-}
-
-function isoYearStart(year){return `${year}-01-01`}
-function isoYearEnd(year){return `${year}-12-31`}
-function snapshotsForPeriod(pid,to){
- return state.snapshots.filter(x=>x.portfolioId===pid&&x.date<=to).sort((a,b)=>a.date.localeCompare(b.date));
-}
-function portfolioPeriodPerf(pid,from,to=todayISO()){
- const rows=snapshotsForPeriod(pid,to);
- if(!rows.length)return{start:0,end:0,flow:0,profit:0,pct:0,hasData:false,startDate:null,endDate:null};
- const beforeOrAt=rows.filter(x=>x.date<=from);
- const within=rows.filter(x=>x.date>=from&&x.date<=to);
- let startRow=beforeOrAt.length?beforeOrAt.at(-1):(within.length?within[0]:null);
- const endRow=rows.at(-1);
- if(!startRow||!endRow||endRow.date<startRow.date)return{start:0,end:0,flow:0,profit:0,pct:0,hasData:false,startDate:null,endDate:null};
- const start=Number(startRow.value)||0,end=Number(endRow.value)||0;
- let flowRows=state.flows.filter(x=>x.portfolioId===pid&&x.date<=to);
- if(startRow.date>from)flowRows=flowRows.filter(x=>x.date>startRow.date);
- else flowRows=flowRows.filter(x=>x.date>=from);
- const flow=flowRows.reduce((s,x)=>s+Number(x.amount||0),0);
- const profit=end-start-flow;
- return{start,end,flow,profit,pct:start?profit/start*100:0,hasData:true,startDate:startRow.date,endDate:endRow.date}
-}
-function totalPeriodPerf(from,to=todayISO()){
- let start=0,end=0,flow=0,profit=0,hasData=false;
- state.portfolios.forEach(p=>{
-   const r=portfolioPeriodPerf(p.id,from,to);
-   if(!r.hasData)return;
-   hasData=true;start+=r.start;end+=r.end;flow+=r.flow;profit+=r.profit;
+function uniqueSnapshots(pid){
+ const seen=new Set(),rows=[];
+ state.snapshots.filter(x=>x.portfolioId===pid).forEach(x=>{
+   const key=`${x.date}|${Number(x.value)}`;
+   if(seen.has(key))return;
+   seen.add(key);rows.push(x);
  });
- return{start,end,flow,profit,pct:start?profit/start*100:0,hasData}
+ return rows.sort((a,b)=>a.date.localeCompare(b.date));
 }
-function allTimePortfolioPerf(pid){
- const rows=state.snapshots.filter(x=>x.portfolioId===pid).sort((a,b)=>a.date.localeCompare(b.date));
- if(!rows.length)return{start:0,end:0,flow:0,profit:0,pct:0,hasData:false};
- const first=rows[0],end=rows.at(-1),flow=state.flows.filter(x=>x.portfolioId===pid&&x.date>first.date&&x.date<=end.date).reduce((s,x)=>s+Number(x.amount||0),0);
- const start=Number(first.value)||0,endValue=Number(end.value)||0,profit=endValue-start-flow;
- return{start,end:endValue,flow,profit,pct:start?profit/start*100:0,hasData:true,startDate:first.date,endDate:end.date}
+function latestValue(pid,at=null){
+ const rows=uniqueSnapshots(pid).filter(x=>!at||x.date<=at);
+ return rows.length?Number(rows.at(-1).value):0
 }
-function totalAllTimePerf(){
- let start=0,end=0,flow=0,profit=0,hasData=false;
- state.portfolios.forEach(p=>{const r=allTimePortfolioPerf(p.id);if(!r.hasData)return;hasData=true;start+=r.start;end+=r.end;flow+=r.flow;profit+=r.profit});
- return{start,end,flow,profit,pct:start?profit/start*100:0,hasData}
+function firstValue(pid,from=null){
+ const rows=uniqueSnapshots(pid).filter(x=>!from||x.date>=from);
+ return rows.length?Number(rows[0].value):0
 }
-function annualPerformanceRows(){
- const dates=allDates();
- if(!dates.length)return[];
- const firstYear=Number(dates[0].slice(0,4)),currentYear=new Date().getFullYear(),rows=[];
- for(let year=firstYear;year<=currentYear;year++){
-   const to=year===currentYear?todayISO():isoYearEnd(year);
-   const total=totalPeriodPerf(isoYearStart(year),to);
-   const portfolios=state.portfolios.map(p=>({p,r:portfolioPeriodPerf(p.id,isoYearStart(year),to)})).filter(x=>x.r.hasData);
-   if(total.hasData||portfolios.length)rows.push({year,...total,portfolios});
- }
- return rows.reverse();
+function flowTypeOf(x){return x.flowType||(Number(x.amount)>=0?'contribution':'withdrawal')}
+function flowCapitalEffect(x){
+ const t=flowTypeOf(x),a=Math.abs(Number(x.amount)||0);
+ if(t==='contribution'||t==='transfer_in')return a;
+ if(t==='withdrawal'||t==='transfer_out')return -a;
+ return 0;
 }
-
+function flowIncomeEffect(x){
+ const t=flowTypeOf(x),a=Math.abs(Number(x.amount)||0);
+ if(t==='dividend')return a;
+ if(t==='fee')return -a;
+ return 0;
+}
+function flowsForPeriod(pid,from,to,{afterStart=true}={}){
+ return state.flows.filter(x=>x.portfolioId===pid&&(afterStart?x.date>from:x.date>=from)&&x.date<=to);
+}
+function perfPctModifiedDietz(start,profit,flows,from,to){
+ if(!Number.isFinite(start)||start<=0)return null;
+ const a=new Date(from+'T12:00:00'),b=new Date(to+'T12:00:00'),days=Math.max(1,(b-a)/86400000);
+ let denominator=start;
+ flows.forEach(f=>{
+   const cap=flowCapitalEffect(f);if(!cap)return;
+   const d=new Date(f.date+'T12:00:00');
+   const elapsed=Math.max(0,Math.min(days,(d-a)/86400000));
+   const weight=(days-elapsed)/days;
+   denominator+=cap*weight;
+ });
+ return denominator>0?profit/denominator*100:null;
+}
+function portfolioPerf(pid,from,to=todayISO()){
+ const rows=uniqueSnapshots(pid).filter(x=>x.date<=to);
+ if(!rows.length)return{start:0,end:0,flow:0,profit:0,pct:null,sufficient:false,startDate:'',endDate:'',incomeEvents:0};
+ let startSnap=[...rows].reverse().find(x=>x.date<=from);
+ if(!startSnap)startSnap=rows.find(x=>x.date>=from);
+ const endSnap=[...rows].reverse().find(x=>x.date<=to);
+ if(!startSnap||!endSnap)return{start:0,end:0,flow:0,profit:0,pct:null,sufficient:false,startDate:'',endDate:'',incomeEvents:0};
+ const start=Number(startSnap.value),end=Number(endSnap.value),startDate=startSnap.date,endDate=endSnap.date;
+ if(endDate<=startDate)return{start,end,flow:0,profit:0,pct:null,sufficient:false,startDate,endDate,incomeEvents:0};
+ const fs=flowsForPeriod(pid,startDate,endDate);
+ const flow=fs.reduce((s,x)=>s+flowCapitalEffect(x),0);
+ const incomeEvents=fs.reduce((s,x)=>s+flowIncomeEffect(x),0);
+ const profit=end-start-flow+incomeEvents;
+ const pct=perfPctModifiedDietz(start,profit,fs,startDate,endDate);
+ return{start,end,flow,profit,pct,sufficient:true,startDate,endDate,incomeEvents}
+}
 function totalNow(){return state.portfolios.reduce((s,p)=>s+latestValue(p.id),0)}
-function totalPerf(from){let start=0,end=0,flow=0;state.portfolios.forEach(p=>{const r=portfolioPerf(p.id,from);start+=r.start;end+=r.end;flow+=r.flow});const profit=end-start-flow;return{start,end,flow,profit,pct:start?profit/start*100:0}}
+function totalPerf(from,to=todayISO()){
+ let start=0,end=0,flow=0,profit=0,covered=0,total=state.portfolios.length;
+ state.portfolios.forEach(p=>{
+   const r=portfolioPerf(p.id,from,to);
+   if(!r.sufficient)return;
+   start+=r.start;end+=r.end;flow+=r.flow;profit+=r.profit;covered++;
+ });
+ return{start,end,flow,profit,pct:start>0?profit/start*100:null,covered,total}
+}
 function allDates(){return[...new Set(state.snapshots.map(x=>x.date))].sort()}
 function totalAtDate(date){return state.portfolios.reduce((s,p)=>s+latestValue(p.id,date),0)}
-function annualizedFromYtd(){const s=new Date(state.settings.fyStart+'T12:00:00'),n=new Date(),days=Math.max(1,(n-s)/86400000),r=totalPerf(state.settings.fyStart).pct/100;if(r<=-1)return-1;return Math.pow(1+r,365/days)-1}
+function annualizedFromYtd(){
+ const s=new Date(state.settings.fyStart+'T12:00:00'),n=new Date(),days=Math.max(1,(n-s)/86400000),p=totalPerf(state.settings.fyStart).pct;
+ if(p===null||!Number.isFinite(p))return 0;
+ const r=p/100;if(r<=-1)return-1;return Math.pow(1+r,365/days)-1
+}
 function yearEndForecast(){const cap=totalNow(),n=new Date(),e=new Date(n.getFullYear(),11,31,12),days=Math.max(0,(e-n)/86400000),ar=annualizedFromYtd();return cap*Math.pow(1+ar,days/365)}
 function portfolioName(id){return state.portfolios.find(p=>p.id===id)?.name||'Удалён'}
 
@@ -1743,13 +1763,8 @@ function grossDividendIncrementForNet(targetNet,existingGross){
 }
 
 function sortedPortfolioRows(){
- const now=totalNow(),sort=q('dashboardSort')?.value||'value_desc',yr=new Date().getFullYear(),prev=yr-1;
- const rows=state.portfolios.map(p=>{
-   const r=portfolioPeriodPerf(p.id,isoYearStart(yr),todayISO());
-   const prevR=portfolioPeriodPerf(p.id,isoYearStart(prev),isoYearEnd(prev));
-   const allR=allTimePortfolioPerf(p.id);
-   return{p,r,prevR,allR,share:now?100*latestValue(p.id)/now:0};
- });
+ const now=totalNow(),sort=q('dashboardSort')?.value||'value_desc';
+ const rows=state.portfolios.map(p=>{const r=portfolioPerf(p.id,state.settings.fyStart);return{p,r,share:now?100*r.end/now:0}});
  rows.sort((a,b)=>{
   if(sort==='name')return a.p.name.localeCompare(b.p.name,'ru');
   if(sort==='value_asc')return a.r.end-b.r.end;if(sort==='value_desc')return b.r.end-a.r.end;
@@ -1758,47 +1773,35 @@ function sortedPortfolioRows(){
  });return rows
 }
 function renderDashboard(){
- const now=totalNow(),yr=new Date().getFullYear(),prev=yr-1;
- const ytd=totalPeriodPerf(isoYearStart(yr),todayISO()),prevYear=totalPeriodPerf(isoYearStart(prev),isoYearEnd(prev)),all=totalAllTimePerf();
+ const now=totalNow(),ytd=totalPerf(state.settings.fyStart),first=allDates()[0],all=first?totalPerf(first):{profit:0,pct:0};
  q('heroTotal').textContent=money(now);q('personalCapital').textContent=money(ownerTotal('personal'));q('companyCapital').textContent=money(ownerTotal('oy'));
  q('planningCapital').textContent=money(planningTotal());q('excludedCapital').textContent=money(excludedTotal());q('exitAssetsCapital').textContent=money(exitAssetsTotal());
- q('companyTaxLabel').textContent=`${Number(state.taxSettings.companyTaxRate).toFixed(1)}%`;q('heroYtd').textContent=`${yr} ${ytd.pct>=0?'+':''}${pct(ytd.pct)}`;q('heroYtd').className='chip '+(ytd.pct<0?'bad':'');
+ q('companyTaxLabel').textContent=`${Number(state.taxSettings.companyTaxRate).toFixed(1)}%`;q('heroYtd').textContent=`YTD ${fmtReturn(ytd.pct)}`;q('heroYtd').className='chip '+(ytd.pct!==null&&ytd.pct<0?'bad':'');
  q('heroPortfolios').textContent=`${state.portfolios.length} ${state.portfolios.length===1?'портфель':'портфелей'}`;
- q('mCurrentYearLabel').textContent=`Доход с начала ${yr} года`;
- q('mPrevYearLabel').textContent=`Доход за ${prev} год`;
- q('mFlowsLabel').textContent=`Внешние потоки ${yr}`;
- q('thCurrentYear').textContent=String(yr);
- q('thPrevYear').textContent=String(prev);
-
- q('mYtd').textContent=`${ytd.profit>=0?'+':''}${money(ytd.profit)}`;q('mYtd').className='metric '+(ytd.profit>=0?'good':'bad');q('mYtdPct').textContent=`${ytd.pct>=0?'+':''}${pct(ytd.pct)} · ${yr}`;
- q('mPrevYear').textContent=`${prevYear.profit>=0?'+':''}${money(prevYear.profit)}`;q('mPrevYear').className='metric '+(prevYear.profit>=0?'good':'bad');q('mPrevYearPct').textContent=`${prevYear.pct>=0?'+':''}${pct(prevYear.pct)} · полный ${prev} год`;
- q('mAll').textContent=`${all.profit>=0?'+':''}${money(all.profit)}`;q('mAll').className='metric '+(all.profit>=0?'good':'bad');q('mAllPct').textContent=`${all.pct>=0?'+':''}${pct(all.pct)} за всю историю`;
- q('mYearEnd').textContent=money(yearEndForecast());q('mYearEndSub').innerHTML=`если текущий темп сохранится · ${yr} <span class="age-tag">${ageTextByYear(yr)}</span>`;
+ q('mYtd').textContent=`${ytd.profit>=0?'+':''}${money(ytd.profit)}`;q('mYtd').className='metric '+(ytd.profit>=0?'good':'bad');q('mYtdPct').textContent=`${fmtReturn(ytd.pct)} с начала года · ${ytd.covered}/${ytd.total} портф. с данными`;
+ q('mAll').textContent=`${all.profit>=0?'+':''}${money(all.profit)}`;q('mAll').className='metric '+(all.profit>=0?'good':'bad');q('mAllPct').textContent=`${fmtReturn(all.pct)} за измеримую историю`;
+ q('mYearEnd').textContent=money(yearEndForecast());q('mYearEndSub').innerHTML=`если текущий темп сохранится · ${new Date().getFullYear()} <span class="age-tag">${ageTextByYear(new Date().getFullYear())}</span>`;
  q('mFlows').textContent=`${ytd.flow>=0?'+':''}${money(ytd.flow)}`;q('mFlows').className='metric '+(ytd.flow>=0?'good':'bad');
 
- const perfCell=r=>`<div class="period-cell"><b class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</b><span class="${r.pct>=0?'good':'bad'}">${r.pct>=0?'+':''}${pct(r.pct)}</span></div>`;
  const body=q('portfolioSummaryBody');body.innerHTML='';
- sortedPortfolioRows().forEach(({p,r,prevR,allR,share})=>body.insertAdjacentHTML('beforeend',`<tr>
+ sortedPortfolioRows().forEach(({p,r,share})=>body.insertAdjacentHTML('beforeend',`<tr>
   <td><b>${esc(p.name)}</b><div class="muted small">${esc(p.type||'Портфель')}</div></td>
   <td><span class="owner-badge ${p.owner==='oy'?'oy':'personal'}">${p.owner==='oy'?'VMPC Oy':'Personal'}</span><div class="asset-role-badge role-${portfolioRole(p)}">${portfolioRole(p)==='investable'?'В расчёте':portfolioRole(p)==='excluded'?'Вне расчёта':'Exit-актив'}</div></td>
-  <td>${money(latestValue(p.id))}</td>
-  <td>${perfCell(r)}</td>
-  <td>${perfCell(prevR)}</td>
-  <td>${perfCell(allR)}</td>
-  <td>${pct(share)}</td>
+  <td>${money(r.end)}</td><td class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</td>
+  <td class="${r.pct>=0?'good':'bad'}">${r.pct>=0?'+':''}${pct(r.pct)}</td><td>${pct(share)}</td>
   <td><div class="table-actions"><button class="mini-action" data-editport="${p.id}" title="Редактировать">✎</button><button class="mini-action" data-snap="${p.id}" title="Новая оценка">＋</button></div></td></tr>`));
  body.querySelectorAll('[data-editport]').forEach(b=>b.addEventListener('click',()=>openPortfolioModal(b.dataset.editport)));
  body.querySelectorAll('[data-snap]').forEach(b=>b.addEventListener('click',()=>openSnapshotModal(null,b.dataset.snap)));
 
  const alloc=q('allocationList');alloc.innerHTML='';
- sortedPortfolioRows().forEach(({p,share})=>alloc.insertAdjacentHTML('beforeend',`<div class="allocation-item"><div class="alloc-name">${esc(p.name)}</div><div class="alloc-value">${money(latestValue(p.id))} · ${pct(share)}</div><div class="alloc-track"><div class="alloc-fill" style="width:${Math.min(100,Math.max(0,share))}%"></div></div></div>`));
+ sortedPortfolioRows().forEach(({p,r,share})=>alloc.insertAdjacentHTML('beforeend',`<div class="allocation-item"><div class="alloc-name">${esc(p.name)}</div><div class="alloc-value">${money(r.end)} · ${pct(share)}</div><div class="alloc-track"><div class="alloc-fill" style="width:${Math.min(100,Math.max(0,share))}%"></div></div></div>`));
  renderCapitalChart()
 }
 function renderPortfolios(){
  const h=q('portfolioCards');h.innerHTML='';
  if(!state.portfolios.length){h.innerHTML='<div class="muted">Добавьте первый актив — например Nordea, Crypto, Cash или частную инвестицию.</div>';return}
  state.portfolios.forEach(p=>{
-   const yr=new Date().getFullYear(),r=portfolioPeriodPerf(p.id,isoYearStart(yr),todayISO()),role=portfolioRole(p);
+   const r=portfolioPerf(p.id,state.settings.fyStart),role=portfolioRole(p);
    const roleText=role==='investable'?'Участвует в сценариях':role==='excluded'?'Не участвует в расчётах':'До exit не приносит доход';
    const exitInfo=role==='exit'?`<div class="exit-mini"><span>Exit: ${p.exitDate?formatDate(p.exitDate)+' · '+ageTextForIso(p.exitDate):'не задан'}</span><span>Множитель: ×${Number(p.exitMultiple||1).toFixed(2)}</span><span>Ожидаемая продажа: ${money(exitSaleValue(p))}</span><span>После Exit → <b>${esc(exitTargetName(p))}</b></span></div>`:'';
    const rateInfo=role==='investable'?`<div class="portfolio-rate-info">Доходность сценария ${portfolioReturnAdjustment(p)>=0?'+':''}${portfolioReturnAdjustment(p).toFixed(1)} п.п.</div>`:'';
@@ -1808,7 +1811,7 @@ function renderPortfolios(){
     <div class="asset-role-badge role-${role}">${roleText}</div>
     ${rateInfo}
     <div class="port-value">${money(r.end)}</div>
-    <div class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)} · ${r.pct>=0?'+':''}${pct(r.pct)} ${yr}</div>
+    <div class="${r.sufficient?(r.profit>=0?'good':'bad'):'muted'}">${r.sufficient?`${r.profit>=0?'+':''}${money(r.profit)} · ${fmtReturn(r.pct)} YTD`:'Недостаточно оценок для доходности'}</div>
     ${exitInfo}
     <div class="port-actions"><button class="btn secondary compact" data-snap="${p.id}">Оценка</button><button class="btn secondary compact" data-flow="${p.id}">Поток</button><button class="btn secondary compact" data-edit="${p.id}">Изменить</button></div>
    </div>`)
@@ -1817,8 +1820,125 @@ function renderPortfolios(){
  h.querySelectorAll('[data-flow]').forEach(b=>b.addEventListener('click',()=>openFlowModal(null,b.dataset.flow)));
  h.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>openPortfolioModal(b.dataset.edit)))
 }
+
+function flowLabel(t){
+ return {contribution:'Пополнение',withdrawal:'Вывод',transfer_in:'Перевод → сюда',transfer_out:'Перевод → отсюда',dividend:'Дивиденд',fee:'Комиссия'}[t]||'Денежное событие';
+}
+function flowDisplayAmount(x){
+ const t=flowTypeOf(x),a=Math.abs(Number(x.amount)||0);
+ return (t==='withdrawal'||t==='transfer_out'||t==='fee')?-a:a;
+}
+function fmtReturn(v){return v===null||!Number.isFinite(v)?'—':`${v>=0?'+':''}${pct(v)}`}
+function yearsInHistory(){
+ const ys=new Set();
+ state.snapshots.forEach(x=>ys.add(Number(x.date.slice(0,4))));
+ state.flows.forEach(x=>ys.add(Number(x.date.slice(0,4))));
+ return [...ys].filter(Number.isFinite).sort((a,b)=>b-a);
+}
+function yearPerf(year){
+ const from=`${year}-01-01`,to=year===new Date().getFullYear()?todayISO():`${year+1}-01-01`;
+ let start=0,end=0,externalFlow=0,profit=0,covered=0;
+ const parts=[];
+ state.portfolios.forEach(p=>{
+   const r=portfolioPerf(p.id,from,to);
+   parts.push({p,r});
+   if(!r.sufficient)return;
+   covered++;start+=r.start;end+=r.end;profit+=r.profit;
+   // Only true external capital flows. Paired transfers cancel by definition.
+   const fs=flowsForPeriod(p.id,r.startDate,r.endDate);
+   externalFlow+=fs.reduce((s,f)=>{
+     const t=flowTypeOf(f);
+     return (t==='contribution'||t==='withdrawal')?s+flowCapitalEffect(f):s;
+   },0);
+ });
+ return{year,start,end,externalFlow,profit,pct:start>0?profit/start*100:null,covered,total:state.portfolios.length,parts}
+}
+function duplicateSnapshotGroups(){
+ const map=new Map();
+ state.snapshots.forEach(x=>{
+   const k=`${x.portfolioId}|${x.date}|${Number(x.value)}`;
+   if(!map.has(k))map.set(k,[]);
+   map.get(k).push(x);
+ });
+ return [...map.values()].filter(g=>g.length>1);
+}
+function orphanTransfers(){
+ const map=new Map();
+ state.flows.filter(f=>flowTypeOf(f).startsWith('transfer_')).forEach(f=>{
+   const id=f.transferId||`orphan:${f.id}`;
+   if(!map.has(id))map.set(id,[]);
+   map.get(id).push(f);
+ });
+ return [...map.values()].filter(g=>{
+   const ins=g.filter(x=>flowTypeOf(x)==='transfer_in');
+   const outs=g.filter(x=>flowTypeOf(x)==='transfer_out');
+   const ai=ins.reduce((s,x)=>s+Math.abs(Number(x.amount)||0),0);
+   const ao=outs.reduce((s,x)=>s+Math.abs(Number(x.amount)||0),0);
+   return ins.length!==1||outs.length!==1||Math.abs(ai-ao)>.01;
+ });
+}
+function boundaryGaps(){
+ const years=yearsInHistory().sort((a,b)=>a-b),gaps=[];
+ for(let i=0;i<years.length-1;i++){
+   const y=years[i],next=years[i+1];
+   if(next!==y+1)continue;
+   state.portfolios.forEach(p=>{
+     const endRows=uniqueSnapshots(p.id).filter(x=>x.date<=`${next}-01-01`);
+     const prior=endRows.filter(x=>x.date<`${next}-01-01`).at(-1);
+     const opening=endRows.find(x=>x.date===`${next}-01-01`);
+     if(!prior||!opening)return;
+     // Only flag if prior snapshot is reasonably close to year end (<=45 days)
+     const dd=(new Date(opening.date+'T12:00:00')-new Date(prior.date+'T12:00:00'))/86400000;
+     if(dd>45)return;
+     const between=state.flows.filter(f=>f.portfolioId===p.id&&f.date>prior.date&&f.date<=opening.date).reduce((s,f)=>s+flowCapitalEffect(f),0);
+     const unexplained=Number(opening.value)-Number(prior.value)-between;
+     if(Math.abs(unexplained)>1)gaps.push({p,year:next,prior,opening,between,unexplained});
+   });
+ }
+ return gaps;
+}
+function renderHistoricalReturns(){
+ const body=q('annualReturnBody');if(!body)return;
+ const years=yearsInHistory(),rows=years.map(yearPerf);
+ body.innerHTML=rows.length?rows.map(y=>`<tr>
+   <td><b>${y.year}</b><div class="muted small">${ageTextByYear(y.year)}</div></td>
+   <td>${y.covered?money(y.start):'—'}</td>
+   <td class="${y.externalFlow>0?'good':y.externalFlow<0?'bad':''}">${y.covered?`${y.externalFlow>=0?'+':''}${money(y.externalFlow)}`:'—'}</td>
+   <td class="${y.profit>=0?'good':'bad'}">${y.covered?`${y.profit>=0?'+':''}${money(y.profit)}`:'—'}</td>
+   <td class="${y.pct===null?'return-na':y.pct>=0?'good':'bad'}">${fmtReturn(y.pct)}</td>
+   <td>${y.covered?money(y.end):'—'}<div class="muted small">${y.covered}/${y.total} портф. с данными</div></td>
+ </tr>`).join(''):`<tr><td colspan="6" class="muted">Истории пока нет.</td></tr>`;
+
+ const pbox=q('portfolioYearReturns');
+ pbox.innerHTML=rows.map(y=>{
+   const available=y.parts.filter(x=>x.r.sufficient);
+   const missing=y.parts.filter(x=>!x.r.sufficient);
+   return `<div class="year-return-card">
+    <div class="year-return-head"><b>${y.year}</b><span>Доход: <b class="${y.profit>=0?'good':'bad'}">${y.covered?`${y.profit>=0?'+':''}${money(y.profit)}`:'—'}</b></span><span>Доходность: <b class="${y.pct===null?'return-na':y.pct>=0?'good':'bad'}">${fmtReturn(y.pct)}</b></span></div>
+    ${available.map(({p,r})=>`<div class="year-return-row">
+      <div class="pname"><b>${esc(p.name)}</b><span>${p.owner==='oy'?'VMPC Oy':'Personal'} · ${formatDate(r.startDate)} → ${formatDate(r.endDate)}</span></div>
+      <div>${money(r.start)} → ${money(r.end)}</div>
+      <div class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</div>
+      <div class="${r.pct===null?'return-na':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</div>
+      <div class="muted">потоки ${r.flow>=0?'+':''}${money(r.flow)}</div>
+    </div>`).join('')}
+    ${missing.length?`<div class="year-return-row"><div class="pname"><b>Недостаточно данных</b><span>${missing.map(x=>esc(x.p.name)).join(' · ')}</span></div><div class="return-na">Нужны минимум 2 оценки</div><div>—</div><div>—</div><div>—</div></div>`:''}
+   </div>`;
+ }).join('');
+
+ const diag=q('historyDiagnostics'),dups=duplicateSnapshotGroups(),orph=orphanTransfers(),gaps=boundaryGaps();
+ const items=[];
+ if(!dups.length)items.push(`<div class="recon-item"><div><b>Дубликаты оценок</b><span>Точных дублей не найдено</span></div><div class="recon-pill good">OK</div></div>`);
+ else items.push(`<div class="recon-item warn"><div><b>Дубликаты оценок: ${dups.reduce((s,g)=>s+g.length-1,0)}</b><span>Они не участвуют в расчёте повторно, но остаются видимыми в журнале.</span></div><div class="recon-pill">Проверить</div></div>`);
+ if(!orph.length)items.push(`<div class="recon-item"><div><b>Внутренние переводы</b><span>Все переводы имеют парную запись</span></div><div class="recon-pill good">OK</div></div>`);
+ else items.push(`<div class="recon-item bad"><div><b>Непарные переводы: ${orph.length}</b><span>Такой перевод может искажать результат отдельного портфеля.</span></div><div class="recon-pill">Ошибка</div></div>`);
+ if(!gaps.length)items.push(`<div class="recon-item"><div><b>Разрывы на границе года</b><span>Необъяснимых скачков между близкими оценками не найдено</span></div><div class="recon-pill good">OK</div></div>`);
+ else items.push(...gaps.slice(0,4).map(g=>`<div class="recon-item warn"><div><b>${esc(g.p.name)} · ${g.year}</b><span>${formatDate(g.prior.date)} ${money(g.prior.value)} → ${formatDate(g.opening.date)} ${money(g.opening.value)}; необъяснено ${g.unexplained>=0?'+':''}${money(g.unexplained)}</span></div><div class="recon-pill">Проверить</div></div>`));
+ diag.innerHTML=items.join('');
+}
+
 function historyRows(){
- let rows=[];state.snapshots.forEach(x=>rows.push({...x,kind:'Оценка',kindKey:'snap',amount:Number(x.value)}));state.flows.forEach(x=>rows.push({...x,kind:Number(x.amount)>=0?'Пополнение':'Вывод',kindKey:'flow',amount:Number(x.amount)}));
+ let rows=[];state.snapshots.forEach(x=>rows.push({...x,kind:'Оценка',kindKey:'snap',amount:Number(x.value),displayAmount:Number(x.value)}));state.flows.forEach(x=>rows.push({...x,kind:flowLabel(flowTypeOf(x)),kindKey:'flow',amount:flowDisplayAmount(x),displayAmount:flowDisplayAmount(x)}));
  const term=(q('historySearch')?.value||'').toLowerCase(),type=q('historyType')?.value||'all',sort=q('historySort')?.value||'date_desc';
  rows=rows.filter(x=>(type==='all'||x.kindKey===type)&&(!term||portfolioName(x.portfolioId).toLowerCase().includes(term)||(x.comment||'').toLowerCase().includes(term)));
  rows.sort((a,b)=>sort==='date_asc'?a.date.localeCompare(b.date):sort==='amount_desc'?Math.abs(b.amount)-Math.abs(a.amount):sort==='amount_asc'?Math.abs(a.amount)-Math.abs(b.amount):b.date.localeCompare(a.date));return rows
@@ -1827,16 +1947,26 @@ function renderHistory(){
  const body=q('historyBody');body.innerHTML='';
  const rows=historyRows();
  const status=q('historyStatus');
- if(status)status.innerHTML=`В памяти этой версии: <b>${state.snapshots.length}</b> оценок · <b>${state.flows.length}</b> денежных потоков.`;
+ if(status)status.innerHTML=`В памяти этой версии: <b>${state.snapshots.length}</b> оценок · <b>${state.flows.length}</b> денежных событий.`;
+ renderHistoricalReturns();
  if(!rows.length){
    body.innerHTML=`<tr><td colspan="6"><div class="history-empty"><b>История в этой копии программы пуста.</b><span>Новая версия не должна удалять историю. При запуске HTML из другой папки браузер может создать отдельное локальное хранилище. Откройте старую рабочую версию, сделайте «Резервную копию JSON», затем импортируйте её здесь в Настройках.</span></div></td></tr>`;
    return;
  }
- rows.forEach(x=>body.insertAdjacentHTML('beforeend',`<tr><td>${formatDate(x.date)}<div><span class="age-tag">${ageTextForIso(x.date)}</span></div></td><td>${esc(portfolioName(x.portfolioId))}</td><td>${x.kind}</td>
-  <td class="${x.kind==='Вывод'?'bad':x.kind==='Пополнение'?'good':''}">${money(x.amount)}</td><td>${esc(x.comment||'')}</td>
-  <td><div class="table-actions"><button class="mini-action" data-editrow="${x.id}" data-kind="${x.kindKey}" title="Редактировать">✎</button><button class="mini-action" data-delrow="${x.id}" data-kind="${x.kindKey}" title="Удалить">×</button></div></td></tr>`));
+ rows.forEach(x=>{const ft=x.kindKey==='flow'?flowTypeOf(x):'';body.insertAdjacentHTML('beforeend',`<tr><td>${formatDate(x.date)}<div><span class="age-tag">${ageTextForIso(x.date)}</span></div></td><td>${esc(portfolioName(x.portfolioId))}</td><td><span class="${x.kindKey==='flow'?'event-kind '+(ft.startsWith('transfer_')?'event-transfer':ft==='dividend'?'event-dividend':ft==='fee'?'event-fee':''):''}">${x.kind}</span></td>
+  <td class="${Number(x.amount)<0?'bad':x.kindKey==='flow'?'good':''}">${Number(x.amount)>=0?'+':''}${money(x.amount)}</td><td>${esc(x.comment||'')}</td>
+  <td><div class="table-actions"><button class="mini-action" data-editrow="${x.id}" data-kind="${x.kindKey}" title="Редактировать">✎</button><button class="mini-action" data-delrow="${x.id}" data-kind="${x.kindKey}" title="Удалить">×</button></div></td></tr>`)});
  body.querySelectorAll('[data-editrow]').forEach(b=>b.addEventListener('click',()=>b.dataset.kind==='snap'?openSnapshotModal(b.dataset.editrow):openFlowModal(b.dataset.editrow)));
- body.querySelectorAll('[data-delrow]').forEach(b=>b.addEventListener('click',()=>{if(!confirm('Удалить эту запись?'))return;if(b.dataset.kind==='snap')state.snapshots=state.snapshots.filter(x=>x.id!==b.dataset.delrow);else state.flows=state.flows.filter(x=>x.id!==b.dataset.delrow);saveState();toast('Запись удалена')}));
+ body.querySelectorAll('[data-delrow]').forEach(b=>b.addEventListener('click',()=>{
+   if(!confirm('Удалить эту запись?'))return;
+   if(b.dataset.kind==='snap')state.snapshots=state.snapshots.filter(x=>x.id!==b.dataset.delrow);
+   else{
+     const f=state.flows.find(x=>x.id===b.dataset.delrow);
+     if(f?.transferId)state.flows=state.flows.filter(x=>x.transferId!==f.transferId);
+     else state.flows=state.flows.filter(x=>x.id!==b.dataset.delrow);
+   }
+   saveState();toast('Запись удалена')
+ }));
 }
 function runGrowthModel(annual,years,options={}){
  const taxRate=Math.max(0,Number(state.taxSettings.companyTaxRate||20))/100;
@@ -2358,37 +2488,6 @@ function renderWithdrawalExitChart(){
  const a=runWithdrawalModel(annual,years),b=runWithdrawalModel(annual,years,{}, {}, {includeExits:false});
  drawSeries(q('withdrawalExitChart'),[{name:'С Exit',points:a.ptsTotal,ci:2},{name:'Без Exit',points:b.ptsTotal,ci:0}]);
 }
-
-function renderAnnualHistory(){
- const rows=annualPerformanceRows(),body=q('annualHistoryBody'),breakdown=q('annualPortfolioBreakdown');
- if(!body||!breakdown)return;
- if(!rows.length){
-   body.innerHTML='<tr><td colspan="6"><div class="history-empty"><b>Истории пока нет.</b><span>Добавляйте оценки портфелей по датам — здесь автоматически появится доход по каждому году.</span></div></td></tr>';
-   breakdown.innerHTML='';
-   return;
- }
- body.innerHTML=rows.map(y=>`<tr>
-   <td class="annual-year">${y.year}</td>
-   <td>${money(y.start)}</td>
-   <td class="${y.flow>=0?'good':'bad'}">${y.flow>=0?'+':''}${money(y.flow)}</td>
-   <td class="${y.profit>=0?'good':'bad'}"><b>${y.profit>=0?'+':''}${money(y.profit)}</b></td>
-   <td class="${y.pct>=0?'good':'bad'}">${y.pct>=0?'+':''}${pct(y.pct)}</td>
-   <td>${money(y.end)}</td>
- </tr>`).join('');
- breakdown.innerHTML=rows.map(y=>{
-   const parts=y.portfolios.slice().sort((a,b)=>Math.abs(b.r.profit)-Math.abs(a.r.profit));
-   return `<div class="year-breakdown-card">
-     <div class="year-breakdown-head"><b>${y.year}</b><span>Доход: <b class="${y.profit>=0?'good':'bad'}">${y.profit>=0?'+':''}${money(y.profit)}</b></span><span class="hide-small">Доходность: <b class="${y.pct>=0?'good':'bad'}">${y.pct>=0?'+':''}${pct(y.pct)}</b></span></div>
-     <div class="year-breakdown-rows">${parts.map(({p,r})=>`<div class="year-breakdown-row">
-       <div><b>${esc(p.name)}</b><span> · ${p.owner==='oy'?'VMPC Oy':'Personal'}</span></div>
-       <b class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</b>
-       <b class="${r.pct>=0?'good':'bad'}">${r.pct>=0?'+':''}${pct(r.pct)}</b>
-       <span class="hide-small">конец ${money(r.end)}</span>
-     </div>`).join('')}</div>
-   </div>`;
- }).join('');
-}
-
 function renderInsights(){
  const years=Math.max(1,Number(q('withdrawYears')?.value||30)),annual=Number(state.forecast.base||0);
  const base=runWithdrawalModel(annual,years),noExit=runWithdrawalModel(annual,years,{}, {}, {includeExits:false}),exits=exitDiagnostics(years,annual),invest=state.portfolios.filter(isInvestablePortfolio);
@@ -2401,7 +2500,6 @@ function renderInsights(){
  const ep=state.portfolios.find(isExitPortfolio);
  if(ep){const orig=ep.exitMultiple,bars=[];for(let mult=1;mult<=6;mult++){ep.exitMultiple=mult;bars.push({label:'×'+mult,value:runWithdrawalModel(annual,years).cap})}ep.exitMultiple=orig;drawBars(q('exitSensitivityChart'),bars)}else drawBars(q('exitSensitivityChart'),[]);
  drawBars(q('taxByYearChart'),(base.companyTaxByYear||[]).map(y=>({label:String(y.year).slice(-2),value:y.tax})));
- renderAnnualHistory();
 }
 
 function renderAll(){syncAgeHorizon('withdrawYears','withdrawTargetAge','withdrawHorizonDate','years');q('todayText').innerHTML=`${new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} · <span class="age-tag">${ageTextByYear(new Date().getFullYear())}</span><div class="age-note">Возраст рассчитан по году рождения 1982. Без точной даты рождения возможна разница в 1 год до дня рождения.</div>`;q('currency').value=state.settings.currency||'EUR';q('fyStartDisplay').value=formatDate(state.settings.fyStart);
@@ -2577,15 +2675,54 @@ function openSnapshotModal(id=null,pre=''){
  q('saveSnapshot').addEventListener('click',()=>{const iso=parseDate(q('sDate').value),v=Number(q('sValue').value);if(!iso)return toast('Дата должна быть ДД.ММ.ГГГГ');if(!Number.isFinite(v))return toast('Введите сумму');const obj={id:x?.id||uid(),portfolioId:q('sPortfolio').value,date:iso,value:v,comment:q('sComment').value};if(x)Object.assign(x,obj);else state.snapshots.push(obj);closeModal();saveState();toast(x?'Запись изменена':'Оценка добавлена')})
 }
 function openFlowModal(id=null,pre=''){
- if(!state.portfolios.length)return toast('Сначала добавьте портфель');const x=id?state.flows.find(v=>v.id===id):null,kind=x&&Number(x.amount)<0?'out':'in';
- openModal(x?'Редактировать денежный поток':'Пополнение / вывод',`<div class="form-grid">
-  <label>Портфель<select id="fPortfolio">${portfolioOptions(x?.portfolioId||pre)}</select></label>
+ if(!state.portfolios.length)return toast('Сначала добавьте портфель');
+ const x=id?state.flows.find(v=>v.id===id):null;
+ const existingType=x?flowTypeOf(x):'contribution';
+ const sourceId=x?.portfolioId||pre||state.portfolios[0]?.id||'';
+ let pair=null;
+ if(x?.transferId)pair=state.flows.find(v=>v.transferId===x.transferId&&v.id!==x.id);
+ const transferTo=existingType==='transfer_out'?pair?.portfolioId:existingType==='transfer_in'?x?.portfolioId:'';
+ if(existingType==='transfer_in'&&pair)sourceId=pair.portfolioId;
+ const typeForForm=existingType.startsWith('transfer_')?'transfer':existingType;
+ const val=x?Math.abs(Number(x.amount)||0):'';
+ openModal(x?'Редактировать денежное событие':'Денежное событие',`<div class="form-grid">
+  <label>Портфель / источник<select id="fPortfolio">${portfolioOptions(sourceId)}</select></label>
   <label>Дата${dateControl('fDate',x?.date||todayISO())}</label>
-  <label>Тип<select id="fType"><option value="in" ${kind==='in'?'selected':''}>Пополнение</option><option value="out" ${kind==='out'?'selected':''}>Вывод</option></select></label>
-  <label>Сумма<input id="fValue" type="number" step="0.01" value="${x?Math.abs(Number(x.amount)):''}"></label>
+  <label>Тип<select id="fType">
+    <option value="contribution" ${typeForForm==='contribution'?'selected':''}>Пополнение</option>
+    <option value="withdrawal" ${typeForForm==='withdrawal'?'selected':''}>Вывод</option>
+    <option value="transfer" ${typeForForm==='transfer'?'selected':''}>Перевод между портфелями</option>
+    <option value="dividend" ${typeForForm==='dividend'?'selected':''}>Дивиденд / реализованный доход</option>
+    <option value="fee" ${typeForForm==='fee'?'selected':''}>Комиссия / расход</option>
+  </select></label>
+  <label id="fTransferToWrap">Куда перевести<select id="fTransferTo">${portfolioOptions(transferTo)}</select></label>
+  <label>Сумма<input id="fValue" type="number" step="0.01" value="${val}"></label>
   <label>Комментарий<input id="fComment" value="${esc(x?.comment||'')}" placeholder="Необязательно"></label>
-  <div class="modal-actions"><button class="btn primary" id="saveFlow">${x?'Сохранить изменения':'Добавить поток'}</button></div></div>`,'CASH FLOW');
- q('saveFlow').addEventListener('click',()=>{const iso=parseDate(q('fDate').value);let v=Math.abs(Number(q('fValue').value));if(!iso)return toast('Дата должна быть ДД.ММ.ГГГГ');if(!Number.isFinite(v))return toast('Введите сумму');if(q('fType').value==='out')v=-v;const obj={id:x?.id||uid(),portfolioId:q('fPortfolio').value,date:iso,amount:v,comment:q('fComment').value};if(x)Object.assign(x,obj);else state.flows.push(obj);closeModal();saveState();toast(x?'Запись изменена':'Денежный поток добавлен')})
+  <div class="flow-help">Пополнение/вывод исключаются из инвестиционного дохода. Внутренний перевод создаёт две связанные записи и не меняет общий доход. Дивиденд и комиссия используются как реализованный доход/расход, если они не входят в сохранённую оценку портфеля.</div>
+  <div class="modal-actions"><button class="btn primary" id="saveFlow">${x?'Сохранить изменения':'Добавить событие'}</button></div></div>`,'CASH EVENT');
+ const syncTransfer=()=>{q('fTransferToWrap').style.display=q('fType').value==='transfer'?'flex':'none'};
+ q('fType').addEventListener('change',syncTransfer);syncTransfer();
+ q('saveFlow').addEventListener('click',()=>{
+   const iso=parseDate(q('fDate').value),v=Math.abs(Number(q('fValue').value)),type=q('fType').value,source=q('fPortfolio').value,comment=q('fComment').value;
+   if(!iso)return toast('Дата должна быть ДД.ММ.ГГГГ');
+   if(!Number.isFinite(v)||v<=0)return toast('Введите сумму больше нуля');
+   if(type==='transfer'){
+     const dest=q('fTransferTo').value;
+     if(!dest||dest===source)return toast('Выберите другой портфель назначения');
+     const tid=x?.transferId||uid();
+     if(x?.transferId)state.flows=state.flows.filter(f=>f.transferId!==x.transferId);
+     else if(x)state.flows=state.flows.filter(f=>f.id!==x.id);
+     state.flows.push({id:uid(),portfolioId:source,date:iso,amount:-v,flowType:'transfer_out',transferId:tid,comment});
+     state.flows.push({id:uid(),portfolioId:dest,date:iso,amount:v,flowType:'transfer_in',transferId:tid,comment});
+   }else{
+     if(x?.transferId)state.flows=state.flows.filter(f=>f.transferId!==x.transferId);
+     const signed=type==='withdrawal'?-v:v;
+     const obj={id:(x&&!x.transferId)?x.id:uid(),portfolioId:source,date:iso,amount:signed,flowType:type,transferId:'',comment};
+     if(x&&!x.transferId){const idx=state.flows.findIndex(f=>f.id===x.id);if(idx>=0)state.flows[idx]=obj;else state.flows.push(obj)}
+     else state.flows.push(obj);
+   }
+   closeModal();saveState();toast(x?'Событие изменено':'Событие добавлено')
+ })
 }
 
 function renderTaxPreview(){
