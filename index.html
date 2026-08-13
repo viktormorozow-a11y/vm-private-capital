@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.4 Nordea Group.1</title>
+<title>VM Private Capital — Wealth Studio v7.5.1 Dashboard Unified Fix.1</title>
 <style>
 
 :root{
@@ -661,7 +661,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:1300px){.insight-metric-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.insight-grid.two-col{grid-template-columns:1fr}.insights-symbol{display:none}}@media(max-width:650px){.insight-metric-grid{grid-template-columns:1fr}.insight-exit-head,.insight-exit-meta{flex-direction:column}.plan-info-grid{grid-template-columns:1fr}}
 
 
-/* v7.4 Nordea Group */
+/* v7.5.1 Dashboard Unified Fix */
 .cloud-card{border-color:rgba(95,190,150,.18)!important;background:linear-gradient(145deg,rgba(95,190,150,.055),rgba(255,255,255,.018))!important}
 .cloud-card-copy{min-width:0}.cloud-card-copy b,.cloud-card-copy div{overflow-wrap:anywhere}
 .cloud-account-btn{width:100%;margin-top:11px;font-size:10px}
@@ -679,7 +679,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:600px){.cloud-action-grid{grid-template-columns:1fr}.cloud-user-line{flex-direction:column}}
 
 
-/* v7.4 Nordea Group Gate */
+/* v7.5.1 Dashboard Unified Fix Gate */
 body.auth-locked{overflow:hidden}
 #authGate{
   position:fixed;inset:0;z-index:99999;
@@ -799,6 +799,14 @@ body.auth-locked{overflow:hidden}
   .archive-row > :nth-child(5),.archive-row > :nth-child(6){display:none}
 }
 
+
+/* v7.5 — unified Nordea row */
+.nordea-breakdown{display:grid;gap:2px;margin-top:3px}
+.nordea-breakdown span{font-size:8.5px;color:var(--muted);white-space:nowrap}
+.nordea-total{display:grid;gap:2px}
+.nordea-total b{font-size:11px}
+.nordea-total span{font-size:8.5px;color:var(--muted)}
+
 </style>
 </head>
 
@@ -842,7 +850,7 @@ body.auth-locked{overflow:hidden}
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.4 Nordea Group</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.5.1 Dashboard Unified Fix</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -1315,7 +1323,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.4 Nordea Group';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.5.1 Dashboard Unified Fix';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -1954,13 +1962,37 @@ function grossDividendIncrementForNet(targetNet,existingGross){
 
 function sortedPortfolioRows(){
  const now=totalNow(),sort=q('dashboardSort')?.value||'value_desc';
- const rows=state.portfolios.map(p=>{const r=portfolioPerf(p.id,state.settings.fyStart);return{p,r,share:now?100*r.end/now:0}});
+ const nordea=nordeaPortfolio(),cash=nordeaCashPortfolio(),cy=new Date().getFullYear();
+
+ const rows=[];
+ state.portfolios.forEach(p=>{
+   if(cash&&p.id===cash.id)return;
+
+   if(nordea&&cash&&p.id===nordea.id){
+     const r=nordeaYearPerf(cy);
+     const end=latestValue(nordea.id)+latestValue(cash.id);
+     rows.push({
+       p:{...p,name:'Nordea',_nordeaGroup:true},
+       r:{...(r||{}),end,profit:r?.sufficient?r.profit:0,pct:r?.sufficient?r.pct:null,sufficient:!!r?.sufficient},
+       share:now?100*end/now:0,
+       invValue:latestValue(nordea.id),
+       cashValue:latestValue(cash.id)
+     });
+     return;
+   }
+
+   const r=portfolioPerf(p.id,state.settings.fyStart);
+   rows.push({p,r,share:now?100*r.end/now:0});
+ });
+
  rows.sort((a,b)=>{
   if(sort==='name')return a.p.name.localeCompare(b.p.name,'ru');
   if(sort==='value_asc')return a.r.end-b.r.end;if(sort==='value_desc')return b.r.end-a.r.end;
-  if(sort==='ytd_asc')return a.r.pct-b.r.pct;if(sort==='ytd_desc')return b.r.pct-a.r.pct;
+  if(sort==='ytd_asc')return (a.r.pct??-Infinity)-(b.r.pct??-Infinity);
+  if(sort==='ytd_desc')return (b.r.pct??-Infinity)-(a.r.pct??-Infinity);
   if(sort==='share_desc')return b.share-a.share;return 0
- });return rows
+ });
+ return rows
 }
 function renderDashboard(){
  setReturnSummary();
@@ -1975,41 +2007,127 @@ function renderDashboard(){
  q('mFlows').textContent=`${ytd.flow>=0?'+':''}${money(ytd.flow)}`;q('mFlows').className='metric '+(ytd.flow>=0?'good':'bad');
 
  const body=q('portfolioSummaryBody');body.innerHTML='';
- sortedPortfolioRows().forEach(({p,r,share})=>body.insertAdjacentHTML('beforeend',`<tr>
-  <td><b>${esc(p.name)}</b><div class="muted small">${esc(p.type||'Портфель')}</div></td>
-  <td><span class="owner-badge ${p.owner==='oy'?'oy':'personal'}">${p.owner==='oy'?'VMPC Oy':'Personal'}</span><div class="asset-role-badge role-${portfolioRole(p)}">${portfolioRole(p)==='investable'?'В расчёте':portfolioRole(p)==='excluded'?'Вне расчёта':'Exit-актив'}</div></td>
-  <td>${money(r.end)}</td><td class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</td>
-  <td class="${r.pct>=0?'good':'bad'}">${r.pct>=0?'+':''}${pct(r.pct)}</td><td>${pct(share)}</td>
-  <td><div class="table-actions"><button class="mini-action" data-editport="${p.id}" title="Редактировать">✎</button><button class="mini-action" data-snap="${p.id}" title="Новая оценка">＋</button></div></td></tr>`));
+ sortedPortfolioRows().forEach(({p,r,share,invValue,cashValue})=>{
+   const isNordea=!!p._nordeaGroup;
+   const role=portfolioRole(p);
+   const ytdProfit = isNordea
+     ? (r.sufficient?`<span class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</span>`:'—')
+     : role==='excluded'
+       ? '<span class="return-na">Вне расчёта</span>'
+       : role==='exit'
+         ? '<span class="return-na">Exit-актив</span>'
+         : (r.sufficient?`<span class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</span>`:'—');
+
+   const ytdPct = isNordea
+     ? (r.sufficient?`<span class="${r.pct===null?'return-na':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</span>`:'—')
+     : (role==='excluded'||role==='exit')
+       ? '<span class="return-na">—</span>'
+       : (r.sufficient?`<span class="${r.pct===null?'return-na':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</span>`:'—');
+
+   const nameHtml=isNordea
+     ? `<b>Nordea</b><div class="nordea-breakdown"><span>Investments ${money(invValue||0)}</span><span>Cash ${money(cashValue||0)}</span></div>`
+     : `<b>${esc(p.name)}</b><div class="muted small">${esc(p.type||'Портфель')}</div>`;
+
+   const actions=isNordea
+     ? `<div class="table-actions">
+          <button class="mini-action" data-editport="${p.id}" title="Редактировать Nordea investments">✎</button>
+          <button class="mini-action" data-snap="${p.id}" title="Обновить Nordea investments">＋</button>
+          <button class="mini-action" data-snap="${nordeaCashPortfolio()?.id||''}" title="Обновить Nordea cash">€</button>
+        </div>`
+     : `<div class="table-actions"><button class="mini-action" data-editport="${p.id}" title="Редактировать">✎</button><button class="mini-action" data-snap="${p.id}" title="Новая оценка">＋</button></div>`;
+
+   body.insertAdjacentHTML('beforeend',`<tr>
+    <td>${nameHtml}</td>
+    <td><span class="owner-badge ${p.owner==='oy'?'oy':'personal'}">${p.owner==='oy'?'VMPC Oy':'Personal'}</span><div class="asset-role-badge role-${role}">${role==='investable'?'В расчёте':role==='excluded'?'Вне расчёта':'Exit-актив'}</div></td>
+    <td>${money(r.end)}</td><td>${ytdProfit}</td>
+    <td>${ytdPct}</td><td>${pct(share)}</td>
+    <td>${actions}</td></tr>`);
+ });
  body.querySelectorAll('[data-editport]').forEach(b=>b.addEventListener('click',()=>openPortfolioModal(b.dataset.editport)));
- body.querySelectorAll('[data-snap]').forEach(b=>b.addEventListener('click',()=>openSnapshotModal(null,b.dataset.snap)));
+ body.querySelectorAll('[data-snap]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.snap)openSnapshotModal(null,b.dataset.snap)}));
 
  const alloc=q('allocationList');alloc.innerHTML='';
  sortedPortfolioRows().forEach(({p,r,share})=>alloc.insertAdjacentHTML('beforeend',`<div class="allocation-item"><div class="alloc-name">${esc(p.name)}</div><div class="alloc-value">${money(r.end)} · ${pct(share)}</div><div class="alloc-track"><div class="alloc-fill" style="width:${Math.min(100,Math.max(0,share))}%"></div></div></div>`));
  renderCapitalChart()
 }
 function renderPortfolios(){
- const h=q('portfolioCards');h.innerHTML='';
- if(!state.portfolios.length){h.innerHTML='<div class="muted">Добавьте первый актив — например Nordea, Crypto, Cash или частную инвестицию.</div>';return}
- state.portfolios.forEach(p=>{
-   const r=portfolioPerf(p.id,state.settings.fyStart),role=portfolioRole(p);
-   const roleText=role==='investable'?'Участвует в сценариях':role==='excluded'?'Не участвует в расчётах':'До exit не приносит доход';
-   const exitInfo=role==='exit'?`<div class="exit-mini"><span>Exit: ${p.exitDate?formatDate(p.exitDate)+' · '+ageTextForIso(p.exitDate):'не задан'}</span><span>Множитель: ×${Number(p.exitMultiple||1).toFixed(2)}</span><span>Ожидаемая продажа: ${money(exitSaleValue(p))}</span><span>После Exit → <b>${esc(exitTargetName(p))}</b></span></div>`:'';
-   const rateInfo=role==='investable'?`<div class="portfolio-rate-info">Доходность сценария ${portfolioReturnAdjustment(p)>=0?'+':''}${portfolioReturnAdjustment(p).toFixed(1)} п.п.</div>`:'';
-   h.insertAdjacentHTML('beforeend',`<div class="port-card role-card-${role}">
-    <div class="port-type">${esc((p.type||'ПОРТФЕЛЬ').toUpperCase())} · ${p.owner==='oy'?'OY':'PERSONAL'}</div>
-    <div class="port-name">${esc(p.name)}</div>
-    <div class="asset-role-badge role-${role}">${roleText}</div>
-    ${rateInfo}
-    <div class="port-value">${money(r.end)}</div>
-    <div class="${r.sufficient?(r.profit>=0?'good':'bad'):'muted'}">${r.sufficient?`${r.profit>=0?'+':''}${money(r.profit)} · ${fmtReturn(r.pct)} YTD`:'Недостаточно оценок для доходности'}</div>
-    ${exitInfo}
-    <div class="port-actions"><button class="btn secondary compact" data-snap="${p.id}">Оценка</button><button class="btn secondary compact" data-flow="${p.id}">Поток</button><button class="btn secondary compact" data-edit="${p.id}">Изменить</button></div>
-   </div>`)
+ const body=q('portfolioBody');if(!body)return;
+ const now=totalNow(),cy=new Date().getFullYear();
+ const nordea=nordeaPortfolio(),cash=nordeaCashPortfolio();
+
+ const visible=state.portfolios.filter(p=>!(cash&&p.id===cash.id));
+ const rows=[...visible].sort((a,b)=>{
+   const va=(nordea&&cash&&a.id===nordea.id)?latestValue(nordea.id)+latestValue(cash.id):latestValue(a.id);
+   const vb=(nordea&&cash&&b.id===nordea.id)?latestValue(nordea.id)+latestValue(cash.id):latestValue(b.id);
+   const mode=q('portfolioSort')?.value||'value_desc';
+   if(mode==='name_asc')return a.name.localeCompare(b.name,'ru');
+   if(mode==='value_asc')return va-vb;
+   return vb-va;
  });
- h.querySelectorAll('[data-snap]').forEach(b=>b.addEventListener('click',()=>openSnapshotModal(null,b.dataset.snap)));
- h.querySelectorAll('[data-flow]').forEach(b=>b.addEventListener('click',()=>openFlowModal(null,b.dataset.flow)));
- h.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>openPortfolioModal(b.dataset.edit)))
+
+ body.innerHTML='';
+ rows.forEach(p=>{
+   const isNordea=nordea&&cash&&p.id===nordea.id;
+   const invValue=isNordea?latestValue(nordea.id):latestValue(p.id);
+   const cashValue=isNordea?latestValue(cash.id):0;
+   const value=isNordea?invValue+cashValue:invValue;
+   const share=now?value/now*100:0;
+
+   let profitHtml='—',pctHtml='—';
+
+   if(isNordea){
+     const r=nordeaYearPerf(cy);
+     if(r?.sufficient){
+       profitHtml=`<span class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</span>`;
+       pctHtml=`<span class="${r.pct===null?'return-na':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</span>`;
+     }
+   }else if(p.calcRole==='excluded'){
+     profitHtml=`<span class="return-na">Вне расчёта</span>`;
+     pctHtml=`<span class="return-na">—</span>`;
+   }else if(p.calcRole==='exit'){
+     profitHtml=`<span class="return-na">Exit-актив</span>`;
+     pctHtml=`<span class="return-na">—</span>`;
+   }else{
+     const r=portfolioYearPerf(p.id,cy);
+     if(r?.sufficient){
+       profitHtml=`<span class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</span>`;
+       pctHtml=`<span class="${r.pct===null?'return-na':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</span>`;
+     }
+   }
+
+   const ownerLabel=p.owner==='oy'?'VMPC Oy':'Personal';
+   const roleLabel=p.calcRole==='excluded'?'Вне расчёта':p.calcRole==='exit'?'Exit-актив':'В расчёте';
+   const roleClass=p.calcRole==='excluded'?'muted':p.calcRole==='exit'?'warn':'good';
+
+   const nameCell=isNordea
+     ? `<b>Nordea</b><div class="nordea-breakdown"><span>Investments ${money(invValue)}</span><span>Cash ${money(cashValue)}</span></div>`
+     : `<b>${esc(p.name)}</b><div class="muted small">${esc(p.type||'')}</div>`;
+
+   const valueCell=isNordea
+     ? `<div class="nordea-total"><b>${money(value)}</b><span>всего Nordea</span></div>`
+     : `<b>${money(value)}</b>`;
+
+   const actions=isNordea
+     ? `<div class="table-actions">
+          <button class="mini-action" data-editportfolio="${nordea.id}" title="Редактировать Nordea investments">✎</button>
+          <button class="mini-action" data-addsnapshot="${nordea.id}" title="Обновить Nordea investments">＋</button>
+          <button class="mini-action" data-addsnapshot="${cash.id}" title="Обновить Nordea cash">€</button>
+        </div>`
+     : `<div class="table-actions"><button class="mini-action" data-editportfolio="${p.id}" title="Редактировать">✎</button><button class="mini-action" data-addsnapshot="${p.id}" title="Добавить оценку">＋</button></div>`;
+
+   body.insertAdjacentHTML('beforeend',`<tr>
+     <td>${nameCell}</td>
+     <td><span class="owner-tag ${p.owner==='oy'?'oy':'personal'}">${ownerLabel}</span> <span class="role-tag ${roleClass}">${roleLabel}</span></td>
+     <td>${valueCell}</td>
+     <td>${profitHtml}</td>
+     <td>${pctHtml}</td>
+     <td><b>${pct(share)}</b></td>
+     <td>${actions}</td>
+   </tr>`);
+ });
+
+ body.querySelectorAll('[data-editportfolio]').forEach(b=>b.addEventListener('click',()=>openPortfolioModal(b.dataset.editportfolio)));
+ body.querySelectorAll('[data-addsnapshot]').forEach(b=>b.addEventListener('click',()=>openSnapshotModal(b.dataset.addsnapshot)));
 }
 
 function flowLabel(t){
@@ -2068,7 +2186,7 @@ function yearPerf(year){
    let r,displayP=p,isGroup=false;
    if(nordea&&cash&&p.id===nordea.id){
      r=groupPerf([nordea,cash],from,to);isGroup=true;
-     displayP={...p,name:'Nordea (включая Nordea cash)'};
+     displayP={...p,name:'Nordea'};
    }else{
      r=portfolioPerf(p.id,from,to);
    }
