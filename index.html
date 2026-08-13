@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.2 Security.1</title>
+<title>VM Private Capital — Wealth Studio v7.3 Returns.1</title>
 <style>
 
 :root{
@@ -661,7 +661,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:1300px){.insight-metric-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.insight-grid.two-col{grid-template-columns:1fr}.insights-symbol{display:none}}@media(max-width:650px){.insight-metric-grid{grid-template-columns:1fr}.insight-exit-head,.insight-exit-meta{flex-direction:column}.plan-info-grid{grid-template-columns:1fr}}
 
 
-/* v7.2 Security */
+/* v7.3 Returns */
 .cloud-card{border-color:rgba(95,190,150,.18)!important;background:linear-gradient(145deg,rgba(95,190,150,.055),rgba(255,255,255,.018))!important}
 .cloud-card-copy{min-width:0}.cloud-card-copy b,.cloud-card-copy div{overflow-wrap:anywhere}
 .cloud-account-btn{width:100%;margin-top:11px;font-size:10px}
@@ -679,7 +679,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:600px){.cloud-action-grid{grid-template-columns:1fr}.cloud-user-line{flex-direction:column}}
 
 
-/* v7.2 Security Gate */
+/* v7.3 Returns Gate */
 body.auth-locked{overflow:hidden}
 #authGate{
   position:fixed;inset:0;z-index:99999;
@@ -707,6 +707,26 @@ body.auth-locked{overflow:hidden}
 .auth-gate-msg.ok{color:var(--good)}.auth-gate-msg.err{color:var(--bad)}
 .auth-gate-note{font-size:9px;color:#6f7b82;line-height:1.5;margin-top:10px;text-align:center}
 #appShell.auth-hidden{visibility:hidden;pointer-events:none;user-select:none}
+
+
+/* v7.3 Return History */
+.metric-grid.return-metrics{grid-template-columns:repeat(5,minmax(0,1fr))}
+.period-cell{min-width:112px}
+.period-cell b{display:block;font-size:13px}
+.period-cell span{display:block;font-size:10px;margin-top:3px;color:var(--muted)}
+.annual-history-panel{margin-top:16px}
+.annual-summary-table th,.annual-summary-table td{white-space:nowrap}
+.annual-year{font-weight:750}
+.annual-breakdown{display:grid;gap:8px;margin-top:12px}
+.year-breakdown-card{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:rgba(255,255,255,.012)}
+.year-breakdown-head{display:grid;grid-template-columns:90px 1fr 1fr;gap:10px;align-items:center;padding:10px 12px;background:rgba(255,255,255,.02)}
+.year-breakdown-head b{font-size:13px}.year-breakdown-head span{font-size:10px;color:var(--muted)}
+.year-breakdown-rows{display:grid}
+.year-breakdown-row{display:grid;grid-template-columns:minmax(140px,1.6fr) 115px 105px 115px;gap:10px;padding:9px 12px;border-top:1px solid rgba(255,255,255,.045);align-items:center}
+.year-breakdown-row span{font-size:10px;color:var(--muted)}.year-breakdown-row b{font-size:11px}
+@media(max-width:1350px){.metric-grid.return-metrics{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){.metric-grid.return-metrics{grid-template-columns:repeat(2,1fr)}.year-breakdown-row{grid-template-columns:1.4fr 1fr 1fr}.year-breakdown-row .hide-small{display:none}}
+@media(max-width:650px){.metric-grid.return-metrics{grid-template-columns:1fr}.year-breakdown-head{grid-template-columns:70px 1fr}.year-breakdown-head .hide-small{display:none}.year-breakdown-row{grid-template-columns:1fr 1fr}}
 
 </style>
 </head>
@@ -751,7 +771,7 @@ body.auth-locked{overflow:hidden}
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.2 Security</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.3 Returns</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -827,24 +847,29 @@ body.auth-locked{overflow:hidden}
         </div>
       </div>
 
-      <div class="metric-grid">
+      <div class="metric-grid return-metrics">
         <div class="metric-card reveal">
-          <div class="metric-label">Инвестиционный результат YTD</div>
+          <div id="mCurrentYearLabel" class="metric-label">Доход с начала года</div>
           <div id="mYtd" class="metric">€0</div>
           <div id="mYtdPct" class="metric-sub"></div>
         </div>
         <div class="metric-card reveal delay1">
-          <div class="metric-label">Результат с начала учёта</div>
+          <div id="mPrevYearLabel" class="metric-label">Доход за прошлый год</div>
+          <div id="mPrevYear" class="metric">€0</div>
+          <div id="mPrevYearPct" class="metric-sub"></div>
+        </div>
+        <div class="metric-card reveal delay2">
+          <div class="metric-label">Доход за всё время</div>
           <div id="mAll" class="metric">€0</div>
           <div id="mAllPct" class="metric-sub"></div>
         </div>
-        <div class="metric-card reveal delay2">
-          <div class="metric-label">Прогноз на конец года</div>
+        <div class="metric-card reveal delay3">
+          <div class="metric-label">Прогноз капитала на конец года</div>
           <div id="mYearEnd" class="metric">€0</div>
           <div id="mYearEndSub" class="metric-sub"></div>
         </div>
-        <div class="metric-card reveal delay3">
-          <div class="metric-label">Внешние потоки YTD</div>
+        <div class="metric-card reveal">
+          <div id="mFlowsLabel" class="metric-label">Внешние потоки с начала года</div>
           <div id="mFlows" class="metric">€0</div>
           <div class="metric-sub">пополнения минус снятия</div>
         </div>
@@ -894,7 +919,7 @@ body.auth-locked{overflow:hidden}
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Портфель</th><th>Владелец</th><th>Сейчас</th><th>YTD €</th><th>YTD %</th><th>Доля</th><th></th></tr></thead>
+            <thead><tr><th>Портфель</th><th>Владелец</th><th>Сейчас</th><th id="thCurrentYear">Текущий год</th><th id="thPrevYear">Прошлый год</th><th>Всё время</th><th>Доля</th><th></th></tr></thead>
             <tbody id="portfolioSummaryBody"></tbody>
           </table>
         </div>
@@ -1032,6 +1057,23 @@ body.auth-locked{overflow:hidden}
       <div class="insight-grid two-col">
         <div class="panel"><div class="panel-head"><div><div class="eyebrow">ASSET STRUCTURE</div><h2>Структура капитала</h2></div></div><div id="insightAssetStructure"></div></div>
         <div class="panel"><div class="panel-head"><div><div class="eyebrow">PLAN CHECK</div><h2>Базовый план в цифрах</h2></div></div><div id="insightPlanCheck"></div></div>
+      </div>
+      <div class="panel annual-history-panel">
+        <div class="panel-head">
+          <div>
+            <div class="eyebrow">RETURN HISTORY</div>
+            <h2>Доход по всем годам</h2>
+            <div class="muted small">Фактический инвестиционный результат по сохранённым оценкам: изменение стоимости минус внешние пополнения/снятия.</div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="annual-summary-table">
+            <thead><tr><th>Год</th><th>Капитал на начало</th><th>Внешние потоки</th><th>Инвестиционный доход</th><th>Доходность</th><th>Капитал на конец</th></tr></thead>
+            <tbody id="annualHistoryBody"></tbody>
+          </table>
+        </div>
+        <div class="panel-head compact-top"><div><div class="eyebrow">BY PORTFOLIO</div><h2>По портфелям и годам</h2></div></div>
+        <div id="annualPortfolioBreakdown" class="annual-breakdown"></div>
       </div>
     </section>
 
@@ -1196,7 +1238,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.2 Security';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.3 Returns';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -1489,6 +1531,62 @@ function portfolioPerf(pid,from){
  const end=latestValue(pid),atStart=latestValue(pid,from),start=atStart||firstValue(pid,from),flow=flowsBetween(pid,from,todayISO()),profit=end-start-flow;
  return{start,end,flow,profit,pct:start?profit/start*100:0}
 }
+
+function isoYearStart(year){return `${year}-01-01`}
+function isoYearEnd(year){return `${year}-12-31`}
+function snapshotsForPeriod(pid,to){
+ return state.snapshots.filter(x=>x.portfolioId===pid&&x.date<=to).sort((a,b)=>a.date.localeCompare(b.date));
+}
+function portfolioPeriodPerf(pid,from,to=todayISO()){
+ const rows=snapshotsForPeriod(pid,to);
+ if(!rows.length)return{start:0,end:0,flow:0,profit:0,pct:0,hasData:false,startDate:null,endDate:null};
+ const beforeOrAt=rows.filter(x=>x.date<=from);
+ const within=rows.filter(x=>x.date>=from&&x.date<=to);
+ let startRow=beforeOrAt.length?beforeOrAt.at(-1):(within.length?within[0]:null);
+ const endRow=rows.at(-1);
+ if(!startRow||!endRow||endRow.date<startRow.date)return{start:0,end:0,flow:0,profit:0,pct:0,hasData:false,startDate:null,endDate:null};
+ const start=Number(startRow.value)||0,end=Number(endRow.value)||0;
+ let flowRows=state.flows.filter(x=>x.portfolioId===pid&&x.date<=to);
+ if(startRow.date>from)flowRows=flowRows.filter(x=>x.date>startRow.date);
+ else flowRows=flowRows.filter(x=>x.date>=from);
+ const flow=flowRows.reduce((s,x)=>s+Number(x.amount||0),0);
+ const profit=end-start-flow;
+ return{start,end,flow,profit,pct:start?profit/start*100:0,hasData:true,startDate:startRow.date,endDate:endRow.date}
+}
+function totalPeriodPerf(from,to=todayISO()){
+ let start=0,end=0,flow=0,profit=0,hasData=false;
+ state.portfolios.forEach(p=>{
+   const r=portfolioPeriodPerf(p.id,from,to);
+   if(!r.hasData)return;
+   hasData=true;start+=r.start;end+=r.end;flow+=r.flow;profit+=r.profit;
+ });
+ return{start,end,flow,profit,pct:start?profit/start*100:0,hasData}
+}
+function allTimePortfolioPerf(pid){
+ const rows=state.snapshots.filter(x=>x.portfolioId===pid).sort((a,b)=>a.date.localeCompare(b.date));
+ if(!rows.length)return{start:0,end:0,flow:0,profit:0,pct:0,hasData:false};
+ const first=rows[0],end=rows.at(-1),flow=state.flows.filter(x=>x.portfolioId===pid&&x.date>first.date&&x.date<=end.date).reduce((s,x)=>s+Number(x.amount||0),0);
+ const start=Number(first.value)||0,endValue=Number(end.value)||0,profit=endValue-start-flow;
+ return{start,end:endValue,flow,profit,pct:start?profit/start*100:0,hasData:true,startDate:first.date,endDate:end.date}
+}
+function totalAllTimePerf(){
+ let start=0,end=0,flow=0,profit=0,hasData=false;
+ state.portfolios.forEach(p=>{const r=allTimePortfolioPerf(p.id);if(!r.hasData)return;hasData=true;start+=r.start;end+=r.end;flow+=r.flow;profit+=r.profit});
+ return{start,end,flow,profit,pct:start?profit/start*100:0,hasData}
+}
+function annualPerformanceRows(){
+ const dates=allDates();
+ if(!dates.length)return[];
+ const firstYear=Number(dates[0].slice(0,4)),currentYear=new Date().getFullYear(),rows=[];
+ for(let year=firstYear;year<=currentYear;year++){
+   const to=year===currentYear?todayISO():isoYearEnd(year);
+   const total=totalPeriodPerf(isoYearStart(year),to);
+   const portfolios=state.portfolios.map(p=>({p,r:portfolioPeriodPerf(p.id,isoYearStart(year),to)})).filter(x=>x.r.hasData);
+   if(total.hasData||portfolios.length)rows.push({year,...total,portfolios});
+ }
+ return rows.reverse();
+}
+
 function totalNow(){return state.portfolios.reduce((s,p)=>s+latestValue(p.id),0)}
 function totalPerf(from){let start=0,end=0,flow=0;state.portfolios.forEach(p=>{const r=portfolioPerf(p.id,from);start+=r.start;end+=r.end;flow+=r.flow});const profit=end-start-flow;return{start,end,flow,profit,pct:start?profit/start*100:0}}
 function allDates(){return[...new Set(state.snapshots.map(x=>x.date))].sort()}
@@ -1645,8 +1743,13 @@ function grossDividendIncrementForNet(targetNet,existingGross){
 }
 
 function sortedPortfolioRows(){
- const now=totalNow(),sort=q('dashboardSort')?.value||'value_desc';
- const rows=state.portfolios.map(p=>{const r=portfolioPerf(p.id,state.settings.fyStart);return{p,r,share:now?100*r.end/now:0}});
+ const now=totalNow(),sort=q('dashboardSort')?.value||'value_desc',yr=new Date().getFullYear(),prev=yr-1;
+ const rows=state.portfolios.map(p=>{
+   const r=portfolioPeriodPerf(p.id,isoYearStart(yr),todayISO());
+   const prevR=portfolioPeriodPerf(p.id,isoYearStart(prev),isoYearEnd(prev));
+   const allR=allTimePortfolioPerf(p.id);
+   return{p,r,prevR,allR,share:now?100*latestValue(p.id)/now:0};
+ });
  rows.sort((a,b)=>{
   if(sort==='name')return a.p.name.localeCompare(b.p.name,'ru');
   if(sort==='value_asc')return a.r.end-b.r.end;if(sort==='value_desc')return b.r.end-a.r.end;
@@ -1655,35 +1758,47 @@ function sortedPortfolioRows(){
  });return rows
 }
 function renderDashboard(){
- const now=totalNow(),ytd=totalPerf(state.settings.fyStart),first=allDates()[0],all=first?totalPerf(first):{profit:0,pct:0};
+ const now=totalNow(),yr=new Date().getFullYear(),prev=yr-1;
+ const ytd=totalPeriodPerf(isoYearStart(yr),todayISO()),prevYear=totalPeriodPerf(isoYearStart(prev),isoYearEnd(prev)),all=totalAllTimePerf();
  q('heroTotal').textContent=money(now);q('personalCapital').textContent=money(ownerTotal('personal'));q('companyCapital').textContent=money(ownerTotal('oy'));
  q('planningCapital').textContent=money(planningTotal());q('excludedCapital').textContent=money(excludedTotal());q('exitAssetsCapital').textContent=money(exitAssetsTotal());
- q('companyTaxLabel').textContent=`${Number(state.taxSettings.companyTaxRate).toFixed(1)}%`;q('heroYtd').textContent=`YTD ${ytd.pct>=0?'+':''}${pct(ytd.pct)}`;q('heroYtd').className='chip '+(ytd.pct<0?'bad':'');
+ q('companyTaxLabel').textContent=`${Number(state.taxSettings.companyTaxRate).toFixed(1)}%`;q('heroYtd').textContent=`${yr} ${ytd.pct>=0?'+':''}${pct(ytd.pct)}`;q('heroYtd').className='chip '+(ytd.pct<0?'bad':'');
  q('heroPortfolios').textContent=`${state.portfolios.length} ${state.portfolios.length===1?'портфель':'портфелей'}`;
- q('mYtd').textContent=`${ytd.profit>=0?'+':''}${money(ytd.profit)}`;q('mYtd').className='metric '+(ytd.profit>=0?'good':'bad');q('mYtdPct').textContent=`${ytd.pct>=0?'+':''}${pct(ytd.pct)} с начала года`;
+ q('mCurrentYearLabel').textContent=`Доход с начала ${yr} года`;
+ q('mPrevYearLabel').textContent=`Доход за ${prev} год`;
+ q('mFlowsLabel').textContent=`Внешние потоки ${yr}`;
+ q('thCurrentYear').textContent=String(yr);
+ q('thPrevYear').textContent=String(prev);
+
+ q('mYtd').textContent=`${ytd.profit>=0?'+':''}${money(ytd.profit)}`;q('mYtd').className='metric '+(ytd.profit>=0?'good':'bad');q('mYtdPct').textContent=`${ytd.pct>=0?'+':''}${pct(ytd.pct)} · ${yr}`;
+ q('mPrevYear').textContent=`${prevYear.profit>=0?'+':''}${money(prevYear.profit)}`;q('mPrevYear').className='metric '+(prevYear.profit>=0?'good':'bad');q('mPrevYearPct').textContent=`${prevYear.pct>=0?'+':''}${pct(prevYear.pct)} · полный ${prev} год`;
  q('mAll').textContent=`${all.profit>=0?'+':''}${money(all.profit)}`;q('mAll').className='metric '+(all.profit>=0?'good':'bad');q('mAllPct').textContent=`${all.pct>=0?'+':''}${pct(all.pct)} за всю историю`;
- q('mYearEnd').textContent=money(yearEndForecast());q('mYearEndSub').innerHTML=`если текущий темп сохранится · ${new Date().getFullYear()} <span class="age-tag">${ageTextByYear(new Date().getFullYear())}</span>`;
+ q('mYearEnd').textContent=money(yearEndForecast());q('mYearEndSub').innerHTML=`если текущий темп сохранится · ${yr} <span class="age-tag">${ageTextByYear(yr)}</span>`;
  q('mFlows').textContent=`${ytd.flow>=0?'+':''}${money(ytd.flow)}`;q('mFlows').className='metric '+(ytd.flow>=0?'good':'bad');
 
+ const perfCell=r=>`<div class="period-cell"><b class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</b><span class="${r.pct>=0?'good':'bad'}">${r.pct>=0?'+':''}${pct(r.pct)}</span></div>`;
  const body=q('portfolioSummaryBody');body.innerHTML='';
- sortedPortfolioRows().forEach(({p,r,share})=>body.insertAdjacentHTML('beforeend',`<tr>
+ sortedPortfolioRows().forEach(({p,r,prevR,allR,share})=>body.insertAdjacentHTML('beforeend',`<tr>
   <td><b>${esc(p.name)}</b><div class="muted small">${esc(p.type||'Портфель')}</div></td>
   <td><span class="owner-badge ${p.owner==='oy'?'oy':'personal'}">${p.owner==='oy'?'VMPC Oy':'Personal'}</span><div class="asset-role-badge role-${portfolioRole(p)}">${portfolioRole(p)==='investable'?'В расчёте':portfolioRole(p)==='excluded'?'Вне расчёта':'Exit-актив'}</div></td>
-  <td>${money(r.end)}</td><td class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</td>
-  <td class="${r.pct>=0?'good':'bad'}">${r.pct>=0?'+':''}${pct(r.pct)}</td><td>${pct(share)}</td>
+  <td>${money(latestValue(p.id))}</td>
+  <td>${perfCell(r)}</td>
+  <td>${perfCell(prevR)}</td>
+  <td>${perfCell(allR)}</td>
+  <td>${pct(share)}</td>
   <td><div class="table-actions"><button class="mini-action" data-editport="${p.id}" title="Редактировать">✎</button><button class="mini-action" data-snap="${p.id}" title="Новая оценка">＋</button></div></td></tr>`));
  body.querySelectorAll('[data-editport]').forEach(b=>b.addEventListener('click',()=>openPortfolioModal(b.dataset.editport)));
  body.querySelectorAll('[data-snap]').forEach(b=>b.addEventListener('click',()=>openSnapshotModal(null,b.dataset.snap)));
 
  const alloc=q('allocationList');alloc.innerHTML='';
- sortedPortfolioRows().forEach(({p,r,share})=>alloc.insertAdjacentHTML('beforeend',`<div class="allocation-item"><div class="alloc-name">${esc(p.name)}</div><div class="alloc-value">${money(r.end)} · ${pct(share)}</div><div class="alloc-track"><div class="alloc-fill" style="width:${Math.min(100,Math.max(0,share))}%"></div></div></div>`));
+ sortedPortfolioRows().forEach(({p,share})=>alloc.insertAdjacentHTML('beforeend',`<div class="allocation-item"><div class="alloc-name">${esc(p.name)}</div><div class="alloc-value">${money(latestValue(p.id))} · ${pct(share)}</div><div class="alloc-track"><div class="alloc-fill" style="width:${Math.min(100,Math.max(0,share))}%"></div></div></div>`));
  renderCapitalChart()
 }
 function renderPortfolios(){
  const h=q('portfolioCards');h.innerHTML='';
  if(!state.portfolios.length){h.innerHTML='<div class="muted">Добавьте первый актив — например Nordea, Crypto, Cash или частную инвестицию.</div>';return}
  state.portfolios.forEach(p=>{
-   const r=portfolioPerf(p.id,state.settings.fyStart),role=portfolioRole(p);
+   const yr=new Date().getFullYear(),r=portfolioPeriodPerf(p.id,isoYearStart(yr),todayISO()),role=portfolioRole(p);
    const roleText=role==='investable'?'Участвует в сценариях':role==='excluded'?'Не участвует в расчётах':'До exit не приносит доход';
    const exitInfo=role==='exit'?`<div class="exit-mini"><span>Exit: ${p.exitDate?formatDate(p.exitDate)+' · '+ageTextForIso(p.exitDate):'не задан'}</span><span>Множитель: ×${Number(p.exitMultiple||1).toFixed(2)}</span><span>Ожидаемая продажа: ${money(exitSaleValue(p))}</span><span>После Exit → <b>${esc(exitTargetName(p))}</b></span></div>`:'';
    const rateInfo=role==='investable'?`<div class="portfolio-rate-info">Доходность сценария ${portfolioReturnAdjustment(p)>=0?'+':''}${portfolioReturnAdjustment(p).toFixed(1)} п.п.</div>`:'';
@@ -1693,7 +1808,7 @@ function renderPortfolios(){
     <div class="asset-role-badge role-${role}">${roleText}</div>
     ${rateInfo}
     <div class="port-value">${money(r.end)}</div>
-    <div class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)} · ${r.pct>=0?'+':''}${pct(r.pct)} YTD</div>
+    <div class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)} · ${r.pct>=0?'+':''}${pct(r.pct)} ${yr}</div>
     ${exitInfo}
     <div class="port-actions"><button class="btn secondary compact" data-snap="${p.id}">Оценка</button><button class="btn secondary compact" data-flow="${p.id}">Поток</button><button class="btn secondary compact" data-edit="${p.id}">Изменить</button></div>
    </div>`)
@@ -2243,6 +2358,37 @@ function renderWithdrawalExitChart(){
  const a=runWithdrawalModel(annual,years),b=runWithdrawalModel(annual,years,{}, {}, {includeExits:false});
  drawSeries(q('withdrawalExitChart'),[{name:'С Exit',points:a.ptsTotal,ci:2},{name:'Без Exit',points:b.ptsTotal,ci:0}]);
 }
+
+function renderAnnualHistory(){
+ const rows=annualPerformanceRows(),body=q('annualHistoryBody'),breakdown=q('annualPortfolioBreakdown');
+ if(!body||!breakdown)return;
+ if(!rows.length){
+   body.innerHTML='<tr><td colspan="6"><div class="history-empty"><b>Истории пока нет.</b><span>Добавляйте оценки портфелей по датам — здесь автоматически появится доход по каждому году.</span></div></td></tr>';
+   breakdown.innerHTML='';
+   return;
+ }
+ body.innerHTML=rows.map(y=>`<tr>
+   <td class="annual-year">${y.year}</td>
+   <td>${money(y.start)}</td>
+   <td class="${y.flow>=0?'good':'bad'}">${y.flow>=0?'+':''}${money(y.flow)}</td>
+   <td class="${y.profit>=0?'good':'bad'}"><b>${y.profit>=0?'+':''}${money(y.profit)}</b></td>
+   <td class="${y.pct>=0?'good':'bad'}">${y.pct>=0?'+':''}${pct(y.pct)}</td>
+   <td>${money(y.end)}</td>
+ </tr>`).join('');
+ breakdown.innerHTML=rows.map(y=>{
+   const parts=y.portfolios.slice().sort((a,b)=>Math.abs(b.r.profit)-Math.abs(a.r.profit));
+   return `<div class="year-breakdown-card">
+     <div class="year-breakdown-head"><b>${y.year}</b><span>Доход: <b class="${y.profit>=0?'good':'bad'}">${y.profit>=0?'+':''}${money(y.profit)}</b></span><span class="hide-small">Доходность: <b class="${y.pct>=0?'good':'bad'}">${y.pct>=0?'+':''}${pct(y.pct)}</b></span></div>
+     <div class="year-breakdown-rows">${parts.map(({p,r})=>`<div class="year-breakdown-row">
+       <div><b>${esc(p.name)}</b><span> · ${p.owner==='oy'?'VMPC Oy':'Personal'}</span></div>
+       <b class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</b>
+       <b class="${r.pct>=0?'good':'bad'}">${r.pct>=0?'+':''}${pct(r.pct)}</b>
+       <span class="hide-small">конец ${money(r.end)}</span>
+     </div>`).join('')}</div>
+   </div>`;
+ }).join('');
+}
+
 function renderInsights(){
  const years=Math.max(1,Number(q('withdrawYears')?.value||30)),annual=Number(state.forecast.base||0);
  const base=runWithdrawalModel(annual,years),noExit=runWithdrawalModel(annual,years,{}, {}, {includeExits:false}),exits=exitDiagnostics(years,annual),invest=state.portfolios.filter(isInvestablePortfolio);
@@ -2255,6 +2401,7 @@ function renderInsights(){
  const ep=state.portfolios.find(isExitPortfolio);
  if(ep){const orig=ep.exitMultiple,bars=[];for(let mult=1;mult<=6;mult++){ep.exitMultiple=mult;bars.push({label:'×'+mult,value:runWithdrawalModel(annual,years).cap})}ep.exitMultiple=orig;drawBars(q('exitSensitivityChart'),bars)}else drawBars(q('exitSensitivityChart'),[]);
  drawBars(q('taxByYearChart'),(base.companyTaxByYear||[]).map(y=>({label:String(y.year).slice(-2),value:y.tax})));
+ renderAnnualHistory();
 }
 
 function renderAll(){syncAgeHorizon('withdrawYears','withdrawTargetAge','withdrawHorizonDate','years');q('todayText').innerHTML=`${new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} · <span class="age-tag">${ageTextByYear(new Date().getFullYear())}</span><div class="age-note">Возраст рассчитан по году рождения 1982. Без точной даты рождения возможна разница в 1 год до дня рождения.</div>`;q('currency').value=state.settings.currency||'EUR';q('fyStartDisplay').value=formatDate(state.settings.fyStart);
