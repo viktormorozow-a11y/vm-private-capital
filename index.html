@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.3.5 Stable.1</title>
+<title>VM Private Capital — Wealth Studio v7.3.6 Insights Only.1</title>
 <style>
 
 :root{
@@ -661,7 +661,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:1300px){.insight-metric-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.insight-grid.two-col{grid-template-columns:1fr}.insights-symbol{display:none}}@media(max-width:650px){.insight-metric-grid{grid-template-columns:1fr}.insight-exit-head,.insight-exit-meta{flex-direction:column}.plan-info-grid{grid-template-columns:1fr}}
 
 
-/* v7.3.5 Stable */
+/* v7.3.6 Insights Only */
 .cloud-card{border-color:rgba(95,190,150,.18)!important;background:linear-gradient(145deg,rgba(95,190,150,.055),rgba(255,255,255,.018))!important}
 .cloud-card-copy{min-width:0}.cloud-card-copy b,.cloud-card-copy div{overflow-wrap:anywhere}
 .cloud-account-btn{width:100%;margin-top:11px;font-size:10px}
@@ -679,7 +679,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:600px){.cloud-action-grid{grid-template-columns:1fr}.cloud-user-line{flex-direction:column}}
 
 
-/* v7.3.5 Stable Gate */
+/* v7.3.6 Insights Only Gate */
 body.auth-locked{overflow:hidden}
 #authGate{
   position:fixed;inset:0;z-index:99999;
@@ -814,7 +814,7 @@ body.auth-locked{overflow:hidden}
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.3.5 Stable</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.3.6 Insights Only</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -1143,7 +1143,18 @@ body.auth-locked{overflow:hidden}
         <div class="panel"><div class="panel-head"><div><div class="eyebrow">ASSET STRUCTURE</div><h2>Структура капитала</h2></div></div><div id="insightAssetStructure"></div></div>
         <div class="panel"><div class="panel-head"><div><div class="eyebrow">PLAN CHECK</div><h2>Базовый план в цифрах</h2></div></div><div id="insightPlanCheck"></div></div>
       </div>
-    </section>
+    
+<div class="panel" style="margin-top:14px">
+        <div class="panel-head">
+          <div>
+            <div class="eyebrow">ALL YEARS ARCHIVE</div>
+            <h2>История доходности за все годы</h2>
+            <div class="muted small">Архив сохраняется в разделе «Дополнительно»: по каждому году и по каждому портфелю.</div>
+          </div>
+        </div>
+        <div id="insightsAllYearsHistory" class="insights-history-wrap"></div>
+      </div>
+</section>
 
     <section id="view-reports" class="view">
       <div class="report-hero panel">
@@ -1166,18 +1177,6 @@ body.auth-locked{overflow:hidden}
         </button>
       </div>
     </section>
-
-
-      <div class="panel" style="margin-top:14px">
-        <div class="panel-head">
-          <div>
-            <div class="eyebrow">ALL YEARS ARCHIVE</div>
-            <h2>История доходности за все годы</h2>
-            <div class="muted small">Архив сохраняется в разделе «Дополнительно»: по каждому году и по каждому портфелю.</div>
-          </div>
-        </div>
-        <div id="insightsAllYearsHistory" class="insights-history-wrap"></div>
-      </div>
 
     <section id="view-settings" class="view">
       <div class="grid two">
@@ -1322,7 +1321,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.3.5 Stable';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.3.6 Insights Only';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
