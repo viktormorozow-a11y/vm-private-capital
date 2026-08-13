@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.3.3 Portfolio Returns.1</title>
+<title>VM Private Capital — Wealth Studio v7.3.4 Login Fix.1</title>
 <style>
 
 :root{
@@ -661,7 +661,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:1300px){.insight-metric-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.insight-grid.two-col{grid-template-columns:1fr}.insights-symbol{display:none}}@media(max-width:650px){.insight-metric-grid{grid-template-columns:1fr}.insight-exit-head,.insight-exit-meta{flex-direction:column}.plan-info-grid{grid-template-columns:1fr}}
 
 
-/* v7.3.3 Portfolio Returns */
+/* v7.3.4 Login Fix */
 .cloud-card{border-color:rgba(95,190,150,.18)!important;background:linear-gradient(145deg,rgba(95,190,150,.055),rgba(255,255,255,.018))!important}
 .cloud-card-copy{min-width:0}.cloud-card-copy b,.cloud-card-copy div{overflow-wrap:anywhere}
 .cloud-account-btn{width:100%;margin-top:11px;font-size:10px}
@@ -679,7 +679,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:600px){.cloud-action-grid{grid-template-columns:1fr}.cloud-user-line{flex-direction:column}}
 
 
-/* v7.3.3 Portfolio Returns Gate */
+/* v7.3.4 Login Fix Gate */
 body.auth-locked{overflow:hidden}
 #authGate{
   position:fixed;inset:0;z-index:99999;
@@ -814,7 +814,7 @@ body.auth-locked{overflow:hidden}
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.3.3 Portfolio Returns</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.3.4 Login Fix</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -1272,7 +1272,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.3.3 Portfolio Returns';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.3.4 Login Fix';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -1344,7 +1344,7 @@ async function handleCloudSession(session,{initial=false}={}){
    const {data,error}=await supabaseClient.from('user_data').select('payload,updated_at').eq('user_id',cloudUser.id).maybeSingle();
    if(error){
      setCloudStatus('err','Ошибка подключения',error.message);
-     return;
+     throw error;
    }
    if(data){
      suppressCloudSave=true;
@@ -1385,10 +1385,31 @@ async function gateSignIn(){
  const email=q('gateEmail')?.value.trim()||'';
  const password=q('gatePassword')?.value||'';
  if(!email||!password)return gateMessage('Введите email и пароль.','err');
+
+ const btn=q('gateSignIn');
+ if(btn){btn.disabled=true;btn.textContent='Вхожу…'}
  gateMessage('Выполняю вход…');
- const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
- if(error)return gateMessage(error.message,'err');
- gateMessage('Вход выполнен. Загружаю данные…','ok');
+
+ try{
+   const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+   if(error)throw error;
+   const session=data?.session;
+   if(!session?.user)throw new Error('Сессия не получена. Попробуйте войти ещё раз.');
+
+   gateMessage('Вход выполнен. Загружаю данные…','ok');
+
+   // Не ждём события onAuthStateChange: сразу загружаем облачные данные
+   // и открываем интерфейс. Это устраняет зависание на экране входа.
+   await handleCloudSession(session,{initial:true});
+   unlockApp();
+   gateMessage('');
+
+ }catch(e){
+   console.error('Gate sign-in error',e);
+   gateMessage(e?.message||'Не удалось войти.','err');
+ }finally{
+   if(btn){btn.disabled=false;btn.textContent='Войти'}
+ }
 }
 
 async function initCloud(){
@@ -1400,8 +1421,14 @@ async function initCloud(){
  }
  const {data:{session}}=await supabaseClient.auth.getSession();
  if(session?.user){
-   await handleCloudSession(session,{initial:true});
-   unlockApp();
+   try{
+     await handleCloudSession(session,{initial:true});
+     unlockApp();
+   }catch(e){
+     console.error('Initial cloud load error',e);
+     lockApp();
+     gateMessage(e?.message||'Не удалось загрузить данные из облака.','err');
+   }
  }else{
    cloudUser=null;
    setCloudStatus('idle','Облако не подключено','Требуется вход');
@@ -1409,14 +1436,27 @@ async function initCloud(){
  }
  supabaseClient.auth.onAuthStateChange((event,session)=>{
    setTimeout(async()=>{
-     if(session?.user){
-       await handleCloudSession(session,{initial:event==='SIGNED_IN'});
-       unlockApp();
-       gateMessage('');
-     }else{
-       cloudUser=null;
+     try{
+       if(session?.user){
+         // Если прямой gateSignIn уже установил этого пользователя,
+         // не запускаем повторную тяжёлую загрузку из облака.
+         if(cloudUser?.id===session.user.id){
+           setCloudStatus('ok','Облако подключено',`${session.user.email||''} · ${cloudTimeText()}`);
+           unlockApp();
+           return;
+         }
+         await handleCloudSession(session,{initial:true});
+         unlockApp();
+         gateMessage('');
+       }else{
+         cloudUser=null;
+         lockApp();
+         setCloudStatus('idle','Облако не подключено','Требуется вход');
+       }
+     }catch(e){
+       console.error('Auth state error',e);
        lockApp();
-       setCloudStatus('idle','Облако не подключено','Требуется вход');
+       gateMessage(e?.message||'Ошибка загрузки облачных данных.','err');
      }
    },0);
  });
