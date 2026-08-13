@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.1 Cloud.1</title>
+<title>VM Private Capital — Wealth Studio v7.2 Security.1</title>
 <style>
 
 :root{
@@ -661,7 +661,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:1300px){.insight-metric-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.insight-grid.two-col{grid-template-columns:1fr}.insights-symbol{display:none}}@media(max-width:650px){.insight-metric-grid{grid-template-columns:1fr}.insight-exit-head,.insight-exit-meta{flex-direction:column}.plan-info-grid{grid-template-columns:1fr}}
 
 
-/* v7.1 Cloud */
+/* v7.2 Security */
 .cloud-card{border-color:rgba(95,190,150,.18)!important;background:linear-gradient(145deg,rgba(95,190,150,.055),rgba(255,255,255,.018))!important}
 .cloud-card-copy{min-width:0}.cloud-card-copy b,.cloud-card-copy div{overflow-wrap:anywhere}
 .cloud-account-btn{width:100%;margin-top:11px;font-size:10px}
@@ -678,9 +678,56 @@ th,td{border-color:rgba(255,255,255,.055)}
 .cloud-modal-message{min-height:18px;font-size:10px;color:#8d9aa3}.cloud-modal-message.ok{color:var(--good)}.cloud-modal-message.err{color:var(--bad)}
 @media(max-width:600px){.cloud-action-grid{grid-template-columns:1fr}.cloud-user-line{flex-direction:column}}
 
+
+/* v7.2 Security Gate */
+body.auth-locked{overflow:hidden}
+#authGate{
+  position:fixed;inset:0;z-index:99999;
+  display:flex;align-items:center;justify-content:center;
+  background:
+    radial-gradient(circle at 50% 20%,rgba(188,145,73,.08),transparent 35%),
+    linear-gradient(180deg,#0b0f12,#11171b 60%,#0b0f12);
+  padding:24px;
+}
+#authGate.hidden{display:none}
+.auth-gate-card{
+  width:min(420px,100%);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;
+  background:rgba(17,23,27,.96);
+  box-shadow:0 24px 80px rgba(0,0,0,.45);
+  padding:26px;
+}
+.auth-gate-brand{font-size:11px;letter-spacing:.18em;color:#b99049;font-weight:700;text-align:center}
+.auth-gate-title{font-size:24px;font-weight:700;text-align:center;margin:8px 0 4px}
+.auth-gate-sub{font-size:11px;color:#83919a;text-align:center;margin-bottom:18px}
+.auth-gate-card label{display:grid;gap:6px;margin-top:10px;font-size:10px;color:#98a5ad}
+.auth-gate-actions{display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px}
+.auth-gate-msg{min-height:18px;margin-top:10px;font-size:10px;color:#8e9ba3}
+.auth-gate-msg.ok{color:var(--good)}.auth-gate-msg.err{color:var(--bad)}
+.auth-gate-note{font-size:9px;color:#6f7b82;line-height:1.5;margin-top:10px;text-align:center}
+#appShell.auth-hidden{visibility:hidden;pointer-events:none;user-select:none}
+
 </style>
 </head>
-<body>
+
+<body class="auth-locked">
+<div id="authGate">
+  <div class="auth-gate-card">
+    <div class="auth-gate-brand">VM PRIVATE CAPITAL</div>
+    <div class="auth-gate-title">Private Wealth Studio</div>
+    <div class="auth-gate-sub">Авторизуйтесь для доступа к данным</div>
+    <label>Email<input id="gateEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
+    <label>Пароль<input id="gatePassword" type="password" autocomplete="current-password" placeholder="Введите пароль"></label>
+    <div id="authGateMsg" class="auth-gate-msg"></div>
+    <div class="auth-gate-actions">
+      <button class="btn primary" id="gateSignIn">Войти</button>
+    </div>
+    <div class="auth-gate-note">Без авторизации портфели, банки, активы и графики не отображаются.</div>
+  </div>
+</div>
+<div id="appShell" class="auth-hidden">
+
 <div class="ambient a1"></div><div class="ambient a2"></div><div class="ambient a3"></div>
 
 <div class="app">
@@ -704,7 +751,7 @@ th,td{border-color:rgba(255,255,255,.055)}
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.1 Cloud</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.2 Security</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -1149,7 +1196,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.1 Cloud';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.2 Security';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -1242,15 +1289,60 @@ async function handleCloudSession(session,{initial=false}={}){
    setCloudStatus('ok','Облако подключено',`${cloudUser.email||''} · ${cloudTimeText()}`);
  }
 }
+
+function gateMessage(text,kind=''){
+ const el=q('authGateMsg'); if(!el)return;
+ el.textContent=text||''; el.className='auth-gate-msg '+kind;
+}
+function lockApp(){
+ document.body.classList.add('auth-locked');
+ q('authGate')?.classList.remove('hidden');
+ q('appShell')?.classList.add('auth-hidden');
+}
+function unlockApp(){
+ q('authGate')?.classList.add('hidden');
+ q('appShell')?.classList.remove('auth-hidden');
+ document.body.classList.remove('auth-locked');
+}
+async function gateSignIn(){
+ if(!supabaseClient)return gateMessage('Сервис авторизации недоступен.','err');
+ const email=q('gateEmail')?.value.trim()||'';
+ const password=q('gatePassword')?.value||'';
+ if(!email||!password)return gateMessage('Введите email и пароль.','err');
+ gateMessage('Выполняю вход…');
+ const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+ if(error)return gateMessage(error.message,'err');
+ gateMessage('Вход выполнен. Загружаю данные…','ok');
+}
+
 async function initCloud(){
+ lockApp();
  if(!supabaseClient){
    setCloudStatus('err','Облако недоступно','Не загрузилась библиотека Supabase');
+   gateMessage('Не удалось загрузить авторизацию. Проверьте интернет.','err');
    return;
  }
  const {data:{session}}=await supabaseClient.auth.getSession();
- await handleCloudSession(session,{initial:true});
+ if(session?.user){
+   await handleCloudSession(session,{initial:true});
+   unlockApp();
+ }else{
+   cloudUser=null;
+   setCloudStatus('idle','Облако не подключено','Требуется вход');
+   lockApp();
+ }
  supabaseClient.auth.onAuthStateChange((event,session)=>{
-   setTimeout(()=>handleCloudSession(session,{initial:event==='SIGNED_IN'}),0);
+   setTimeout(async()=>{
+     if(session?.user){
+       await handleCloudSession(session,{initial:event==='SIGNED_IN'});
+       unlockApp();
+       gateMessage('');
+     }else{
+       cloudUser=null;
+       lockApp();
+       setCloudStatus('idle','Облако не подключено','Требуется вход');
+     }
+   },0);
  });
 }
 function cloudMessage(text,kind='info'){
@@ -1279,15 +1371,14 @@ function openCloudModal(){
      <div id="cloudModalMessage" class="cloud-modal-message"></div>
      <div class="cloud-action-grid">
        <button class="btn primary" id="cloudSignIn">Войти</button>
-       <button class="btn secondary" id="cloudSignUp">Создать аккаунт</button>
      </div>
-     <div class="cloud-login-help">При первой регистрации Supabase может попросить подтвердить email. После подтверждения просто снова откройте приложение и войдите.</div>
+     <div class="cloud-login-help">Регистрация новых пользователей отключена в этой версии интерфейса.</div>
    </div>`,'CLOUD');
  if(signed){
    q('cloudSaveNow').onclick=async()=>{cloudMessage('Сохраняю…');const ok=await saveCloudState(false);cloudMessage(ok?'Готово. Данные сохранены в облаке.':'Ошибка сохранения.',ok?'ok':'err')};
    q('cloudLoadNow').onclick=async()=>{if(!confirm('Заменить локальные данные данными из облака?'))return;cloudMessage('Загружаю…');const ok=await loadCloudState({force:true,showToast:false});cloudMessage(ok?'Данные загружены.':'Ошибка загрузки.',ok?'ok':'err')};
    q('cloudExportBackup').onclick=exportJSON;
-   q('cloudSignOut').onclick=async()=>{await supabaseClient.auth.signOut();cloudUser=null;closeModal();setCloudStatus('idle','Облако не подключено','Локальная копия сохранена');toast('Вы вышли из облака')};
+   q('cloudSignOut').onclick=async()=>{await supabaseClient.auth.signOut();cloudUser=null;closeModal();lockApp();setCloudStatus('idle','Облако не подключено','Требуется вход');toast('Вы вышли из облака')};
  }else{
    const authData=()=>({email:q('cloudEmail').value.trim(),password:q('cloudPassword').value});
    q('cloudSignIn').onclick=async()=>{
@@ -1297,16 +1388,6 @@ function openCloudModal(){
      const {error}=await supabaseClient.auth.signInWithPassword({email,password});
      if(error)return cloudMessage(error.message,'err');
      cloudMessage('Вход выполнен. Загружаю ваши данные…','ok');setTimeout(closeModal,500);
-   };
-   q('cloudSignUp').onclick=async()=>{
-     const {email,password}=authData();
-     if(!email||password.length<6)return cloudMessage('Введите email и пароль минимум из 6 символов.','err');
-     cloudMessage('Создаю аккаунт…');
-     const redirectTo=location.origin+location.pathname;
-     const {data,error}=await supabaseClient.auth.signUp({email,password,options:{emailRedirectTo:redirectTo}});
-     if(error)return cloudMessage(error.message,'err');
-     if(data.session){cloudMessage('Аккаунт создан и вход выполнен.','ok');setTimeout(closeModal,600)}
-     else cloudMessage('Аккаунт создан. Проверьте почту и подтвердите email, затем войдите.','ok');
    };
  }
 }
@@ -2395,7 +2476,8 @@ function pdfReport(){
   <h2>Прогноз на ${years} лет · возраст к концу: ${ageTextAfterYears(years)}</h2><table><thead><tr><th>Сценарий</th><th>Доходность</th><th>Капитал</th></tr></thead><tbody>${scenarios}</tbody></table>
   <p class="note">Прогноз является математическим сценарием на основе заданной доходности и не гарантирует будущий результат.</p>
   <footer>Capital Studio Offline · Отчёт сформирован локально на компьютере пользователя.</footer>
-  <script>window.onload=()=>setTimeout(()=>window.print(),250)<\/script></body></html>`);w.document.close()
+  <script>window.onload=()=>setTimeout(()=>window.print(),250)<\/script></div>
+</body></html>`);w.document.close()
 }
 
 document.querySelectorAll('.nav-item').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
@@ -2435,6 +2517,8 @@ q('withdrawTargetAge').addEventListener('change',()=>{
  });
 });
 q('cloudAccountBtn').addEventListener('click',openCloudModal);
+q('gateSignIn').addEventListener('click',gateSignIn);
+q('gatePassword').addEventListener('keydown',e=>{if(e.key==='Enter')gateSignIn()});
 q('runWithdrawalBtn').addEventListener('click',()=>{
  persistState();
  const b=q('runWithdrawalBtn');
