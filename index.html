@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.3.4 Login Fix.1</title>
+<title>VM Private Capital — Wealth Studio v7.3.5 Stable.1</title>
 <style>
 
 :root{
@@ -661,7 +661,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:1300px){.insight-metric-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.insight-grid.two-col{grid-template-columns:1fr}.insights-symbol{display:none}}@media(max-width:650px){.insight-metric-grid{grid-template-columns:1fr}.insight-exit-head,.insight-exit-meta{flex-direction:column}.plan-info-grid{grid-template-columns:1fr}}
 
 
-/* v7.3.4 Login Fix */
+/* v7.3.5 Stable */
 .cloud-card{border-color:rgba(95,190,150,.18)!important;background:linear-gradient(145deg,rgba(95,190,150,.055),rgba(255,255,255,.018))!important}
 .cloud-card-copy{min-width:0}.cloud-card-copy b,.cloud-card-copy div{overflow-wrap:anywhere}
 .cloud-account-btn{width:100%;margin-top:11px;font-size:10px}
@@ -679,7 +679,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:600px){.cloud-action-grid{grid-template-columns:1fr}.cloud-user-line{flex-direction:column}}
 
 
-/* v7.3.4 Login Fix Gate */
+/* v7.3.5 Stable Gate */
 body.auth-locked{overflow:hidden}
 #authGate{
   position:fixed;inset:0;z-index:99999;
@@ -814,7 +814,7 @@ body.auth-locked{overflow:hidden}
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.3.4 Login Fix</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.3.5 Stable</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -841,6 +841,56 @@ body.auth-locked{overflow:hidden}
     </div>
 
     <section id="view-dashboard" class="view active">
+
+      
+      <div class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow">СОВОКУПНЫЙ КАПИТАЛ</div>
+          <div id="heroTotal" class="hero-value">€0</div>
+          <div class="hero-chips">
+            <span id="heroYtd" class="chip">YTD 0%</span>
+            <span id="heroPortfolios" class="chip soft">0 портфелей</span>
+          </div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <svg viewBox="0 0 420 180">
+            <defs>
+              <linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".12"/><stop offset="1" stop-color="currentColor" stop-opacity=".75"/></linearGradient>
+            </defs>
+            <path class="hero-grid" d="M10 145H410M10 105H410M10 65H410M65 20V165M145 20V165M225 20V165M305 20V165M385 20V165"/>
+            <path class="hero-area" d="M12 145 C70 138,82 111,126 121 S194 105,221 83 S275 100,310 61 S365 56,408 30 L408 165 L12 165 Z" fill="url(#g)"/>
+            <path class="hero-line" d="M12 145 C70 138,82 111,126 121 S194 105,221 83 S275 100,310 61 S365 56,408 30"/>
+            <circle class="pulse-dot" cx="408" cy="30" r="5"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="ownership-strip">
+        <div class="ownership-card personal">
+          <div class="ownership-icon">P</div>
+          <div><div class="metric-label">Личный капитал</div><div id="personalCapital" class="ownership-value">€0</div></div>
+        </div>
+        <div class="ownership-card company">
+          <div class="ownership-icon">Oy</div>
+          <div><div class="metric-label">Капитал VM Private Capital Oy</div><div id="companyCapital" class="ownership-value">€0</div></div>
+        </div>
+        <div class="ownership-card planning">
+          <div class="ownership-icon">↗</div>
+          <div><div class="metric-label">Участвует в расчётах</div><div id="planningCapital" class="ownership-value small-value">€0</div></div>
+        </div>
+        <div class="ownership-card excluded">
+          <div class="ownership-icon">◇</div>
+          <div><div class="metric-label">Активы вне расчёта</div><div id="excludedCapital" class="ownership-value small-value">€0</div></div>
+        </div>
+        <div class="ownership-card exit">
+          <div class="ownership-icon">Exit</div>
+          <div><div class="metric-label">Exit-активы до продажи</div><div id="exitAssetsCapital" class="ownership-value small-value">€0</div></div>
+        </div>
+        <div class="ownership-card tax">
+          <div class="ownership-icon">%</div>
+          <div><div class="metric-label">Модель налога Oy</div><div id="companyTaxLabel" class="ownership-value small-value">20%</div></div>
+        </div>
+      </div>
 
       <div class="metric-grid">
         <div class="metric-card reveal">
@@ -1272,7 +1322,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.3.4 Login Fix';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.3.5 Stable';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -1400,7 +1450,10 @@ async function gateSignIn(){
 
    // Не ждём события onAuthStateChange: сразу загружаем облачные данные
    // и открываем интерфейс. Это устраняет зависание на экране входа.
-   await handleCloudSession(session,{initial:true});
+   await Promise.race([
+     handleCloudSession(session,{initial:true}),
+     new Promise((_,reject)=>setTimeout(()=>reject(new Error('Облачные данные не ответили за 12 секунд. Обновите страницу и попробуйте ещё раз.')),12000))
+   ]);
    unlockApp();
    gateMessage('');
 
@@ -1857,9 +1910,9 @@ function renderDashboard(){
  setReturnSummary();
  renderDashboardPortfolioReturns();
  const now=totalNow(),ytd=totalPerf(state.settings.fyStart),first=allDates()[0],all=first?totalPerf(first):{profit:0,pct:0};
- q('heroTotal').textContent=money(now);q('personalCapital').textContent=money(ownerTotal('personal'));q('companyCapital').textContent=money(ownerTotal('oy'));
+ if(q('heroTotal'))q('heroTotal').textContent=money(now);q('personalCapital').textContent=money(ownerTotal('personal'));q('companyCapital').textContent=money(ownerTotal('oy'));
  q('planningCapital').textContent=money(planningTotal());q('excludedCapital').textContent=money(excludedTotal());q('exitAssetsCapital').textContent=money(exitAssetsTotal());
- q('companyTaxLabel').textContent=`${Number(state.taxSettings.companyTaxRate).toFixed(1)}%`;q('heroYtd').textContent=`YTD ${fmtReturn(ytd.pct)}`;q('heroYtd').className='chip '+(ytd.pct!==null&&ytd.pct<0?'bad':'');
+ q('companyTaxLabel').textContent=`${Number(state.taxSettings.companyTaxRate).toFixed(1)}%`;if(q('heroYtd')){q('heroYtd').textContent=`YTD ${fmtReturn(ytd.pct)}`;q('heroYtd').className='chip '+(ytd.pct!==null&&ytd.pct<0?'bad':'')}
  q('heroPortfolios').textContent=`${state.portfolios.length} ${state.portfolios.length===1?'портфель':'портфелей'}`;
  q('mYtd').textContent=`${ytd.profit>=0?'+':''}${money(ytd.profit)}`;q('mYtd').className='metric '+(ytd.profit>=0?'good':'bad');q('mYtdPct').textContent=`${fmtReturn(ytd.pct)} с начала года · ${ytd.covered}/${ytd.total} портф. с данными`;
  q('mAll').textContent=`${all.profit>=0?'+':''}${money(all.profit)}`;q('mAll').className='metric '+(all.profit>=0?'good':'bad');q('mAllPct').textContent=`${fmtReturn(all.pct)} за измеримую историю`;
