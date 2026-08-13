@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.3.6 Insights Only.1</title>
+<title>VM Private Capital — Wealth Studio v7.4 Nordea Group.1</title>
 <style>
 
 :root{
@@ -661,7 +661,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:1300px){.insight-metric-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.insight-grid.two-col{grid-template-columns:1fr}.insights-symbol{display:none}}@media(max-width:650px){.insight-metric-grid{grid-template-columns:1fr}.insight-exit-head,.insight-exit-meta{flex-direction:column}.plan-info-grid{grid-template-columns:1fr}}
 
 
-/* v7.3.6 Insights Only */
+/* v7.4 Nordea Group */
 .cloud-card{border-color:rgba(95,190,150,.18)!important;background:linear-gradient(145deg,rgba(95,190,150,.055),rgba(255,255,255,.018))!important}
 .cloud-card-copy{min-width:0}.cloud-card-copy b,.cloud-card-copy div{overflow-wrap:anywhere}
 .cloud-account-btn{width:100%;margin-top:11px;font-size:10px}
@@ -679,7 +679,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:600px){.cloud-action-grid{grid-template-columns:1fr}.cloud-user-line{flex-direction:column}}
 
 
-/* v7.3.6 Insights Only Gate */
+/* v7.4 Nordea Group Gate */
 body.auth-locked{overflow:hidden}
 #authGate{
   position:fixed;inset:0;z-index:99999;
@@ -771,6 +771,34 @@ body.auth-locked{overflow:hidden}
   .insights-year-row > :nth-child(4),.insights-year-row > :nth-child(5){display:none}
 }
 
+
+/* v7.4 — Nordea group + improved all-years archive */
+.archive-legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:0 0 12px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.015);font-size:9px;color:var(--muted)}
+.archive-legend b{color:var(--text)}
+.insights-year-card{overflow:hidden}
+.archive-year-summary{display:grid;grid-template-columns:85px repeat(5,minmax(105px,1fr));gap:10px;padding:12px;background:linear-gradient(90deg,rgba(196,151,76,.06),rgba(255,255,255,.015));align-items:center}
+.archive-year-summary .year{font-size:18px;font-weight:800}
+.archive-year-summary .metric{display:grid;gap:2px}
+.archive-year-summary .metric span{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.archive-year-summary .metric b{font-size:11px}
+.archive-table-head,.archive-row{display:grid;grid-template-columns:1.4fr .95fr .95fr .8fr .75fr .8fr;gap:10px;align-items:center;padding:9px 12px}
+.archive-table-head{border-top:1px solid var(--line);background:rgba(255,255,255,.02);font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.archive-row{border-top:1px solid var(--line);font-size:10px}
+.archive-row .name b{display:block;font-size:10px}
+.archive-row .name span{display:block;font-size:8.5px;color:var(--muted);margin-top:2px}
+.archive-row.group{background:rgba(113,159,255,.025)}
+.archive-row.child{background:rgba(255,255,255,.008)}
+.archive-row.child .name{padding-left:14px}
+.archive-row .external-out{color:#e6b76a}
+.archive-empty{padding:9px 12px;border-top:1px solid var(--line);font-size:9px;color:var(--muted)}
+@media(max-width:950px){
+  .archive-year-summary{grid-template-columns:70px repeat(2,1fr)}
+  .archive-year-summary .metric:nth-child(n+4){display:none}
+  .archive-table-head,.archive-row{grid-template-columns:1.35fr 1fr 1fr .8fr}
+  .archive-table-head > :nth-child(5),.archive-table-head > :nth-child(6),
+  .archive-row > :nth-child(5),.archive-row > :nth-child(6){display:none}
+}
+
 </style>
 </head>
 
@@ -814,7 +842,7 @@ body.auth-locked{overflow:hidden}
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.3.6 Insights Only</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.4 Nordea Group</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -966,31 +994,6 @@ body.auth-locked{overflow:hidden}
       </div>
     </section>
 
-
-      <div class="panel portfolio-return-section">
-        <div class="panel-head">
-          <div>
-            <div class="eyebrow">RETURN BY PORTFOLIO</div>
-            <h2>Доходность каждого портфеля</h2>
-            <div class="muted small">Отдельно: текущий год, прошлый год и с самого начала. Везде одновременно показываются € и %.</div>
-          </div>
-        </div>
-        <div class="table-wrap portfolio-return-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Портфель</th>
-                <th>Сейчас</th>
-                <th>Текущий год</th>
-                <th>Прошлый год</th>
-                <th>С самого начала</th>
-              </tr>
-            </thead>
-            <tbody id="dashboardPortfolioReturnBody"></tbody>
-          </table>
-        </div>
-      </div>
-
     <section id="view-portfolios" class="view">
       <div class="panel">
         <div class="panel-head"><div><div class="eyebrow">ASSETS</div><h2>Мои портфели</h2></div><button class="btn primary" id="addPortfolioBtn2">＋ Добавить</button></div>
@@ -1001,24 +1004,10 @@ body.auth-locked{overflow:hidden}
     <section id="view-history" class="view">
       <div class="history-analysis-grid">
         <div class="panel history-analysis-panel">
-          <div class="panel-head"><div><div class="eyebrow">RETURN HISTORY</div><h2>Доход по годам</h2><div class="muted small">Доход = изменение стоимости минус движения капитала. Внутренние переводы не меняют общий результат.</div></div></div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Год</th><th>Измеримый капитал на начало*</th><th>Внешние потоки</th><th>Инвест. доход</th><th>Доходность</th><th>Измеримый капитал на конец*</th></tr></thead>
-              <tbody id="annualReturnBody"></tbody>
-            </table>
-          </div>
-          <div class="return-table-note">* В агрегат входят только портфели, где есть минимум две оценки для измеримого периода. Доходность считается методом Modified Dietz с учётом даты пополнений/снятий. Если данных недостаточно, показывается «—».</div>
-        </div>
-        <div class="panel history-analysis-panel">
           <div class="panel-head"><div><div class="eyebrow">DATA CONTROL</div><h2>Проверка истории</h2><div class="muted small">Автоматически ищет дубликаты, непарные переводы и разрывы между годами.</div></div></div>
           <div id="historyDiagnostics" class="recon-list"></div>
         </div>
-      </div>
-      <div class="panel history-analysis-panel" style="margin-bottom:14px">
-        <div class="panel-head"><div><div class="eyebrow">BY PORTFOLIO</div><h2>По портфелям и годам</h2></div></div>
-        <div id="portfolioYearReturns"></div>
-      </div>
+      
       <div class="panel">
         <div class="panel-head">
           <div><div class="eyebrow">LEDGER</div><h2>История данных</h2></div>
@@ -1148,9 +1137,14 @@ body.auth-locked{overflow:hidden}
         <div class="panel-head">
           <div>
             <div class="eyebrow">ALL YEARS ARCHIVE</div>
-            <h2>История доходности за все годы</h2>
-            <div class="muted small">Архив сохраняется в разделе «Дополнительно»: по каждому году и по каждому портфелю.</div>
+            <h2>История доходности по годам</h2>
+            <div class="muted small">Единственное место, где хранится таблица доходности. Nordea рассчитывается как единая группа: инвестиции + Nordea cash.</div>
           </div>
+        </div>
+        <div class="archive-legend">
+          <span><b>Доход</b> — результат инвестиций</span>
+          <span><b>Доходность</b> — Modified Dietz</span>
+          <span><b>Внешний вывод</b> — реальные деньги, ушедшие из группы наружу</span>
         </div>
         <div id="insightsAllYearsHistory" class="insights-history-wrap"></div>
       </div>
@@ -1321,7 +1315,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.3.6 Insights Only';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.4 Nordea Group';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -1718,6 +1712,69 @@ function portfolioPerf(pid,from,to=todayISO()){
  return{start,end,flow,profit,pct,denominator,sufficient:true,startDate,endDate,incomeEvents}
 }
 
+
+function normPortfolioName(name){return String(name||'').trim().toLowerCase().replace(/\s+/g,' ')}
+function nordeaPortfolio(){return state.portfolios.find(p=>normPortfolioName(p.name)==='nordea')||null}
+function nordeaCashPortfolio(){return state.portfolios.find(p=>normPortfolioName(p.name)==='nordea cash')||null}
+function isNordeaMember(p){const n=normPortfolioName(p?.name);return n==='nordea'||n==='nordea cash'}
+function nordeaGroupAvailable(){return !!(nordeaPortfolio()&&nordeaCashPortfolio())}
+
+function valueAtOrBefore(pid,date){
+ const rows=uniqueSnapshots(pid).filter(x=>x.date<=date);
+ return rows.length?Number(rows.at(-1).value):null;
+}
+function groupSnapshotDates(portfolios){
+ const dateSets=portfolios.map(p=>new Set(uniqueSnapshots(p.id).map(x=>x.date)));
+ if(!dateSets.length)return[];
+ const union=[...new Set(portfolios.flatMap(p=>uniqueSnapshots(p.id).map(x=>x.date)))].sort();
+ // We can calculate a group value on any date where each component has an existing
+ // value at-or-before that date. This matches how the app stores portfolio valuations.
+ return union.filter(date=>portfolios.every(p=>valueAtOrBefore(p.id,date)!==null));
+}
+function groupValueAt(portfolios,date){
+ return portfolios.reduce((s,p)=>s+Number(valueAtOrBefore(p.id,date)||0),0);
+}
+function groupFlows(portfolios,from,to){
+ const ids=new Set(portfolios.map(p=>p.id));
+ return state.flows.filter(f=>ids.has(f.portfolioId)&&f.date>from&&f.date<=to);
+}
+function externalGroupCapitalEffect(f){
+ const t=flowTypeOf(f),a=Math.abs(Number(f.amount)||0);
+ if(t==='contribution')return a;
+ if(t==='withdrawal')return -a;
+ // transfer_in/out between Nordea and Nordea cash is internal and ignored.
+ // Transfer to a portfolio outside the group is treated as external only when
+ // it is explicitly entered as withdrawal/contribution, which avoids guessing.
+ return 0;
+}
+function groupPerf(portfolios,from,to=todayISO()){
+ const dates=groupSnapshotDates(portfolios).filter(d=>d<=to);
+ if(!dates.length)return{start:0,end:0,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:'',endDate:'',withdrawals:0,contributions:0};
+ let startDate=[...dates].reverse().find(d=>d<=from);
+ if(!startDate)startDate=dates.find(d=>d>=from);
+ const endDate=[...dates].reverse().find(d=>d<=to);
+ if(!startDate||!endDate||endDate<=startDate)return{start:0,end:0,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:startDate||'',endDate:endDate||'',withdrawals:0,contributions:0};
+ const start=groupValueAt(portfolios,startDate),end=groupValueAt(portfolios,endDate);
+ const fs=groupFlows(portfolios,startDate,endDate);
+ const external=fs.filter(f=>['contribution','withdrawal'].includes(flowTypeOf(f)));
+ const flow=external.reduce((s,f)=>s+externalGroupCapitalEffect(f),0);
+ const incomeEvents=fs.reduce((s,f)=>s+flowIncomeEffect(f),0);
+ const withdrawals=external.filter(f=>flowTypeOf(f)==='withdrawal').reduce((s,f)=>s+Math.abs(Number(f.amount)||0),0);
+ const contributions=external.filter(f=>flowTypeOf(f)==='contribution').reduce((s,f)=>s+Math.abs(Number(f.amount)||0),0);
+ const profit=end-start-flow+incomeEvents;
+ // Modified Dietz denominator using only true external capital movements.
+ const denomFlows=external.map(f=>({...f,amount:externalGroupCapitalEffect(f)}));
+ const denominator=dietzDenominator(start,denomFlows,startDate,endDate);
+ const pct=denominator?profit/denominator*100:null;
+ return{start,end,flow,profit,pct,denominator,sufficient:true,startDate,endDate,withdrawals,contributions};
+}
+function nordeaYearPerf(year){
+ const a=nordeaPortfolio(),c=nordeaCashPortfolio();
+ if(!a||!c)return null;
+ const to=year===new Date().getFullYear()?todayISO():`${year+1}-01-01`;
+ return groupPerf([a,c],`${year}-01-01`,to);
+}
+
 function portfolioYearPerf(pid,year){
  const to=year===new Date().getFullYear()?todayISO():`${year+1}-01-01`;
  return portfolioPerf(pid,`${year}-01-01`,to);
@@ -1907,7 +1964,6 @@ function sortedPortfolioRows(){
 }
 function renderDashboard(){
  setReturnSummary();
- renderDashboardPortfolioReturns();
  const now=totalNow(),ytd=totalPerf(state.settings.fyStart),first=allDates()[0],all=first?totalPerf(first):{profit:0,pct:0};
  if(q('heroTotal'))q('heroTotal').textContent=money(now);q('personalCapital').textContent=money(ownerTotal('personal'));q('companyCapital').textContent=money(ownerTotal('oy'));
  q('planningCapital').textContent=money(planningTotal());q('excludedCapital').textContent=money(excludedTotal());q('exitAssetsCapital').textContent=money(exitAssetsTotal());
@@ -2005,19 +2061,32 @@ function yearPerf(year){
  const from=`${year}-01-01`,to=year===new Date().getFullYear()?todayISO():`${year+1}-01-01`;
  let start=0,end=0,externalFlow=0,profit=0,denominator=0,covered=0;
  const parts=[];
+ const nordea=nordeaPortfolio(),cash=nordeaCashPortfolio();
+
  state.portfolios.forEach(p=>{
-   const r=portfolioPerf(p.id,from,to);
-   parts.push({p,r});
+   if(cash&&p.id===cash.id)return; // cash is included inside Nordea group
+   let r,displayP=p,isGroup=false;
+   if(nordea&&cash&&p.id===nordea.id){
+     r=groupPerf([nordea,cash],from,to);isGroup=true;
+     displayP={...p,name:'Nordea (включая Nordea cash)'};
+   }else{
+     r=portfolioPerf(p.id,from,to);
+   }
+   parts.push({p:displayP,r,isGroup});
    if(!r.sufficient)return;
    covered++;start+=r.start;end+=r.end;profit+=r.profit;denominator+=Number(r.denominator||0);
-   // Only true external capital flows. Paired transfers cancel by definition.
-   const fs=flowsForPeriod(p.id,r.startDate,r.endDate);
-   externalFlow+=fs.reduce((s,f)=>{
-     const t=flowTypeOf(f);
-     return (t==='contribution'||t==='withdrawal')?s+flowCapitalEffect(f):s;
-   },0);
+   if(isGroup){
+     externalFlow+=r.flow;
+   }else{
+     const fs=flowsForPeriod(p.id,r.startDate,r.endDate);
+     externalFlow+=fs.reduce((s,f)=>{
+       const t=flowTypeOf(f);
+       return (t==='contribution'||t==='withdrawal')?s+flowCapitalEffect(f):s;
+     },0);
+   }
  });
- return{year,start,end,externalFlow,profit,denominator,pct:denominator>0?profit/denominator*100:null,covered,total:state.portfolios.length,parts}
+ const total=state.portfolios.length-(nordea&&cash?1:0);
+ return{year,start,end,externalFlow,profit,denominator,pct:denominator>0?profit/denominator*100:null,covered,total,parts}
 }
 function duplicateSnapshotGroups(){
  const map=new Map();
@@ -2101,62 +2170,66 @@ function renderInsightsAllYears(){
  const box=q('insightsAllYearsHistory'); if(!box)return;
  const years=yearsInHistory();
  if(!years.length){box.innerHTML='<div class="muted">Истории пока нет.</div>';return}
+
  box.innerHTML=years.map(year=>{
    const yp=yearPerf(year);
-   const rows=yp.parts.map(({p,r})=>{
-     if(!r.sufficient)return `<div class="insights-year-row">
-       <div><b>${esc(p.name)}</b><div class="muted2">${p.owner==='oy'?'VMPC Oy':'Personal'}</div></div>
-       <div class="return-na">—</div><div class="return-na">—</div><div>—</div><div class="muted2">Недостаточно оценок</div>
-     </div>`;
-     return `<div class="insights-year-row">
-       <div><b>${esc(p.name)}</b><div class="muted2">${p.owner==='oy'?'VMPC Oy':'Personal'} · ${formatDate(r.startDate)} → ${formatDate(r.endDate)}</div></div>
+   const nordea=nordeaPortfolio(),cash=nordeaCashPortfolio();
+
+   const rows=yp.parts.map(({p,r,isGroup})=>{
+     if(!r.sufficient){
+       return `<div class="archive-row">
+         <div class="name"><b>${esc(p.name)}</b><span>${p.owner==='oy'?'VMPC Oy':'Personal'}</span></div>
+         <div>—</div><div>—</div><div>—</div><div>—</div><div class="muted">Недостаточно оценок</div>
+       </div>`;
+     }
+     const out=isGroup?Number(r.withdrawals||0):
+       state.flows.filter(f=>f.portfolioId===p.id&&f.date>r.startDate&&f.date<=r.endDate&&flowTypeOf(f)==='withdrawal')
+         .reduce((s,f)=>s+Math.abs(Number(f.amount)||0),0);
+
+     let row=`<div class="archive-row ${isGroup?'group':''}">
+       <div class="name"><b>${esc(p.name)}</b><span>${p.owner==='oy'?'VMPC Oy':'Personal'} · ${formatDate(r.startDate)} → ${formatDate(r.endDate)}</span></div>
        <div>${money(r.start)} → ${money(r.end)}</div>
-       <div class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</div>
-       <div class="${r.pct===null?'return-na':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</div>
-       <div class="muted2">Потоки ${r.flow>=0?'+':''}${money(r.flow)}</div>
+       <div class="${r.profit>=0?'good':'bad'}"><b>${r.profit>=0?'+':''}${money(r.profit)}</b></div>
+       <div class="${r.pct===null?'return-na':r.pct>=0?'good':'bad'}"><b>${fmtReturn(r.pct)}</b></div>
+       <div class="external-out">${out?`−${money(out)}`:'0 €'}</div>
+       <div class="muted">${r.flow?`Чистый внешний поток ${r.flow>=0?'+':''}${money(r.flow)}`:'Без внешних потоков'}</div>
      </div>`;
+
+     if(isGroup&&nordea&&cash){
+       const nStart=valueAtOrBefore(nordea.id,r.startDate),nEnd=valueAtOrBefore(nordea.id,r.endDate);
+       const cStart=valueAtOrBefore(cash.id,r.startDate),cEnd=valueAtOrBefore(cash.id,r.endDate);
+       row+=`<div class="archive-row child">
+         <div class="name"><b>↳ Nordea investments</b><span>структура группы, без отдельной доходности</span></div>
+         <div>${money(nStart||0)} → ${money(nEnd||0)}</div><div>—</div><div>—</div><div>—</div><div class="muted">Входит в Nordea</div>
+       </div>
+       <div class="archive-row child">
+         <div class="name"><b>↳ Nordea cash</b><span>кэш внутри группы, без отдельной доходности</span></div>
+         <div>${money(cStart||0)} → ${money(cEnd||0)}</div><div>—</div><div>—</div>
+         <div class="external-out">${out?`−${money(out)}`:'0 €'}</div>
+         <div class="muted">Покупка/продажа акций внутри Nordea не считается доходом или убытком</div>
+       </div>`;
+     }
+     return row;
    }).join('');
+
    return `<div class="insights-year-card">
-     <div class="insights-year-head">
-       <b>${year}</b>
-       <span>Доход: <b class="${yp.profit>=0?'good':'bad'}">${yp.covered?`${yp.profit>=0?'+':''}${money(yp.profit)}`:'—'}</b></span>
-       <span>Доходность: <b class="${yp.pct===null?'return-na':yp.pct>=0?'good':'bad'}">${fmtReturn(yp.pct)}</b></span>
-       <span>Начало: <b>${yp.covered?money(yp.start):'—'}</b></span>
-       <span>Конец: <b>${yp.covered?money(yp.end):'—'}</b></span>
-     </div>${rows}
+     <div class="archive-year-summary">
+       <div class="year">${year}</div>
+       <div class="metric"><span>Доход</span><b class="${yp.profit>=0?'good':'bad'}">${yp.covered?`${yp.profit>=0?'+':''}${money(yp.profit)}`:'—'}</b></div>
+       <div class="metric"><span>Доходность</span><b class="${yp.pct===null?'return-na':yp.pct>=0?'good':'bad'}">${fmtReturn(yp.pct)}</b></div>
+       <div class="metric"><span>Начало</span><b>${yp.covered?money(yp.start):'—'}</b></div>
+       <div class="metric"><span>Конец</span><b>${yp.covered?money(yp.end):'—'}</b></div>
+       <div class="metric"><span>Внешние потоки</span><b>${yp.externalFlow>=0?'+':''}${money(yp.externalFlow)}</b></div>
+     </div>
+     <div class="archive-table-head">
+       <div>Портфель</div><div>Стоимость</div><div>Доход</div><div>Доходность</div><div>Внешний вывод</div><div>Комментарий</div>
+     </div>
+     ${rows}
    </div>`;
  }).join('');
 }
 
 function renderHistoricalReturns(){
- const body=q('annualReturnBody');if(!body)return;
- const years=yearsInHistory(),rows=years.map(yearPerf);
- body.innerHTML=rows.length?rows.map(y=>`<tr>
-   <td><b>${y.year}</b><div class="muted small">${ageTextByYear(y.year)}</div></td>
-   <td>${y.covered?money(y.start):'—'}</td>
-   <td class="${y.externalFlow>0?'good':y.externalFlow<0?'bad':''}">${y.covered?`${y.externalFlow>=0?'+':''}${money(y.externalFlow)}`:'—'}</td>
-   <td class="${y.profit>=0?'good':'bad'}">${y.covered?`${y.profit>=0?'+':''}${money(y.profit)}`:'—'}</td>
-   <td class="${y.pct===null?'return-na':y.pct>=0?'good':'bad'}">${fmtReturn(y.pct)}</td>
-   <td>${y.covered?money(y.end):'—'}<div class="muted small">${y.covered}/${y.total} портф. с данными</div></td>
- </tr>`).join(''):`<tr><td colspan="6" class="muted">Истории пока нет.</td></tr>`;
-
- const pbox=q('portfolioYearReturns');
- pbox.innerHTML=rows.map(y=>{
-   const available=y.parts.filter(x=>x.r.sufficient);
-   const missing=y.parts.filter(x=>!x.r.sufficient);
-   return `<div class="year-return-card">
-    <div class="year-return-head"><b>${y.year}</b><span>Доход: <b class="${y.profit>=0?'good':'bad'}">${y.covered?`${y.profit>=0?'+':''}${money(y.profit)}`:'—'}</b></span><span>Доходность: <b class="${y.pct===null?'return-na':y.pct>=0?'good':'bad'}">${fmtReturn(y.pct)}</b></span></div>
-    ${available.map(({p,r})=>`<div class="year-return-row">
-      <div class="pname"><b>${esc(p.name)}</b><span>${p.owner==='oy'?'VMPC Oy':'Personal'} · ${formatDate(r.startDate)} → ${formatDate(r.endDate)}</span></div>
-      <div>${money(r.start)} → ${money(r.end)}</div>
-      <div class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</div>
-      <div class="${r.pct===null?'return-na':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</div>
-      <div class="muted">потоки ${r.flow>=0?'+':''}${money(r.flow)}</div>
-    </div>`).join('')}
-    ${missing.length?`<div class="year-return-row"><div class="pname"><b>Недостаточно данных</b><span>${missing.map(x=>esc(x.p.name)).join(' · ')}</span></div><div class="return-na">Нужны минимум 2 оценки</div><div>—</div><div>—</div><div>—</div></div>`:''}
-   </div>`;
- }).join('');
-
  const diag=q('historyDiagnostics'),dups=duplicateSnapshotGroups(),conflicts=conflictingSameDaySnapshots(),orph=orphanTransfers(),gaps=boundaryGaps();
  const items=[];
  if(!dups.length)items.push(`<div class="recon-item"><div><b>Дубликаты оценок</b><span>Точных дублей не найдено</span></div><div class="recon-pill good">OK</div></div>`);
