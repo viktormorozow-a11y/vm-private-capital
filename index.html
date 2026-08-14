@@ -380,7 +380,10 @@ select:focus,input:focus{
 }
 
 .chart-panel{background:linear-gradient(155deg,rgba(7,19,28,.96),rgba(5,14,22,.96))}
-canvas{filter:saturate(.88)}
+canvas{filter:saturate(.92);max-width:100%}
+.chart-panel canvas{border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,.012),rgba(255,255,255,.003))}
+.chart-panel{min-width:0}
+@media(max-width:700px){.chart-panel{padding:14px 10px}.chart-panel .panel-head{padding:0 4px}.chart-tools{width:100%;align-items:stretch}.chart-tools select{max-width:170px}.segmented{overflow:auto}}
 
 .table-wrap{border-radius:12px;border:1px solid rgba(255,255,255,.055)}
 table{background:rgba(4,13,20,.34)}
@@ -2901,30 +2904,67 @@ function simulateWithdrawals(){
  q('withdrawalDiagnostics').innerHTML=base?`<div class="plan-status ${base.success?'ok':'warn'}"><div class="status-title">${base.success?'✓ Базовый план выполняется':'✕ Базовый план требует корректировки'}</div><div class="status-main">${base.success?`Через ${years} лет (${ageTextAfterYears(years)}) останется <b>${money(base.cap)}</b>.`:`Первый дефицит: <b>${base.firstShortfall?formatDateFromDate(base.firstShortfall.date):'—'}</b> <span class="age-tag">${base.firstShortfall?ageTextForDate(base.firstShortfall.date):''}</span>, источник: <b>${scenarioSourceLabel(base.firstShortfall?.source)}</b>.`}</div><div class="required-return"><span>Минимальная расчётная доходность для всего плана</span><b>${req.found?req.rate.toFixed(2)+'%':'> 50%'}</b></div></div>`:'';
  q('taxSummary').innerHTML=base?`<div class="mini-stat"><span class="muted small">Снято из Personal</span><b>${money(base.spentPersonal)}</b></div><div class="mini-stat"><span class="muted small">Дивиденды из VM Private Capital Oy, gross</span><b>${money(base.spentFromOyGross)}</b></div><div class="mini-stat"><span class="muted small">Налог с дивидендов</span><b>${money(base.totalDividendTax)}</b></div><div class="mini-stat"><span class="muted small">Налог VM Private Capital Oy</span><b>${money(base.totalCompanyTax)}</b></div>`:'';
  const warning=q('withdrawalWarning');if(warning){warning.style.display='none'}
- drawSeries(q('withdrawalChart'),out.map(o=>({name:o.name,points:o.ptsTotal,ci:o.ci})));renderWithdrawalExitChart();
+ drawSeries(q('withdrawalChart'),out.map(o=>({name:o.name,points:o.ptsTotal,ci:o.ci})),{xMode:'year'});renderWithdrawalExitChart();
  withdrawalResultsReady=true;if(btn){btn.disabled=false;btn.textContent='Пересчитать сценарии';btn.classList.remove('needs-calc')}
 }
 
-function drawBars(canvas,items){
+function chartDpr(){return Math.min(2.5,Math.max(1,window.devicePixelRatio||1))}
+function niceStep(raw){
+ if(!Number.isFinite(raw)||raw<=0)return 1;
+ const p=Math.pow(10,Math.floor(Math.log10(raw))),n=raw/p;
+ const m=n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10;
+ return m*p;
+}
+function niceScale(min,max,targetTicks=5,includeZero=false){
+ min=Number(min)||0;max=Number(max)||0;
+ if(max<min)[min,max]=[max,min];
+ if(max===min){const d=Math.abs(max||1)*.1||1;min-=d;max+=d}
+ if(includeZero){min=Math.min(0,min);max=Math.max(0,max)}
+ const range=max-min,step=niceStep(range/Math.max(2,targetTicks));
+ let lo=Math.floor(min/step)*step,hi=Math.ceil(max/step)*step;
+ if(!includeZero&&lo===0&&min>0&&min/max>.28){lo=Math.max(0,Math.floor((min-range*.08)/step)*step)}
+ const ticks=[];for(let v=lo,n=0;v<=hi+step*.25&&n<12;v+=step,n++)ticks.push(v);
+ return{min:lo,max:hi,step,ticks};
+}
+function formatChartValue(v){
+ const a=Math.abs(v),sign=v<0?'−':'';
+ if(a>=1e9)return sign+(a/1e9).toFixed(a>=10e9?0:1)+' млрд';
+ if(a>=1e6)return sign+(a/1e6).toFixed(a>=10e6?0:1)+' млн';
+ if(a>=1e3)return sign+(a/1e3).toFixed(a>=100e3?0:1)+' тыс.';
+ return sign+Math.round(a).toLocaleString('ru-RU');
+}
+function setupCanvas(canvas,fallbackH=300){
+ const dpr=chartDpr(),rect=canvas.getBoundingClientRect(),w=Math.max(260,Math.round(rect.width||canvas.clientWidth||700)),h=Number(canvas.getAttribute('height'))||fallbackH;
+ canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);canvas.style.height=h+'px';canvas.style.width='100%';
+ const c=canvas.getContext('2d');if(!c)return null;c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);c.lineCap='round';c.lineJoin='round';return{c,w,h};
+}
+function drawBars(canvas,items,options={}){
  if(!canvas)return;
- const dpr=window.devicePixelRatio||1,w=Math.max(1,canvas.clientWidth||700),h=Number(canvas.getAttribute('height'))||300;
- canvas.width=w*dpr;canvas.height=h*dpr;canvas.style.height=h+'px';
- const c=canvas.getContext('2d');if(!c)return;c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);
- const arr=(items||[]).filter(x=>Number.isFinite(Number(x.value)));
- if(!arr.length){c.fillStyle='#798598';c.font='13px -apple-system';c.fillText('Недостаточно данных',18,30);return}
- const pad={l:64,r:18,t:22,b:48},max=Math.max(...arr.map(x=>Math.max(0,Number(x.value))),1),plotW=w-pad.l-pad.r,plotH=h-pad.t-pad.b,step=plotW/arr.length,barW=Math.min(54,step*.56);
- c.font='10px -apple-system';
- for(let i=0;i<=4;i++){const y=pad.t+plotH*i/4;c.strokeStyle='rgba(255,255,255,.055)';c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();c.fillStyle='#71808d';c.fillText(compact(max*(1-i/4)),5,y+3)}
- arr.forEach((x,i)=>{const val=Math.max(0,Number(x.value)),bh=plotH*(val/max),cx=pad.l+step*i+step/2;c.fillStyle=x.color||'#d4aa5a';c.fillRect(cx-barW/2,pad.t+plotH-bh,barW,bh);c.fillStyle='#a3adb5';c.textAlign='center';c.fillText(String(x.label||''),cx,h-25);c.fillStyle='#eee8dc';c.fillText(compact(val),cx,Math.max(12,pad.t+plotH-bh-7))});c.textAlign='left';
+ const env=setupCanvas(canvas,300);if(!env)return;const {c,w,h}=env;
+ const arr=(items||[]).filter(x=>Number.isFinite(Number(x.value))).map(x=>({...x,value:Number(x.value)}));
+ if(!arr.length){c.fillStyle='#82909d';c.font='13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.fillText('Недостаточно данных',18,32);return}
+ const values=arr.map(x=>x.value),hasNeg=Math.min(...values)<0,scale=niceScale(Math.min(...values),Math.max(...values),5,hasNeg);
+ const pad={l:w<520?58:72,r:18,t:24,b:52},plotW=w-pad.l-pad.r,plotH=h-pad.t-pad.b;
+ c.font='11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+ scale.ticks.forEach(v=>{const y=pad.t+plotH*(1-(v-scale.min)/(scale.max-scale.min));c.strokeStyle='rgba(255,255,255,.060)';c.lineWidth=1;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();c.fillStyle='#7f8c99';c.textAlign='right';c.fillText(formatChartValue(v),pad.l-10,y+4)});
+ const zeroY=pad.t+plotH*(1-(0-scale.min)/(scale.max-scale.min));if(hasNeg){c.strokeStyle='rgba(255,255,255,.16)';c.beginPath();c.moveTo(pad.l,zeroY);c.lineTo(w-pad.r,zeroY);c.stroke()}
+ const step=plotW/arr.length,barW=Math.max(3,Math.min(48,step*(arr.length>20?.68:.56))),labelEvery=Math.max(1,Math.ceil(arr.length/Math.max(6,Math.floor(plotW/70))));
+ arr.forEach((x,i)=>{const yVal=pad.t+plotH*(1-(x.value-scale.min)/(scale.max-scale.min)),baseY=hasNeg?zeroY:pad.t+plotH,top=Math.min(yVal,baseY),bh=Math.max(1,Math.abs(baseY-yVal)),cx=pad.l+step*(i+.5);
+   c.fillStyle=x.color||'#d4aa5a';c.globalAlpha=.88;c.fillRect(cx-barW/2,top,barW,bh);c.globalAlpha=1;
+   if(i%labelEvery===0||i===arr.length-1){c.fillStyle='#8996a2';c.textAlign='center';c.font='10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.fillText(String(x.label||''),cx,h-26)}
+   if(arr.length<=10){c.fillStyle='#e9e3d8';c.font='10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.textAlign='center';c.fillText(formatChartValue(x.value),cx,Math.max(13,top-7))}
+ });
+ c.textAlign='left';
+ if(arr.length>10){const last=arr[arr.length-1],maxItem=arr.reduce((a,b)=>b.value>a.value?b:a,arr[0]);c.fillStyle='#7f8c99';c.font='10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.fillText(`Последний: ${last.label} · ${formatChartValue(last.value)}   Максимум: ${maxItem.label} · ${formatChartValue(maxItem.value)}`,pad.l,h-8)}
 }
 function renderForecastOwnerChart(){
  const years=Math.max(1,Number(state.forecast.years||20)),m=runGrowthModel(Number(state.forecast.base||0),years);
- drawSeries(q('forecastOwnerChart'),[{name:'Personal',points:m.ptsPersonal,ci:0},{name:'VM Private Capital Oy',points:m.ptsOy,ci:1}]);
+ drawSeries(q('forecastOwnerChart'),[{name:'Personal',points:m.ptsPersonal,ci:0},{name:'VM Private Capital Oy',points:m.ptsOy,ci:1}],{xMode:'year'});
 }
 function renderWithdrawalExitChart(){
  const years=Math.max(1,Number(q('withdrawYears')?.value||30)),annual=Number(state.forecast.base||0);
  const a=runWithdrawalModel(annual,years),b=runWithdrawalModel(annual,years,{}, {}, {includeExits:false});
- drawSeries(q('withdrawalExitChart'),[{name:'С Exit',points:a.ptsTotal,ci:2},{name:'Без Exit',points:b.ptsTotal,ci:0}]);
+ drawSeries(q('withdrawalExitChart'),[{name:'С Exit',points:a.ptsTotal,ci:2},{name:'Без Exit',points:b.ptsTotal,ci:0}],{xMode:'year'});
 }
 function renderInsights(){
  renderInsightsAllYears();
@@ -2937,8 +2977,8 @@ function renderInsights(){
  q('insightAssetStructure').innerHTML=`<div class="structure-row"><span>Инвестируемые</span><b>${money(planCapital)}</b><div class="structure-track"><i style="width:${currentTotal?Math.min(100,planCapital/currentTotal*100):0}%"></i></div></div><div class="structure-row"><span>Вне расчёта</span><b>${money(excluded)}</b><div class="structure-track muted-track"><i style="width:${currentTotal?Math.min(100,excluded/currentTotal*100):0}%"></i></div></div><div class="structure-row"><span>Exit до продажи</span><b>${money(exitTotal)}</b><div class="structure-track exit-track"><i style="width:${currentTotal?Math.min(100,exitTotal/currentTotal*100):0}%"></i></div></div>`;
  q('insightPlanCheck').innerHTML=`<div class="plan-info-grid"><div><span>Горизонт</span><b>${years} лет · ${ageTextAfterYears(years)}</b></div><div><span>Базовая доходность</span><b>${annual.toFixed(1)}%</b></div><div><span>Капитал в конце</span><b>${money(base.cap)}</b></div><div><span>Без Exit</span><b>${money(noExit.cap)}</b></div><div><span>Exit поступления</span><b>${money(base.totalExitInflows||0)}</b></div><div><span>Налог Oy</span><b>${money(base.totalCompanyTax)}</b></div><div><span>Дивиденды gross</span><b>${money(base.spentFromOyGross)}</b></div><div><span>Налог дивидендов</span><b>${money(base.totalDividendTax)}</b></div></div>`;
  const ep=state.portfolios.find(isExitPortfolio);
- if(ep){const orig=ep.exitMultiple,bars=[];for(let mult=1;mult<=6;mult++){ep.exitMultiple=mult;bars.push({label:'×'+mult,value:runWithdrawalModel(annual,years).cap})}ep.exitMultiple=orig;drawBars(q('exitSensitivityChart'),bars)}else drawBars(q('exitSensitivityChart'),[]);
- drawBars(q('taxByYearChart'),(base.companyTaxByYear||[]).map(y=>({label:String(y.year).slice(-2),value:y.tax})));
+ if(ep){const orig=ep.exitMultiple,bars=[];for(let mult=1;mult<=6;mult++){ep.exitMultiple=mult;bars.push({label:'×'+mult,value:runWithdrawalModel(annual,years).cap,color:'#d4aa5a'})}ep.exitMultiple=orig;drawBars(q('exitSensitivityChart'),bars)}else drawBars(q('exitSensitivityChart'),[]);
+ drawBars(q('taxByYearChart'),(base.companyTaxByYear||[]).map(y=>({label:String(y.year),value:y.tax,color:'#64cda1'}))); 
 }
 
 function renderAll(){syncAgeHorizon('withdrawYears','withdrawTargetAge','withdrawHorizonDate','years');q('todayText').innerHTML=`${new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} · <span class="age-tag">${ageTextByYear(new Date().getFullYear())}</span><div class="age-note">Возраст рассчитан по году рождения 1982. Без точной даты рождения возможна разница в 1 год до дня рождения.</div>`;q('currency').value=state.settings.currency||'EUR';q('fyStartDisplay').value=formatDate(state.settings.fyStart);
@@ -2948,11 +2988,12 @@ function renderAll(){syncAgeHorizon('withdrawYears','withdrawTargetAge','withdra
 
 function renderCapitalChart(){
  const cutoff=localISODate(new Date(Date.now()-chartRange*86400000)),dates=allDates().filter(d=>chartRange>=99999||d>=cutoff),mode=q('capitalChartMode')?.value||'total';
+ const tx=d=>new Date(d+'T12:00:00').getTime();
  if(mode==='split'){
-   const personal=dates.map((d,i)=>({t:i,v:ownerAtDate('personal',d)})),oy=dates.map((d,i)=>({t:i,v:ownerAtDate('oy',d)}));
-   drawSeries(q('capitalChart'),[{name:'Personal',points:personal,ci:0},{name:'Oy',points:oy,ci:1}]);
+   const personal=dates.map(d=>({t:tx(d),v:ownerAtDate('personal',d)})),oy=dates.map(d=>({t:tx(d),v:ownerAtDate('oy',d)}));
+   drawSeries(q('capitalChart'),[{name:'Personal',points:personal,ci:0},{name:'VM Private Capital Oy',points:oy,ci:1}],{xMode:'date'});
  }else{
-   const pts=dates.map((d,i)=>({t:i,v:totalAtDate(d)}));drawSeries(q('capitalChart'),[{name:'Общий капитал',points:pts,ci:0}]);
+   const pts=dates.map(d=>({t:tx(d),v:totalAtDate(d)}));drawSeries(q('capitalChart'),[{name:'Общий капитал',points:pts,ci:0}],{xMode:'date'});
  }
 }
 function renderForecastChart(){
@@ -2960,23 +3001,38 @@ function renderForecastChart(){
  const series=[['Консервативный',+f.conservative],['Базовый',+f.base],['Оптимистичный',+f.optimistic]].map(([name,r],ci)=>{
    const m=runGrowthModel(r,years);return{name,ci,points:m.ptsTotal};
  });
- drawSeries(q('forecastChart'),series);
+ drawSeries(q('forecastChart'),series,{xMode:'year'});
 }
-function chartColor(ci){return['#82c6ff','#71e1c0','#efc878'][ci%3]}
-function drawSeries(canvas,series){
+function chartColor(ci){return['#d7ab57','#64cda1','#7fb9e8','#ff7c8b'][ci%4]}
+function seriesXLabel(v,mode){
+ if(mode==='date'){
+   const d=new Date(Number(v));if(!Number.isFinite(d.getTime()))return '';
+   return d.toLocaleDateString('ru-RU',{month:'short',year:'2-digit'}).replace('.','');
+ }
+ if(mode==='year')return Number(v)===0?'сейчас':`+${Math.round(Number(v))} г.`;
+ return String(Math.round(Number(v)));
+}
+function drawSeries(canvas,series,options={}){
  if(!canvas)return;
- const dpr=window.devicePixelRatio||1,w=Math.max(1,canvas.clientWidth||900),h=Number(canvas.getAttribute('height'))||280;
- canvas.width=Math.max(1,w*dpr);canvas.height=h*dpr;canvas.style.height=h+'px';
- const c=canvas.getContext('2d');if(!c)return;c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);
- const pts=(series||[]).flatMap(s=>Array.isArray(s.points)?s.points:[]);
- if(pts.length<2){c.fillStyle='#798598';c.font='13px Segoe UI';c.fillText('Недостаточно данных для графика',18,31);return}
- const pad={l:68,r:20,t:20,b:38},vals=pts.map(p=>Number(p.v)||0);let min=Math.min(...vals),max=Math.max(...vals);min=Math.min(0,min);if(max===min)max=min+1;const xmax=Math.max(...pts.map(p=>Number(p.t)||0),1);
- c.font='10px Segoe UI';
- for(let i=0;i<=4;i++){const y=pad.t+(h-pad.t-pad.b)*i/4;c.strokeStyle='rgba(255,255,255,.055)';c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();c.fillStyle='#6f7b8e';c.fillText(compact(max-(max-min)*i/4),5,y+3)}
- (series||[]).forEach(s=>{c.strokeStyle=chartColor(s.ci||0);c.lineWidth=2.4;c.beginPath();(s.points||[]).forEach((p,i)=>{const x=pad.l+(w-pad.l-pad.r)*(Number(p.t)||0)/xmax,y=pad.t+(h-pad.t-pad.b)*(1-((Number(p.v)||0)-min)/(max-min));i?c.lineTo(x,y):c.moveTo(x,y)});c.stroke()});
- let lx=pad.l;(series||[]).forEach(s=>{c.fillStyle=chartColor(s.ci||0);c.fillRect(lx,h-18,12,2);c.fillStyle='#8490a2';c.fillText(s.name||'',lx+17,h-14);lx+=c.measureText(s.name||'').width+48});
+ const env=setupCanvas(canvas,280);if(!env)return;const {c,w,h}=env;
+ const valid=(series||[]).map(s=>({...s,points:(s.points||[]).filter(p=>Number.isFinite(Number(p.t))&&Number.isFinite(Number(p.v)))})).filter(s=>s.points.length);
+ const pts=valid.flatMap(s=>s.points);
+ if(pts.length<2){c.fillStyle='#82909d';c.font='13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.fillText('Недостаточно данных для графика',18,32);return}
+ const vals=pts.map(p=>Number(p.v)),xvals=pts.map(p=>Number(p.t)),rawMin=Math.min(...vals),rawMax=Math.max(...vals),positive=rawMin>=0;
+ const includeZero=options.includeZero===true||(positive&&rawMin/rawMax<.32);
+ const scale=niceScale(rawMin,rawMax,5,includeZero),xmin=Math.min(...xvals),xmax=Math.max(...xvals),xspan=Math.max(1,xmax-xmin);
+ const legendRows=w<560&&valid.length>2?2:1,pad={l:w<520?60:76,r:24,t:22,b:42+legendRows*18},plotW=w-(w<520?60:76)-24,plotH=h-22-(42+legendRows*18);
+ c.font='11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+ scale.ticks.forEach(v=>{const y=pad.t+plotH*(1-(v-scale.min)/(scale.max-scale.min));c.strokeStyle='rgba(255,255,255,.058)';c.lineWidth=1;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();c.fillStyle='#7f8c99';c.textAlign='right';c.fillText(formatChartValue(v),pad.l-10,y+4)});
+ const targetXTicks=w<560?4:6,xStep=xspan/targetXTicks;
+ for(let i=0;i<=targetXTicks;i++){const xv=xmin+xStep*i,x=pad.l+plotW*i/targetXTicks;c.strokeStyle='rgba(255,255,255,.025)';c.beginPath();c.moveTo(x,pad.t);c.lineTo(x,pad.t+plotH);c.stroke();c.fillStyle='#768592';c.textAlign=i===0?'left':i===targetXTicks?'right':'center';c.fillText(seriesXLabel(xv,options.xMode||'year'),x,pad.t+plotH+20)}
+ valid.forEach((s,si)=>{const color=chartColor(s.ci??si),points=s.points;
+   if(valid.length===1&&options.fill!==false){c.beginPath();points.forEach((p,i)=>{const x=pad.l+plotW*(Number(p.t)-xmin)/xspan,y=pad.t+plotH*(1-(Number(p.v)-scale.min)/(scale.max-scale.min));i?c.lineTo(x,y):c.moveTo(x,y)});const last=points[points.length-1],lx=pad.l+plotW*(Number(last.t)-xmin)/xspan;c.lineTo(lx,pad.t+plotH);c.lineTo(pad.l,pad.t+plotH);c.closePath();const g=c.createLinearGradient(0,pad.t,0,pad.t+plotH);g.addColorStop(0,color+'2f');g.addColorStop(1,color+'03');c.fillStyle=g;c.fill()}
+   c.strokeStyle=color;c.lineWidth=2.5;c.beginPath();points.forEach((p,i)=>{const x=pad.l+plotW*(Number(p.t)-xmin)/xspan,y=pad.t+plotH*(1-(Number(p.v)-scale.min)/(scale.max-scale.min));i?c.lineTo(x,y):c.moveTo(x,y)});c.stroke();
+   const last=points[points.length-1],lx=pad.l+plotW*(Number(last.t)-xmin)/xspan,ly=pad.t+plotH*(1-(Number(last.v)-scale.min)/(scale.max-scale.min));c.fillStyle=color;c.beginPath();c.arc(lx,ly,3.2,0,Math.PI*2);c.fill();
+ });
+ let lx=pad.l,ly=h-(legendRows===2?30:18);c.textAlign='left';valid.forEach((s,si)=>{const color=chartColor(s.ci??si),label=s.name||'',tw=c.measureText(label).width+34;if(lx+tw>w-pad.r&&lx>pad.l){lx=pad.l;ly+=16}c.strokeStyle=color;c.lineWidth=3;c.beginPath();c.moveTo(lx,ly-3);c.lineTo(lx+14,ly-3);c.stroke();c.fillStyle='#9aa6b2';c.fillText(label,lx+20,ly);lx+=tw+14});
 }
-
 function compact(v){const a=Math.abs(v);return a>=1e6?(v/1e6).toFixed(1)+'M':a>=1e3?(v/1e3).toFixed(0)+'k':Math.round(v).toString()}
 
 function openModal(title,html,eyebrow='ENTRY'){q('modalTitle').textContent=title;q('modalEyebrow').textContent=eyebrow;q('modalBody').innerHTML=html;q('modalBackdrop').classList.remove('hidden');q('modalBody').querySelectorAll('.date-input').forEach(attachDateMask);q('modalBody').querySelectorAll('[data-today-for]').forEach(b=>b.addEventListener('click',()=>{const inp=q(b.dataset.todayFor);inp.value=formatDate(todayISO())}))}
@@ -3204,7 +3260,7 @@ function pdfReport(){
 }
 
 document.querySelectorAll('.nav-item').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
-function switchView(v){currentView=v;document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.view===v));document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));q('view-'+v).classList.add('active');const t={dashboard:'Планирование капитала',portfolios:'Портфель',history:'Источники и история',forecast:'Сценарии',withdrawals:'План вывода средств',reports:'Аналитика и отчёты',insights:'Дополнительная информация',settings:'Настройки'};q('viewTitle').textContent=t[v];if(v==='history')renderHistory();if(v==='withdrawals'){renderWithdrawalRules();if(!withdrawalResultsReady)markWithdrawalDirty();else renderWithdrawalExitChart()}if(v==='dashboard')renderCapitalChart();if(v==='forecast'){renderForecastChart();renderForecastOwnerChart()}if(v==='insights')renderInsights()}
+function switchView(v){currentView=v;document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.view===v));document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));q('view-'+v).classList.add('active');const t={dashboard:'Планирование капитала',portfolios:'Портфель',history:'Источники и история',forecast:'Сценарии',withdrawals:'План вывода средств',reports:'Аналитика и отчёты',insights:'Дополнительная информация',settings:'Настройки'};q('viewTitle').textContent=t[v];if(v==='history')renderHistory();if(v==='withdrawals'){renderWithdrawalRules();if(!withdrawalResultsReady)markWithdrawalDirty();else{renderWithdrawalExitChart();const yrs=Math.max(1,Number(q('withdrawYears')?.value||30)),f=state.forecast,out=[['Консервативный',+f.conservative,0],['Базовый',+f.base,1],['Оптимистичный',+f.optimistic,2]].map(([name,r,ci])=>{const m=runWithdrawalModel(r,yrs);return{name,points:m.ptsTotal,ci}});drawSeries(q('withdrawalChart'),out,{xMode:'year'})}}if(v==='dashboard')renderCapitalChart();if(v==='forecast'){renderForecastChart();renderForecastOwnerChart()}if(v==='insights')renderInsights()}
 q('closeModalBtn').addEventListener('click',closeModal);q('modalBackdrop').addEventListener('click',e=>{if(e.target===q('modalBackdrop'))closeModal()});
 q('quickAddBtn').addEventListener('click',()=>openSnapshotModal());q('addSnapshotBtn').addEventListener('click',()=>openSnapshotModal());q('addFlowBtn').addEventListener('click',()=>openFlowModal());q('addPortfolioBtn').addEventListener('click',()=>openPortfolioModal());q('addPortfolioBtn2').addEventListener('click',()=>openPortfolioModal());
 q('dashboardSort').addEventListener('change',renderDashboard);q('capitalChartMode').addEventListener('change',renderCapitalChart);q('historySearch').addEventListener('input',renderHistory);q('historyType').addEventListener('change',renderHistory);q('historySort').addEventListener('change',renderHistory);
@@ -3271,7 +3327,8 @@ q('saveSettingsBtn').addEventListener('click',()=>{const iso=parseDate(q('fyStar
 q('exportBtn').addEventListener('click',exportJSON);q('jsonReportBtn').addEventListener('click',exportJSON);q('excelReportBtn').addEventListener('click',excelReport);q('pdfReportBtn').addEventListener('click',pdfReport);q('reportsQuickBtn').addEventListener('click',()=>switchView('reports'));
 q('importFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const obj=JSON.parse(await f.text());if(!confirm('Импорт заменит текущие данные. Продолжить?'))return;state=normalizeState(obj);persistState();renderAll();withdrawalResultsReady=false;toast('Данные импортированы')}catch(err){toast('Не удалось прочитать файл')}e.target.value=''});
 q('resetBtn').addEventListener('click',()=>{if(confirm('Удалить текущие данные? Если вы вошли в облако, пустое состояние также будет синхронизировано. Сначала рекомендуется сделать резервную копию.')){state=normalizeState(defaultState());persistState();renderAll();withdrawalResultsReady=false;toast('Данные удалены')}});
-let resizeTimer=null;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{if(currentView==='dashboard')renderCapitalChart();if(currentView==='forecast')renderForecastChart();},120)});
+let resizeTimer=null;function rerenderVisibleCharts(){if(currentView==='dashboard')renderCapitalChart();if(currentView==='forecast'){renderForecastChart();renderForecastOwnerChart()}if(currentView==='withdrawals'&&withdrawalResultsReady){renderWithdrawalExitChart();const yrs=Math.max(1,Number(q('withdrawYears')?.value||30)),f=state.forecast,out=[['Консервативный',+f.conservative,0],['Базовый',+f.base,1],['Оптимистичный',+f.optimistic,2]].map(([name,r,ci])=>{const m=runWithdrawalModel(r,yrs);return{name,points:m.ptsTotal,ci}});drawSeries(q('withdrawalChart'),out,{xMode:'year'})}if(currentView==='insights')renderInsights()}
+window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(rerenderVisibleCharts,140)});
 renderAll();
 initCloud();
 window.addEventListener('online',()=>{if(cloudUser&&localStorage.getItem(CLOUD_DIRTY_KEY)==='1')saveCloudState(false)});
