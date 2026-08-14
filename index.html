@@ -1136,7 +1136,7 @@ body.auth-locked{overflow:hidden}
         <div class="panel"><div class="panel-head"><div><div class="eyebrow">PORTFOLIO RETURNS</div><h2>Доходность портфелей</h2></div></div><div id="insightPortfolioRates"></div></div>
       </div>
       <div class="insight-grid two-col">
-        <div class="panel chart-panel"><div class="panel-head"><div><div class="eyebrow">EXIT SENSITIVITY</div><h2>Reno Group: результат при разных × Exit</h2></div></div><canvas id="exitSensitivityChart" height="300"></canvas></div>
+        <div class="panel chart-panel"><div class="panel-head"><div><div class="eyebrow">EXIT SENSITIVITY</div><h2 id="exitSensitivityTitle">Exit: результат при разных ×</h2><div id="exitSensitivityNote" class="muted small">Показывает сумму, остающуюся после продажи актива и налога на прибыль Exit. Не весь капитал портфеля.</div></div></div><canvas id="exitSensitivityChart" height="300"></canvas></div>
         <div class="panel chart-panel"><div class="panel-head"><div><div class="eyebrow">TAX LOAD</div><h2>Налог Oy по годам</h2></div></div><canvas id="taxByYearChart" height="300"></canvas></div>
       </div>
       <div class="insight-grid two-col">
@@ -2976,8 +2976,29 @@ function renderInsights(){
  q('insightPortfolioRates').innerHTML=invest.length?`<div class="portfolio-rate-list">${invest.map(p=>{const rate=portfolioScenarioRate(p,annual),adj=portfolioReturnAdjustment(p);return `<div class="portfolio-rate-row"><div><b>${esc(p.name)}</b><span>${p.owner==='oy'?'Oy':'Personal'} · ${money(latestValue(p.id))}</span></div><div class="rate-pill">${rate.toFixed(1)}%</div><small>${adj>=0?'+':''}${adj.toFixed(1)} п.п. к базовому</small></div>`}).join('')}</div>`:'<div class="muted">Нет инвестируемых портфелей.</div>';
  q('insightAssetStructure').innerHTML=`<div class="structure-row"><span>Инвестируемые</span><b>${money(planCapital)}</b><div class="structure-track"><i style="width:${currentTotal?Math.min(100,planCapital/currentTotal*100):0}%"></i></div></div><div class="structure-row"><span>Вне расчёта</span><b>${money(excluded)}</b><div class="structure-track muted-track"><i style="width:${currentTotal?Math.min(100,excluded/currentTotal*100):0}%"></i></div></div><div class="structure-row"><span>Exit до продажи</span><b>${money(exitTotal)}</b><div class="structure-track exit-track"><i style="width:${currentTotal?Math.min(100,exitTotal/currentTotal*100):0}%"></i></div></div>`;
  q('insightPlanCheck').innerHTML=`<div class="plan-info-grid"><div><span>Горизонт</span><b>${years} лет · ${ageTextAfterYears(years)}</b></div><div><span>Базовая доходность</span><b>${annual.toFixed(1)}%</b></div><div><span>Капитал в конце</span><b>${money(base.cap)}</b></div><div><span>Без Exit</span><b>${money(noExit.cap)}</b></div><div><span>Exit поступления</span><b>${money(base.totalExitInflows||0)}</b></div><div><span>Налог Oy</span><b>${money(base.totalCompanyTax)}</b></div><div><span>Дивиденды gross</span><b>${money(base.spentFromOyGross)}</b></div><div><span>Налог дивидендов</span><b>${money(base.totalDividendTax)}</b></div></div>`;
- const ep=state.portfolios.find(isExitPortfolio);
- if(ep){const orig=ep.exitMultiple,bars=[];for(let mult=1;mult<=6;mult++){ep.exitMultiple=mult;bars.push({label:'×'+mult,value:runWithdrawalModel(annual,years).cap,color:'#d4aa5a'})}ep.exitMultiple=orig;drawBars(q('exitSensitivityChart'),bars)}else drawBars(q('exitSensitivityChart'),[]);
+ const exitPortfolios=state.portfolios.filter(isExitPortfolio);
+ const ep=exitPortfolios.find(p=>/reno/i.test(String(p.name||'')))||exitPortfolios[0];
+ if(ep){
+   const cost=exitCostBasis(ep);
+   const owner=ep.owner||'oy';
+   const taxable=ep.exitTaxable!==false;
+   const companyTaxRate=Math.max(0,Number(state.taxSettings.companyTaxRate||20))/100;
+   const bars=[];
+   for(let mult=1;mult<=6;mult++){
+     const gross=cost*mult;
+     const exitGain=Math.max(0,gross-cost);
+     const exitTax=(owner==='oy'&&taxable)?exitGain*companyTaxRate:0;
+     const net=gross-exitTax;
+     bars.push({label:'×'+mult,value:net,color:'#d4aa5a'});
+   }
+   if(q('exitSensitivityTitle'))q('exitSensitivityTitle').textContent=`${ep.name||'Exit'}: сумма после Exit при разных ×`;
+   if(q('exitSensitivityNote'))q('exitSensitivityNote').innerHTML=`База: <b>${money(cost)}</b>. Столбец показывает сумму после продажи${owner==='oy'&&taxable?` и ориентировочного налога Oy ${Number(state.taxSettings.companyTaxRate||20).toFixed(1)}% только с прибыли Exit`:''}. Формула: gross = база × множитель; налог считается только с положительной разницы gross − база. Это не общий капитал в конце горизонта.`;
+   drawBars(q('exitSensitivityChart'),bars);
+ }else{
+   if(q('exitSensitivityTitle'))q('exitSensitivityTitle').textContent='Exit: результат при разных ×';
+   if(q('exitSensitivityNote'))q('exitSensitivityNote').textContent='Exit-активов нет.';
+   drawBars(q('exitSensitivityChart'),[]);
+ }
  drawBars(q('taxByYearChart'),(base.companyTaxByYear||[]).map(y=>({label:String(y.year),value:y.tax,color:'#64cda1'}))); 
 }
 
