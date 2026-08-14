@@ -27,7 +27,7 @@ nav{display:flex;flex-direction:column;gap:6px}.nav-item{border:1px solid transp
 .metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:16px}.metric-card,.panel{border:1px solid var(--line);background:var(--panel);backdrop-filter:blur(18px);box-shadow:0 14px 45px rgba(0,0,0,.12)}.metric-card{border-radius:16px;padding:17px 18px;transition:transform .2s,border-color .2s}.metric-card:hover{transform:translateY(-2px);border-color:rgba(158,208,255,.18)}.metric-label{font-size:12px;color:var(--muted)}.metric{font-size:25px;font-weight:720;letter-spacing:-.035em;margin-top:9px}.metric-sub{font-size:12px;color:var(--muted);margin-top:6px}.good{color:var(--good)!important}.bad{color:var(--bad)!important}.reveal{animation:rise .55s ease both}.delay1{animation-delay:.08s}.delay2{animation-delay:.16s}.delay3{animation-delay:.24s}@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .grid.two{display:grid;grid-template-columns:1.55fr 1fr;gap:16px;margin-bottom:16px}.panel{border-radius:18px;padding:19px;margin-bottom:16px}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}.panel h2{font-size:18px;letter-spacing:-.02em;margin:4px 0 0;font-weight:680}.chart-panel{overflow:hidden}
 .segmented{padding:3px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;display:flex}.seg{border:0;background:transparent;color:#7f8a9d;border-radius:7px;padding:5px 8px;font-size:11px;cursor:pointer}.seg.active{background:rgba(158,208,255,.12);color:var(--accent)}
-canvas{width:100%;display:block}.allocation-list{display:grid;gap:13px}.allocation-item{display:grid;grid-template-columns:1fr auto;gap:7px}.alloc-name{font-size:13px}.alloc-value{font-size:12px;color:#b6c0cf}.alloc-track{grid-column:1/-1;height:7px;border-radius:999px;background:rgba(255,255,255,.045);overflow:hidden}.alloc-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#6fb7ff,#70e0c2);transform-origin:left;animation:barGrow .8s ease both}@keyframes barGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+canvas{width:100%;display:block}.chart-panel{position:relative;border:1px solid rgba(212,170,90,.16);background:linear-gradient(180deg,rgba(11,23,34,.98),rgba(7,16,24,.96));box-shadow:inset 0 1px rgba(255,255,255,.03),0 18px 42px rgba(0,0,0,.18)}.chart-panel .panel-head{margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(212,170,90,.10)}.chart-panel::before{content:"";position:absolute;left:18px;right:18px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(224,182,95,.32),transparent);opacity:.9}.chart-panel canvas{border-radius:16px}.allocation-list{display:grid;gap:13px}.allocation-item{display:grid;grid-template-columns:1fr auto;gap:7px}.alloc-name{font-size:13px}.alloc-value{font-size:12px;color:#b6c0cf}.alloc-track{grid-column:1/-1;height:7px;border-radius:999px;background:rgba(255,255,255,.045);overflow:hidden}.alloc-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#6fb7ff,#70e0c2);transform-origin:left;animation:barGrow .8s ease both}@keyframes barGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 .table-controls{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.sort-label{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted)}select,input{background:#0c121d;color:var(--text);border:1px solid var(--line2);border-radius:10px;padding:9px 10px;outline:none;transition:border .15s,box-shadow .15s}select:focus,input:focus{border-color:rgba(158,208,255,.5);box-shadow:0 0 0 3px rgba(111,183,255,.08)}
 .table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:12px 9px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left}th{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6f7b8f;font-weight:700}td{font-size:13px}.table-actions{display:flex;justify-content:flex-end;gap:4px}.mini-action{border:1px solid var(--line);background:transparent;color:#8995a7;border-radius:8px;padding:5px 8px;cursor:pointer}.mini-action:hover{color:var(--text);border-color:var(--line2)}
 .portfolio-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.port-card{position:relative;overflow:hidden;border:1px solid var(--line);background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.012));border-radius:16px;padding:17px;transition:.2s}.port-card:hover{transform:translateY(-2px);border-color:rgba(158,208,255,.20)}.port-card:before{content:"";position:absolute;width:100px;height:100px;border-radius:50%;background:rgba(111,183,255,.06);right:-25px;top:-35px}.port-type{font-size:10px;letter-spacing:.12em;color:#72809a}.port-name{font-weight:680;margin-top:5px}.port-value{font-size:25px;font-weight:730;letter-spacing:-.04em;margin:18px 0 6px}.port-actions{display:flex;gap:7px;margin-top:14px;flex-wrap:wrap}
@@ -971,7 +971,7 @@ body.auth-locked{overflow:hidden}
             </div>
             </div>
           </div>
-          <canvas id="capitalChart" height="270"></canvas>
+          <canvas id="capitalChart" height="225"></canvas>
         </div>
         <div class="panel">
           <div class="panel-head"><div><div class="eyebrow">ALLOCATION</div><h2>Структура капитала</h2></div></div>
@@ -1069,11 +1069,11 @@ body.auth-locked{overflow:hidden}
       </div>
       <div class="panel chart-panel">
         <div class="panel-head"><div><div class="eyebrow">PROJECTION</div><h2>Три траектории капитала без снятий, с налогом Oy</h2></div></div>
-        <canvas id="forecastChart" height="320"></canvas>
+        <canvas id="forecastChart" height="245"></canvas>
       </div>
       <div class="panel chart-panel">
         <div class="panel-head"><div><div class="eyebrow">OWNERSHIP</div><h2>Personal и VM Private Capital Oy — базовый сценарий</h2><div class="muted small">Отдельно видно, где формируется капитал к концу горизонта.</div></div></div>
-        <canvas id="forecastOwnerChart" height="300"></canvas>
+        <canvas id="forecastOwnerChart" height="225"></canvas>
       </div>
     </section>
 
@@ -1112,11 +1112,11 @@ body.auth-locked{overflow:hidden}
       </div>
       <div class="panel chart-panel">
         <div class="panel-head"><div><div class="eyebrow">LONGEVITY</div><h2>Капитал при регулярных снятиях</h2></div></div>
-        <canvas id="withdrawalChart" height="320"></canvas>
+        <canvas id="withdrawalChart" height="245"></canvas>
       </div>
       <div class="panel chart-panel">
         <div class="panel-head"><div><div class="eyebrow">EXIT IMPACT</div><h2>Базовый сценарий: с Exit и без Exit</h2><div class="muted small">Так видно влияние Reno Group на капитал по годам.</div></div></div>
-        <canvas id="withdrawalExitChart" height="300"></canvas>
+        <canvas id="withdrawalExitChart" height="225"></canvas>
       </div>
     </section>
 
@@ -1136,8 +1136,8 @@ body.auth-locked{overflow:hidden}
         <div class="panel"><div class="panel-head"><div><div class="eyebrow">PORTFOLIO RETURNS</div><h2>Доходность портфелей</h2></div></div><div id="insightPortfolioRates"></div></div>
       </div>
       <div class="insight-grid two-col">
-        <div class="panel chart-panel"><div class="panel-head"><div><div class="eyebrow">EXIT SENSITIVITY</div><h2 id="exitSensitivityTitle">Exit: результат при разных ×</h2><div id="exitSensitivityNote" class="muted small">Показывает сумму, остающуюся после продажи актива и налога на прибыль Exit. Не весь капитал портфеля.</div></div></div><canvas id="exitSensitivityChart" height="300"></canvas></div>
-        <div class="panel chart-panel"><div class="panel-head"><div><div class="eyebrow">TAX LOAD</div><h2>Налог Oy по годам</h2></div></div><canvas id="taxByYearChart" height="300"></canvas></div>
+        <div class="panel chart-panel"><div class="panel-head"><div><div class="eyebrow">EXIT SENSITIVITY</div><h2 id="exitSensitivityTitle">Exit: результат при разных ×</h2><div id="exitSensitivityNote" class="muted small">Показывает сумму, остающуюся после продажи актива и налога на прибыль Exit. Не весь капитал портфеля.</div></div></div><canvas id="exitSensitivityChart" height="225"></canvas></div>
+        <div class="panel chart-panel"><div class="panel-head"><div><div class="eyebrow">TAX LOAD</div><h2>Налог Oy по годам</h2></div></div><canvas id="taxByYearChart" height="225"></canvas></div>
       </div>
       <div class="insight-grid two-col">
         <div class="panel"><div class="panel-head"><div><div class="eyebrow">ASSET STRUCTURE</div><h2>Структура капитала</h2></div></div><div id="insightAssetStructure"></div></div>
@@ -2933,126 +2933,94 @@ function formatChartValue(v){
  if(a>=1e3)return sign+(a/1e3).toFixed(a>=100e3?0:1)+' тыс.';
  return sign+Math.round(a).toLocaleString('ru-RU');
 }
-function setupCanvas(canvas,fallbackH=300){
+function setupCanvas(canvas,fallbackH=260){
  const dpr=chartDpr(),rect=canvas.getBoundingClientRect(),w=Math.max(260,Math.round(rect.width||canvas.clientWidth||700)),h=Number(canvas.getAttribute('height'))||fallbackH;
  canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);canvas.style.height=h+'px';canvas.style.width='100%';
  const c=canvas.getContext('2d');if(!c)return null;c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);c.lineCap='round';c.lineJoin='round';return{c,w,h};
 }
-function drawBars(canvas,items,options={}){
- if(!canvas)return;
- const env=setupCanvas(canvas,300);if(!env)return;const {c,w,h}=env;
- const arr=(items||[]).filter(x=>Number.isFinite(Number(x.value))).map(x=>({...x,value:Number(x.value)}));
- if(!arr.length){c.fillStyle='#82909d';c.font='13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.fillText('Недостаточно данных',18,32);return}
- const values=arr.map(x=>x.value),hasNeg=Math.min(...values)<0,scale=niceScale(Math.min(...values),Math.max(...values),5,hasNeg);
- const pad={l:w<520?58:72,r:18,t:24,b:52},plotW=w-pad.l-pad.r,plotH=h-pad.t-pad.b;
- c.font='11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
- scale.ticks.forEach(v=>{const y=pad.t+plotH*(1-(v-scale.min)/(scale.max-scale.min));c.strokeStyle='rgba(255,255,255,.060)';c.lineWidth=1;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();c.fillStyle='#7f8c99';c.textAlign='right';c.fillText(formatChartValue(v),pad.l-10,y+4)});
- const zeroY=pad.t+plotH*(1-(0-scale.min)/(scale.max-scale.min));if(hasNeg){c.strokeStyle='rgba(255,255,255,.16)';c.beginPath();c.moveTo(pad.l,zeroY);c.lineTo(w-pad.r,zeroY);c.stroke()}
- const step=plotW/arr.length,barW=Math.max(3,Math.min(48,step*(arr.length>20?.68:.56))),labelEvery=Math.max(1,Math.ceil(arr.length/Math.max(6,Math.floor(plotW/70))));
- arr.forEach((x,i)=>{const yVal=pad.t+plotH*(1-(x.value-scale.min)/(scale.max-scale.min)),baseY=hasNeg?zeroY:pad.t+plotH,top=Math.min(yVal,baseY),bh=Math.max(1,Math.abs(baseY-yVal)),cx=pad.l+step*(i+.5);
-   c.fillStyle=x.color||'#d4aa5a';c.globalAlpha=.88;c.fillRect(cx-barW/2,top,barW,bh);c.globalAlpha=1;
-   if(i%labelEvery===0||i===arr.length-1){c.fillStyle='#8996a2';c.textAlign='center';c.font='10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.fillText(String(x.label||''),cx,h-26)}
-   if(arr.length<=10){c.fillStyle='#e9e3d8';c.font='10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.textAlign='center';c.fillText(formatChartValue(x.value),cx,Math.max(13,top-7))}
- });
- c.textAlign='left';
- if(arr.length>10){const last=arr[arr.length-1],maxItem=arr.reduce((a,b)=>b.value>a.value?b:a,arr[0]);c.fillStyle='#7f8c99';c.font='10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.fillText(`Последний: ${last.label} · ${formatChartValue(last.value)}   Максимум: ${maxItem.label} · ${formatChartValue(maxItem.value)}`,pad.l,h-8)}
+function rgbaFromHex(hex,alpha=.16){
+ const safe=String(hex||'#d4aa5a').replace('#','');
+ const full=safe.length===3?safe.split('').map(x=>x+x).join(''):safe.padEnd(6,'0').slice(0,6);
+ const n=parseInt(full,16);
+ return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${alpha})`;
 }
-function renderForecastOwnerChart(){
- const years=Math.max(1,Number(state.forecast.years||20)),m=runGrowthModel(Number(state.forecast.base||0),years);
- drawSeries(q('forecastOwnerChart'),[{name:'Personal',points:m.ptsPersonal,ci:0},{name:'VM Private Capital Oy',points:m.ptsOy,ci:1}],{xMode:'year'});
+function roundedRect(c,x,y,w,h,r=12){
+ const rr=Math.max(0,Math.min(r,Math.min(w,h)/2));
+ c.beginPath();
+ c.moveTo(x+rr,y);
+ c.arcTo(x+w,y,x+w,y+h,rr);
+ c.arcTo(x+w,y+h,x,y+h,rr);
+ c.arcTo(x,y+h,x,y,rr);
+ c.arcTo(x,y,x+w,y,rr);
+ c.closePath();
 }
-function renderWithdrawalExitChart(){
- const years=Math.max(1,Number(q('withdrawYears')?.value||30)),annual=Number(state.forecast.base||0);
- const a=runWithdrawalModel(annual,years),b=runWithdrawalModel(annual,years,{}, {}, {includeExits:false});
- drawSeries(q('withdrawalExitChart'),[{name:'С Exit',points:a.ptsTotal,ci:2},{name:'Без Exit',points:b.ptsTotal,ci:0}],{xMode:'year'});
-}
-function renderInsights(){
- renderInsightsAllYears();
- const years=Math.max(1,Number(q('withdrawYears')?.value||30)),annual=Number(state.forecast.base||0);
- const base=runWithdrawalModel(annual,years),noExit=runWithdrawalModel(annual,years,{}, {}, {includeExits:false}),exits=exitDiagnostics(years,annual),invest=state.portfolios.filter(isInvestablePortfolio);
- const currentTotal=totalNow(),planCapital=planningTotal(),excluded=excludedTotal(),exitTotal=exitAssetsTotal();
- q('insightMetrics').innerHTML=`<div class="metric-card insight-metric"><div class="metric-label">Весь капитал</div><div class="metric">${money(currentTotal)}</div><div class="metric-sub">Все активы</div></div><div class="metric-card insight-metric"><div class="metric-label">В сценариях сейчас</div><div class="metric">${money(planCapital)}</div><div class="metric-sub">${currentTotal?((planCapital/currentTotal)*100).toFixed(1):0}% капитала</div></div><div class="metric-card insight-metric"><div class="metric-label">Exit-активы</div><div class="metric">${money(exitTotal)}</div><div class="metric-sub">${exits.length} актив(а)</div></div><div class="metric-card insight-metric"><div class="metric-label">Эффект Exit</div><div class="metric good">+${money(Math.max(0,base.cap-noExit.cap))}</div><div class="metric-sub">к конечному капиталу</div></div>`;
- q('insightExitList').innerHTML=exits.length?exits.map(e=>`<div class="insight-exit-card"><div class="insight-exit-head"><div><b>${esc(e.name)}</b><span>${e.owner==='oy'?'VM Private Capital Oy':'Personal'}</span></div><strong>${money(e.sale)}</strong></div><div class="insight-exit-flow"><span>${money(e.cost)}</span><i>× ${Number(e.multiple).toFixed(2)}</i><span>${money(e.sale)}</span><i>→</i><span>${esc(e.targetName)}</span></div><div class="insight-exit-meta"><span>Exit: <b>${e.date?formatDate(e.date):'не задан'}</b></span><span class="${e.inside?'good':'bad'}">${e.inside?'✓ внутри горизонта':'✕ за горизонтом'}</span></div><div class="insight-exit-meta"><span>После Exit: <b>${Number(e.targetRate).toFixed(1)}%/год</b></span><span>Прирост: <b>${money(Math.max(0,e.sale-e.cost))}</b></span></div></div>`).join(''):'<div class="history-empty"><b>Exit-активов нет.</b></div>';
- q('insightPortfolioRates').innerHTML=invest.length?`<div class="portfolio-rate-list">${invest.map(p=>{const rate=portfolioScenarioRate(p,annual),adj=portfolioReturnAdjustment(p);return `<div class="portfolio-rate-row"><div><b>${esc(p.name)}</b><span>${p.owner==='oy'?'Oy':'Personal'} · ${money(latestValue(p.id))}</span></div><div class="rate-pill">${rate.toFixed(1)}%</div><small>${adj>=0?'+':''}${adj.toFixed(1)} п.п. к базовому</small></div>`}).join('')}</div>`:'<div class="muted">Нет инвестируемых портфелей.</div>';
- q('insightAssetStructure').innerHTML=`<div class="structure-row"><span>Инвестируемые</span><b>${money(planCapital)}</b><div class="structure-track"><i style="width:${currentTotal?Math.min(100,planCapital/currentTotal*100):0}%"></i></div></div><div class="structure-row"><span>Вне расчёта</span><b>${money(excluded)}</b><div class="structure-track muted-track"><i style="width:${currentTotal?Math.min(100,excluded/currentTotal*100):0}%"></i></div></div><div class="structure-row"><span>Exit до продажи</span><b>${money(exitTotal)}</b><div class="structure-track exit-track"><i style="width:${currentTotal?Math.min(100,exitTotal/currentTotal*100):0}%"></i></div></div>`;
- q('insightPlanCheck').innerHTML=`<div class="plan-info-grid"><div><span>Горизонт</span><b>${years} лет · ${ageTextAfterYears(years)}</b></div><div><span>Базовая доходность</span><b>${annual.toFixed(1)}%</b></div><div><span>Капитал в конце</span><b>${money(base.cap)}</b></div><div><span>Без Exit</span><b>${money(noExit.cap)}</b></div><div><span>Exit поступления</span><b>${money(base.totalExitInflows||0)}</b></div><div><span>Налог Oy</span><b>${money(base.totalCompanyTax)}</b></div><div><span>Дивиденды gross</span><b>${money(base.spentFromOyGross)}</b></div><div><span>Налог дивидендов</span><b>${money(base.totalDividendTax)}</b></div></div>`;
- const exitPortfolios=state.portfolios.filter(isExitPortfolio);
- const ep=exitPortfolios.find(p=>/reno/i.test(String(p.name||'')))||exitPortfolios[0];
- if(ep){
-   const cost=exitCostBasis(ep);
-   const owner=ep.owner||'oy';
-   const taxable=ep.exitTaxable!==false;
-   const companyTaxRate=Math.max(0,Number(state.taxSettings.companyTaxRate||20))/100;
-   const bars=[];
-   for(let mult=1;mult<=6;mult++){
-     const gross=cost*mult;
-     const exitGain=Math.max(0,gross-cost);
-     const exitTax=(owner==='oy'&&taxable)?exitGain*companyTaxRate:0;
-     const net=gross-exitTax;
-     bars.push({label:'×'+mult,value:net,color:'#d4aa5a'});
-   }
-   if(q('exitSensitivityTitle'))q('exitSensitivityTitle').textContent=`${ep.name||'Exit'}: сумма после Exit при разных ×`;
-   if(q('exitSensitivityNote'))q('exitSensitivityNote').innerHTML=`База: <b>${money(cost)}</b>. Столбец показывает сумму после продажи${owner==='oy'&&taxable?` и ориентировочного налога Oy ${Number(state.taxSettings.companyTaxRate||20).toFixed(1)}% только с прибыли Exit`:''}. Формула: gross = база × множитель; налог считается только с положительной разницы gross − база. Это не общий капитал в конце горизонта.`;
-   drawBars(q('exitSensitivityChart'),bars);
- }else{
-   if(q('exitSensitivityTitle'))q('exitSensitivityTitle').textContent='Exit: результат при разных ×';
-   if(q('exitSensitivityNote'))q('exitSensitivityNote').textContent='Exit-активов нет.';
-   drawBars(q('exitSensitivityChart'),[]);
- }
- drawBars(q('taxByYearChart'),(base.companyTaxByYear||[]).map(y=>({label:String(y.year),value:y.tax,color:'#64cda1'}))); 
-}
-
-function renderAll(){syncAgeHorizon('withdrawYears','withdrawTargetAge','withdrawHorizonDate','years');q('todayText').innerHTML=`${new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} · <span class="age-tag">${ageTextByYear(new Date().getFullYear())}</span><div class="age-note">Возраст рассчитан по году рождения 1982. Без точной даты рождения возможна разница в 1 год до дня рождения.</div>`;q('currency').value=state.settings.currency||'EUR';q('fyStartDisplay').value=formatDate(state.settings.fyStart);
- const t=state.taxSettings;
- ['companyTaxRate','dividendThreshold','netAssetRate','shareMathValue','dividendTaxableBelow','dividendTaxableAbove','capitalTaxLow','capitalTaxHigh','capitalTaxThreshold'].forEach(id=>{if(q(id))q(id).value=t[id]});
- renderTaxPreview();renderDashboard();renderPortfolios();renderHistory();renderForecast();renderWithdrawalRules();renderInsights()}
-
-function renderCapitalChart(){
- const cutoff=localISODate(new Date(Date.now()-chartRange*86400000)),dates=allDates().filter(d=>chartRange>=99999||d>=cutoff),mode=q('capitalChartMode')?.value||'total';
- const tx=d=>new Date(d+'T12:00:00').getTime();
- if(mode==='split'){
-   const personal=dates.map(d=>({t:tx(d),v:ownerAtDate('personal',d)})),oy=dates.map(d=>({t:tx(d),v:ownerAtDate('oy',d)}));
-   drawSeries(q('capitalChart'),[{name:'Personal',points:personal,ci:0},{name:'VM Private Capital Oy',points:oy,ci:1}],{xMode:'date'});
- }else{
-   const pts=dates.map(d=>({t:tx(d),v:totalAtDate(d)}));drawSeries(q('capitalChart'),[{name:'Общий капитал',points:pts,ci:0}],{xMode:'date'});
- }
-}
-function renderForecastChart(){
- const f=state.forecast,years=Number(f.years);
- const series=[['Консервативный',+f.conservative],['Базовый',+f.base],['Оптимистичный',+f.optimistic]].map(([name,r],ci)=>{
-   const m=runGrowthModel(r,years);return{name,ci,points:m.ptsTotal};
- });
- drawSeries(q('forecastChart'),series,{xMode:'year'});
-}
-function chartColor(ci){return['#d7ab57','#64cda1','#7fb9e8','#ff7c8b'][ci%4]}
-function seriesXLabel(v,mode){
- if(mode==='date'){
-   const d=new Date(Number(v));if(!Number.isFinite(d.getTime()))return '';
-   return d.toLocaleDateString('ru-RU',{month:'short',year:'2-digit'}).replace('.','');
- }
- if(mode==='year')return Number(v)===0?'сейчас':`+${Math.round(Number(v))} г.`;
- return String(Math.round(Number(v)));
+function drawChartFrame(c,pad,plotW,plotH){
+ roundedRect(c,pad.l,pad.t,plotW,plotH,18);
+ const g=c.createLinearGradient(0,pad.t,0,pad.t+plotH);
+ g.addColorStop(0,'rgba(255,255,255,.022)');
+ g.addColorStop(1,'rgba(255,255,255,.008)');
+ c.fillStyle=g;
+ c.fill();
+ c.strokeStyle='rgba(212,170,90,.10)';
+ c.lineWidth=1;
+ c.stroke();
 }
 function drawSeries(canvas,series,options={}){
  if(!canvas)return;
- const env=setupCanvas(canvas,280);if(!env)return;const {c,w,h}=env;
+ const env=setupCanvas(canvas,250);if(!env)return;const {c,w,h}=env;
  const valid=(series||[]).map(s=>({...s,points:(s.points||[]).filter(p=>Number.isFinite(Number(p.t))&&Number.isFinite(Number(p.v)))})).filter(s=>s.points.length);
  const pts=valid.flatMap(s=>s.points);
  if(pts.length<2){c.fillStyle='#82909d';c.font='13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.fillText('Недостаточно данных для графика',18,32);return}
  const vals=pts.map(p=>Number(p.v)),xvals=pts.map(p=>Number(p.t)),rawMin=Math.min(...vals),rawMax=Math.max(...vals),positive=rawMin>=0;
  const includeZero=options.includeZero===true||(positive&&rawMin/rawMax<.32);
  const scale=niceScale(rawMin,rawMax,5,includeZero),xmin=Math.min(...xvals),xmax=Math.max(...xvals),xspan=Math.max(1,xmax-xmin);
- const legendRows=w<560&&valid.length>2?2:1,pad={l:w<520?60:76,r:24,t:22,b:42+legendRows*18},plotW=w-(w<520?60:76)-24,plotH=h-22-(42+legendRows*18);
+ const legendRows=w<560&&valid.length>2?2:1,pad={l:w<520?60:76,r:w<520?18:24,t:18,b:40+legendRows*18},plotW=w-pad.l-pad.r,plotH=h-pad.t-pad.b;
  c.font='11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
- scale.ticks.forEach(v=>{const y=pad.t+plotH*(1-(v-scale.min)/(scale.max-scale.min));c.strokeStyle='rgba(255,255,255,.058)';c.lineWidth=1;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();c.fillStyle='#7f8c99';c.textAlign='right';c.fillText(formatChartValue(v),pad.l-10,y+4)});
+ drawChartFrame(c,pad,plotW,plotH);
+ scale.ticks.forEach(v=>{const y=pad.t+plotH*(1-(v-scale.min)/(scale.max-scale.min));c.strokeStyle='rgba(255,255,255,.06)';c.lineWidth=1;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();c.fillStyle='#7f8c99';c.textAlign='right';c.fillText(formatChartValue(v),pad.l-10,y+4)});
  const targetXTicks=w<560?4:6,xStep=xspan/targetXTicks;
- for(let i=0;i<=targetXTicks;i++){const xv=xmin+xStep*i,x=pad.l+plotW*i/targetXTicks;c.strokeStyle='rgba(255,255,255,.025)';c.beginPath();c.moveTo(x,pad.t);c.lineTo(x,pad.t+plotH);c.stroke();c.fillStyle='#768592';c.textAlign=i===0?'left':i===targetXTicks?'right':'center';c.fillText(seriesXLabel(xv,options.xMode||'year'),x,pad.t+plotH+20)}
- valid.forEach((s,si)=>{const color=chartColor(s.ci??si),points=s.points;
-   if(valid.length===1&&options.fill!==false){c.beginPath();points.forEach((p,i)=>{const x=pad.l+plotW*(Number(p.t)-xmin)/xspan,y=pad.t+plotH*(1-(Number(p.v)-scale.min)/(scale.max-scale.min));i?c.lineTo(x,y):c.moveTo(x,y)});const last=points[points.length-1],lx=pad.l+plotW*(Number(last.t)-xmin)/xspan;c.lineTo(lx,pad.t+plotH);c.lineTo(pad.l,pad.t+plotH);c.closePath();const g=c.createLinearGradient(0,pad.t,0,pad.t+plotH);g.addColorStop(0,color+'2f');g.addColorStop(1,color+'03');c.fillStyle=g;c.fill()}
-   c.strokeStyle=color;c.lineWidth=2.5;c.beginPath();points.forEach((p,i)=>{const x=pad.l+plotW*(Number(p.t)-xmin)/xspan,y=pad.t+plotH*(1-(Number(p.v)-scale.min)/(scale.max-scale.min));i?c.lineTo(x,y):c.moveTo(x,y)});c.stroke();
-   const last=points[points.length-1],lx=pad.l+plotW*(Number(last.t)-xmin)/xspan,ly=pad.t+plotH*(1-(Number(last.v)-scale.min)/(scale.max-scale.min));c.fillStyle=color;c.beginPath();c.arc(lx,ly,3.2,0,Math.PI*2);c.fill();
+ for(let i=0;i<=targetXTicks;i++){const xv=xmin+xStep*i,x=pad.l+plotW*i/targetXTicks;c.strokeStyle='rgba(255,255,255,.028)';c.beginPath();c.moveTo(x,pad.t);c.lineTo(x,pad.t+plotH);c.stroke();c.fillStyle='#768592';c.textAlign=i===0?'left':i===targetXTicks?'right':'center';c.fillText(seriesXLabel(xv,options.xMode||'year'),x,pad.t+plotH+19)}
+ valid.forEach((s,si)=>{
+   const color=chartColor(s.ci??si),points=s.points;
+   if(options.fill!==false){
+     c.beginPath();points.forEach((p,i)=>{const x=pad.l+plotW*(Number(p.t)-xmin)/xspan,y=pad.t+plotH*(1-(Number(p.v)-scale.min)/(scale.max-scale.min));i?c.lineTo(x,y):c.moveTo(x,y)});
+     const last=points[points.length-1],first=points[0],lx=pad.l+plotW*(Number(last.t)-xmin)/xspan,fx=pad.l+plotW*(Number(first.t)-xmin)/xspan;
+     c.lineTo(lx,pad.t+plotH);c.lineTo(fx,pad.t+plotH);c.closePath();
+     const g=c.createLinearGradient(0,pad.t,0,pad.t+plotH);g.addColorStop(0,rgbaFromHex(color,.18));g.addColorStop(1,rgbaFromHex(color,.02));c.fillStyle=g;c.fill();
+   }
+   c.save();
+   c.strokeStyle=color;c.lineWidth=2.8;c.shadowColor=rgbaFromHex(color,.35);c.shadowBlur=10;c.beginPath();
+   points.forEach((p,i)=>{const x=pad.l+plotW*(Number(p.t)-xmin)/xspan,y=pad.t+plotH*(1-(Number(p.v)-scale.min)/(scale.max-scale.min));i?c.lineTo(x,y):c.moveTo(x,y)});
+   c.stroke();
+   c.restore();
+   const last=points[points.length-1],lx=pad.l+plotW*(Number(last.t)-xmin)/xspan,ly=pad.t+plotH*(1-(Number(last.v)-scale.min)/(scale.max-scale.min));
+   c.fillStyle='rgba(5,12,18,.96)';c.beginPath();c.arc(lx,ly,6,0,Math.PI*2);c.fill();
+   c.fillStyle=color;c.beginPath();c.arc(lx,ly,3.3,0,Math.PI*2);c.fill();
  });
- let lx=pad.l,ly=h-(legendRows===2?30:18);c.textAlign='left';valid.forEach((s,si)=>{const color=chartColor(s.ci??si),label=s.name||'',tw=c.measureText(label).width+34;if(lx+tw>w-pad.r&&lx>pad.l){lx=pad.l;ly+=16}c.strokeStyle=color;c.lineWidth=3;c.beginPath();c.moveTo(lx,ly-3);c.lineTo(lx+14,ly-3);c.stroke();c.fillStyle='#9aa6b2';c.fillText(label,lx+20,ly);lx+=tw+14});
+ let lx=pad.l,ly=h-(legendRows===2?28:16);c.textAlign='left';
+ valid.forEach((s,si)=>{const color=chartColor(s.ci??si),label=s.name||'',tw=c.measureText(label).width+34;if(lx+tw>w-pad.r&&lx>pad.l){lx=pad.l;ly+=16}c.fillStyle=color;c.beginPath();c.arc(lx+6,ly-5,4,0,Math.PI*2);c.fill();c.fillStyle='#9aa6b2';c.fillText(label,lx+18,ly);lx+=tw+12});
+}
+function drawBars(canvas,items,options={}){
+ if(!canvas)return;
+ const env=setupCanvas(canvas,240);if(!env)return;const {c,w,h}=env;
+ const arr=(items||[]).filter(x=>Number.isFinite(Number(x.value))).map((x,i)=>({...x,value:Number(x.value),_color:x.color||chartColor(i)}));
+ if(!arr.length){c.fillStyle='#82909d';c.font='13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.fillText('Недостаточно данных',18,32);return}
+ const values=arr.map(x=>x.value),hasNeg=Math.min(...values)<0,scale=niceScale(Math.min(...values),Math.max(...values),5,hasNeg);
+ const pad={l:w<520?58:72,r:18,t:18,b:46},plotW=w-pad.l-pad.r,plotH=h-pad.t-pad.b;
+ c.font='11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+ drawChartFrame(c,pad,plotW,plotH);
+ scale.ticks.forEach(v=>{const y=pad.t+plotH*(1-(v-scale.min)/(scale.max-scale.min));c.strokeStyle='rgba(255,255,255,.060)';c.lineWidth=1;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();c.fillStyle='#7f8c99';c.textAlign='right';c.fillText(formatChartValue(v),pad.l-10,y+4)});
+ const zeroY=pad.t+plotH*(1-(0-scale.min)/(scale.max-scale.min));if(hasNeg){c.strokeStyle='rgba(255,255,255,.16)';c.beginPath();c.moveTo(pad.l,zeroY);c.lineTo(w-pad.r,zeroY);c.stroke()}
+ const step=plotW/arr.length,barW=Math.max(5,Math.min(40,step*(arr.length>20?.64:.52))),labelEvery=Math.max(1,Math.ceil(arr.length/Math.max(6,Math.floor(plotW/78))));
+ arr.forEach((x,i)=>{
+   const yVal=pad.t+plotH*(1-(x.value-scale.min)/(scale.max-scale.min)),baseY=hasNeg?zeroY:pad.t+plotH,top=Math.min(yVal,baseY),bh=Math.max(2,Math.abs(baseY-yVal)),cx=pad.l+step*(i+.5),left=cx-barW/2;
+   const g=c.createLinearGradient(0,top,0,top+bh);g.addColorStop(0,rgbaFromHex(x._color,.98));g.addColorStop(1,rgbaFromHex(x._color,.65));
+   roundedRect(c,left,top,barW,bh,Math.min(8,barW/2));c.fillStyle=g;c.fill();
+   c.strokeStyle=rgbaFromHex(x._color,.24);c.lineWidth=1;c.stroke();
+   if(i%labelEvery===0||i===arr.length-1){c.fillStyle='#8996a2';c.textAlign='center';c.font='10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.fillText(String(x.label||''),cx,h-22)}
+ });
+ if(arr.length<=8){arr.forEach((x,i)=>{const yVal=pad.t+plotH*(1-(x.value-scale.min)/(scale.max-scale.min)),baseY=hasNeg?zeroY:pad.t+plotH,top=Math.min(yVal,baseY),cx=pad.l+step*(i+.5);c.fillStyle='#e9e3d8';c.font='10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.textAlign='center';c.fillText(formatChartValue(x.value),cx,Math.max(12,top-7))})}
+ else {const last=arr[arr.length-1],maxItem=arr.reduce((a,b)=>b.value>a.value?b:a,arr[0]);c.fillStyle='#7f8c99';c.font='10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.textAlign='left';c.fillText(`Последний: ${last.label} · ${formatChartValue(last.value)}   Максимум: ${maxItem.label} · ${formatChartValue(maxItem.value)}`,pad.l,h-6)}
 }
 function compact(v){const a=Math.abs(v);return a>=1e6?(v/1e6).toFixed(1)+'M':a>=1e3?(v/1e3).toFixed(0)+'k':Math.round(v).toString()}
 
