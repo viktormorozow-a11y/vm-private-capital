@@ -27,7 +27,7 @@ nav{display:flex;flex-direction:column;gap:6px}.nav-item{border:1px solid transp
 .metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:16px}.metric-card,.panel{border:1px solid var(--line);background:var(--panel);backdrop-filter:blur(18px);box-shadow:0 14px 45px rgba(0,0,0,.12)}.metric-card{border-radius:16px;padding:17px 18px;transition:transform .2s,border-color .2s}.metric-card:hover{transform:translateY(-2px);border-color:rgba(158,208,255,.18)}.metric-label{font-size:12px;color:var(--muted)}.metric{font-size:25px;font-weight:720;letter-spacing:-.035em;margin-top:9px}.metric-sub{font-size:12px;color:var(--muted);margin-top:6px}.good{color:var(--good)!important}.bad{color:var(--bad)!important}.reveal{animation:rise .55s ease both}.delay1{animation-delay:.08s}.delay2{animation-delay:.16s}.delay3{animation-delay:.24s}@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .grid.two{display:grid;grid-template-columns:1.55fr 1fr;gap:16px;margin-bottom:16px}.panel{border-radius:18px;padding:19px;margin-bottom:16px}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}.panel h2{font-size:18px;letter-spacing:-.02em;margin:4px 0 0;font-weight:680}.chart-panel{overflow:hidden}
 .segmented{padding:3px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;display:flex}.seg{border:0;background:transparent;color:#7f8a9d;border-radius:7px;padding:5px 8px;font-size:11px;cursor:pointer}.seg.active{background:rgba(158,208,255,.12);color:var(--accent)}
-canvas{width:100%;display:block}.chart-panel{position:relative;border:1px solid rgba(212,170,90,.16);background:linear-gradient(180deg,rgba(11,23,34,.98),rgba(7,16,24,.96));box-shadow:inset 0 1px rgba(255,255,255,.03),0 18px 42px rgba(0,0,0,.18)}.chart-panel .panel-head{margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(212,170,90,.10)}.chart-panel::before{content:"";position:absolute;left:18px;right:18px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(224,182,95,.32),transparent);opacity:.9}.chart-panel canvas{border-radius:16px}.allocation-list{display:grid;gap:13px}.allocation-item{display:grid;grid-template-columns:1fr auto;gap:7px}.alloc-name{font-size:13px}.alloc-value{font-size:12px;color:#b6c0cf}.alloc-track{grid-column:1/-1;height:7px;border-radius:999px;background:rgba(255,255,255,.045);overflow:hidden}.alloc-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#6fb7ff,#70e0c2);transform-origin:left;animation:barGrow .8s ease both}@keyframes barGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+canvas{width:100%;display:block}.chart-panel{border:1px solid rgba(212,170,90,.14);background:linear-gradient(180deg,rgba(10,21,31,.96),rgba(7,16,24,.94));box-shadow:inset 0 1px rgba(255,255,255,.02),0 12px 32px rgba(0,0,0,.14)}.chart-panel .panel-head{margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(212,170,90,.08)}.chart-panel canvas{border-radius:12px}.allocation-list{display:grid;gap:13px}.allocation-item{display:grid;grid-template-columns:1fr auto;gap:7px}.alloc-name{font-size:13px}.alloc-value{font-size:12px;color:#b6c0cf}.alloc-track{grid-column:1/-1;height:7px;border-radius:999px;background:rgba(255,255,255,.045);overflow:hidden}.alloc-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#6fb7ff,#70e0c2);transform-origin:left;animation:barGrow .8s ease both}@keyframes barGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 .table-controls{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.sort-label{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted)}select,input{background:#0c121d;color:var(--text);border:1px solid var(--line2);border-radius:10px;padding:9px 10px;outline:none;transition:border .15s,box-shadow .15s}select:focus,input:focus{border-color:rgba(158,208,255,.5);box-shadow:0 0 0 3px rgba(111,183,255,.08)}
 .table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:12px 9px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left}th{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6f7b8f;font-weight:700}td{font-size:13px}.table-actions{display:flex;justify-content:flex-end;gap:4px}.mini-action{border:1px solid var(--line);background:transparent;color:#8995a7;border-radius:8px;padding:5px 8px;cursor:pointer}.mini-action:hover{color:var(--text);border-color:var(--line2)}
 .portfolio-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.port-card{position:relative;overflow:hidden;border:1px solid var(--line);background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.012));border-radius:16px;padding:17px;transition:.2s}.port-card:hover{transform:translateY(-2px);border-color:rgba(158,208,255,.20)}.port-card:before{content:"";position:absolute;width:100px;height:100px;border-radius:50%;background:rgba(111,183,255,.06);right:-25px;top:-35px}.port-type{font-size:10px;letter-spacing:.12em;color:#72809a}.port-name{font-weight:680;margin-top:5px}.port-value{font-size:25px;font-weight:730;letter-spacing:-.04em;margin:18px 0 6px}.port-actions{display:flex;gap:7px;margin-top:14px;flex-wrap:wrap}
@@ -810,6 +810,157 @@ body.auth-locked{overflow:hidden}
 .nordea-total b{font-size:11px}
 .nordea-total span{font-size:8.5px;color:var(--muted)}
 
+
+
+/* =========================================================
+   STEP 2 — visual polish only. No auth/calculation changes.
+   ========================================================= */
+.chart-panel{
+  border-radius:16px;
+  padding:16px 17px 14px;
+  background:
+    radial-gradient(circle at 88% -20%,rgba(207,164,83,.055),transparent 38%),
+    linear-gradient(180deg,rgba(10,21,31,.975),rgba(7,15,23,.955));
+  border-color:rgba(216,176,98,.16);
+  box-shadow:inset 0 1px rgba(255,255,255,.025),0 14px 34px rgba(0,0,0,.15);
+}
+.chart-panel .panel-head{
+  margin-bottom:10px;
+  padding-bottom:10px;
+  border-bottom:1px solid rgba(216,176,98,.075);
+}
+.chart-panel .eyebrow{
+  color:#a98548;
+  letter-spacing:.15em;
+  font-size:9px;
+}
+.chart-panel h2{
+  font-size:16px;
+  font-weight:690;
+  letter-spacing:-.018em;
+  color:#f2eee6;
+}
+.chart-panel .muted.small{
+  color:#7f8d98;
+  font-size:10.5px;
+  line-height:1.45;
+}
+.chart-panel canvas{
+  border-radius:12px;
+  background:linear-gradient(180deg,rgba(255,255,255,.008),rgba(255,255,255,0));
+}
+.chart-tools{
+  gap:7px;
+}
+.chart-tools select{
+  min-height:30px;
+  padding:5px 9px;
+  border-radius:9px;
+  border-color:rgba(255,255,255,.09);
+  background:#09131d;
+  color:#c9d0d5;
+}
+.segmented{
+  padding:2px;
+  border-radius:9px;
+  border-color:rgba(255,255,255,.08);
+  background:rgba(255,255,255,.018);
+}
+.seg{
+  min-width:34px;
+  padding:5px 8px;
+  border-radius:7px;
+  font-size:10px;
+  color:#768490;
+}
+.seg.active{
+  color:#e1bb72;
+  background:linear-gradient(180deg,rgba(212,170,90,.13),rgba(212,170,90,.07));
+  box-shadow:inset 0 0 0 1px rgba(212,170,90,.13);
+}
+
+/* Make analytical graph layouts more compact and balanced on desktop */
+.insight-grid.two-col{
+  gap:12px;
+}
+.insight-grid.two-col > .chart-panel{
+  min-width:0;
+}
+
+/* Slightly tighter panel rhythm throughout analytics */
+#view-insights .panel,
+#view-forecast .panel,
+#view-withdrawals .chart-panel{
+  margin-bottom:12px;
+}
+
+/* Professional metric treatment without touching values */
+#view-insights .metric-card,
+#view-forecast .metric-card,
+#view-withdrawals .metric-card{
+  border-color:rgba(255,255,255,.07);
+  background:linear-gradient(155deg,rgba(13,25,36,.88),rgba(8,17,25,.88));
+  box-shadow:inset 0 1px rgba(255,255,255,.02),0 10px 26px rgba(0,0,0,.10);
+}
+
+/* Cleaner visual hierarchy for chart-heavy sections */
+#view-insights .panel-head h2,
+#view-forecast .panel-head h2,
+#view-withdrawals .chart-panel .panel-head h2{
+  max-width:760px;
+}
+
+@media(max-width:930px){
+  .chart-panel{padding:14px 13px 12px}
+  .chart-panel h2{font-size:15px}
+}
+@media(max-width:650px){
+  .chart-panel{border-radius:14px;padding:12px 10px 10px}
+  .chart-panel .panel-head{gap:8px}
+  .chart-tools{width:100%;align-items:stretch}
+  .chart-tools select{flex:1}
+  .seg{min-width:31px;padding:5px 6px}
+}
+
+
+/* STEP 4 — compact dashboard trend chart only */
+#view-dashboard > .grid.two{
+  grid-template-columns:minmax(0,1.08fr) minmax(280px,.92fr);
+  gap:12px;
+}
+#view-dashboard > .grid.two > .chart-panel{
+  padding:12px 14px 10px;
+  margin-bottom:12px;
+}
+#view-dashboard > .grid.two > .chart-panel .panel-head{
+  margin-bottom:6px;
+  padding-bottom:7px;
+}
+#view-dashboard > .grid.two > .chart-panel h2{
+  font-size:15px;
+}
+#capitalChart{
+  max-height:155px;
+}
+@media(max-width:1100px){
+  #view-dashboard > .grid.two{grid-template-columns:minmax(0,1fr) minmax(250px,.85fr)}
+}
+@media(max-width:930px){
+  #view-dashboard > .grid.two{grid-template-columns:1fr}
+  #capitalChart{max-height:150px}
+}
+</style>
+<style id="calcTooltipStyles">
+.calc-tooltip-target{cursor:help!important}
+#calcTooltip{position:fixed;z-index:99999;display:none;pointer-events:none;width:min(390px,calc(100vw - 24px));padding:13px 14px;border-radius:13px;border:1px solid rgba(212,170,90,.25);background:rgba(5,13,20,.97);color:#eef2f3;box-shadow:0 18px 55px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.035);backdrop-filter:blur(16px);font-size:11px;line-height:1.48}
+#calcTooltip .ct-title{font-size:12px;font-weight:760;color:#f2d79e;margin-bottom:7px}
+#calcTooltip .ct-row{display:grid;grid-template-columns:82px 1fr;gap:8px;padding:4px 0;border-top:1px solid rgba(255,255,255,.055)}
+#calcTooltip .ct-row:first-of-type{border-top:0}
+#calcTooltip .ct-key{color:#8393a1}
+#calcTooltip .ct-val{color:#d8e0e6;overflow-wrap:anywhere}
+#calcTooltip .ct-formula{margin-top:7px;padding:8px 9px;border-radius:9px;background:rgba(212,170,90,.065);border:1px solid rgba(212,170,90,.12);color:#d9c8a6}
+#calcTooltip .ct-foot{margin-top:7px;color:#7d8b96;font-size:10px}
+@media(max-width:650px){#calcTooltip{font-size:10px;width:min(350px,calc(100vw - 16px));padding:11px 12px}}
 </style>
 </head>
 
@@ -971,7 +1122,7 @@ body.auth-locked{overflow:hidden}
             </div>
             </div>
           </div>
-          <canvas id="capitalChart" height="225"></canvas>
+          <canvas id="capitalChart" height="155"></canvas>
         </div>
         <div class="panel">
           <div class="panel-head"><div><div class="eyebrow">ALLOCATION</div><h2>Структура капитала</h2></div></div>
@@ -2933,94 +3084,126 @@ function formatChartValue(v){
  if(a>=1e3)return sign+(a/1e3).toFixed(a>=100e3?0:1)+' тыс.';
  return sign+Math.round(a).toLocaleString('ru-RU');
 }
-function setupCanvas(canvas,fallbackH=260){
+function setupCanvas(canvas,fallbackH=300){
  const dpr=chartDpr(),rect=canvas.getBoundingClientRect(),w=Math.max(260,Math.round(rect.width||canvas.clientWidth||700)),h=Number(canvas.getAttribute('height'))||fallbackH;
  canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);canvas.style.height=h+'px';canvas.style.width='100%';
  const c=canvas.getContext('2d');if(!c)return null;c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);c.lineCap='round';c.lineJoin='round';return{c,w,h};
 }
-function rgbaFromHex(hex,alpha=.16){
- const safe=String(hex||'#d4aa5a').replace('#','');
- const full=safe.length===3?safe.split('').map(x=>x+x).join(''):safe.padEnd(6,'0').slice(0,6);
- const n=parseInt(full,16);
- return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${alpha})`;
+function drawBars(canvas,items,options={}){
+ if(!canvas)return;
+ const env=setupCanvas(canvas,300);if(!env)return;const {c,w,h}=env;
+ const arr=(items||[]).filter(x=>Number.isFinite(Number(x.value))).map(x=>({...x,value:Number(x.value)}));
+ if(!arr.length){c.fillStyle='#82909d';c.font='13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.fillText('Недостаточно данных',18,32);return}
+ const values=arr.map(x=>x.value),hasNeg=Math.min(...values)<0,scale=niceScale(Math.min(...values),Math.max(...values),5,hasNeg);
+ const pad={l:w<520?58:72,r:18,t:24,b:52},plotW=w-pad.l-pad.r,plotH=h-pad.t-pad.b;
+ c.font='11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+ scale.ticks.forEach(v=>{const y=pad.t+plotH*(1-(v-scale.min)/(scale.max-scale.min));c.strokeStyle='rgba(255,255,255,.060)';c.lineWidth=1;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();c.fillStyle='#7f8c99';c.textAlign='right';c.fillText(formatChartValue(v),pad.l-10,y+4)});
+ const zeroY=pad.t+plotH*(1-(0-scale.min)/(scale.max-scale.min));if(hasNeg){c.strokeStyle='rgba(255,255,255,.16)';c.beginPath();c.moveTo(pad.l,zeroY);c.lineTo(w-pad.r,zeroY);c.stroke()}
+ const step=plotW/arr.length,barW=Math.max(3,Math.min(48,step*(arr.length>20?.68:.56))),labelEvery=Math.max(1,Math.ceil(arr.length/Math.max(6,Math.floor(plotW/70))));
+ arr.forEach((x,i)=>{const yVal=pad.t+plotH*(1-(x.value-scale.min)/(scale.max-scale.min)),baseY=hasNeg?zeroY:pad.t+plotH,top=Math.min(yVal,baseY),bh=Math.max(1,Math.abs(baseY-yVal)),cx=pad.l+step*(i+.5);
+   c.fillStyle=x.color||'#d4aa5a';c.globalAlpha=.88;c.fillRect(cx-barW/2,top,barW,bh);c.globalAlpha=1;
+   if(i%labelEvery===0||i===arr.length-1){c.fillStyle='#8996a2';c.textAlign='center';c.font='10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.fillText(String(x.label||''),cx,h-26)}
+   if(arr.length<=10){c.fillStyle='#e9e3d8';c.font='10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.textAlign='center';c.fillText(formatChartValue(x.value),cx,Math.max(13,top-7))}
+ });
+ c.textAlign='left';
+ if(arr.length>10){const last=arr[arr.length-1],maxItem=arr.reduce((a,b)=>b.value>a.value?b:a,arr[0]);c.fillStyle='#7f8c99';c.font='10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.fillText(`Последний: ${last.label} · ${formatChartValue(last.value)}   Максимум: ${maxItem.label} · ${formatChartValue(maxItem.value)}`,pad.l,h-8)}
 }
-function roundedRect(c,x,y,w,h,r=12){
- const rr=Math.max(0,Math.min(r,Math.min(w,h)/2));
- c.beginPath();
- c.moveTo(x+rr,y);
- c.arcTo(x+w,y,x+w,y+h,rr);
- c.arcTo(x+w,y+h,x,y+h,rr);
- c.arcTo(x,y+h,x,y,rr);
- c.arcTo(x,y,x+w,y,rr);
- c.closePath();
+function renderForecastOwnerChart(){
+ const years=Math.max(1,Number(state.forecast.years||20)),m=runGrowthModel(Number(state.forecast.base||0),years);
+ drawSeries(q('forecastOwnerChart'),[{name:'Personal',points:m.ptsPersonal,ci:0},{name:'VM Private Capital Oy',points:m.ptsOy,ci:1}],{xMode:'year'});
 }
-function drawChartFrame(c,pad,plotW,plotH){
- roundedRect(c,pad.l,pad.t,plotW,plotH,18);
- const g=c.createLinearGradient(0,pad.t,0,pad.t+plotH);
- g.addColorStop(0,'rgba(255,255,255,.022)');
- g.addColorStop(1,'rgba(255,255,255,.008)');
- c.fillStyle=g;
- c.fill();
- c.strokeStyle='rgba(212,170,90,.10)';
- c.lineWidth=1;
- c.stroke();
+function renderWithdrawalExitChart(){
+ const years=Math.max(1,Number(q('withdrawYears')?.value||30)),annual=Number(state.forecast.base||0);
+ const a=runWithdrawalModel(annual,years),b=runWithdrawalModel(annual,years,{}, {}, {includeExits:false});
+ drawSeries(q('withdrawalExitChart'),[{name:'С Exit',points:a.ptsTotal,ci:2},{name:'Без Exit',points:b.ptsTotal,ci:0}],{xMode:'year'});
+}
+function renderInsights(){
+ renderInsightsAllYears();
+ const years=Math.max(1,Number(q('withdrawYears')?.value||30)),annual=Number(state.forecast.base||0);
+ const base=runWithdrawalModel(annual,years),noExit=runWithdrawalModel(annual,years,{}, {}, {includeExits:false}),exits=exitDiagnostics(years,annual),invest=state.portfolios.filter(isInvestablePortfolio);
+ const currentTotal=totalNow(),planCapital=planningTotal(),excluded=excludedTotal(),exitTotal=exitAssetsTotal();
+ q('insightMetrics').innerHTML=`<div class="metric-card insight-metric"><div class="metric-label">Весь капитал</div><div class="metric">${money(currentTotal)}</div><div class="metric-sub">Все активы</div></div><div class="metric-card insight-metric"><div class="metric-label">В сценариях сейчас</div><div class="metric">${money(planCapital)}</div><div class="metric-sub">${currentTotal?((planCapital/currentTotal)*100).toFixed(1):0}% капитала</div></div><div class="metric-card insight-metric"><div class="metric-label">Exit-активы</div><div class="metric">${money(exitTotal)}</div><div class="metric-sub">${exits.length} актив(а)</div></div><div class="metric-card insight-metric"><div class="metric-label">Эффект Exit</div><div class="metric good">+${money(Math.max(0,base.cap-noExit.cap))}</div><div class="metric-sub">к конечному капиталу</div></div>`;
+ q('insightExitList').innerHTML=exits.length?exits.map(e=>`<div class="insight-exit-card"><div class="insight-exit-head"><div><b>${esc(e.name)}</b><span>${e.owner==='oy'?'VM Private Capital Oy':'Personal'}</span></div><strong>${money(e.sale)}</strong></div><div class="insight-exit-flow"><span>${money(e.cost)}</span><i>× ${Number(e.multiple).toFixed(2)}</i><span>${money(e.sale)}</span><i>→</i><span>${esc(e.targetName)}</span></div><div class="insight-exit-meta"><span>Exit: <b>${e.date?formatDate(e.date):'не задан'}</b></span><span class="${e.inside?'good':'bad'}">${e.inside?'✓ внутри горизонта':'✕ за горизонтом'}</span></div><div class="insight-exit-meta"><span>После Exit: <b>${Number(e.targetRate).toFixed(1)}%/год</b></span><span>Прирост: <b>${money(Math.max(0,e.sale-e.cost))}</b></span></div></div>`).join(''):'<div class="history-empty"><b>Exit-активов нет.</b></div>';
+ q('insightPortfolioRates').innerHTML=invest.length?`<div class="portfolio-rate-list">${invest.map(p=>{const rate=portfolioScenarioRate(p,annual),adj=portfolioReturnAdjustment(p);return `<div class="portfolio-rate-row"><div><b>${esc(p.name)}</b><span>${p.owner==='oy'?'Oy':'Personal'} · ${money(latestValue(p.id))}</span></div><div class="rate-pill">${rate.toFixed(1)}%</div><small>${adj>=0?'+':''}${adj.toFixed(1)} п.п. к базовому</small></div>`}).join('')}</div>`:'<div class="muted">Нет инвестируемых портфелей.</div>';
+ q('insightAssetStructure').innerHTML=`<div class="structure-row"><span>Инвестируемые</span><b>${money(planCapital)}</b><div class="structure-track"><i style="width:${currentTotal?Math.min(100,planCapital/currentTotal*100):0}%"></i></div></div><div class="structure-row"><span>Вне расчёта</span><b>${money(excluded)}</b><div class="structure-track muted-track"><i style="width:${currentTotal?Math.min(100,excluded/currentTotal*100):0}%"></i></div></div><div class="structure-row"><span>Exit до продажи</span><b>${money(exitTotal)}</b><div class="structure-track exit-track"><i style="width:${currentTotal?Math.min(100,exitTotal/currentTotal*100):0}%"></i></div></div>`;
+ q('insightPlanCheck').innerHTML=`<div class="plan-info-grid"><div><span>Горизонт</span><b>${years} лет · ${ageTextAfterYears(years)}</b></div><div><span>Базовая доходность</span><b>${annual.toFixed(1)}%</b></div><div><span>Капитал в конце</span><b>${money(base.cap)}</b></div><div><span>Без Exit</span><b>${money(noExit.cap)}</b></div><div><span>Exit поступления</span><b>${money(base.totalExitInflows||0)}</b></div><div><span>Налог Oy</span><b>${money(base.totalCompanyTax)}</b></div><div><span>Дивиденды gross</span><b>${money(base.spentFromOyGross)}</b></div><div><span>Налог дивидендов</span><b>${money(base.totalDividendTax)}</b></div></div>`;
+ const exitPortfolios=state.portfolios.filter(isExitPortfolio);
+ const ep=exitPortfolios.find(p=>/reno/i.test(String(p.name||'')))||exitPortfolios[0];
+ if(ep){
+   const cost=exitCostBasis(ep);
+   const owner=ep.owner||'oy';
+   const taxable=ep.exitTaxable!==false;
+   const companyTaxRate=Math.max(0,Number(state.taxSettings.companyTaxRate||20))/100;
+   const bars=[];
+   for(let mult=1;mult<=6;mult++){
+     const gross=cost*mult;
+     const exitGain=Math.max(0,gross-cost);
+     const exitTax=(owner==='oy'&&taxable)?exitGain*companyTaxRate:0;
+     const net=gross-exitTax;
+     bars.push({label:'×'+mult,value:net,color:'#d4aa5a'});
+   }
+   if(q('exitSensitivityTitle'))q('exitSensitivityTitle').textContent=`${ep.name||'Exit'}: сумма после Exit при разных ×`;
+   if(q('exitSensitivityNote'))q('exitSensitivityNote').innerHTML=`База: <b>${money(cost)}</b>. Столбец показывает сумму после продажи${owner==='oy'&&taxable?` и ориентировочного налога Oy ${Number(state.taxSettings.companyTaxRate||20).toFixed(1)}% только с прибыли Exit`:''}. Формула: gross = база × множитель; налог считается только с положительной разницы gross − база. Это не общий капитал в конце горизонта.`;
+   drawBars(q('exitSensitivityChart'),bars);
+ }else{
+   if(q('exitSensitivityTitle'))q('exitSensitivityTitle').textContent='Exit: результат при разных ×';
+   if(q('exitSensitivityNote'))q('exitSensitivityNote').textContent='Exit-активов нет.';
+   drawBars(q('exitSensitivityChart'),[]);
+ }
+ drawBars(q('taxByYearChart'),(base.companyTaxByYear||[]).map(y=>({label:String(y.year),value:y.tax,color:'#64cda1'}))); 
+}
+
+function renderAll(){syncAgeHorizon('withdrawYears','withdrawTargetAge','withdrawHorizonDate','years');q('todayText').innerHTML=`${new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} · <span class="age-tag">${ageTextByYear(new Date().getFullYear())}</span><div class="age-note">Возраст рассчитан по году рождения 1982. Без точной даты рождения возможна разница в 1 год до дня рождения.</div>`;q('currency').value=state.settings.currency||'EUR';q('fyStartDisplay').value=formatDate(state.settings.fyStart);
+ const t=state.taxSettings;
+ ['companyTaxRate','dividendThreshold','netAssetRate','shareMathValue','dividendTaxableBelow','dividendTaxableAbove','capitalTaxLow','capitalTaxHigh','capitalTaxThreshold'].forEach(id=>{if(q(id))q(id).value=t[id]});
+ renderTaxPreview();renderDashboard();renderPortfolios();renderHistory();renderForecast();renderWithdrawalRules();renderInsights()}
+
+function renderCapitalChart(){
+ const cutoff=localISODate(new Date(Date.now()-chartRange*86400000)),dates=allDates().filter(d=>chartRange>=99999||d>=cutoff),mode=q('capitalChartMode')?.value||'total';
+ const tx=d=>new Date(d+'T12:00:00').getTime();
+ if(mode==='split'){
+   const personal=dates.map(d=>({t:tx(d),v:ownerAtDate('personal',d)})),oy=dates.map(d=>({t:tx(d),v:ownerAtDate('oy',d)}));
+   drawSeries(q('capitalChart'),[{name:'Personal',points:personal,ci:0},{name:'VM Private Capital Oy',points:oy,ci:1}],{xMode:'date'});
+ }else{
+   const pts=dates.map(d=>({t:tx(d),v:totalAtDate(d)}));drawSeries(q('capitalChart'),[{name:'Общий капитал',points:pts,ci:0}],{xMode:'date'});
+ }
+}
+function renderForecastChart(){
+ const f=state.forecast,years=Number(f.years);
+ const series=[['Консервативный',+f.conservative],['Базовый',+f.base],['Оптимистичный',+f.optimistic]].map(([name,r],ci)=>{
+   const m=runGrowthModel(r,years);return{name,ci,points:m.ptsTotal};
+ });
+ drawSeries(q('forecastChart'),series,{xMode:'year'});
+}
+function chartColor(ci){return['#d7ab57','#64cda1','#7fb9e8','#ff7c8b'][ci%4]}
+function seriesXLabel(v,mode){
+ if(mode==='date'){
+   const d=new Date(Number(v));if(!Number.isFinite(d.getTime()))return '';
+   return d.toLocaleDateString('ru-RU',{month:'short',year:'2-digit'}).replace('.','');
+ }
+ if(mode==='year')return Number(v)===0?'сейчас':`+${Math.round(Number(v))} г.`;
+ return String(Math.round(Number(v)));
 }
 function drawSeries(canvas,series,options={}){
  if(!canvas)return;
- const env=setupCanvas(canvas,250);if(!env)return;const {c,w,h}=env;
+ const env=setupCanvas(canvas,280);if(!env)return;const {c,w,h}=env;
  const valid=(series||[]).map(s=>({...s,points:(s.points||[]).filter(p=>Number.isFinite(Number(p.t))&&Number.isFinite(Number(p.v)))})).filter(s=>s.points.length);
  const pts=valid.flatMap(s=>s.points);
  if(pts.length<2){c.fillStyle='#82909d';c.font='13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.fillText('Недостаточно данных для графика',18,32);return}
  const vals=pts.map(p=>Number(p.v)),xvals=pts.map(p=>Number(p.t)),rawMin=Math.min(...vals),rawMax=Math.max(...vals),positive=rawMin>=0;
  const includeZero=options.includeZero===true||(positive&&rawMin/rawMax<.32);
  const scale=niceScale(rawMin,rawMax,5,includeZero),xmin=Math.min(...xvals),xmax=Math.max(...xvals),xspan=Math.max(1,xmax-xmin);
- const legendRows=w<560&&valid.length>2?2:1,pad={l:w<520?60:76,r:w<520?18:24,t:18,b:40+legendRows*18},plotW=w-pad.l-pad.r,plotH=h-pad.t-pad.b;
+ const legendRows=w<560&&valid.length>2?2:1,pad={l:w<520?60:76,r:24,t:22,b:42+legendRows*18},plotW=w-(w<520?60:76)-24,plotH=h-22-(42+legendRows*18);
  c.font='11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
- drawChartFrame(c,pad,plotW,plotH);
- scale.ticks.forEach(v=>{const y=pad.t+plotH*(1-(v-scale.min)/(scale.max-scale.min));c.strokeStyle='rgba(255,255,255,.06)';c.lineWidth=1;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();c.fillStyle='#7f8c99';c.textAlign='right';c.fillText(formatChartValue(v),pad.l-10,y+4)});
+ scale.ticks.forEach(v=>{const y=pad.t+plotH*(1-(v-scale.min)/(scale.max-scale.min));c.strokeStyle='rgba(255,255,255,.058)';c.lineWidth=1;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();c.fillStyle='#7f8c99';c.textAlign='right';c.fillText(formatChartValue(v),pad.l-10,y+4)});
  const targetXTicks=w<560?4:6,xStep=xspan/targetXTicks;
- for(let i=0;i<=targetXTicks;i++){const xv=xmin+xStep*i,x=pad.l+plotW*i/targetXTicks;c.strokeStyle='rgba(255,255,255,.028)';c.beginPath();c.moveTo(x,pad.t);c.lineTo(x,pad.t+plotH);c.stroke();c.fillStyle='#768592';c.textAlign=i===0?'left':i===targetXTicks?'right':'center';c.fillText(seriesXLabel(xv,options.xMode||'year'),x,pad.t+plotH+19)}
- valid.forEach((s,si)=>{
-   const color=chartColor(s.ci??si),points=s.points;
-   if(options.fill!==false){
-     c.beginPath();points.forEach((p,i)=>{const x=pad.l+plotW*(Number(p.t)-xmin)/xspan,y=pad.t+plotH*(1-(Number(p.v)-scale.min)/(scale.max-scale.min));i?c.lineTo(x,y):c.moveTo(x,y)});
-     const last=points[points.length-1],first=points[0],lx=pad.l+plotW*(Number(last.t)-xmin)/xspan,fx=pad.l+plotW*(Number(first.t)-xmin)/xspan;
-     c.lineTo(lx,pad.t+plotH);c.lineTo(fx,pad.t+plotH);c.closePath();
-     const g=c.createLinearGradient(0,pad.t,0,pad.t+plotH);g.addColorStop(0,rgbaFromHex(color,.18));g.addColorStop(1,rgbaFromHex(color,.02));c.fillStyle=g;c.fill();
-   }
-   c.save();
-   c.strokeStyle=color;c.lineWidth=2.8;c.shadowColor=rgbaFromHex(color,.35);c.shadowBlur=10;c.beginPath();
-   points.forEach((p,i)=>{const x=pad.l+plotW*(Number(p.t)-xmin)/xspan,y=pad.t+plotH*(1-(Number(p.v)-scale.min)/(scale.max-scale.min));i?c.lineTo(x,y):c.moveTo(x,y)});
-   c.stroke();
-   c.restore();
-   const last=points[points.length-1],lx=pad.l+plotW*(Number(last.t)-xmin)/xspan,ly=pad.t+plotH*(1-(Number(last.v)-scale.min)/(scale.max-scale.min));
-   c.fillStyle='rgba(5,12,18,.96)';c.beginPath();c.arc(lx,ly,6,0,Math.PI*2);c.fill();
-   c.fillStyle=color;c.beginPath();c.arc(lx,ly,3.3,0,Math.PI*2);c.fill();
+ for(let i=0;i<=targetXTicks;i++){const xv=xmin+xStep*i,x=pad.l+plotW*i/targetXTicks;c.strokeStyle='rgba(255,255,255,.025)';c.beginPath();c.moveTo(x,pad.t);c.lineTo(x,pad.t+plotH);c.stroke();c.fillStyle='#768592';c.textAlign=i===0?'left':i===targetXTicks?'right':'center';c.fillText(seriesXLabel(xv,options.xMode||'year'),x,pad.t+plotH+20)}
+ valid.forEach((s,si)=>{const color=chartColor(s.ci??si),points=s.points;
+   if(valid.length===1&&options.fill!==false){c.beginPath();points.forEach((p,i)=>{const x=pad.l+plotW*(Number(p.t)-xmin)/xspan,y=pad.t+plotH*(1-(Number(p.v)-scale.min)/(scale.max-scale.min));i?c.lineTo(x,y):c.moveTo(x,y)});const last=points[points.length-1],lx=pad.l+plotW*(Number(last.t)-xmin)/xspan;c.lineTo(lx,pad.t+plotH);c.lineTo(pad.l,pad.t+plotH);c.closePath();const g=c.createLinearGradient(0,pad.t,0,pad.t+plotH);g.addColorStop(0,color+'2f');g.addColorStop(1,color+'03');c.fillStyle=g;c.fill()}
+   c.strokeStyle=color;c.lineWidth=2.5;c.beginPath();points.forEach((p,i)=>{const x=pad.l+plotW*(Number(p.t)-xmin)/xspan,y=pad.t+plotH*(1-(Number(p.v)-scale.min)/(scale.max-scale.min));i?c.lineTo(x,y):c.moveTo(x,y)});c.stroke();
+   const last=points[points.length-1],lx=pad.l+plotW*(Number(last.t)-xmin)/xspan,ly=pad.t+plotH*(1-(Number(last.v)-scale.min)/(scale.max-scale.min));c.fillStyle=color;c.beginPath();c.arc(lx,ly,3.2,0,Math.PI*2);c.fill();
  });
- let lx=pad.l,ly=h-(legendRows===2?28:16);c.textAlign='left';
- valid.forEach((s,si)=>{const color=chartColor(s.ci??si),label=s.name||'',tw=c.measureText(label).width+34;if(lx+tw>w-pad.r&&lx>pad.l){lx=pad.l;ly+=16}c.fillStyle=color;c.beginPath();c.arc(lx+6,ly-5,4,0,Math.PI*2);c.fill();c.fillStyle='#9aa6b2';c.fillText(label,lx+18,ly);lx+=tw+12});
-}
-function drawBars(canvas,items,options={}){
- if(!canvas)return;
- const env=setupCanvas(canvas,240);if(!env)return;const {c,w,h}=env;
- const arr=(items||[]).filter(x=>Number.isFinite(Number(x.value))).map((x,i)=>({...x,value:Number(x.value),_color:x.color||chartColor(i)}));
- if(!arr.length){c.fillStyle='#82909d';c.font='13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.fillText('Недостаточно данных',18,32);return}
- const values=arr.map(x=>x.value),hasNeg=Math.min(...values)<0,scale=niceScale(Math.min(...values),Math.max(...values),5,hasNeg);
- const pad={l:w<520?58:72,r:18,t:18,b:46},plotW=w-pad.l-pad.r,plotH=h-pad.t-pad.b;
- c.font='11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
- drawChartFrame(c,pad,plotW,plotH);
- scale.ticks.forEach(v=>{const y=pad.t+plotH*(1-(v-scale.min)/(scale.max-scale.min));c.strokeStyle='rgba(255,255,255,.060)';c.lineWidth=1;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();c.fillStyle='#7f8c99';c.textAlign='right';c.fillText(formatChartValue(v),pad.l-10,y+4)});
- const zeroY=pad.t+plotH*(1-(0-scale.min)/(scale.max-scale.min));if(hasNeg){c.strokeStyle='rgba(255,255,255,.16)';c.beginPath();c.moveTo(pad.l,zeroY);c.lineTo(w-pad.r,zeroY);c.stroke()}
- const step=plotW/arr.length,barW=Math.max(5,Math.min(40,step*(arr.length>20?.64:.52))),labelEvery=Math.max(1,Math.ceil(arr.length/Math.max(6,Math.floor(plotW/78))));
- arr.forEach((x,i)=>{
-   const yVal=pad.t+plotH*(1-(x.value-scale.min)/(scale.max-scale.min)),baseY=hasNeg?zeroY:pad.t+plotH,top=Math.min(yVal,baseY),bh=Math.max(2,Math.abs(baseY-yVal)),cx=pad.l+step*(i+.5),left=cx-barW/2;
-   const g=c.createLinearGradient(0,top,0,top+bh);g.addColorStop(0,rgbaFromHex(x._color,.98));g.addColorStop(1,rgbaFromHex(x._color,.65));
-   roundedRect(c,left,top,barW,bh,Math.min(8,barW/2));c.fillStyle=g;c.fill();
-   c.strokeStyle=rgbaFromHex(x._color,.24);c.lineWidth=1;c.stroke();
-   if(i%labelEvery===0||i===arr.length-1){c.fillStyle='#8996a2';c.textAlign='center';c.font='10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.fillText(String(x.label||''),cx,h-22)}
- });
- if(arr.length<=8){arr.forEach((x,i)=>{const yVal=pad.t+plotH*(1-(x.value-scale.min)/(scale.max-scale.min)),baseY=hasNeg?zeroY:pad.t+plotH,top=Math.min(yVal,baseY),cx=pad.l+step*(i+.5);c.fillStyle='#e9e3d8';c.font='10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.textAlign='center';c.fillText(formatChartValue(x.value),cx,Math.max(12,top-7))})}
- else {const last=arr[arr.length-1],maxItem=arr.reduce((a,b)=>b.value>a.value?b:a,arr[0]);c.fillStyle='#7f8c99';c.font='10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.textAlign='left';c.fillText(`Последний: ${last.label} · ${formatChartValue(last.value)}   Максимум: ${maxItem.label} · ${formatChartValue(maxItem.value)}`,pad.l,h-6)}
+ let lx=pad.l,ly=h-(legendRows===2?30:18);c.textAlign='left';valid.forEach((s,si)=>{const color=chartColor(s.ci??si),label=s.name||'',tw=c.measureText(label).width+34;if(lx+tw>w-pad.r&&lx>pad.l){lx=pad.l;ly+=16}c.strokeStyle=color;c.lineWidth=3;c.beginPath();c.moveTo(lx,ly-3);c.lineTo(lx+14,ly-3);c.stroke();c.fillStyle='#9aa6b2';c.fillText(label,lx+20,ly);lx+=tw+14});
 }
 function compact(v){const a=Math.abs(v);return a>=1e6?(v/1e6).toFixed(1)+'M':a>=1e3?(v/1e3).toFixed(0)+'k':Math.round(v).toString()}
 
@@ -3323,6 +3506,97 @@ initCloud();
 window.addEventListener('online',()=>{if(cloudUser&&localStorage.getItem(CLOUD_DIRTY_KEY)==='1')saveCloudState(false)});
 setInterval(()=>{if(cloudUser&&localStorage.getItem(CLOUD_DIRTY_KEY)==='1'&&!cloudBusy)saveCloudState(false)},30000);
 
+</script>
+<script id="calcTooltipScript">
+(function(){
+  const chartHelp={
+    capitalChart:{title:'Динамика общего капитала',formula:'Каждая точка = сумма последних известных оценок портфелей на соответствующую дату.',inputs:'Оценки портфелей; выбранный режим Общий или Personal / Oy; выбранный диапазон 1Y / 3Y / 10Y / MAX.'},
+    forecastChart:{title:'Три траектории капитала',formula:'Капитал растёт помесячно по выбранной годовой доходности. Для Oy налог на положительную налогооблагаемую прибыль рассчитывается по годам. Exit добавляется только в дату продажи.',inputs:'Инвестируемый Personal и Oy капитал; доходности Консервативная / Базовая / Оптимистичная; горизонт; ставка налога Oy; настройки Exit и индивидуальные корректировки доходности портфелей.'},
+    forecastOwnerChart:{title:'Personal и VM Private Capital Oy',formula:'Тот же базовый прогноз, но капитал разделён по владельцу. Источники не смешиваются.',inputs:'Personal-портфели; Oy-портфели; базовая доходность; налог Oy; Exit-события.'},
+    withdrawalChart:{title:'Капитал при регулярных снятиях',formula:'Модель идёт помесячно: рост капитала → наступившие Exit → снятия по активным этапам. Налоги Oy и дивидендов учитываются по правилам модели.',inputs:'Все этапы снятий; источник каждого этапа; сумма; ежегодное повышение; горизонт; три доходности; налоги; Exit.'},
+    withdrawalExitChart:{title:'С Exit и без Exit',formula:'Сравниваются два одинаковых базовых сценария снятий. Единственная разница — в одном применяются Exit-события, во втором они отключены.',inputs:'Базовая доходность; этапы снятий; горизонт; параметры Reno Group / других Exit-активов; налоги.'},
+    exitSensitivityChart:{title:'Результат Exit при разных ×',formula:'Продажа = вложенная сумма × Exit-множитель. Для налогооблагаемого Exit в Oy налог считается с положительной прибыли Exit, а график показывает сумму после этого налога.',inputs:'Вложенная сумма Exit-актива; множитель ×1…×6; владелец; признак налогообложения; ставка налога Oy.'},
+    taxByYearChart:{title:'Налог Oy по годам',formula:'Налог года = max(0, налогооблагаемая прибыль Oy за год) × ставка налога Oy.',inputs:'Начальный Oy капитал; рост портфелей Oy; дивиденды из Oy; Exit-поступления и их cost basis; ставка налога Oy.'}
+  };
+
+  function safe(fn,fallback='—'){try{return fn()}catch(e){return fallback}}
+  function escHtml(v){return String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
+  function row(k,v){return `<div class="ct-row"><div class="ct-key">${escHtml(k)}</div><div class="ct-val">${escHtml(v)}</div></div>`}
+  function box(title,rows,formula='',foot=''){return `<div class="ct-title">${escHtml(title)}</div>${rows.map(x=>row(x[0],x[1])).join('')}${formula?`<div class="ct-formula">${escHtml(formula)}</div>`:''}${foot?`<div class="ct-foot">${escHtml(foot)}</div>`:''}`}
+  function labelOf(el){
+    const card=el.closest('.metric-card,.ownership-card,.source-board,.scenario-info-card,.forecast-scenario-card,.mini-stat,.allocation-item');
+    return card?.querySelector('.metric-label,.scenario-end-label,.source-rec-title,.alloc-name')?.textContent?.trim() || el.previousElementSibling?.textContent?.trim() || '';
+  }
+  function topMetric(el){
+    const id=el.id;
+    if(id==='heroTotal') return box('Общий капитал', [['Сейчас',el.textContent.trim()],['Источник','Последняя оценка каждого портфеля']], 'Общий капитал = сумма последних известных стоимостей всех портфелей.');
+    if(id==='personalCapital') return box('Личный капитал (Personal)', [['Сейчас',el.textContent.trim()],['Владелец','Personal']], 'Сумма последних оценок всех активов с владельцем Personal.');
+    if(id==='companyCapital') return box('Капитал VM Private Capital Oy', [['Сейчас',el.textContent.trim()],['Владелец','VM Private Capital Oy']], 'Сумма последних оценок всех активов, принадлежащих Oy.');
+    if(id==='planningCapital') return box('Капитал, участвующий в сценариях', [['Сейчас',el.textContent.trim()]], 'Суммируются только активы с ролью «Инвестируемый». Активы «Вне расчёта» и Exit до даты продажи сюда не входят.');
+    if(id==='excludedCapital') return box('Активы вне расчёта', [['Сейчас',el.textContent.trim()]], 'Сумма активов с ролью «Отдельный актив / вне расчёта». Они показываются в общем капитале, но не растут в сценариях.');
+    if(id==='exitAssetsCapital') return box('Exit-активы', [['Текущая стоимость',el.textContent.trim()]], 'Сумма текущих оценок активов с ролью Exit. В прогнозный капитал они подключаются только в дату продажи.');
+    if(id==='companyTaxLabel') return box('Ставка налога Oy', [['Ставка',el.textContent.trim()]], 'Используется для расчёта налога с положительной налогооблагаемой прибыли VM Private Capital Oy в модели.');
+    if(id==='mYtd'){
+      const y=safe(()=>totalPerf(state.settings.fyStart),null);
+      return box('Инвестиционный результат YTD', [['Результат',el.textContent.trim()],['Старт',y?money(y.start):'—'],['Конец',y?money(y.end):'—'],['Внешние потоки',y?money(y.flow):'—'],['Доходные события',y?money(y.incomeEvents||0):'—'],['Период',safe(()=>formatDate(state.settings.fyStart))+' → сегодня']], 'Результат = Конец − Старт − чистые внешние потоки + доходные события. Доходность % рассчитывается Modified Dietz.', 'Учитываются только инвестиционные портфели с достаточными данными. Nordea investments + Nordea cash считаются одной группой.');
+    }
+    if(id==='mAll'){
+      const a=safe(()=>allTimePerf(),null);
+      return box('Результат с начала учёта', [['Результат',el.textContent.trim()],['Старт',a?money(a.start):'—'],['Конец',a?money(a.end):'—'],['Внешние потоки',a?money(a.flow):'—'],['Период',a&&a.earliest?formatDate(a.earliest)+' → '+formatDate(a.latest):'—']], 'Для каждого измеримого инвестиционного портфеля считается результат с первой до последней доступной оценки, затем результаты агрегируются.');
+    }
+    if(id==='mYearEnd'){
+      return box('Прогноз на конец года', [['Прогноз',el.textContent.trim()],['Текущий капитал',safe(()=>money(totalNow()))],['Инвестируемый капитал',safe(()=>money(planningTotal()))],['Годовой темп из YTD',safe(()=> (annualizedFromYtd()*100).toFixed(2)+'%')]], 'Инвестируемая часть текущего капитала продолжается до 31 декабря с годовым темпом, полученным из текущей YTD-доходности. Неинвестируемая часть остаётся фиксированной.');
+    }
+    if(id==='mFlows'){
+      const y=safe(()=>totalPerf(state.settings.fyStart),null);
+      return box('Внешние потоки YTD', [['Чистый поток',el.textContent.trim()],['Период',safe(()=>formatDate(state.settings.fyStart))+' → сегодня']], 'Чистый внешний поток = пополнения − снятия ± внешние переводы. Внутренние переводы между связанными портфелями группы не должны создавать доход.');
+    }
+    return null;
+  }
+
+  function tableHelp(el){
+    const td=el.closest('#portfolioSummaryBody td'); if(!td)return null;
+    const tr=td.parentElement, cells=[...tr.children],i=cells.indexOf(td),name=cells[0]?.innerText?.trim().split('\n')[0]||'Портфель';
+    const val=td.innerText.trim();
+    if(i===2)return box(`${name}: текущая стоимость`,[['Значение',val]],'Берётся последняя сохранённая оценка портфеля на текущую дату. Для Nordea показывается Investments + Nordea cash.');
+    if(i===3)return box(`${name}: YTD €`,[['Результат',val]],'Результат = конечная оценка − начальная оценка − чистые внешние потоки + доходные события.');
+    if(i===4)return box(`${name}: YTD %`,[['Доходность',val]],'Доходность рассчитывается методом Modified Dietz: инвестиционный результат делится на капитал, скорректированный по времени внешних денежных потоков.');
+    if(i===5)return box(`${name}: доля`,[['Доля',val]],'Доля = текущая стоимость этого портфеля / общий текущий капитал × 100%.');
+    return null;
+  }
+
+  function genericHelp(el){
+    const chart=el.closest('canvas'); if(chart&&chartHelp[chart.id]){const h=chartHelp[chart.id];return box(h.title,[['Данные',h.inputs]],h.formula,'Подсказка описывает метод расчёта графика; сами точки берутся из текущих данных программы.');}
+    const alloc=el.closest('.allocation-item');
+    if(alloc){const name=alloc.querySelector('.alloc-name')?.textContent?.trim()||'Портфель',v=alloc.querySelector('.alloc-value')?.textContent?.trim()||'';return box(`Структура капитала: ${name}`,[['Стоимость / доля',v]],'Доля = текущая стоимость портфеля / общий текущий капитал × 100%.');}
+    const fc=el.closest('.forecast-scenario-card');
+    if(fc){const title=fc.querySelector('.forecast-scenario-head b')?.textContent?.trim()||'Сценарий';const annual=fc.querySelector('.forecast-scenario-head span')?.textContent?.trim()||'';const result=fc.querySelector('.forecast-scenario-head strong')?.textContent?.trim()||'';return box(`Прогноз: ${title}`,[['Конечный капитал',result],['Параметры',annual],['Старт в сценариях',safe(()=>money(planningTotal()))],['Налог Oy',safe(()=>Number(state.taxSettings.companyTaxRate).toFixed(1)+'%')]],'Капитал растёт помесячно. Personal не облагается налогом Oy. Для Oy в конце каждого расчётного года снимается налог с положительной налогооблагаемой прибыли. Exit поступает только в заданную дату и затем работает по доходности целевого портфеля.');}
+    const sc=el.closest('.scenario-info-card');
+    if(sc){const title=sc.querySelector('.scenario-name h3')?.textContent?.trim()||'Сценарий снятий';const rate=sc.querySelector('.scenario-rate')?.innerText?.trim().replace(/\s+/g,' ')||'';const end=sc.querySelector('.scenario-end-value')?.textContent?.trim()||'';return box(`План вывода: ${title}`,[['Доходность',rate],['Капитал в конце',end],['Горизонт',safe(()=>q('withdrawYears').value+' лет')]],'Каждый месяц сначала применяется рост капитала, затем наступившие Exit, затем активные снятия. Personal и Oy считаются раздельно. Для дивидендов Oy применяется дивидендная налоговая модель, а прибыль Oy облагается корпоративным налогом по годам.');}
+    const mini=el.closest('.tax-summary .mini-stat');
+    if(mini){const label=mini.querySelector('span')?.textContent?.trim()||'Налог';const val=mini.querySelector('b')?.textContent?.trim()||mini.innerText.trim();return box(label,[['Сумма',val]],'Значение получено из выбранного сценария вывода средств с учётом настроек налогов, источника снятий и горизонта.');}
+    const insight=el.closest('#insightMetrics .metric-card');
+    if(insight){const label=insight.querySelector('.metric-label')?.textContent?.trim()||'Показатель';const val=insight.querySelector('.metric')?.textContent?.trim()||'';return box(label,[['Значение',val]], label.includes('Эффект Exit')?'Эффект Exit = конечный капитал базового сценария с Exit − конечный капитал того же сценария без Exit.':'Показатель собран из текущих активов и ролей активов в финансовом плане.');}
+    const source=el.closest('.source-board');
+    if(source){const title=source.querySelector('.source-board-head b')?.textContent?.trim()||'Источник';return box(title,[['Блок','Отдельный расчёт источника средств']], 'Personal и VM Private Capital Oy не смешиваются автоматически. Доступность снятий и дефицит проверяются отдельно для каждого источника.');}
+    return null;
+  }
+
+  function getHelp(el){return topMetric(el)||tableHelp(el)||genericHelp(el)}
+  const eligible='#heroTotal,#personalCapital,#companyCapital,#planningCapital,#excludedCapital,#exitAssetsCapital,#companyTaxLabel,#mYtd,#mAll,#mYearEnd,#mFlows,#portfolioSummaryBody td:nth-child(3),#portfolioSummaryBody td:nth-child(4),#portfolioSummaryBody td:nth-child(5),#portfolioSummaryBody td:nth-child(6),.allocation-item,.forecast-scenario-card,.scenario-info-card,.tax-summary .mini-stat,#insightMetrics .metric-card,.source-board,canvas';
+
+  let tip=null,active=null;
+  function ensure(){if(tip)return tip;tip=document.createElement('div');tip.id='calcTooltip';tip.setAttribute('role','tooltip');document.body.appendChild(tip);return tip}
+  function place(e){if(!tip||tip.style.display==='none')return;const gap=14,tw=tip.offsetWidth,th=tip.offsetHeight;let x=(e.clientX||20)+gap,y=(e.clientY||20)+gap;if(x+tw>innerWidth-8)x=Math.max(8,(e.clientX||20)-tw-gap);if(y+th>innerHeight-8)y=Math.max(8,(e.clientY||20)-th-gap);tip.style.left=x+'px';tip.style.top=y+'px'}
+  function show(el,e){const html=getHelp(el);if(!html)return;active=el;el.classList.add('calc-tooltip-target');const t=ensure();t.innerHTML=html;t.style.display='block';place(e)}
+  function hide(){if(active)active.classList.remove('calc-tooltip-target');active=null;if(tip)tip.style.display='none'}
+
+  document.addEventListener('mouseover',e=>{const el=e.target.closest?.(eligible);if(!el||el===active)return;show(el,e)});
+  document.addEventListener('mousemove',e=>{if(active)place(e)});
+  document.addEventListener('mouseout',e=>{if(!active)return;const rel=e.relatedTarget;if(rel&&active.contains(rel))return;hide()});
+  document.addEventListener('click',e=>{const el=e.target.closest?.(eligible);if(!el)return;if(matchMedia('(hover: none)').matches){if(active===el){hide()}else{show(el,e)}}});
+  document.addEventListener('scroll',hide,true);
+})();
 </script>
 </body>
 </html>
