@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.5.1 Dashboard Unified Fix.1</title>
+<title>VM Private Capital — Wealth Studio v7.6.1 Portfolio View Fix</title>
 <style>
 
 :root{
@@ -661,7 +661,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:1300px){.insight-metric-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.insight-grid.two-col{grid-template-columns:1fr}.insights-symbol{display:none}}@media(max-width:650px){.insight-metric-grid{grid-template-columns:1fr}.insight-exit-head,.insight-exit-meta{flex-direction:column}.plan-info-grid{grid-template-columns:1fr}}
 
 
-/* v7.5.1 Dashboard Unified Fix */
+/* v7.6.1 Portfolio View Fix */
 .cloud-card{border-color:rgba(95,190,150,.18)!important;background:linear-gradient(145deg,rgba(95,190,150,.055),rgba(255,255,255,.018))!important}
 .cloud-card-copy{min-width:0}.cloud-card-copy b,.cloud-card-copy div{overflow-wrap:anywhere}
 .cloud-account-btn{width:100%;margin-top:11px;font-size:10px}
@@ -679,7 +679,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:600px){.cloud-action-grid{grid-template-columns:1fr}.cloud-user-line{flex-direction:column}}
 
 
-/* v7.5.1 Dashboard Unified Fix Gate */
+/* v7.6.1 Portfolio View Fix Gate */
 body.auth-locked{overflow:hidden}
 #authGate{
   position:fixed;inset:0;z-index:99999;
@@ -850,7 +850,7 @@ body.auth-locked{overflow:hidden}
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.5.1 Dashboard Unified Fix</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.6.1 Portfolio View Fix</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -1151,7 +1151,7 @@ body.auth-locked{overflow:hidden}
         </div>
         <div class="archive-legend">
           <span><b>Доход</b> — результат инвестиций</span>
-          <span><b>Доходность</b> — Modified Dietz</span>
+          <span><b>Доходность</b> — Modified Dietz · только инвестиционные портфели</span>
           <span><b>Внешний вывод</b> — реальные деньги, ушедшие из группы наружу</span>
         </div>
         <div id="insightsAllYearsHistory" class="insights-history-wrap"></div>
@@ -1239,6 +1239,8 @@ const SUPABASE_URL='https://hlrvwzqwxqmycuttvzbx.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_RBRKa6zqrw7-CW77RW__QQ_vrqebWCp';
 const STORAGE_KEY='capital_tracker_offline_v1';
 const STORAGE_KEY_V4='vm_private_capital_data_v4';
+const CLOUD_DIRTY_KEY='vm_cloud_dirty_v1';
+const CLOUD_LOCAL_SAVED_AT='vm_cloud_local_saved_at_v1';
 const uid=()=> (crypto.randomUUID?crypto.randomUUID():'id-'+Date.now()+'-'+Math.random().toString(16).slice(2));
 const pad2=n=>String(n).padStart(2,'0');
 const localISODate=d=>`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
@@ -1305,6 +1307,10 @@ function persistState(options={}){
    const raw=JSON.stringify(state);
    localStorage.setItem(STORAGE_KEY_V4,raw);
    localStorage.setItem(STORAGE_KEY,raw);
+   if(!options.localOnly){
+     localStorage.setItem(CLOUD_DIRTY_KEY,'1');
+     localStorage.setItem(CLOUD_LOCAL_SAVED_AT,new Date().toISOString());
+   }
  }catch(e){console.warn('Storage error',e)}
  if(!options.localOnly&&!suppressCloudSave)scheduleCloudSave();
 }
@@ -1323,7 +1329,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.5.1 Dashboard Unified Fix';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.6.1 Portfolio View Fix';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -1333,19 +1339,29 @@ async function saveCloudState(showToast=true){
  if(!supabaseClient||!cloudUser)return false;
  if(cloudBusy)return false;
  cloudBusy=true;setCloudStatus('busy','Сохраняю в облако…',cloudUser.email||'');
+ const payload=JSON.parse(JSON.stringify(state));
+ let lastError=null;
  try{
-   const {error}=await supabaseClient.from('user_data').upsert({user_id:cloudUser.id,payload:state},{onConflict:'user_id'});
-   if(error)throw error;
-   cloudLastSync=new Date().toISOString();
-   localStorage.setItem('vm_cloud_last_sync',cloudLastSync);
-   setCloudStatus('ok','Облако синхронизировано',`${cloudUser.email||''} · ${cloudTimeText()}`);
-   if(showToast)toast('Сохранено в облако');
-   return true;
+   for(let attempt=1;attempt<=3;attempt++){
+     try{
+       const {error}=await supabaseClient.from('user_data').upsert({user_id:cloudUser.id,payload},{onConflict:'user_id'});
+       if(error)throw error;
+       cloudLastSync=new Date().toISOString();
+       localStorage.setItem('vm_cloud_last_sync',cloudLastSync);
+       localStorage.removeItem(CLOUD_DIRTY_KEY);
+       setCloudStatus('ok','Облако синхронизировано',`${cloudUser.email||''} · ${cloudTimeText()}`);
+       if(showToast)toast('Сохранено в облако');
+       return true;
+     }catch(e){
+       lastError=e;console.warn(`Cloud save attempt ${attempt}/3 failed`,e);
+       if(attempt<3)await new Promise(r=>setTimeout(r,700*attempt));
+     }
+   }
+   throw lastError||new Error('Cloud save failed');
  }catch(e){
-   console.error('Cloud save error',e);
-   setCloudStatus('err','Ошибка облачного сохранения',e?.message||'Проверьте интернет');
-   if(showToast)toast('Не удалось сохранить в облако');
-   return false;
+   console.error('Cloud save error',e);localStorage.setItem(CLOUD_DIRTY_KEY,'1');
+   setCloudStatus('err','Облако временно недоступно',`${e?.message||'Проверьте интернет'} · локально сохранено`);
+   if(showToast)toast('Локально сохранено. Облако синхронизируется позже.');return false;
  }finally{cloudBusy=false}
 }
 async function loadCloudState({force=false,showToast=true}={}){
@@ -1398,15 +1414,15 @@ async function handleCloudSession(session,{initial=false}={}){
      throw error;
    }
    if(data){
-     suppressCloudSave=true;
-     state=normalizeState(data.payload||defaultState());
-     persistState({localOnly:true});
-     suppressCloudSave=false;
-     cloudLastSync=data.updated_at||new Date().toISOString();
-     localStorage.setItem('vm_cloud_last_sync',cloudLastSync);
-     withdrawalResultsReady=false;
-     renderAll();
-     setCloudStatus('ok','Облако синхронизировано',`${cloudUser.email||''} · ${cloudTimeText()}`);
+     const localDirty=localStorage.getItem(CLOUD_DIRTY_KEY)==='1';
+     if(localDirty&&hasMeaningfulLocalData(state)){
+       setCloudStatus('busy','Есть несинхронизированные изменения','Сначала отправляю локальную копию в облако');
+       await saveCloudState(false);
+     }else{
+       suppressCloudSave=true;state=normalizeState(data.payload||defaultState());persistState({localOnly:true});suppressCloudSave=false;
+       cloudLastSync=data.updated_at||new Date().toISOString();localStorage.setItem('vm_cloud_last_sync',cloudLastSync);withdrawalResultsReady=false;renderAll();
+       setCloudStatus('ok','Облако синхронизировано',`${cloudUser.email||''} · ${cloudTimeText()}`);
+     }
    }else if(hasMeaningfulLocalData(state)){
      await saveCloudState(false);
    }else{
@@ -1546,7 +1562,7 @@ function openCloudModal(){
    </div>`,'CLOUD');
  if(signed){
    q('cloudSaveNow').onclick=async()=>{cloudMessage('Сохраняю…');const ok=await saveCloudState(false);cloudMessage(ok?'Готово. Данные сохранены в облаке.':'Ошибка сохранения.',ok?'ok':'err')};
-   q('cloudLoadNow').onclick=async()=>{if(!confirm('Заменить локальные данные данными из облака?'))return;cloudMessage('Загружаю…');const ok=await loadCloudState({force:true,showToast:false});cloudMessage(ok?'Данные загружены.':'Ошибка загрузки.',ok?'ok':'err')};
+   q('cloudLoadNow').onclick=async()=>{const dirty=localStorage.getItem(CLOUD_DIRTY_KEY)==='1';const warning=dirty?'Есть локальные изменения, которые ещё не сохранены в облако. Загрузка из облака их перезапишет. Продолжить?':'Заменить локальные данные данными из облака?';if(!confirm(warning))return;localStorage.removeItem(CLOUD_DIRTY_KEY);cloudMessage('Загружаю…');const ok=await loadCloudState({force:true,showToast:false});cloudMessage(ok?'Данные загружены.':'Ошибка загрузки.',ok?'ok':'err')};
    q('cloudExportBackup').onclick=exportJSON;
    q('cloudSignOut').onclick=async()=>{await supabaseClient.auth.signOut();cloudUser=null;closeModal();lockApp();setCloudStatus('idle','Облако не подключено','Требуется вход');toast('Вы вышли из облака')};
  }else{
@@ -1746,14 +1762,15 @@ function groupFlows(portfolios,from,to){
  const ids=new Set(portfolios.map(p=>p.id));
  return state.flows.filter(f=>ids.has(f.portfolioId)&&f.date>from&&f.date<=to);
 }
-function externalGroupCapitalEffect(f){
+function groupCapitalEffect(f,groupIds){
  const t=flowTypeOf(f),a=Math.abs(Number(f.amount)||0);
  if(t==='contribution')return a;
  if(t==='withdrawal')return -a;
- // transfer_in/out between Nordea and Nordea cash is internal and ignored.
- // Transfer to a portfolio outside the group is treated as external only when
- // it is explicitly entered as withdrawal/contribution, which avoids guessing.
- return 0;
+ if(t!=='transfer_in'&&t!=='transfer_out')return 0;
+ if(!f.transferId)return t==='transfer_in'?a:-a;
+ const pair=state.flows.find(x=>x.transferId===f.transferId&&x.id!==f.id);
+ if(pair&&groupIds.has(pair.portfolioId))return 0;
+ return t==='transfer_in'?a:-a;
 }
 function groupPerf(portfolios,from,to=todayISO()){
  const dates=groupSnapshotDates(portfolios).filter(d=>d<=to);
@@ -1764,14 +1781,14 @@ function groupPerf(portfolios,from,to=todayISO()){
  if(!startDate||!endDate||endDate<=startDate)return{start:0,end:0,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:startDate||'',endDate:endDate||'',withdrawals:0,contributions:0};
  const start=groupValueAt(portfolios,startDate),end=groupValueAt(portfolios,endDate);
  const fs=groupFlows(portfolios,startDate,endDate);
- const external=fs.filter(f=>['contribution','withdrawal'].includes(flowTypeOf(f)));
- const flow=external.reduce((s,f)=>s+externalGroupCapitalEffect(f),0);
+ const groupIds=new Set(portfolios.map(p=>p.id));
+ const capitalFlows=fs.filter(f=>groupCapitalEffect(f,groupIds)!==0);
+ const flow=capitalFlows.reduce((s,f)=>s+groupCapitalEffect(f,groupIds),0);
  const incomeEvents=fs.reduce((s,f)=>s+flowIncomeEffect(f),0);
- const withdrawals=external.filter(f=>flowTypeOf(f)==='withdrawal').reduce((s,f)=>s+Math.abs(Number(f.amount)||0),0);
- const contributions=external.filter(f=>flowTypeOf(f)==='contribution').reduce((s,f)=>s+Math.abs(Number(f.amount)||0),0);
+ const withdrawals=fs.filter(f=>flowTypeOf(f)==='withdrawal').reduce((s,f)=>s+Math.abs(Number(f.amount)||0),0);
+ const contributions=fs.filter(f=>flowTypeOf(f)==='contribution').reduce((s,f)=>s+Math.abs(Number(f.amount)||0),0);
  const profit=end-start-flow+incomeEvents;
- // Modified Dietz denominator using only true external capital movements.
- const denomFlows=external.map(f=>({...f,amount:externalGroupCapitalEffect(f)}));
+ const denomFlows=capitalFlows.map(f=>({...f,amount:groupCapitalEffect(f,groupIds)}));
  const denominator=dietzDenominator(start,denomFlows,startDate,endDate);
  const pct=denominator?profit/denominator*100:null;
  return{start,end,flow,profit,pct,denominator,sufficient:true,startDate,endDate,withdrawals,contributions};
@@ -1794,14 +1811,41 @@ function portfolioAllTimePerf(pid){
 }
 
 function totalNow(){return state.portfolios.reduce((s,p)=>s+latestValue(p.id),0)}
-function totalPerf(from,to=todayISO()){
- let start=0,end=0,flow=0,profit=0,denominator=0,covered=0,total=state.portfolios.length;
+
+function returnEntities({includeNonInvestable=false}={}){
+ const nordea=nordeaPortfolio(),cash=nordeaCashPortfolio();
+ const entities=[];
  state.portfolios.forEach(p=>{
-   const r=portfolioPerf(p.id,from,to);
-   if(!r.sufficient)return;
-   start+=r.start;end+=r.end;flow+=r.flow;profit+=r.profit;denominator+=Number(r.denominator||0);covered++;
+   if(cash&&p.id===cash.id)return;
+   if(nordea&&cash&&p.id===nordea.id){
+     const role=portfolioRole(nordea);
+     if(includeNonInvestable||role==='investable')entities.push({id:'group:nordea',kind:'group',role,p:{...nordea,name:'Nordea',_nordeaGroup:true},members:[nordea,cash]});
+     return;
+   }
+   const role=portfolioRole(p);
+   if(includeNonInvestable||role==='investable')entities.push({id:`portfolio:${p.id}`,kind:'portfolio',role,p,members:[p]});
  });
- return{start,end,flow,profit,denominator,pct:denominator>0?profit/denominator*100:null,covered,total}
+ return entities;
+}
+function entityPerf(entity,from,to=todayISO()){return entity.kind==='group'?groupPerf(entity.members,from,to):portfolioPerf(entity.p.id,from,to)}
+function entityAllTimePerf(entity){
+ if(entity.kind==='group'){
+   const dates=groupSnapshotDates(entity.members);
+   if(dates.length<2)return{start:dates.length?groupValueAt(entity.members,dates[0]):0,end:dates.length?groupValueAt(entity.members,dates.at(-1)):0,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:dates[0]||'',endDate:dates.at(-1)||'',withdrawals:0,contributions:0};
+   return groupPerf(entity.members,dates[0],dates.at(-1));
+ }
+ return portfolioAllTimePerf(entity.p.id);
+}
+function aggregateEntityReturns(results,totalCount){
+ let start=0,end=0,flow=0,profit=0,denominator=0,covered=0;
+ results.forEach(r=>{if(!r?.sufficient)return;start+=Number(r.start||0);end+=Number(r.end||0);flow+=Number(r.flow||0);profit+=Number(r.profit||0);denominator+=Number(r.denominator||0);covered++});
+ return{start,end,flow,profit,denominator,covered,total:totalCount,pct:denominator>0?profit/denominator*100:null};
+}
+function totalPerf(from,to=todayISO()){const entities=returnEntities();return aggregateEntityReturns(entities.map(e=>entityPerf(e,from,to)),entities.length)}
+function allTimePerf(){
+ const entities=returnEntities();let earliest='',latest='';
+ const results=entities.map(e=>{const r=entityAllTimePerf(e);if(r.sufficient){if(!earliest||r.startDate<earliest)earliest=r.startDate;if(!latest||r.endDate>latest)latest=r.endDate}return r});
+ return{...aggregateEntityReturns(results,entities.length),earliest,latest};
 }
 function allDates(){return[...new Set(state.snapshots.map(x=>x.date))].sort()}
 function totalAtDate(date){return state.portfolios.reduce((s,p)=>s+latestValue(p.id,date),0)}
@@ -1810,7 +1854,13 @@ function annualizedFromYtd(){
  if(p===null||!Number.isFinite(p))return 0;
  const r=p/100;if(r<=-1)return-1;return Math.pow(1+r,365/days)-1
 }
-function yearEndForecast(){const cap=totalNow(),n=new Date(),e=new Date(n.getFullYear(),11,31,12),days=Math.max(0,(e-n)/86400000),ar=annualizedFromYtd();return cap*Math.pow(1+ar,days/365)}
+function yearEndForecast(){
+ const total=totalNow();
+ const projectable=state.portfolios.filter(isInvestablePortfolio).reduce((s,p)=>s+latestValue(p.id),0);
+ const fixed=Math.max(0,total-projectable);
+ const n=new Date(),e=new Date(n.getFullYear(),11,31,12),days=Math.max(0,(e-n)/86400000),ar=annualizedFromYtd();
+ return fixed+projectable*Math.pow(1+ar,days/365)
+}
 function portfolioName(id){return state.portfolios.find(p=>p.id===id)?.name||'Удалён'}
 
 
@@ -1981,8 +2031,9 @@ function sortedPortfolioRows(){
      return;
    }
 
-   const r=portfolioPerf(p.id,state.settings.fyStart);
-   rows.push({p,r,share:now?100*r.end/now:0});
+   const role=portfolioRole(p),latest=latestValue(p.id);
+   const r=role==='investable'?portfolioPerf(p.id,state.settings.fyStart):{start:0,end:latest,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:'',endDate:''};
+   rows.push({p,r,share:now?100*latest/now:0});
  });
 
  rows.sort((a,b)=>{
@@ -1996,7 +2047,7 @@ function sortedPortfolioRows(){
 }
 function renderDashboard(){
  setReturnSummary();
- const now=totalNow(),ytd=totalPerf(state.settings.fyStart),first=allDates()[0],all=first?totalPerf(first):{profit:0,pct:0};
+ const now=totalNow(),ytd=totalPerf(state.settings.fyStart),all=allTimePerf();
  if(q('heroTotal'))q('heroTotal').textContent=money(now);q('personalCapital').textContent=money(ownerTotal('personal'));q('companyCapital').textContent=money(ownerTotal('oy'));
  q('planningCapital').textContent=money(planningTotal());q('excludedCapital').textContent=money(excludedTotal());q('exitAssetsCapital').textContent=money(exitAssetsTotal());
  q('companyTaxLabel').textContent=`${Number(state.taxSettings.companyTaxRate).toFixed(1)}%`;if(q('heroYtd')){q('heroYtd').textContent=`YTD ${fmtReturn(ytd.pct)}`;q('heroYtd').className='chip '+(ytd.pct!==null&&ytd.pct<0?'bad':'')}
@@ -2051,83 +2102,83 @@ function renderDashboard(){
  renderCapitalChart()
 }
 function renderPortfolios(){
- const body=q('portfolioBody');if(!body)return;
- const now=totalNow(),cy=new Date().getFullYear();
- const nordea=nordeaPortfolio(),cash=nordeaCashPortfolio();
+ const box=q('portfolioCards');if(!box)return;
+ const nordea=nordeaPortfolio(),cash=nordeaCashPortfolio(),cy=new Date().getFullYear();
 
  const visible=state.portfolios.filter(p=>!(cash&&p.id===cash.id));
  const rows=[...visible].sort((a,b)=>{
    const va=(nordea&&cash&&a.id===nordea.id)?latestValue(nordea.id)+latestValue(cash.id):latestValue(a.id);
    const vb=(nordea&&cash&&b.id===nordea.id)?latestValue(nordea.id)+latestValue(cash.id):latestValue(b.id);
-   const mode=q('portfolioSort')?.value||'value_desc';
-   if(mode==='name_asc')return a.name.localeCompare(b.name,'ru');
-   if(mode==='value_asc')return va-vb;
    return vb-va;
  });
 
- body.innerHTML='';
- rows.forEach(p=>{
+ if(!rows.length){
+   box.innerHTML='<div class="history-empty"><b>Портфелей пока нет.</b><span>Нажмите «＋ Добавить».</span></div>';
+   return;
+ }
+
+ box.innerHTML=rows.map(p=>{
    const isNordea=nordea&&cash&&p.id===nordea.id;
    const invValue=isNordea?latestValue(nordea.id):latestValue(p.id);
    const cashValue=isNordea?latestValue(cash.id):0;
    const value=isNordea?invValue+cashValue:invValue;
-   const share=now?value/now*100:0;
+   const role=portfolioRole(p);
 
-   let profitHtml='—',pctHtml='—';
-
+   let returnText='—',returnClass='muted';
    if(isNordea){
      const r=nordeaYearPerf(cy);
      if(r?.sufficient){
-       profitHtml=`<span class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</span>`;
-       pctHtml=`<span class="${r.pct===null?'return-na':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</span>`;
+       returnText=`${r.profit>=0?'+':''}${money(r.profit)} · ${fmtReturn(r.pct)}`;
+       returnClass=r.profit>=0?'good':'bad';
      }
-   }else if(p.calcRole==='excluded'){
-     profitHtml=`<span class="return-na">Вне расчёта</span>`;
-     pctHtml=`<span class="return-na">—</span>`;
-   }else if(p.calcRole==='exit'){
-     profitHtml=`<span class="return-na">Exit-актив</span>`;
-     pctHtml=`<span class="return-na">—</span>`;
+   }else if(role==='excluded'){
+     returnText='Вне расчёта доходности';
+   }else if(role==='exit'){
+     returnText='Exit-актив · до Exit доходность не считается';
    }else{
      const r=portfolioYearPerf(p.id,cy);
      if(r?.sufficient){
-       profitHtml=`<span class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</span>`;
-       pctHtml=`<span class="${r.pct===null?'return-na':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</span>`;
+       returnText=`${r.profit>=0?'+':''}${money(r.profit)} · ${fmtReturn(r.pct)}`;
+       returnClass=r.profit>=0?'good':'bad';
      }
    }
 
+   const roleLabel=role==='excluded'?'Вне расчёта':role==='exit'?'Exit-актив':'В расчёте';
    const ownerLabel=p.owner==='oy'?'VMPC Oy':'Personal';
-   const roleLabel=p.calcRole==='excluded'?'Вне расчёта':p.calcRole==='exit'?'Exit-актив':'В расчёте';
-   const roleClass=p.calcRole==='excluded'?'muted':p.calcRole==='exit'?'warn':'good';
 
-   const nameCell=isNordea
-     ? `<b>Nordea</b><div class="nordea-breakdown"><span>Investments ${money(invValue)}</span><span>Cash ${money(cashValue)}</span></div>`
-     : `<b>${esc(p.name)}</b><div class="muted small">${esc(p.type||'')}</div>`;
+   const breakdown=isNordea
+     ? `<div class="muted small" style="margin-top:6px">Investments ${money(invValue)} · Cash ${money(cashValue)}</div>`
+     : '';
 
-   const valueCell=isNordea
-     ? `<div class="nordea-total"><b>${money(value)}</b><span>всего Nordea</span></div>`
-     : `<b>${money(value)}</b>`;
+   const extraActions=isNordea
+     ? `<button class="btn secondary compact" data-snap-pre="${nordea.id}">Оценка investments</button>
+        <button class="btn secondary compact" data-snap-pre="${cash.id}">Оценка cash</button>
+        <button class="btn secondary compact" data-flow-pre="${cash.id}" data-flow-type="withdrawal">Вывод</button>`
+     : `<button class="btn secondary compact" data-snap-pre="${p.id}">＋ Оценка</button>`;
 
-   const actions=isNordea
-     ? `<div class="table-actions">
-          <button class="mini-action" data-editportfolio="${nordea.id}" title="Редактировать Nordea investments">✎</button>
-          <button class="mini-action" data-addsnapshot="${nordea.id}" title="Обновить Nordea investments">＋</button>
-          <button class="mini-action" data-addsnapshot="${cash.id}" title="Обновить Nordea cash">€</button>
-        </div>`
-     : `<div class="table-actions"><button class="mini-action" data-editportfolio="${p.id}" title="Редактировать">✎</button><button class="mini-action" data-addsnapshot="${p.id}" title="Добавить оценку">＋</button></div>`;
+   return `<div class="port-card">
+     <div class="port-type">${esc(p.type||'Портфель')}</div>
+     <div class="port-name">${esc(isNordea?'Nordea':p.name)}</div>
+     <div class="muted small" style="margin-top:5px">${ownerLabel} · ${roleLabel}</div>
+     <div class="port-value">${money(value)}</div>
+     ${breakdown}
+     <div class="${returnClass}" style="margin-top:9px;font-size:12px">${returnText}</div>
+     <div class="port-actions">
+       <button class="btn secondary compact" data-editport-card="${p.id}">Редактировать</button>
+       ${extraActions}
+     </div>
+   </div>`;
+ }).join('');
 
-   body.insertAdjacentHTML('beforeend',`<tr>
-     <td>${nameCell}</td>
-     <td><span class="owner-tag ${p.owner==='oy'?'oy':'personal'}">${ownerLabel}</span> <span class="role-tag ${roleClass}">${roleLabel}</span></td>
-     <td>${valueCell}</td>
-     <td>${profitHtml}</td>
-     <td>${pctHtml}</td>
-     <td><b>${pct(share)}</b></td>
-     <td>${actions}</td>
-   </tr>`);
- });
-
- body.querySelectorAll('[data-editportfolio]').forEach(b=>b.addEventListener('click',()=>openPortfolioModal(b.dataset.editportfolio)));
- body.querySelectorAll('[data-addsnapshot]').forEach(b=>b.addEventListener('click',()=>openSnapshotModal(b.dataset.addsnapshot)));
+ box.querySelectorAll('[data-editport-card]').forEach(b=>b.addEventListener('click',()=>openPortfolioModal(b.dataset.editportCard)));
+ box.querySelectorAll('[data-snap-pre]').forEach(b=>b.addEventListener('click',()=>openSnapshotModal(null,b.dataset.snapPre)));
+ box.querySelectorAll('[data-flow-pre]').forEach(b=>b.addEventListener('click',()=>{
+   openFlowModal(null,b.dataset.flowPre);
+   setTimeout(()=>{
+     const t=q('fType');
+     if(t&&b.dataset.flowType){t.value=b.dataset.flowType;t.dispatchEvent(new Event('change'))}
+   },0);
+ }));
 }
 
 function flowLabel(t){
@@ -2139,21 +2190,6 @@ function flowDisplayAmount(x){
 }
 function fmtReturn(v){return v===null||!Number.isFinite(v)?'—':`${v>=0?'+':''}${pct(v)}`}
 
-function allTimePerf(){
- let start=0,end=0,flow=0,profit=0,denominator=0,covered=0,total=state.portfolios.length;
- let earliest='',latest='';
- state.portfolios.forEach(p=>{
-   const rows=uniqueSnapshots(p.id);
-   if(rows.length<2)return;
-   const from=rows[0].date,to=rows.at(-1).date;
-   const r=portfolioPerf(p.id,from,to);
-   if(!r.sufficient)return;
-   start+=r.start;end+=r.end;flow+=r.flow;profit+=r.profit;denominator+=Number(r.denominator||0);covered++;
-   if(!earliest||r.startDate<earliest)earliest=r.startDate;
-   if(!latest||r.endDate>latest)latest=r.endDate;
- });
- return{start,end,flow,profit,denominator,pct:denominator>0?profit/denominator*100:null,covered,total,earliest,latest};
-}
 function setReturnSummary(){
  const cy=new Date().getFullYear(),py=cy-1;
  const cur=yearPerf(cy),prev=yearPerf(py),all=allTimePerf();
@@ -2177,34 +2213,11 @@ function yearsInHistory(){
 }
 function yearPerf(year){
  const from=`${year}-01-01`,to=year===new Date().getFullYear()?todayISO():`${year+1}-01-01`;
- let start=0,end=0,externalFlow=0,profit=0,denominator=0,covered=0;
- const parts=[];
- const nordea=nordeaPortfolio(),cash=nordeaCashPortfolio();
-
- state.portfolios.forEach(p=>{
-   if(cash&&p.id===cash.id)return; // cash is included inside Nordea group
-   let r,displayP=p,isGroup=false;
-   if(nordea&&cash&&p.id===nordea.id){
-     r=groupPerf([nordea,cash],from,to);isGroup=true;
-     displayP={...p,name:'Nordea'};
-   }else{
-     r=portfolioPerf(p.id,from,to);
-   }
-   parts.push({p:displayP,r,isGroup});
-   if(!r.sufficient)return;
-   covered++;start+=r.start;end+=r.end;profit+=r.profit;denominator+=Number(r.denominator||0);
-   if(isGroup){
-     externalFlow+=r.flow;
-   }else{
-     const fs=flowsForPeriod(p.id,r.startDate,r.endDate);
-     externalFlow+=fs.reduce((s,f)=>{
-       const t=flowTypeOf(f);
-       return (t==='contribution'||t==='withdrawal')?s+flowCapitalEffect(f):s;
-     },0);
-   }
- });
- const total=state.portfolios.length-(nordea&&cash?1:0);
- return{year,start,end,externalFlow,profit,denominator,pct:denominator>0?profit/denominator*100:null,covered,total,parts}
+ const displayEntities=returnEntities({includeNonInvestable:true});
+ const investable=displayEntities.filter(e=>e.role==='investable');
+ const aggregate=aggregateEntityReturns(investable.map(e=>entityPerf(e,from,to)),investable.length);
+ const parts=displayEntities.map(e=>({p:e.p,r:e.role==='investable'?entityPerf(e,from,to):{start:0,end:latestValue(e.p.id),flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:'',endDate:'',withdrawals:0,contributions:0},isGroup:e.kind==='group',role:e.role}));
+ return{year,...aggregate,externalFlow:aggregate.flow,parts};
 }
 function duplicateSnapshotGroups(){
  const map=new Map();
@@ -2293,11 +2306,12 @@ function renderInsightsAllYears(){
    const yp=yearPerf(year);
    const nordea=nordeaPortfolio(),cash=nordeaCashPortfolio();
 
-   const rows=yp.parts.map(({p,r,isGroup})=>{
+   const rows=yp.parts.map(({p,r,isGroup,role})=>{
      if(!r.sufficient){
+       const reason=role==='excluded'?'Вне расчёта доходности':role==='exit'?'Exit-актив · до Exit доходность не считается':'Недостаточно оценок';
        return `<div class="archive-row">
          <div class="name"><b>${esc(p.name)}</b><span>${p.owner==='oy'?'VMPC Oy':'Personal'}</span></div>
-         <div>—</div><div>—</div><div>—</div><div>—</div><div class="muted">Недостаточно оценок</div>
+         <div>${role==='excluded'||role==='exit'?money(latestValue(p.id)):'—'}</div><div>—</div><div>—</div><div>—</div><div class="muted">${reason}</div>
        </div>`;
      }
      const out=isGroup?Number(r.withdrawals||0):
@@ -3166,14 +3180,14 @@ function xmlEsc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;
 function excelReport(){
  const ytd=totalPerf(state.settings.fyStart),now=totalNow(),rows=sortedPortfolioRows();
  const sheet=(name,table)=>`<Worksheet ss:Name="${xmlEsc(name)}"><Table>${table.map(row=>`<Row>${row.map((c,i)=>`<Cell><Data ss:Type="${typeof c==='number'?'Number':'String'}">${xmlEsc(c)}</Data></Cell>`).join('')}</Row>`).join('')}</Table></Worksheet>`;
- const summary=[['Capital Studio — Summary'],['Дата отчёта',formatDate(todayISO())],['Возраст по году рождения',ageTextForIso(todayISO())],['Общий капитал',now],['Результат YTD',ytd.profit],['YTD %',ytd.pct],[],['Портфель','Владелец','Стоимость','YTD EUR','YTD %','Доля %'],...rows.map(({p,r,share})=>[p.name,p.owner==='oy'?'VMPC Oy':'Personal',r.end,r.profit,r.pct,share])];
+ const summary=[['Capital Studio — Summary'],['Дата отчёта',formatDate(todayISO())],['Возраст по году рождения',ageTextForIso(todayISO())],['Общий капитал',now],['Результат YTD',ytd.profit],['YTD %',ytd.pct],[],['Портфель','Владелец','Стоимость','YTD EUR','YTD %','Доля %'],...rows.map(({p,r,share})=>[p.name,p.owner==='oy'?'VMPC Oy':'Personal',r.end,r.sufficient?r.profit:'',r.sufficient?r.pct:'',share])];
  const hist=[['Дата','Возраст','Портфель','Тип','Сумма','Комментарий'],...historyRows().map(x=>[formatDate(x.date),ageTextForIso(x.date),portfolioName(x.portfolioId),x.kind,x.amount,x.comment||''])];
  const xml=`<?xml version="1.0"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">${sheet('Summary',summary)}${sheet('History',hist)}</Workbook>`;
  downloadBlob(new Blob([xml],{type:'application/vnd.ms-excel'}),`Capital_Studio_Report_${todayISO()}.xls`);toast('Excel отчёт готов')
 }
 function pdfReport(){
  const now=totalNow(),ytd=totalPerf(state.settings.fyStart),rows=sortedPortfolioRows(),f=state.forecast,years=Number(f.years);
- const table=rows.map(({p,r,share})=>`<tr><td>${esc(p.name)}</td><td>${money(r.end)}</td><td>${r.profit>=0?'+':''}${money(r.profit)}</td><td>${r.pct>=0?'+':''}${pct(r.pct)}</td><td>${pct(share)}</td></tr>`).join('');
+ const table=rows.map(({p,r,share})=>`<tr><td>${esc(p.name)}</td><td>${money(r.end)}</td><td>${r.sufficient?`${r.profit>=0?'+':''}${money(r.profit)}`:'—'}</td><td>${r.sufficient?fmtReturn(r.pct):'—'}</td><td>${pct(share)}</td></tr>`).join('');
  const scenarios=[['Консервативный',+f.conservative],['Базовый',+f.base],['Оптимистичный',+f.optimistic]].map(([n,r])=>{const m=runGrowthModel(r,years);return`<tr><td>${n}</td><td>${r.toFixed(1)}%</td><td>${money(m.cap)}</td></tr>`}).join('');
  const w=window.open('','_blank');w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Capital Studio Report</title><style>
   body{font-family:Arial,sans-serif;color:#151820;margin:42px}header{border-bottom:2px solid #151820;padding-bottom:18px;margin-bottom:26px}.ey{font-size:10px;letter-spacing:2px;color:#718096}.title{font-size:28px;font-weight:700;margin:5px 0}.big{font-size:36px;font-weight:700}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0}.m{border:1px solid #dfe3e8;border-radius:10px;padding:14px}.l{font-size:10px;color:#718096;text-transform:uppercase}.v{font-size:19px;font-weight:700;margin-top:6px}h2{margin-top:28px;font-size:16px}table{width:100%;border-collapse:collapse;font-size:11px}th,td{border-bottom:1px solid #e5e7eb;padding:9px 7px;text-align:right}th:first-child,td:first-child{text-align:left}th{color:#718096;text-transform:uppercase;font-size:9px}footer{margin-top:36px;color:#8490a0;font-size:9px}.note{padding:10px;background:#f5f7f9;border-radius:8px;color:#5d6877;font-size:10px}@media print{button{display:none}body{margin:20mm}}</style></head><body>
@@ -3260,6 +3274,8 @@ q('resetBtn').addEventListener('click',()=>{if(confirm('Удалить теку�
 let resizeTimer=null;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{if(currentView==='dashboard')renderCapitalChart();if(currentView==='forecast')renderForecastChart();},120)});
 renderAll();
 initCloud();
+window.addEventListener('online',()=>{if(cloudUser&&localStorage.getItem(CLOUD_DIRTY_KEY)==='1')saveCloudState(false)});
+setInterval(()=>{if(cloudUser&&localStorage.getItem(CLOUD_DIRTY_KEY)==='1'&&!cloudBusy)saveCloudState(false)},30000);
 
 </script>
 </body>
