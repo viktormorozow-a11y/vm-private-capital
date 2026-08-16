@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.10.0 Portfolio Analytics</title>
+<title>VM Private Capital — Wealth Studio v7.11.0 Final Crypto Accounting</title>
 <style>
 
 :root{
@@ -667,6 +667,15 @@ th,td{border-color:rgba(255,255,255,.055)}
 
 
 
+
+/* v7.11.0 Final Crypto Accounting */
+.crypto-return-detail{display:grid;gap:2px;margin-top:3px;font-size:9px;line-height:1.35}
+.crypto-return-detail .mining{color:#d7b76e}
+.crypto-return-detail .market{color:#a8c7dd}
+.crypto-pct-pill{display:inline-flex;align-items:center;padding:3px 6px;border-radius:999px;border:1px solid var(--line);font-size:9px;font-weight:750}
+.crypto-pct-pill.good{background:rgba(120,227,155,.06)}
+.crypto-pct-pill.bad{background:rgba(255,123,136,.06)}
+
 /* v7.10.0 Portfolio Analytics */
 .portfolio-analytics-toolbar{
   display:flex;gap:10px;align-items:end;justify-content:space-between;flex-wrap:wrap;
@@ -1103,7 +1112,7 @@ body.auth-locked{overflow:hidden}
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.10.0 Portfolio Analytics</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.11.0 Final Crypto Accounting</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -1248,7 +1257,7 @@ body.auth-locked{overflow:hidden}
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Портфель</th><th>Владелец</th><th>Сейчас</th><th>YTD €</th><th>YTD %</th><th>Доля</th><th></th></tr></thead>
+            <thead><tr><th>Портфель</th><th>Владелец</th><th>Сейчас</th><th>YTD €</th><th>YTD %</th><th>Вся история %</th><th>Доля</th><th></th></tr></thead>
             <tbody id="portfolioSummaryBody"></tbody>
           </table>
         </div>
@@ -1673,7 +1682,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.10.0 Portfolio Analytics';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.11.0 Final Crypto Accounting';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -2208,7 +2217,7 @@ function yearEndForecast(){
 function portfolioName(id){return state.portfolios.find(p=>p.id===id)?.name||'Удалён'}
 
 
-function portfolioRole(p){return p?.calcRole||((p?.type||'')==='Крипто'?'excluded':'investable')}
+function portfolioRole(p){if((p?.type||'')==='Крипто')return'excluded';return p?.calcRole||'investable'}
 function isInvestablePortfolio(p){return portfolioRole(p)==='investable'}
 function isExcludedPortfolio(p){return portfolioRole(p)==='excluded'}
 function isExitPortfolio(p){return portfolioRole(p)==='exit'}
@@ -2354,6 +2363,101 @@ function grossDividendIncrementForNet(targetNet,existingGross){
  return hi
 }
 
+
+function cryptoBalanceAtDate(pid,date){
+  let btc=0;
+  for(const t of cryptoTxFor(pid)){
+    if(String(t.date||'')>String(date||''))break;
+    const qty=Math.abs(Number(t.btc)||0);
+    if(t.type==='mining'||t.type==='purchase'||t.type==='transfer_in')btc+=qty;
+    else if(t.type==='transfer_out')btc=Math.max(0,btc-qty);
+  }
+  return btc;
+}
+function cryptoFlowValue(t){
+  const qty=Math.abs(Number(t?.btc)||0),rate=Number(t?.eurRate)||0,explicit=Number(t?.eurValue)||0;
+  return explicit>0?explicit:(qty>0&&rate>0?qty*rate:0);
+}
+function cryptoMiningSummary(pid,from='',to=todayISO()){
+  return cryptoTxFor(pid).filter(t=>t.type==='mining'&&(!from||t.date>=from)&&(!to||t.date<=to)).reduce((a,t)=>{
+    a.btc+=Math.abs(Number(t.btc)||0);a.eur+=cryptoFlowValue(t);a.count++;return a;
+  },{btc:0,eur:0,count:0});
+}
+function cryptoPerf(pid,from,to=todayISO()){
+  const rows=uniqueSnapshots(pid).filter(x=>x.date<=to);
+  if(!rows.length)return{start:0,end:0,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:'',endDate:'',miningBtc:0,miningEur:0};
+  let startSnap=[...rows].reverse().find(x=>x.date<=from);
+  if(!startSnap)startSnap=rows.find(x=>x.date>=from);
+  const endSnap=[...rows].reverse().find(x=>x.date<=to);
+  if(!startSnap||!endSnap)return{start:0,end:0,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:'',endDate:'',miningBtc:0,miningEur:0};
+  const start=Number(startSnap.value)||0,end=Number(endSnap.value)||0,startDate=startSnap.date,endDate=endSnap.date;
+  if(endDate<=startDate)return{start,end,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate,endDate,miningBtc:0,miningEur:0};
+
+  const tx=cryptoTxFor(pid).filter(t=>t.date>startDate&&t.date<=endDate);
+  let netFlow=0,miningBtc=0,miningEur=0;
+  const synthFlows=[];
+  for(const t of tx){
+    const val=cryptoFlowValue(t);
+    if(t.type==='mining'||t.type==='purchase'||t.type==='transfer_in'){
+      netFlow+=val;synthFlows.push({date:t.date,amount:val,flowType:'contribution'});
+      if(t.type==='mining'){miningBtc+=Math.abs(Number(t.btc)||0);miningEur+=val}
+    }else if(t.type==='transfer_out'){
+      netFlow-=val;synthFlows.push({date:t.date,amount:-val,flowType:'withdrawal'});
+    }
+  }
+  const profit=end-start-netFlow;
+  const denominator=dietzDenominator(start,synthFlows,startDate,endDate);
+  const pct=denominator?profit/denominator*100:null;
+  return{start,end,flow:netFlow,profit,pct,denominator,sufficient:true,startDate,endDate,miningBtc,miningEur};
+}
+function cryptoAllTimePerf(pid){
+  const rows=uniqueSnapshots(pid);
+  if(rows.length<2)return{start:rows[0]?Number(rows[0].value):0,end:rows.at(-1)?Number(rows.at(-1).value):0,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:rows[0]?.date||'',endDate:rows.at(-1)?.date||''};
+  return cryptoPerf(pid,rows[0].date,rows.at(-1).date);
+}
+function cryptoYearPerf(pid,year){
+  const to=year===new Date().getFullYear()?todayISO():`${year+1}-01-01`;
+  return cryptoPerf(pid,`${year}-01-01`,to);
+}
+function allTimePerfForDashboardRow(p,isNordea=false){
+  if(isNordea){
+    const a=nordeaPortfolio(),c=nordeaCashPortfolio();
+    if(!a||!c)return null;
+    const dates=groupSnapshotDates([a,c]);
+    return dates.length>=2?groupPerf([a,c],dates[0],dates.at(-1)):null;
+  }
+  if(p.type==='Крипто')return cryptoAllTimePerf(p.id);
+  if(portfolioRole(p)!=='investable')return null;
+  return portfolioAllTimePerf(p.id);
+}
+function cryptoPriceSeries(pid){
+  return uniqueSnapshots(pid).map(s=>{
+    const btc=cryptoBalanceAtDate(pid,s.date);
+    return btc>0?{date:s.date,value:(Number(s.value)||0)/btc,portfolioValue:Number(s.value)||0,btc}:null;
+  }).filter(Boolean);
+}
+function cryptoTimeWeightedStats(pid){
+  const rows=cryptoPriceSeries(pid);
+  if(rows.length<2)return{rows,periods:0,days:0,totalReturn:null,annualized:null,volatility:null,maxDrawdown:null,confidence:'none'};
+  let wealth=1,peak=1,maxDd=0,weightedLogSum=0,weightedSq=0,totalDays=0,periods=0;
+  for(let i=1;i<rows.length;i++){
+    const a=rows[i-1],b=rows[i];
+    const days=Math.max(1,(new Date(b.date+'T12:00:00')-new Date(a.date+'T12:00:00'))/86400000);
+    if(!(a.value>0)||!(b.value>0))continue;
+    const r=b.value/a.value-1;
+    if(!Number.isFinite(r)||r<=-0.999999)continue;
+    wealth*=1+r;peak=Math.max(peak,wealth);maxDd=Math.min(maxDd,wealth/peak-1);
+    const dailyLog=Math.log1p(r)/days;
+    weightedLogSum+=dailyLog*days;weightedSq+=dailyLog*dailyLog*days;totalDays+=days;periods++;
+  }
+  if(!periods||!totalDays)return{rows,periods:0,days:0,totalReturn:null,annualized:null,volatility:null,maxDrawdown:null,confidence:'none'};
+  const totalReturn=wealth-1,annualized=Math.pow(Math.max(.000001,wealth),365.25/totalDays)-1;
+  const meanDaily=weightedLogSum/totalDays,variance=Math.max(0,weightedSq/totalDays-meanDaily*meanDaily);
+  const volatility=Math.sqrt(variance)*Math.sqrt(365.25);
+  const confidence=rows.length>=12&&totalDays>=730?'good':rows.length>=5&&totalDays>=180?'medium':'low';
+  return{rows,periods,days:totalDays,totalReturn,annualized,volatility,maxDrawdown:maxDd,confidence};
+}
+
 function sortedPortfolioRows(){
  const now=totalNow(),sort=q('dashboardSort')?.value||'value_desc';
  const nordea=nordeaPortfolio(),cash=nordeaCashPortfolio(),cy=new Date().getFullYear();
@@ -2376,7 +2480,11 @@ function sortedPortfolioRows(){
    }
 
    const role=portfolioRole(p),latest=latestValue(p.id);
-   const r=role==='investable'?portfolioPerf(p.id,state.settings.fyStart):{start:0,end:latest,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:'',endDate:''};
+   const r=p.type==='Крипто'
+     ? {...cryptoPerf(p.id,state.settings.fyStart),end:latest}
+     : role==='investable'
+       ? portfolioPerf(p.id,state.settings.fyStart)
+       : {start:0,end:latest,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:'',endDate:''};
    rows.push({p,r,share:now?100*latest/now:0});
  });
 
@@ -2405,7 +2513,12 @@ function renderDashboard(){
  sortedPortfolioRows().forEach(({p,r,share,invValue,cashValue})=>{
    const isNordea=!!p._nordeaGroup;
    const role=portfolioRole(p);
-   const ytdProfit = isNordea
+   const isCrypto=p.type==='Крипто';
+   const allRow=allTimePerfForDashboardRow(p,isNordea);
+   const miningYtd=isCrypto?cryptoMiningSummary(p.id,state.settings.fyStart,todayISO()):null;
+   const ytdProfit = isCrypto
+     ? (r.sufficient?`<div><span class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</span><div class="crypto-return-detail"><span class="market">только изменение цены BTC</span><span class="mining">майнинг YTD: +${miningYtd.btc.toFixed(8)} BTC · ${money(miningYtd.eur)}</span></div></div>`:'—')
+     : isNordea
      ? (r.sufficient?`<span class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</span>`:'—')
      : role==='excluded'
        ? '<span class="return-na">Вне расчёта</span>'
@@ -2413,11 +2526,17 @@ function renderDashboard(){
          ? '<span class="return-na">Exit-актив</span>'
          : (r.sufficient?`<span class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</span>`:'—');
 
-   const ytdPct = isNordea
-     ? (r.sufficient?`<span class="${r.pct===null?'return-na':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</span>`:'—')
-     : (role==='excluded'||role==='exit')
-       ? '<span class="return-na">—</span>'
-       : (r.sufficient?`<span class="${r.pct===null?'return-na':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</span>`:'—');
+   const ytdPct = isCrypto
+     ? (r.sufficient?`<span class="crypto-pct-pill ${r.pct===null?'':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</span>`:'—')
+     : isNordea
+       ? (r.sufficient?`<span class="${r.pct===null?'return-na':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</span>`:'—')
+       : (role==='excluded'||role==='exit')
+         ? '<span class="return-na">—</span>'
+         : (r.sufficient?`<span class="${r.pct===null?'return-na':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</span>`:'—');
+
+   const allPct = allRow?.sufficient
+     ? `<span class="${allRow.pct===null?'return-na':allRow.pct>=0?'good':'bad'}">${fmtReturn(allRow.pct)}</span>`
+     : '<span class="return-na">—</span>';
 
    const nameHtml=isNordea
      ? `<b>Nordea</b><div class="nordea-breakdown"><span>Investments ${money(invValue||0)}</span><span>Cash ${money(cashValue||0)}</span></div>`
@@ -2435,7 +2554,7 @@ function renderDashboard(){
     <td>${nameHtml}</td>
     <td><span class="owner-badge ${p.owner==='oy'?'oy':'personal'}">${p.owner==='oy'?'VMPC Oy':'Personal'}</span><div class="asset-role-badge role-${role}">${role==='investable'?'В расчёте':role==='excluded'?'Вне расчёта':'Exit-актив'}</div></td>
     <td>${money(r.end)}</td><td>${ytdProfit}</td>
-    <td>${ytdPct}</td><td>${pct(share)}</td>
+    <td>${ytdPct}</td><td>${allPct}</td><td>${pct(share)}</td>
     <td>${actions}</td></tr>`);
  });
  body.querySelectorAll('[data-editport]').forEach(b=>b.addEventListener('click',()=>openPortfolioModal(b.dataset.editport)));
@@ -2605,11 +2724,15 @@ async function syncDirectBtcWallet(options={}){
       };
     }).filter(x=>Math.abs(x.netBtc)>0.0000000001);
 
-    // Исторические цены загружаем только для новых входящих транзакций.
+    // Исторические цены загружаются для каждого нового движения BTC.
+    // Входящие BTC = приход актива; исходящие корректно исключаются из доходности.
     const existingKeys=new Set((state.cryptoTransactions||[]).map(walletTxToLedgerExistingKey));
-    const newIncoming=parsed.filter(x=>x.netBtc>0&&!existingKeys.has(`txid:${x.txid}:mining`));
+    const newLedgerTx=parsed.filter(x=>{
+      const type=x.netBtc>0?'mining':'transfer_out';
+      return !existingKeys.has(`txid:${x.txid}:${type}`);
+    });
     const monthGroups=new Map();
-    for(const x of newIncoming){
+    for(const x of newLedgerTx){
       if(!x.timestamp)continue;
       const d=new Date(x.timestamp*1000);
       const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
@@ -2645,10 +2768,16 @@ async function syncDirectBtcWallet(options={}){
       }else{
         const key=`txid:${x.txid}:transfer_out`;
         if(existingKeys.has(key)){duplicates++;continue}
+        let rate=0;
+        if(x.timestamp){
+          const d=new Date(x.timestamp*1000);
+          const mk=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+          rate=nearestBtcPrice(priceCache.get(mk)||[],x.timestamp*1000);
+        }
         const btc=Math.abs(Number(x.netBtc));
         state.cryptoTransactions.push({
           id:uid(),portfolioId:p.id,date:x.date,type:'transfer_out',btc,
-          eurRate:0,eurValue:0,source:'Bitcoin wallet',
+          eurRate:rate,eurValue:btc*rate,source:'Bitcoin wallet',
           txid:x.txid,comment:'Исходящая транзакция BTC · автоматически из блокчейна',
           walletAddress:address,confirmed:x.confirmed,blockchainSync:true
         });
@@ -2713,12 +2842,14 @@ function renderDirectBtcWalletSettings(){
     const cs=p?cryptoStats(p.id):{btc:0,basis:0,investmentPnl:0,currentValue:0};
     const chainBalance=Number(state.settings?.btcWalletBlockchainBalance||0);
     const rate=Number(state.settings?.btcWalletCurrentRate||0);
+    const cp=p?cryptoAllTimePerf(p.id):null;
+    const mined=p?cryptoMiningSummary(p.id,'',todayISO()):{btc:0,eur:0};
     k.innerHTML=`
       <div class="btc-wallet-kpi"><span>Баланс блокчейна</span><b>${chainBalance.toFixed(8)} BTC</b></div>
-      <div class="btc-wallet-kpi"><span>В учёте Wealth Studio</span><b>${Number(cs.btc||0).toFixed(8)} BTC</b></div>
+      <div class="btc-wallet-kpi"><span>Получено майнингом</span><b>${mined.btc.toFixed(8)} BTC</b></div>
       <div class="btc-wallet-kpi"><span>BTC/EUR</span><b>${rate?money(rate):'—'}</b></div>
       <div class="btc-wallet-kpi"><span>Рыночная стоимость</span><b>${rate?money(chainBalance*rate):money(cs.currentValue||0)}</b></div>
-      <div class="btc-wallet-kpi"><span>Инвест. результат</span><b class="${Number(cs.investmentPnl||0)>=0?'good':'bad'}">${Number(cs.investmentPnl||0)>=0?'+':''}${money(cs.investmentPnl||0)}</b></div>`;
+      <div class="btc-wallet-kpi"><span>Доходность BTC (цена)</span><b class="${cp?.pct!==null&&cp?.pct<0?'bad':'good'}">${cp?.sufficient?fmtReturn(cp.pct):'—'}</b></div>`;
   }
 
   const status=q('btcWalletStatus');
@@ -2846,8 +2977,11 @@ function renderPortfolios(){
        returnClass=r.profit>=0?'good':'bad';
      }
    }else if(isCrypto){
-     returnText=`Инвестиционный результат: ${crypto.investmentPnl>=0?'+':''}${money(crypto.investmentPnl)}`;
-     returnClass=crypto.investmentPnl>=0?'good':'bad';
+     const cr=cryptoYearPerf(p.id,cy);
+     returnText=cr?.sufficient
+       ? `Доходность BTC по цене: ${cr.profit>=0?'+':''}${money(cr.profit)} · ${fmtReturn(cr.pct)}`
+       : 'Доходность BTC: недостаточно истории';
+     returnClass=cr?.sufficient?(cr.profit>=0?'good':'bad'):'muted';
    }else if(role==='excluded'){
      returnText='Вне расчёта доходности';
    }else if(role==='exit'){
@@ -2870,7 +3004,7 @@ function renderPortfolios(){
             <div class="crypto-kpi"><span>Количество</span><b>${crypto.btc.toFixed(8)} BTC</b></div>
             <div class="crypto-kpi"><span>Текущий BTC/EUR</span><b>${crypto.currentRate?money(crypto.currentRate):'—'}</b></div>
             <div class="crypto-kpi"><span>Приход от майнинга</span><b>${money(crypto.miningIncome)}</b></div>
-            <div class="crypto-kpi"><span>Базовая стоимость</span><b>${money(crypto.basis)}</b></div>
+            <div class="crypto-kpi"><span>Доходность BTC (цена)</span><b>${cryptoAllTimePerf(p.id)?.sufficient?fmtReturn(cryptoAllTimePerf(p.id).pct):'—'}</b></div>
           </div>`
        : '';
 
@@ -3771,9 +3905,11 @@ function analyticsRangeStart(range,lastDate){
   return localISODate(d);
 }
 function analyticsPeriodPerf(entity,from,to){
+  if(entity.p?.type==='Крипто')return cryptoPerf(entity.p.id,from,to);
   return entity.kind==='group'?groupPerf(entity.members,from,to):portfolioPerf(entity.p.id,from,to);
 }
 function analyticsTimeWeightedStats(entity){
+  if(entity.p?.type==='Крипто')return cryptoTimeWeightedStats(entity.p.id);
   const rows=analyticsEntityRows(entity);
   if(rows.length<2)return{
     rows,periods:0,days:0,totalReturn:null,annualized:null,volatility:null,maxDrawdown:null,
@@ -3866,6 +4002,17 @@ function analyticsConfidenceText(stats){
   return 'Недостаточно исторических оценок для прогноза.';
 }
 function analyticsFlowSummary(entity,from,to){
+  if(entity.p?.type==='Крипто'){
+    const tx=cryptoTxFor(entity.p.id).filter(t=>t.date>from&&t.date<=to);
+    let add=0,out=0,income=0,fees=0,miningBtc=0;
+    tx.forEach(t=>{
+      const v=cryptoFlowValue(t);
+      if(t.type==='mining'){income+=v;miningBtc+=Math.abs(Number(t.btc)||0)}
+      else if(t.type==='purchase'||t.type==='transfer_in')add+=v;
+      else if(t.type==='transfer_out')out+=v;
+    });
+    return{add,out,income,fees,count:tx.length,miningBtc};
+  }
   const flows=analyticsEntityFlows(entity,from,to);
   let add=0,out=0,income=0,fees=0;
   flows.forEach(f=>{
@@ -3917,13 +4064,15 @@ function renderPortfolioAnalytics(){
         <div>
           <div class="analytics-card-title">${esc(entity.p.name)}</div>
           <div class="analytics-card-sub">${esc(entity.p.type||'Актив')} · ${owner} · ${roleText}</div>
-          <div class="analytics-flow-line">За выбранный период: пополнения ${money(flow.add)} · выводы ${money(flow.out)}${flow.income?` · доход событиями ${money(flow.income)}`:''}${flow.fees?` · комиссии ${money(flow.fees)}`:''}</div>
+          <div class="analytics-flow-line">${entity.p.type==='Крипто'
+            ? `За период: майнинг +${Number(flow.miningBtc||0).toFixed(8)} BTC · ${money(flow.income)} · покупки/переводы ${money(flow.add)} · выводы ${money(flow.out)}`
+            : `За выбранный период: пополнения ${money(flow.add)} · выводы ${money(flow.out)}${flow.income?` · доход событиями ${money(flow.income)}`:''}${flow.fees?` · комиссии ${money(flow.fees)}`:''}`}</div>
         </div>
         <div style="text-align:right"><div class="muted small">Сейчас</div><b style="font-size:17px">${money(current)}</b></div>
       </div>
       <div class="analytics-kpis">
-        <div class="analytics-kpi"><span>Доходность периода</span><b class="${perf?.pct>=0?'good':'bad'}">${perf?.sufficient?`${perf.pct>=0?'+':''}${Number(perf.pct).toFixed(1)}%`:'—'}</b></div>
-        <div class="analytics-kpi"><span>Годовая историческая</span><b class="${stats.annualized>=0?'good':'bad'}">${analyticsFmtPct(stats.annualized)}</b></div>
+        <div class="analytics-kpi"><span>${entity.p.type==='Крипто'?'Доходность BTC (цена)':'Доходность периода'}</span><b class="${perf?.pct>=0?'good':'bad'}">${perf?.sufficient?`${perf.pct>=0?'+':''}${Number(perf.pct).toFixed(1)}%`:'—'}</b></div>
+        <div class="analytics-kpi"><span>${entity.p.type==='Крипто'?'Годовая цена BTC':'Годовая историческая'}</span><b class="${stats.annualized>=0?'good':'bad'}">${analyticsFmtPct(stats.annualized)}</b></div>
         <div class="analytics-kpi"><span>Волатильность</span><b>${stats.volatility===null?'—':(stats.volatility*100).toFixed(1)+'%'}</b></div>
         <div class="analytics-kpi"><span>Макс. просадка</span><b class="bad">${stats.maxDrawdown===null?'—':(stats.maxDrawdown*100).toFixed(1)+'%'}</b></div>
         <div class="analytics-kpi"><span>Оценок</span><b>${stats.rows.length}</b></div>
@@ -3935,7 +4084,9 @@ function renderPortfolioAnalytics(){
         <div class="analytics-forecast-box"><span>Базовый · ${rates?analyticsFmtPct(rates.base):'—'} / год</span><b>${endBase===null?'—':money(endBase)}</b></div>
         <div class="analytics-forecast-box"><span>Оптимистичный · ${rates?analyticsFmtPct(rates.optimistic):'—'} / год</span><b>${endOpt===null?'—':money(endOpt)}</b></div>
       </div>
-      <div class="analytics-note ${noteClass}">${analyticsConfidenceText(stats)} Прогноз строится по исторической доходности, очищенной от внешних пополнений и выводов; он не является гарантией будущего результата.</div>
+      <div class="analytics-note ${noteClass}">${analyticsConfidenceText(stats)} ${entity.p.type==='Крипто'
+        ? 'Для Crypto прогноз основан только на историческом изменении цены BTC. Намайненные BTC считаются приходом актива и не увеличивают процент инвестиционной доходности. Crypto полностью исключён из плана вывода денег.'
+        : 'Прогноз строится по исторической доходности, очищенной от внешних пополнений и выводов; он не является гарантией будущего результата.'}</div>
     </div>`;
   }).join('');
 
@@ -3949,10 +4100,23 @@ function renderPortfolioAnalytics(){
     const stats=analyticsTimeWeightedStats(entity);
     const rates=analyticsForecastRates(stats);
     const series=[{
-      name:'Факт',
+      name:entity.p.type==='Крипто'?'Стоимость Crypto':'Факт',
       points:visible.map(x=>({t:new Date(x.date+'T12:00:00').getTime(),v:Number(x.value)})),
       ci:0
     }];
+    if(entity.p.type==='Крипто'){
+      const ps=cryptoPriceSeries(entity.p.id);
+      const pvis=start?ps.filter(x=>x.date>=start):ps;
+      if(pvis.length){
+        const base=pvis[0].value||1;
+        const basePortfolio=visible[0]?.value||all[0]?.value||1;
+        series.push({
+          name:'Цена BTC (нормировано)',
+          points:pvis.map(x=>({t:new Date(x.date+'T12:00:00').getTime(),v:basePortfolio*(x.value/base)})),
+          ci:2,dash:true
+        });
+      }
+    }
     if(rates&&all.at(-1)){
       const last=all.at(-1);
       series.push(
@@ -4035,7 +4199,7 @@ function openPortfolioModal(id=null){
     <option value="investable" ${role==='investable'?'selected':''}>Инвестируемый — участвует в доходности и снятиях</option>
     <option value="excluded" ${role==='excluded'?'selected':''}>Отдельный актив — показывать, но не использовать в расчётах</option>
     <option value="exit" ${role==='exit'?'selected':''}>Exit-инвестиция — без доходности до продажи</option>
-  </select></label>
+  </select><small>Для типа «Крипто» программа всегда использует «Вне расчёта»: Crypto отображается в капитале и аналитике, но не участвует в плане вывода денег и сценариях расходов.</small></label>
   ${p?'':`<label>Дата первой оценки${dateControl('pDate')}</label><label>Начальная стоимость<input id="pValue" type="number" step="0.01"></label>`}
 
   <div id="investableAssetFields" class="investable-asset-fields ${role==='investable'?'':'hidden'}">
@@ -4112,7 +4276,7 @@ function openPortfolioModal(id=null){
 
  q('savePortfolio').addEventListener('click',()=>{
    const name=q('pName').value.trim();if(!name)return toast('Введите название');
-   const role=q('pCalcRole').value;
+   const role=q('pType').value==='Крипто'?'excluded':q('pCalcRole').value;
    const exitDate=role==='exit'?targetDateFromAge(Number(q('pExitAge').value)):'';
    const exitCostParsed=role==='exit'?Math.max(0,flexNumber(q('pExitCost').value)):0;
    const exitMultipleParsed=role==='exit'?Math.max(0,flexNumber(q('pExitMultiple').value)):1;
