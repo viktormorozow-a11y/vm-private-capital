@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.6.1 Portfolio View Fix</title>
+<title>VM Private Capital — Wealth Studio v7.8.0 Mining Sync</title>
 <style>
 
 :root{
@@ -664,6 +664,28 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:1300px){.insight-metric-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.insight-grid.two-col{grid-template-columns:1fr}.insights-symbol{display:none}}@media(max-width:650px){.insight-metric-grid{grid-template-columns:1fr}.insight-exit-head,.insight-exit-meta{flex-direction:column}.plan-info-grid{grid-template-columns:1fr}}
 
 
+
+
+/* v7.8.0 Mining Report sync */
+.mining-sync-panel{border-color:rgba(112,224,194,.20)!important;background:linear-gradient(150deg,rgba(8,29,31,.72),rgba(8,18,25,.92))!important}
+.mining-sync-status{margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(0,0,0,.10);font-size:11px;line-height:1.45;color:#aeb9c8}
+.mining-sync-status.ok{border-color:rgba(120,227,155,.22);color:#bce8c9}
+.mining-sync-status.warn{border-color:rgba(240,200,120,.24);color:#dfc999}
+.sync-inline{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+
+/* v7.7.0 Crypto Ledger */
+.crypto-ledger-card{border-color:rgba(212,170,90,.28)!important;background:linear-gradient(150deg,rgba(18,28,39,.98),rgba(8,16,24,.98))!important}
+.crypto-kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:13px}
+.crypto-kpi{border:1px solid var(--line);background:rgba(255,255,255,.025);border-radius:10px;padding:9px 10px;min-width:0}
+.crypto-kpi span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.crypto-kpi b{display:block;margin-top:4px;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crypto-ledger-list{display:grid;gap:7px;margin-top:12px}
+.crypto-ledger-row{display:grid;grid-template-columns:88px 1fr auto;gap:8px;padding:8px 9px;border:1px solid var(--line);border-radius:9px;background:rgba(0,0,0,.10);font-size:10px;align-items:center}
+.crypto-ledger-row .muted{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.crypto-positive{color:var(--good)}.crypto-negative{color:var(--bad)}
+.crypto-modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:650px){.crypto-kpis,.crypto-modal-grid{grid-template-columns:1fr}.crypto-ledger-row{grid-template-columns:1fr}}
+
 /* v7.6.1 Portfolio View Fix */
 .cloud-card{border-color:rgba(95,190,150,.18)!important;background:linear-gradient(145deg,rgba(95,190,150,.055),rgba(255,255,255,.018))!important}
 .cloud-card-copy{min-width:0}.cloud-card-copy b,.cloud-card-copy div{overflow-wrap:anywhere}
@@ -1004,7 +1026,7 @@ body.auth-locked{overflow:hidden}
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.6.1 Portfolio View Fix</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.8.0 Mining Sync</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -1365,6 +1387,21 @@ body.auth-locked{overflow:hidden}
           <button class="btn primary" id="saveTaxSettingsBtn">Сохранить налоговые параметры</button>
         </div>
 
+        <div class="panel mining-sync-panel">
+          <div class="eyebrow">CRYPTO · MINING REPORT</div><h2>Синхронизация BTC из Mining Report</h2>
+          <p class="muted">Выплаты PowerPool импортируются как <b>приход BTC от майнинга</b>. Изменение цены BTC после получения остаётся инвестиционным доходом/убытком.</p>
+          <div class="form-grid">
+            <label>Криптоактив для майнинга<select id="cryptoMiningPortfolio"></select></label>
+            <label>Сколько месяцев проверять<input id="cryptoMiningMonthsBack" type="number" min="1" max="120" step="1" value="24"></label>
+          </div>
+          <label class="row" style="margin-top:10px"><input id="cryptoMiningAutoSync" type="checkbox" style="width:auto"> Автоматически проверять Mining Report при открытии сайта</label>
+          <div class="sync-inline">
+            <button class="btn primary" id="syncMiningReportBtn">↻ Получить выплаты Mining Report</button>
+            <button class="btn secondary" id="createMiningCryptoBtn">＋ Создать Bitcoin Mining</button>
+          </div>
+          <div id="miningSyncStatus" class="mining-sync-status">Синхронизация ещё не запускалась.</div>
+        </div>
+
         <div class="panel">
           <div class="eyebrow">DATA</div><h2>Резервное копирование</h2>
           <p class="muted">Рекомендуется периодически экспортировать резервную копию. Для будущих обновлений используйте один и тот же файл <b>VM_Private_Capital.html</b> и заменяйте его новой версией в той же папке — так браузеру проще сохранить локальные данные.</p>
@@ -1407,9 +1444,9 @@ function addMonthsToIso(iso,months){
  return localISODate(new Date(y,m-1+months,Math.min(d,lastTargetDay),12));
 }
 const defaultState=()=>({
- portfolios:[],snapshots:[],flows:[],
+ portfolios:[],snapshots:[],flows:[],cryptoTransactions:[],
  withdrawalRules:[{id:uid(),start:localISODate(new Date()),end:'',monthly:5000,annualIncrease:2}],
- settings:{currency:'EUR',fyStart:`${new Date().getFullYear()}-01-01`},
+ settings:{currency:'EUR',fyStart:`${new Date().getFullYear()}-01-01`,cryptoMiningPortfolioId:'',cryptoMiningMonthsBack:24,cryptoMiningAutoSync:true,cryptoMiningLastSync:''},
  taxSettings:{companyTaxRate:20,dividendThreshold:150000,netAssetRate:8,shareMathValue:2465737.5,dividendTaxableBelow:25,dividendTaxableAbove:85,capitalTaxLow:30,capitalTaxHigh:34,capitalTaxThreshold:30000},
  forecast:{years:20,inflation:2,conservative:4,base:8,optimistic:12}
 });
@@ -1429,6 +1466,18 @@ function normalizeState(raw){
    const legacyType=Number(f.amount)>=0?'contribution':'withdrawal';
    return {...f,flowType:f.flowType||legacyType,transferId:f.transferId||''};
  });
+ s.cryptoTransactions=Array.isArray(s.cryptoTransactions)?s.cryptoTransactions:[];
+ s.cryptoTransactions=s.cryptoTransactions.map(t=>({
+   ...t,
+   type:t.type||'mining',
+   btc:Number(t.btc||0),
+   eurRate:Number(t.eurRate||0),
+   eurValue:Number(t.eurValue||((Number(t.btc)||0)*(Number(t.eurRate)||0))),
+   source:t.source||'',
+   txid:t.txid||'',
+   comment:t.comment||''
+ }));
+
  s.withdrawalRules=Array.isArray(s.withdrawalRules)?s.withdrawalRules:[];
  s.settings={...d.settings,...(s.settings||{})};
  s.taxSettings={...d.taxSettings,...(s.taxSettings||{})};
@@ -1483,7 +1532,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.6.1 Portfolio View Fix';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.8.0 Mining Sync';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -2255,6 +2304,308 @@ function renderDashboard(){
  sortedPortfolioRows().forEach(({p,r,share})=>alloc.insertAdjacentHTML('beforeend',`<div class="allocation-item"><div class="alloc-name">${esc(p.name)}</div><div class="alloc-value">${money(r.end)} · ${pct(share)}</div><div class="alloc-track"><div class="alloc-fill" style="width:${Math.min(100,Math.max(0,share))}%"></div></div></div>`));
  renderCapitalChart()
 }
+
+
+let MINING_SYNC_RPC_SEQ=0;
+const MINING_SYNC_RPC_PENDING=new Map();
+
+window.addEventListener('message',(ev)=>{
+  const m=ev.data;
+  if(!m||m.type!=='mining-report-rpc-result'||!m.id)return;
+  const p=MINING_SYNC_RPC_PENDING.get(m.id);
+  if(!p)return;
+  MINING_SYNC_RPC_PENDING.delete(m.id);
+  if(m.ok)p.resolve(m.result);
+  else p.reject(new Error(m.error||'Mining Report API error'));
+});
+
+function miningReportPanelCall(path){
+  if(window.parent===window)return Promise.reject(new Error('not-panel'));
+  const id='ws'+Date.now().toString(36)+(++MINING_SYNC_RPC_SEQ).toString(36);
+  return new Promise((resolve,reject)=>{
+    const timer=setTimeout(()=>{
+      MINING_SYNC_RPC_PENDING.delete(id);
+      reject(new Error('Home Assistant panel timeout'));
+    },5000);
+    MINING_SYNC_RPC_PENDING.set(id,{
+      resolve:v=>{clearTimeout(timer);resolve(v)},
+      reject:e=>{clearTimeout(timer);reject(e)}
+    });
+    window.parent.postMessage({
+      type:'mining-report-rpc',
+      id,
+      action:'callApi',
+      method:'get',
+      path:String(path||'').replace(/^\/+/,'')
+    },location.origin);
+  });
+}
+
+async function miningReportDirectGet(key){
+  const url='/api/mining_report/data/'+encodeURIComponent(key);
+  const r=await fetch(url,{method:'GET',credentials:'include',headers:{'Accept':'application/json'}});
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  return await r.json();
+}
+
+function miningReportIndexedDbGet(key){
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open('mining_report_local_v7',1);
+    req.onerror=()=>reject(req.error||new Error('IndexedDB error'));
+    req.onsuccess=()=>{
+      const db=req.result;
+      if(!db.objectStoreNames.contains('records')){db.close();return resolve({exists:false})}
+      const tx=db.transaction('records','readonly');
+      const store=tx.objectStore('records');
+      const g=store.get(key);
+      g.onsuccess=()=>{const v=g.result;db.close();resolve(v===undefined?{exists:false}:{exists:true,value:v})};
+      g.onerror=()=>{db.close();reject(g.error||new Error('IndexedDB read error'))};
+    };
+  });
+}
+
+async function miningReportGetIncome(y,m){
+  const key=`${y}-${String(m).padStart(2,'0')}-income`;
+  const path='mining_report/data/'+encodeURIComponent(key);
+
+  try{
+    const j=await miningReportPanelCall(path);
+    if(j&&typeof j==='object')return {...j,_source:'HA panel'};
+  }catch(e){}
+
+  try{
+    const j=await miningReportDirectGet(key);
+    if(j&&typeof j==='object')return {...j,_source:'HA API'};
+  }catch(e){}
+
+  try{
+    const j=await miningReportIndexedDbGet(key);
+    if(j&&typeof j==='object')return {...j,_source:'IndexedDB'};
+  }catch(e){}
+
+  return {exists:false,_source:'unavailable'};
+}
+
+function cryptoMiningPortfolio(){
+  const id=state.settings?.cryptoMiningPortfolioId||'';
+  let p=state.portfolios.find(x=>x.id===id&&x.type==='Крипто');
+  if(!p)p=state.portfolios.find(x=>x.type==='Крипто'&&x.owner==='personal')||state.portfolios.find(x=>x.type==='Крипто');
+  return p||null;
+}
+
+function createMiningCryptoPortfolio(){
+  const existing=state.portfolios.find(x=>x.type==='Крипто'&&x.name==='Bitcoin Mining');
+  if(existing){
+    state.settings.cryptoMiningPortfolioId=existing.id;
+    persistState();renderAll();renderMiningSyncSettings();
+    return existing;
+  }
+  const id=uid();
+  state.portfolios.push({
+    id,name:'Bitcoin Mining',type:'Крипто',owner:'personal',calcRole:'excluded',
+    returnAdjustment:0,exitCost:0,exitMultiple:1,exitDate:'',exitTaxable:true,exitTargetPortfolioId:''
+  });
+  state.settings.cryptoMiningPortfolioId=id;
+  persistState();renderAll();renderMiningSyncSettings();
+  toast('Создан криптоактив Bitcoin Mining');
+  return state.portfolios.find(x=>x.id===id);
+}
+
+function miningPaymentRate(p){
+  const btc=Number(p?.btc||0);
+  const rate=Number(p?.rate||p?.eurRate||0);
+  if(Number.isFinite(rate)&&rate>0)return rate;
+  const eur=Number(p?.eur||p?.eurValue||0);
+  if(btc>0&&Number.isFinite(eur)&&eur>0)return eur/btc;
+  return 0;
+}
+
+function miningPaymentEurValue(p,rate){
+  const eur=Number(p?.eur||p?.eurValue||0);
+  if(Number.isFinite(eur)&&eur>0)return eur;
+  const btc=Number(p?.btc||0);
+  return btc>0&&rate>0?btc*rate:0;
+}
+
+async function syncMiningReportPayments(options={}){
+  const silent=!!options.silent;
+  const status=q('miningSyncStatus');
+  if(status){
+    status.className='mining-sync-status';
+    status.textContent='Проверяю Mining Report…';
+  }
+
+  let target=cryptoMiningPortfolio();
+  if(!target){
+    if(silent){
+      if(status){status.className='mining-sync-status warn';status.textContent='Нет криптоактива для импорта. Создайте Bitcoin Mining в настройках.'}
+      return {added:0,total:0};
+    }
+    target=createMiningCryptoPortfolio();
+  }
+  if(!target)return {added:0,total:0};
+
+  const months=Math.max(1,Math.min(120,Number(state.settings.cryptoMiningMonthsBack||24)));
+  const now=new Date();
+  const records=[];
+  let sourceUsed='',monthsFound=0;
+
+  for(let i=0;i<months;i++){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1,12);
+    const y=d.getFullYear(),m=d.getMonth()+1;
+    const j=await miningReportGetIncome(y,m);
+    if(j?._source&&j._source!=='unavailable')sourceUsed=j._source;
+    if(!j?.exists||!j.value)continue;
+    const payments=Array.isArray(j.value.payments)?j.value.payments:[];
+    if(payments.length)monthsFound++;
+    for(const p of payments)records.push(p);
+  }
+
+  let added=0,duplicates=0,invalid=0;
+  const existingTxids=new Set((state.cryptoTransactions||[]).map(t=>String(t.txid||'')).filter(Boolean));
+  const existingFallback=new Set((state.cryptoTransactions||[]).map(t=>`${t.date}|${Number(t.btc||0).toFixed(8)}|${t.source||''}`));
+
+  for(const p of records){
+    const btc=Number(p?.btc||0);
+    const date=String(p?.date||'').slice(0,10);
+    if(!(btc>0)||!/^\d{4}-\d{2}-\d{2}$/.test(date)){invalid++;continue}
+    const txid=String(p?.txid||p?.id||'').trim();
+    const rate=miningPaymentRate(p);
+    const eurValue=miningPaymentEurValue(p,rate);
+    const fallback=`${date}|${btc.toFixed(8)}|PowerPool`;
+    if((txid&&existingTxids.has(txid))||(!txid&&existingFallback.has(fallback))){
+      duplicates++;continue;
+    }
+
+    state.cryptoTransactions.push({
+      id:uid(),
+      portfolioId:target.id,
+      date,
+      type:'mining',
+      btc,
+      eurRate:rate,
+      eurValue,
+      source:'PowerPool',
+      txid,
+      comment:'Импортировано из Mining Report',
+      miningReport:true,
+      miningReportRateSource:p?.rateSource||'',
+      importedAt:new Date().toISOString()
+    });
+    if(txid)existingTxids.add(txid);
+    existingFallback.add(fallback);
+    added++;
+  }
+
+  state.settings.cryptoMiningPortfolioId=target.id;
+  state.settings.cryptoMiningLastSync=new Date().toISOString();
+  persistState();
+  renderAll();
+  renderMiningSyncSettings();
+
+  const msg=`Mining Report: найдено ${records.length} выплат, добавлено ${added}, уже было ${duplicates}`+
+    (invalid?`, пропущено ${invalid}`:'')+
+    (sourceUsed?`. Источник: ${sourceUsed}`:'')+
+    `. Актив: ${target.name}.`;
+
+  if(status){
+    status.className='mining-sync-status ok';
+    status.textContent=msg;
+  }
+  if(!silent)toast(added?`Добавлено ${added} BTC-выплат`:'Новых BTC-выплат нет');
+  return {added,total:records.length,duplicates,invalid,sourceUsed};
+}
+
+function renderMiningSyncSettings(){
+  const sel=q('cryptoMiningPortfolio');
+  if(sel){
+    const cryptos=state.portfolios.filter(p=>p.type==='Крипто');
+    sel.innerHTML=cryptos.length
+      ? cryptos.map(p=>`<option value="${p.id}" ${p.id===(state.settings.cryptoMiningPortfolioId||'')?'selected':''}>${esc(p.name)} · ${p.owner==='oy'?'VMPC Oy':'Personal'}</option>`).join('')
+      : '<option value="">Нет криптоактивов</option>';
+    if(!state.settings.cryptoMiningPortfolioId&&cryptos[0])sel.value=cryptos[0].id;
+  }
+  if(q('cryptoMiningMonthsBack'))q('cryptoMiningMonthsBack').value=Number(state.settings.cryptoMiningMonthsBack||24);
+  if(q('cryptoMiningAutoSync'))q('cryptoMiningAutoSync').checked=state.settings.cryptoMiningAutoSync!==false;
+  const status=q('miningSyncStatus');
+  if(status&&state.settings.cryptoMiningLastSync){
+    const d=new Date(state.settings.cryptoMiningLastSync);
+    status.textContent='Последняя синхронизация: '+(Number.isNaN(d.getTime())?state.settings.cryptoMiningLastSync:d.toLocaleString('ru-RU'));
+  }
+}
+
+function cryptoTxFor(pid){
+  return (state.cryptoTransactions||[]).filter(t=>t.portfolioId===pid).sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+}
+function cryptoStats(pid){
+  const tx=cryptoTxFor(pid);
+  let btc=0,basis=0,miningIncome=0,purchases=0;
+  for(const t of tx){
+    const q=Number(t.btc)||0,rate=Number(t.eurRate)||0,val=Number(t.eurValue)||q*rate;
+    if(t.type==='mining'){btc+=q;basis+=val;miningIncome+=val}
+    else if(t.type==='purchase'){btc+=q;basis+=val;purchases+=val}
+    else if(t.type==='transfer_in'){btc+=q;basis+=val}
+    else if(t.type==='transfer_out'){btc-=Math.abs(q)}
+  }
+  const currentValue=latestValue(pid);
+  const currentRate=btc>0?currentValue/btc:0;
+  const investmentPnl=currentValue-basis;
+  return {tx,btc,basis,miningIncome,purchases,currentValue,currentRate,investmentPnl};
+}
+function cryptoTypeLabel(t){
+  return {mining:'Майнинг',purchase:'Покупка',transfer_in:'Перевод вход',transfer_out:'Перевод выход'}[t]||t;
+}
+function openCryptoTransactionModal(pid){
+  const p=state.portfolios.find(x=>x.id===pid);if(!p)return;
+  openModal('Операция BTC',`<div class="form-grid">
+    <label>Актив<input value="${esc(p.name)}" disabled></label>
+    <label>Тип<select id="cType">
+      <option value="mining">Майнинг — приход актива</option>
+      <option value="purchase">Покупка</option>
+      <option value="transfer_in">Перевод на кошелёк</option>
+      <option value="transfer_out">Перевод с кошелька</option>
+    </select></label>
+    <label>Дата${dateControl('cDate',todayISO())}</label>
+    <label>Количество BTC<input id="cBtc" type="number" step="0.00000001" placeholder="0.00211574"></label>
+    <label>BTC/EUR на момент операции<input id="cRate" type="number" step="0.01" placeholder="55000"></label>
+    <label>Источник<input id="cSource" value="PowerPool" placeholder="PowerPool / покупка / перевод"></label>
+    <label>TXID<input id="cTxid" placeholder="Необязательно"></label>
+    <label>Комментарий<input id="cComment" placeholder="Необязательно"></label>
+    <div class="note">Майнинг учитывается как приход BTC. Стоимость BTC на дату поступления формирует базовую стоимость. Последующее изменение цены попадает в инвестиционный доход/убыток.</div>
+    <div class="modal-actions"><button class="btn primary" id="saveCryptoTx">Добавить</button></div>
+  </div>`,'CRYPTO');
+  q('saveCryptoTx').addEventListener('click',()=>{
+    const date=parseDate(q('cDate').value),btc=Number(q('cBtc').value),rate=Number(q('cRate').value||0),txid=q('cTxid').value.trim();
+    if(!date)return toast('Проверьте дату');
+    if(!Number.isFinite(btc)||btc<=0)return toast('Введите количество BTC');
+    if(txid && state.cryptoTransactions.some(t=>t.txid===txid))return toast('Такая транзакция уже есть');
+    state.cryptoTransactions.push({
+      id:uid(),portfolioId:pid,date,type:q('cType').value,btc,eurRate:rate,
+      eurValue:btc*rate,source:q('cSource').value.trim(),txid,comment:q('cComment').value.trim()
+    });
+    closeModal();saveState();renderPortfolios();renderDashboard();toast('BTC-операция добавлена')
+  });
+}
+function openCryptoPriceModal(pid){
+  const p=state.portfolios.find(x=>x.id===pid);if(!p)return;
+  const s=cryptoStats(pid);
+  openModal('Текущая цена BTC',`<div class="form-grid">
+    <label>Количество BTC<input value="${s.btc.toFixed(8)}" disabled></label>
+    <label>Дата оценки${dateControl('cpDate',todayISO())}</label>
+    <label>Текущая цена BTC/EUR<input id="cpRate" type="number" step="0.01" value="${s.currentRate?s.currentRate.toFixed(2):''}" placeholder="Например 55000"></label>
+    <div class="note">Программа создаст обычную оценку портфеля: количество BTC × текущая цена. Разница с базовой стоимостью будет показана как инвестиционный результат.</div>
+    <div class="modal-actions"><button class="btn primary" id="saveCryptoPrice">Сохранить оценку</button></div>
+  </div>`,'VALUATION');
+  q('saveCryptoPrice').addEventListener('click',()=>{
+    const date=parseDate(q('cpDate').value),rate=Number(q('cpRate').value);
+    if(!date)return toast('Проверьте дату');
+    if(!Number.isFinite(rate)||rate<=0)return toast('Введите BTC/EUR');
+    const value=s.btc*rate;
+    state.snapshots.push({id:uid(),portfolioId:pid,date,value,comment:`BTC ${s.btc.toFixed(8)} × ${rate.toFixed(2)} EUR`});
+    closeModal();saveState();renderPortfolios();renderDashboard();toast('Оценка BTC сохранена')
+  });
+}
+
 function renderPortfolios(){
  const box=q('portfolioCards');if(!box)return;
  const nordea=nordeaPortfolio(),cash=nordeaCashPortfolio(),cy=new Date().getFullYear();
@@ -2277,6 +2628,8 @@ function renderPortfolios(){
    const cashValue=isNordea?latestValue(cash.id):0;
    const value=isNordea?invValue+cashValue:invValue;
    const role=portfolioRole(p);
+   const isCrypto=(p.type==='Крипто');
+   const crypto=isCrypto?cryptoStats(p.id):null;
 
    let returnText='—',returnClass='muted';
    if(isNordea){
@@ -2285,6 +2638,9 @@ function renderPortfolios(){
        returnText=`${r.profit>=0?'+':''}${money(r.profit)} · ${fmtReturn(r.pct)}`;
        returnClass=r.profit>=0?'good':'bad';
      }
+   }else if(isCrypto){
+     returnText=`Инвестиционный результат: ${crypto.investmentPnl>=0?'+':''}${money(crypto.investmentPnl)}`;
+     returnClass=crypto.investmentPnl>=0?'good':'bad';
    }else if(role==='excluded'){
      returnText='Вне расчёта доходности';
    }else if(role==='exit'){
@@ -2302,20 +2658,32 @@ function renderPortfolios(){
 
    const breakdown=isNordea
      ? `<div class="muted small" style="margin-top:6px">Investments ${money(invValue)} · Cash ${money(cashValue)}</div>`
-     : '';
+     : isCrypto
+       ? `<div class="crypto-kpis">
+            <div class="crypto-kpi"><span>Количество</span><b>${crypto.btc.toFixed(8)} BTC</b></div>
+            <div class="crypto-kpi"><span>Текущий BTC/EUR</span><b>${crypto.currentRate?money(crypto.currentRate):'—'}</b></div>
+            <div class="crypto-kpi"><span>Приход от майнинга</span><b>${money(crypto.miningIncome)}</b></div>
+            <div class="crypto-kpi"><span>Базовая стоимость</span><b>${money(crypto.basis)}</b></div>
+          </div>`
+       : '';
 
    const extraActions=isNordea
      ? `<button class="btn secondary compact" data-snap-pre="${nordea.id}">Оценка investments</button>
         <button class="btn secondary compact" data-snap-pre="${cash.id}">Оценка cash</button>
         <button class="btn secondary compact" data-flow-pre="${cash.id}" data-flow-type="withdrawal">Вывод</button>`
-     : `<button class="btn secondary compact" data-snap-pre="${p.id}">＋ Оценка</button>`;
+     : isCrypto
+       ? `<button class="btn primary compact" data-crypto-tx="${p.id}">＋ BTC приход</button>
+          <button class="btn secondary compact" data-crypto-price="${p.id}">Обновить цену</button>
+          <button class="btn secondary compact" data-crypto-sync="${p.id}">↻ Mining Report</button>`
+       : `<button class="btn secondary compact" data-snap-pre="${p.id}">＋ Оценка</button>`;
 
-   return `<div class="port-card">
+   return `<div class="port-card ${isCrypto?'crypto-ledger-card':''}">
      <div class="port-type">${esc(p.type||'Портфель')}</div>
      <div class="port-name">${esc(isNordea?'Nordea':p.name)}</div>
      <div class="muted small" style="margin-top:5px">${ownerLabel} · ${roleLabel}</div>
      <div class="port-value">${money(value)}</div>
      ${breakdown}
+     ${isCrypto&&crypto.tx.length?`<div class="crypto-ledger-list">${crypto.tx.slice(-3).reverse().map(t=>`<div class="crypto-ledger-row"><b>${formatDate(t.date)}</b><span class="muted">${cryptoTypeLabel(t.type)}${t.source?' · '+esc(t.source):''}</span><span>+${Number(t.btc).toFixed(8)} BTC</span></div>`).join('')}</div>`:''}
      <div class="${returnClass}" style="margin-top:9px;font-size:12px">${returnText}</div>
      <div class="port-actions">
        <button class="btn secondary compact" data-editport-card="${p.id}">Редактировать</button>
@@ -2325,6 +2693,13 @@ function renderPortfolios(){
  }).join('');
 
  box.querySelectorAll('[data-editport-card]').forEach(b=>b.addEventListener('click',()=>openPortfolioModal(b.dataset.editportCard)));
+ box.querySelectorAll('[data-crypto-tx]').forEach(b=>b.addEventListener('click',()=>openCryptoTransactionModal(b.dataset.cryptoTx)));
+ box.querySelectorAll('[data-crypto-price]').forEach(b=>b.addEventListener('click',()=>openCryptoPriceModal(b.dataset.cryptoPrice)));
+ box.querySelectorAll('[data-crypto-sync]').forEach(b=>b.addEventListener('click',async()=>{
+   state.settings.cryptoMiningPortfolioId=b.dataset.cryptoSync;
+   persistState({localOnly:true});
+   await syncMiningReportPayments();
+ }));
  box.querySelectorAll('[data-snap-pre]').forEach(b=>b.addEventListener('click',()=>openSnapshotModal(null,b.dataset.snapPre)));
  box.querySelectorAll('[data-flow-pre]').forEach(b=>b.addEventListener('click',()=>{
    openFlowModal(null,b.dataset.flowPre);
@@ -3156,7 +3531,7 @@ function renderInsights(){
 function renderAll(){syncAgeHorizon('withdrawYears','withdrawTargetAge','withdrawHorizonDate','years');q('todayText').innerHTML=`${new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} · <span class="age-tag">${ageTextByYear(new Date().getFullYear())}</span><div class="age-note">Возраст рассчитан по году рождения 1982. Без точной даты рождения возможна разница в 1 год до дня рождения.</div>`;q('currency').value=state.settings.currency||'EUR';q('fyStartDisplay').value=formatDate(state.settings.fyStart);
  const t=state.taxSettings;
  ['companyTaxRate','dividendThreshold','netAssetRate','shareMathValue','dividendTaxableBelow','dividendTaxableAbove','capitalTaxLow','capitalTaxHigh','capitalTaxThreshold'].forEach(id=>{if(q(id))q(id).value=t[id]});
- renderTaxPreview();renderDashboard();renderPortfolios();renderHistory();renderForecast();renderWithdrawalRules();renderInsights()}
+ renderTaxPreview();renderDashboard();renderPortfolios();renderHistory();renderForecast();renderWithdrawalRules();renderInsights();renderMiningSyncSettings()}
 
 function renderCapitalChart(){
  const cutoff=localISODate(new Date(Date.now()-chartRange*86400000)),dates=allDates().filter(d=>chartRange>=99999||d>=cutoff),mode=q('capitalChartMode')?.value||'total';
@@ -3329,7 +3704,7 @@ function openPortfolioModal(id=null){
    }
    closeModal();saveState();markWithdrawalDirty();toast('Сохранено')
  });
- if(p)q('deletePortfolio').addEventListener('click',()=>{if(!confirm(`Удалить "${p.name}" и всю его историю?`))return;state.portfolios=state.portfolios.filter(x=>x.id!==p.id);state.portfolios.forEach(x=>{if(x.exitTargetPortfolioId===p.id)x.exitTargetPortfolioId=''});state.snapshots=state.snapshots.filter(x=>x.portfolioId!==p.id);state.flows=state.flows.filter(x=>x.portfolioId!==p.id);closeModal();saveState();markWithdrawalDirty();toast('Актив удалён')})
+ if(p)q('deletePortfolio').addEventListener('click',()=>{if(!confirm(`Удалить "${p.name}" и всю его историю?`))return;state.portfolios=state.portfolios.filter(x=>x.id!==p.id);state.portfolios.forEach(x=>{if(x.exitTargetPortfolioId===p.id)x.exitTargetPortfolioId=''});state.snapshots=state.snapshots.filter(x=>x.portfolioId!==p.id);state.flows=state.flows.filter(x=>x.portfolioId!==p.id);state.cryptoTransactions=state.cryptoTransactions.filter(x=>x.portfolioId!==p.id);closeModal();saveState();markWithdrawalDirty();toast('Актив удалён')})
 }
 function openSnapshotModal(id=null,pre=''){
  if(!state.portfolios.length)return toast('Сначала добавьте портфель');const x=id?state.snapshots.find(v=>v.id===id):null;
@@ -3496,6 +3871,27 @@ q('saveTaxSettingsBtn').addEventListener('click',()=>{
  ids.forEach(id=>state.taxSettings[id]=Number(q(id).value)||0);saveState();toast('Налоговые параметры сохранены')
 });
 q('saveSettingsBtn').addEventListener('click',()=>{const iso=parseDate(q('fyStartDisplay').value);if(!iso)return toast('Дата должна быть ДД.ММ.ГГГГ');state.settings.currency=q('currency').value;state.settings.fyStart=iso;saveState();toast('Настройки сохранены')});
+if(q('syncMiningReportBtn'))q('syncMiningReportBtn').addEventListener('click',async()=>{
+  state.settings.cryptoMiningPortfolioId=q('cryptoMiningPortfolio')?.value||state.settings.cryptoMiningPortfolioId||'';
+  state.settings.cryptoMiningMonthsBack=Math.max(1,Math.min(120,Number(q('cryptoMiningMonthsBack')?.value||24)));
+  state.settings.cryptoMiningAutoSync=!!q('cryptoMiningAutoSync')?.checked;
+  persistState({localOnly:true});
+  await syncMiningReportPayments();
+});
+if(q('createMiningCryptoBtn'))q('createMiningCryptoBtn').addEventListener('click',()=>createMiningCryptoPortfolio());
+if(q('cryptoMiningPortfolio'))q('cryptoMiningPortfolio').addEventListener('change',()=>{
+  state.settings.cryptoMiningPortfolioId=q('cryptoMiningPortfolio').value;
+  persistState();
+});
+if(q('cryptoMiningMonthsBack'))q('cryptoMiningMonthsBack').addEventListener('change',()=>{
+  state.settings.cryptoMiningMonthsBack=Math.max(1,Math.min(120,Number(q('cryptoMiningMonthsBack').value||24)));
+  persistState();
+});
+if(q('cryptoMiningAutoSync'))q('cryptoMiningAutoSync').addEventListener('change',()=>{
+  state.settings.cryptoMiningAutoSync=!!q('cryptoMiningAutoSync').checked;
+  persistState();
+});
+
 q('exportBtn').addEventListener('click',exportJSON);q('jsonReportBtn').addEventListener('click',exportJSON);q('excelReportBtn').addEventListener('click',excelReport);q('pdfReportBtn').addEventListener('click',pdfReport);q('reportsQuickBtn').addEventListener('click',()=>switchView('reports'));
 q('importFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const obj=JSON.parse(await f.text());if(!confirm('Импорт заменит текущие данные. Продолжить?'))return;state=normalizeState(obj);persistState();renderAll();withdrawalResultsReady=false;toast('Данные импортированы')}catch(err){toast('Не удалось прочитать файл')}e.target.value=''});
 q('resetBtn').addEventListener('click',()=>{if(confirm('Удалить текущие данные? Если вы вошли в облако, пустое состояние также будет синхронизировано. Сначала рекомендуется сделать резервную копию.')){state=normalizeState(defaultState());persistState();renderAll();withdrawalResultsReady=false;toast('Данные удалены')}});
@@ -3503,6 +3899,13 @@ let resizeTimer=null;function rerenderVisibleCharts(){if(currentView==='dashboar
 window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(rerenderVisibleCharts,140)});
 renderAll();
 initCloud();
+setTimeout(async()=>{
+  try{
+    if(state.settings?.cryptoMiningAutoSync!==false && cryptoMiningPortfolio()){
+      await syncMiningReportPayments({silent:true});
+    }
+  }catch(e){console.warn('Mining Report auto sync failed',e)}
+},1800);
 window.addEventListener('online',()=>{if(cloudUser&&localStorage.getItem(CLOUD_DIRTY_KEY)==='1')saveCloudState(false)});
 setInterval(()=>{if(cloudUser&&localStorage.getItem(CLOUD_DIRTY_KEY)==='1'&&!cloudBusy)saveCloudState(false)},30000);
 
