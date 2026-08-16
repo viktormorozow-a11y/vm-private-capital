@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.11.0 Final Crypto Accounting</title>
+<title>VM Private Capital — Wealth Studio v7.11.1 BTC Intraday History</title>
 <style>
 
 :root{
@@ -668,7 +668,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 
 
 
-/* v7.11.0 Final Crypto Accounting */
+/* v7.11.1 BTC Intraday History */
 .crypto-return-detail{display:grid;gap:2px;margin-top:3px;font-size:9px;line-height:1.35}
 .crypto-return-detail .mining{color:#d7b76e}
 .crypto-return-detail .market{color:#a8c7dd}
@@ -1112,7 +1112,7 @@ body.auth-locked{overflow:hidden}
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.11.0 Final Crypto Accounting</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.11.1 BTC Intraday History</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -1682,7 +1682,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.11.0 Final Crypto Accounting';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.11.1 BTC Intraday History';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -2021,14 +2021,25 @@ function dateWithAgeDate(d){return d?`${formatDateFromDate(d)} <span class="age-
 const parseDate=s=>{const m=String(s||'').trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);if(!m)return null;const d=+m[1],mo=+m[2],y=+m[3],dt=new Date(y,mo-1,d);if(dt.getFullYear()!=y||dt.getMonth()!=mo-1||dt.getDate()!=d)return null;return `${y}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`};
 function toast(t){const el=q('toast');el.textContent=t;el.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),2200)}
 
+function snapshotMoment(x){
+ const raw=String(x?.capturedAt||'');
+ const t=raw?Date.parse(raw):NaN;
+ return Number.isFinite(t)?t:0;
+}
+function isBtcWalletAutoSnapshot(x){
+ return String(x?.comment||'').startsWith('Автооценка BTC wallet:');
+}
 function uniqueSnapshots(pid){
- const seen=new Set(),rows=[];
+ // Для расчётов используем только последнюю оценку каждого дня.
+ // При этом все внутридневные BTC-оценки остаются в state.snapshots и видны в «Источниках».
+ const byDay=new Map();
  state.snapshots.filter(x=>x.portfolioId===pid).forEach(x=>{
-   const key=`${x.date}|${Number(x.value)}`;
-   if(seen.has(key))return;
-   seen.add(key);rows.push(x);
+   const prev=byDay.get(x.date);
+   if(!prev){byDay.set(x.date,x);return}
+   const pt=snapshotMoment(prev),xt=snapshotMoment(x);
+   if(xt>pt || (xt===pt && String(x.id).localeCompare(String(prev.id))>0))byDay.set(x.date,x);
  });
- return rows.sort((a,b)=>a.date.localeCompare(b.date));
+ return [...byDay.values()].sort((a,b)=>a.date.localeCompare(b.date));
 }
 function latestValue(pid,at=null){
  const rows=uniqueSnapshots(pid).filter(x=>!at||x.date<=at);
@@ -2762,7 +2773,7 @@ async function syncDirectBtcWallet(options={}){
           id:uid(),portfolioId:p.id,date:x.date,type:'mining',btc,
           eurRate:rate,eurValue:btc*rate,source:'Bitcoin wallet',
           txid:x.txid,comment:'Входящая транзакция BTC · автоматически из блокчейна',
-          walletAddress:address,confirmed:x.confirmed,blockchainSync:true
+          walletAddress:address,confirmed:x.confirmed,blockchainSync:true,blockchainTimestamp:x.timestamp||0,capturedAt:new Date().toISOString()
         });
         existingKeys.add(key);addedIn++;
       }else{
@@ -2779,26 +2790,22 @@ async function syncDirectBtcWallet(options={}){
           id:uid(),portfolioId:p.id,date:x.date,type:'transfer_out',btc,
           eurRate:rate,eurValue:btc*rate,source:'Bitcoin wallet',
           txid:x.txid,comment:'Исходящая транзакция BTC · автоматически из блокчейна',
-          walletAddress:address,confirmed:x.confirmed,blockchainSync:true
+          walletAddress:address,confirmed:x.confirmed,blockchainSync:true,blockchainTimestamp:x.timestamp||0,capturedAt:new Date().toISOString()
         });
         existingKeys.add(key);addedOut++;
       }
     }
 
-    // Автоматически создаём текущую оценку портфеля по реальному балансу кошелька.
+    // Каждая синхронизация BTC-кошелька сохраняется отдельной внутридневной точкой.
+    // Ничего за текущий день не перезаписываем: полная история остаётся в «Источниках».
+    // Для дневной аналитики uniqueSnapshots() берёт только последнюю точку дня.
     if(currentRate>0){
       const value=blockchainBalance*currentRate;
       const today=todayISO();
-      const comment=`Автооценка BTC wallet: ${blockchainBalance.toFixed(8)} BTC × ${currentRate.toFixed(2)} EUR`;
-      const existingToday=state.snapshots
-        .filter(s=>s.portfolioId===p.id&&s.date===today&&String(s.comment||'').startsWith('Автооценка BTC wallet:'))
-        .sort((a,b)=>String(a.id).localeCompare(String(b.id)))[0];
-      if(existingToday){
-        existingToday.value=value;
-        existingToday.comment=comment;
-      }else{
-        state.snapshots.push({id:uid(),portfolioId:p.id,date:today,value,comment});
-      }
+      const capturedAt=new Date().toISOString();
+      const timeText=new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+      const comment=`Автооценка BTC wallet: ${blockchainBalance.toFixed(8)} BTC × ${currentRate.toFixed(2)} EUR · ${timeText}`;
+      state.snapshots.push({id:uid(),portfolioId:p.id,date:today,value,comment,capturedAt,source:'btc_wallet'});
     }
 
     state.settings.btcWalletAddress=address;
@@ -3092,7 +3099,7 @@ function yearPerf(year){
 }
 function duplicateSnapshotGroups(){
  const map=new Map();
- state.snapshots.forEach(x=>{
+ state.snapshots.filter(x=>!isBtcWalletAutoSnapshot(x)).forEach(x=>{
    const k=`${x.portfolioId}|${x.date}|${Number(x.value)}`;
    if(!map.has(k))map.set(k,[]);
    map.get(k).push(x);
@@ -3102,7 +3109,7 @@ function duplicateSnapshotGroups(){
 
 function conflictingSameDaySnapshots(){
  const map=new Map();
- state.snapshots.forEach(x=>{
+ state.snapshots.filter(x=>!isBtcWalletAutoSnapshot(x)).forEach(x=>{
    const k=`${x.portfolioId}|${x.date}`;
    if(!map.has(k))map.set(k,[]);
    map.get(k).push(x);
@@ -3250,7 +3257,7 @@ function historyRows(){
  let rows=[];state.snapshots.forEach(x=>rows.push({...x,kind:'Оценка',kindKey:'snap',amount:Number(x.value),displayAmount:Number(x.value)}));state.flows.forEach(x=>rows.push({...x,kind:flowLabel(flowTypeOf(x)),kindKey:'flow',amount:flowDisplayAmount(x),displayAmount:flowDisplayAmount(x)}));
  const term=(q('historySearch')?.value||'').toLowerCase(),type=q('historyType')?.value||'all',sort=q('historySort')?.value||'date_desc';
  rows=rows.filter(x=>(type==='all'||x.kindKey===type)&&(!term||portfolioName(x.portfolioId).toLowerCase().includes(term)||(x.comment||'').toLowerCase().includes(term)));
- rows.sort((a,b)=>sort==='date_asc'?a.date.localeCompare(b.date):sort==='amount_desc'?Math.abs(b.amount)-Math.abs(a.amount):sort==='amount_asc'?Math.abs(a.amount)-Math.abs(b.amount):b.date.localeCompare(a.date));return rows
+ rows.sort((a,b)=>{if(sort==='amount_desc')return Math.abs(b.amount)-Math.abs(a.amount);if(sort==='amount_asc')return Math.abs(a.amount)-Math.abs(b.amount);const dc=a.date.localeCompare(b.date);if(dc!==0)return sort==='date_asc'?dc:-dc;const mt=snapshotMoment(a)-snapshotMoment(b);return sort==='date_asc'?mt:-mt});return rows
 }
 function renderHistory(){
  const body=q('historyBody');body.innerHTML='';
@@ -3262,7 +3269,7 @@ function renderHistory(){
    body.innerHTML=`<tr><td colspan="6"><div class="history-empty"><b>История в этой копии программы пуста.</b><span>Новая версия не должна удалять историю. При запуске HTML из другой папки браузер может создать отдельное локальное хранилище. Откройте старую рабочую версию, сделайте «Резервную копию JSON», затем импортируйте её здесь в Настройках.</span></div></td></tr>`;
    return;
  }
- rows.forEach(x=>{const ft=x.kindKey==='flow'?flowTypeOf(x):'';body.insertAdjacentHTML('beforeend',`<tr><td>${formatDate(x.date)}<div><span class="age-tag">${ageTextForIso(x.date)}</span></div></td><td>${esc(portfolioName(x.portfolioId))}</td><td><span class="${x.kindKey==='flow'?'event-kind '+(ft.startsWith('transfer_')?'event-transfer':ft==='dividend'?'event-dividend':ft==='fee'?'event-fee':''):''}">${x.kind}</span></td>
+ rows.forEach(x=>{const ft=x.kindKey==='flow'?flowTypeOf(x):'';body.insertAdjacentHTML('beforeend',`<tr><td>${formatDate(x.date)}${x.capturedAt?`<div class="muted small">${new Date(x.capturedAt).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}</div>`:''}<div><span class="age-tag">${ageTextForIso(x.date)}</span></div></td><td>${esc(portfolioName(x.portfolioId))}</td><td><span class="${x.kindKey==='flow'?'event-kind '+(ft.startsWith('transfer_')?'event-transfer':ft==='dividend'?'event-dividend':ft==='fee'?'event-fee':''):''}">${x.kind}</span></td>
   <td class="${Number(x.amount)<0?'bad':x.kindKey==='flow'?'good':''}">${Number(x.amount)>=0?'+':''}${money(x.amount)}</td><td>${esc(x.comment||'')}</td>
   <td><div class="table-actions"><button class="mini-action" data-editrow="${x.id}" data-kind="${x.kindKey}" title="Редактировать">✎</button><button class="mini-action" data-delrow="${x.id}" data-kind="${x.kindKey}" title="Удалить">×</button></div></td></tr>`)});
  body.querySelectorAll('[data-editrow]').forEach(b=>b.addEventListener('click',()=>b.dataset.kind==='snap'?openSnapshotModal(b.dataset.editrow):openFlowModal(b.dataset.editrow)));
