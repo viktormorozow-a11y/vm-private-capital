@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.9.0 Direct BTC Wallet</title>
+<title>VM Private Capital — Wealth Studio v7.10.0 Portfolio Analytics</title>
 <style>
 
 :root{
@@ -666,6 +666,68 @@ th,td{border-color:rgba(255,255,255,.055)}
 
 
 
+
+/* v7.10.0 Portfolio Analytics */
+.portfolio-analytics-toolbar{
+  display:flex;gap:10px;align-items:end;justify-content:space-between;flex-wrap:wrap;
+  margin-bottom:14px
+}
+.analytics-controls{display:flex;gap:8px;align-items:end;flex-wrap:wrap}
+.analytics-range{display:flex;gap:5px;flex-wrap:wrap}
+.analytics-range button{
+  border:1px solid var(--line);background:rgba(255,255,255,.025);color:var(--muted);
+  padding:7px 10px;border-radius:8px;cursor:pointer;font-size:10px
+}
+.analytics-range button.active{
+  color:#f3d89d;border-color:rgba(212,170,90,.34);background:rgba(212,170,90,.09)
+}
+.analytics-list{display:grid;gap:14px}
+.analytics-card{
+  border:1px solid var(--line);border-radius:14px;background:linear-gradient(150deg,rgba(16,25,34,.96),rgba(8,15,22,.96));
+  overflow:hidden
+}
+.analytics-card-head{
+  display:flex;justify-content:space-between;gap:14px;align-items:flex-start;padding:16px 16px 10px
+}
+.analytics-card-title{font-size:17px;font-weight:700;letter-spacing:-.02em}
+.analytics-card-sub{margin-top:4px;color:var(--muted);font-size:10px}
+.analytics-kpis{
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;padding:0 16px 12px
+}
+.analytics-kpi{
+  border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.022);padding:9px 10px;min-width:0
+}
+.analytics-kpi span{
+  display:block;color:var(--muted);font-size:8.5px;text-transform:uppercase;letter-spacing:.055em
+}
+.analytics-kpi b{
+  display:block;margin-top:4px;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.analytics-chart-wrap{padding:0 10px 4px}
+.analytics-chart{width:100%;height:300px;display:block}
+.analytics-forecast-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:0 16px 12px
+}
+.analytics-forecast-box{
+  border:1px solid var(--line);border-radius:10px;padding:9px 10px;background:rgba(0,0,0,.10)
+}
+.analytics-forecast-box span{display:block;color:var(--muted);font-size:9px}
+.analytics-forecast-box b{display:block;margin-top:4px;font-size:13px}
+.analytics-note{
+  margin:0 16px 14px;padding:9px 11px;border:1px solid var(--line);border-radius:9px;
+  color:#9aa7b5;background:rgba(0,0,0,.09);font-size:10px;line-height:1.45
+}
+.analytics-note.low{border-color:rgba(240,200,120,.24);color:#d8c18a}
+.analytics-note.good{border-color:rgba(120,227,155,.18);color:#b6d9c2}
+.analytics-flow-line{margin-top:4px;color:#8494a6;font-size:9.5px}
+.analytics-empty{padding:24px;color:var(--muted);text-align:center}
+@media(max-width:1100px){.analytics-kpis{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){
+  .analytics-kpis{grid-template-columns:1fr 1fr}
+  .analytics-forecast-grid{grid-template-columns:1fr}
+  .analytics-chart{height:270px}
+}
+
 /* v7.9.0 Direct BTC Wallet */
 .btc-wallet-panel{
   border-color:rgba(212,170,90,.24)!important;
@@ -1033,6 +1095,7 @@ body.auth-locked{overflow:hidden}
       <button class="nav-item" data-view="forecast"><span>↗</span> Сценарии</button>
       <button class="nav-item" data-view="withdrawals"><span>⇢</span> План вывода</button>
       <button class="nav-item" data-view="reports"><span>⌁</span> Аналитика</button>
+      <button class="nav-item" data-view="portfolioanalytics"><span>⌗</span> Портфели: прогноз</button>
       <button class="nav-item" data-view="insights"><span>◎</span> Дополнительно</button>
       <button class="nav-item" data-view="settings"><span>⚙</span> Настройки</button>
     </nav>
@@ -1040,7 +1103,7 @@ body.auth-locked{overflow:hidden}
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.9.0 Direct BTC Wallet</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.10.0 Portfolio Analytics</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -1340,6 +1403,42 @@ body.auth-locked{overflow:hidden}
     </section>
 
 
+
+    <section id="view-portfolioanalytics" class="view">
+      <div class="panel">
+        <div class="portfolio-analytics-toolbar">
+          <div>
+            <div class="eyebrow">PORTFOLIO ANALYTICS</div>
+            <h2>История и прогноз по каждому портфелю</h2>
+            <div class="muted small" style="margin-top:5px">
+              Историческая доходность очищается от пополнений и выводов. Прогноз строится из собственной истории каждого портфеля.
+            </div>
+          </div>
+          <div class="analytics-controls">
+            <div>
+              <div class="muted small" style="margin-bottom:5px">История</div>
+              <div id="portfolioAnalyticsRange" class="analytics-range">
+                <button data-arange="1Y">1Y</button>
+                <button data-arange="3Y">3Y</button>
+                <button data-arange="5Y">5Y</button>
+                <button data-arange="MAX">MAX</button>
+              </div>
+            </div>
+            <label>Прогноз
+              <select id="portfolioAnalyticsYears">
+                <option value="1">1 год</option>
+                <option value="3">3 года</option>
+                <option value="5">5 лет</option>
+                <option value="10">10 лет</option>
+                <option value="20">20 лет</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <div id="portfolioAnalyticsList" class="analytics-list"></div>
+      </div>
+    </section>
+
     <section id="view-insights" class="view">
       <div class="insights-hero panel">
         <div>
@@ -1485,7 +1584,9 @@ const defaultState=()=>({
   btcWalletAutoSync:true,
   btcWalletLastSync:'',
   btcWalletCurrentRate:0,
-  btcWalletBlockchainBalance:0
+  btcWalletBlockchainBalance:0,
+  analyticsRange:'MAX',
+  analyticsForecastYears:5
 },
  taxSettings:{companyTaxRate:20,dividendThreshold:150000,netAssetRate:8,shareMathValue:2465737.5,dividendTaxableBelow:25,dividendTaxableAbove:85,capitalTaxLow:30,capitalTaxHigh:34,capitalTaxThreshold:30000},
  forecast:{years:20,inflation:2,conservative:4,base:8,optimistic:12}
@@ -1572,7 +1673,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.9.0 Direct BTC Wallet';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.10.0 Portfolio Analytics';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -3638,7 +3739,231 @@ function renderInsights(){
 function renderAll(){syncAgeHorizon('withdrawYears','withdrawTargetAge','withdrawHorizonDate','years');q('todayText').innerHTML=`${new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} · <span class="age-tag">${ageTextByYear(new Date().getFullYear())}</span><div class="age-note">Возраст рассчитан по году рождения 1982. Без точной даты рождения возможна разница в 1 год до дня рождения.</div>`;q('currency').value=state.settings.currency||'EUR';q('fyStartDisplay').value=formatDate(state.settings.fyStart);
  const t=state.taxSettings;
  ['companyTaxRate','dividendThreshold','netAssetRate','shareMathValue','dividendTaxableBelow','dividendTaxableAbove','capitalTaxLow','capitalTaxHigh','capitalTaxThreshold'].forEach(id=>{if(q(id))q(id).value=t[id]});
- renderTaxPreview();renderDashboard();renderPortfolios();renderHistory();renderForecast();renderWithdrawalRules();renderInsights();renderDirectBtcWalletSettings()}
+ renderTaxPreview();renderDashboard();renderPortfolios();renderHistory();renderForecast();renderWithdrawalRules();renderInsights();renderDirectBtcWalletSettings();renderPortfolioAnalytics()}
+
+
+function analyticsEntities(){
+  return returnEntities({includeNonInvestable:true});
+}
+function analyticsEntityRows(entity){
+  if(entity.kind==='group'){
+    return groupSnapshotDates(entity.members).map(date=>({date,value:groupValueAt(entity.members,date)}));
+  }
+  return uniqueSnapshots(entity.p.id).map(x=>({date:x.date,value:Number(x.value)||0}));
+}
+function analyticsEntityFlows(entity,from,to){
+  if(entity.kind==='group')return groupFlows(entity.members,from,to);
+  return flowsForPeriod(entity.p.id,from,to);
+}
+function analyticsEntityFlowEffect(entity,f){
+  if(entity.kind==='group')return groupCapitalEffect(f,new Set(entity.members.map(p=>p.id)));
+  return flowCapitalEffect(f);
+}
+function analyticsEntityCurrent(entity){
+  if(entity.kind==='group')return entity.members.reduce((s,p)=>s+latestValue(p.id),0);
+  return latestValue(entity.p.id);
+}
+function analyticsRangeStart(range,lastDate){
+  if(range==='MAX')return '';
+  const years=range==='1Y'?1:range==='3Y'?3:5;
+  const d=new Date((lastDate||todayISO())+'T12:00:00');
+  d.setFullYear(d.getFullYear()-years);
+  return localISODate(d);
+}
+function analyticsPeriodPerf(entity,from,to){
+  return entity.kind==='group'?groupPerf(entity.members,from,to):portfolioPerf(entity.p.id,from,to);
+}
+function analyticsTimeWeightedStats(entity){
+  const rows=analyticsEntityRows(entity);
+  if(rows.length<2)return{
+    rows,periods:0,days:0,totalReturn:null,annualized:null,volatility:null,maxDrawdown:null,
+    confidence:'none'
+  };
+
+  let wealth=1,peak=1,maxDd=0,weightedLogSum=0,weightedSq=0,totalDays=0,periods=0;
+  const wealthPoints=[{date:rows[0].date,value:1}];
+
+  for(let i=1;i<rows.length;i++){
+    const a=rows[i-1],b=rows[i];
+    const da=new Date(a.date+'T12:00:00'),db=new Date(b.date+'T12:00:00');
+    const days=Math.max(1,(db-da)/86400000);
+    const flows=analyticsEntityFlows(entity,a.date,b.date);
+    const capFlow=flows.reduce((s,f)=>s+analyticsEntityFlowEffect(entity,f),0);
+    const income=flows.reduce((s,f)=>s+flowIncomeEffect(f),0);
+    const profit=Number(b.value)-Number(a.value)-capFlow+income;
+
+    let denom;
+    if(entity.kind==='group'){
+      const ids=new Set(entity.members.map(p=>p.id));
+      const denomFlows=flows
+        .map(f=>({...f,amount:analyticsEntityFlowEffect(entity,f)}))
+        .filter(f=>Math.abs(Number(f.amount)||0)>0);
+      denom=dietzDenominator(Number(a.value),denomFlows,a.date,b.date);
+    }else{
+      denom=dietzDenominator(Number(a.value),flows,a.date,b.date);
+    }
+    if(!(denom>0))continue;
+
+    const r=profit/denom;
+    if(!Number.isFinite(r)||r<=-0.999999)continue;
+
+    wealth*=1+r;
+    peak=Math.max(peak,wealth);
+    maxDd=Math.min(maxDd,wealth/peak-1);
+
+    const dailyLog=Math.log1p(r)/days;
+    weightedLogSum+=dailyLog*days;
+    weightedSq+=dailyLog*dailyLog*days;
+    totalDays+=days;
+    periods++;
+    wealthPoints.push({date:b.date,value:wealth});
+  }
+
+  if(!periods||!totalDays)return{
+    rows,periods:0,days:0,totalReturn:null,annualized:null,volatility:null,maxDrawdown:null,
+    confidence:'none',wealthPoints
+  };
+
+  const totalReturn=wealth-1;
+  const annualized=Math.pow(Math.max(0.000001,wealth),365.25/totalDays)-1;
+  const meanDaily=weightedLogSum/totalDays;
+  const variance=Math.max(0,weightedSq/totalDays-meanDaily*meanDaily);
+  const volatility=Math.sqrt(variance)*Math.sqrt(365.25);
+  const confidence=rows.length>=12&&totalDays>=730?'good':rows.length>=5&&totalDays>=180?'medium':'low';
+
+  return {rows,periods,totalDays,days:totalDays,totalReturn,annualized,volatility,maxDrawdown:maxDd,confidence,wealthPoints};
+}
+function analyticsForecastRates(stats){
+  if(stats.annualized===null||!Number.isFinite(stats.annualized))return null;
+  const base=Math.max(-0.30,Math.min(0.40,stats.annualized));
+  const rawVol=Number.isFinite(stats.volatility)?stats.volatility:0.06;
+  const spread=Math.max(0.02,Math.min(0.15,rawVol*0.75));
+  return {
+    conservative:Math.max(-0.40,Math.min(0.30,base-spread)),
+    base,
+    optimistic:Math.max(-0.20,Math.min(0.55,base+spread))
+  };
+}
+function analyticsForecastPoints(startValue,startDate,annual,years){
+  const pts=[{t:new Date(startDate+'T12:00:00').getTime(),v:startValue}];
+  const start=new Date(startDate+'T12:00:00');
+  const months=Math.max(1,Math.round(years*12));
+  for(let m=1;m<=months;m++){
+    const d=new Date(start.getFullYear(),start.getMonth()+m,start.getDate(),12);
+    const v=startValue*Math.pow(1+annual,m/12);
+    pts.push({t:d.getTime(),v});
+  }
+  return pts;
+}
+function analyticsFmtPct(v,d=1){
+  if(v===null||!Number.isFinite(v))return '—';
+  return `${v>=0?'+':''}${(v*100).toFixed(d)}%`;
+}
+function analyticsConfidenceText(stats){
+  if(stats.confidence==='good')return `Хорошая база для математического прогноза: ${stats.rows.length} оценок, ${Math.round(stats.days/30.44)} мес. истории.`;
+  if(stats.confidence==='medium')return `Средняя база: ${stats.rows.length} оценок, ${Math.round(stats.days/30.44)} мес. истории. Прогноз ориентировочный.`;
+  if(stats.confidence==='low')return `Истории мало: ${stats.rows.length} оценок, ${Math.round(stats.days/30.44)} мес. Прогноз имеет низкую статистическую надёжность.`;
+  return 'Недостаточно исторических оценок для прогноза.';
+}
+function analyticsFlowSummary(entity,from,to){
+  const flows=analyticsEntityFlows(entity,from,to);
+  let add=0,out=0,income=0,fees=0;
+  flows.forEach(f=>{
+    const cap=analyticsEntityFlowEffect(entity,f);
+    if(cap>0)add+=cap;
+    if(cap<0)out+=Math.abs(cap);
+    const inc=flowIncomeEffect(f);
+    if(inc>0)income+=inc;
+    if(inc<0)fees+=Math.abs(inc);
+  });
+  return {add,out,income,fees,count:flows.length};
+}
+function renderPortfolioAnalytics(){
+  const list=q('portfolioAnalyticsList');if(!list)return;
+  const range=state.settings?.analyticsRange||'MAX';
+  const years=Math.max(1,Number(state.settings?.analyticsForecastYears||5));
+
+  const yearSel=q('portfolioAnalyticsYears');
+  if(yearSel)yearSel.value=String(years);
+  q('portfolioAnalyticsRange')?.querySelectorAll('[data-arange]').forEach(b=>b.classList.toggle('active',b.dataset.arange===range));
+
+  const entities=analyticsEntities();
+  if(!entities.length){
+    list.innerHTML='<div class="analytics-empty">Портфелей пока нет.</div>';
+    return;
+  }
+
+  list.innerHTML=entities.map((entity,idx)=>{
+    const rowsAll=analyticsEntityRows(entity);
+    const lastDate=rowsAll.at(-1)?.date||todayISO();
+    const start=analyticsRangeStart(range,lastDate);
+    const rows=start?rowsAll.filter(x=>x.date>=start):rowsAll;
+    const stats=analyticsTimeWeightedStats(entity);
+    const perfFrom=start||rowsAll[0]?.date||todayISO();
+    const perf=analyticsPeriodPerf(entity,perfFrom,lastDate);
+    const flow=analyticsFlowSummary(entity,perf.startDate||perfFrom,lastDate);
+    const current=analyticsEntityCurrent(entity);
+    const rates=analyticsForecastRates(stats);
+    const lastActual=rowsAll.at(-1);
+    const endBase=rates&&lastActual?lastActual.value*Math.pow(1+rates.base,years):null;
+    const endCons=rates&&lastActual?lastActual.value*Math.pow(1+rates.conservative,years):null;
+    const endOpt=rates&&lastActual?lastActual.value*Math.pow(1+rates.optimistic,years):null;
+    const owner=entity.p.owner==='oy'?'VM Private Capital Oy':'Personal';
+    const role=portfolioRole(entity.p);
+    const roleText=role==='investable'?'Инвестируемый':role==='exit'?'Exit':'Вне сценариев';
+    const noteClass=stats.confidence==='good'?'good':stats.confidence==='none'?'low':stats.confidence==='low'?'low':'';
+    return `<div class="analytics-card" data-analytics-card="${idx}">
+      <div class="analytics-card-head">
+        <div>
+          <div class="analytics-card-title">${esc(entity.p.name)}</div>
+          <div class="analytics-card-sub">${esc(entity.p.type||'Актив')} · ${owner} · ${roleText}</div>
+          <div class="analytics-flow-line">За выбранный период: пополнения ${money(flow.add)} · выводы ${money(flow.out)}${flow.income?` · доход событиями ${money(flow.income)}`:''}${flow.fees?` · комиссии ${money(flow.fees)}`:''}</div>
+        </div>
+        <div style="text-align:right"><div class="muted small">Сейчас</div><b style="font-size:17px">${money(current)}</b></div>
+      </div>
+      <div class="analytics-kpis">
+        <div class="analytics-kpi"><span>Доходность периода</span><b class="${perf?.pct>=0?'good':'bad'}">${perf?.sufficient?`${perf.pct>=0?'+':''}${Number(perf.pct).toFixed(1)}%`:'—'}</b></div>
+        <div class="analytics-kpi"><span>Годовая историческая</span><b class="${stats.annualized>=0?'good':'bad'}">${analyticsFmtPct(stats.annualized)}</b></div>
+        <div class="analytics-kpi"><span>Волатильность</span><b>${stats.volatility===null?'—':(stats.volatility*100).toFixed(1)+'%'}</b></div>
+        <div class="analytics-kpi"><span>Макс. просадка</span><b class="bad">${stats.maxDrawdown===null?'—':(stats.maxDrawdown*100).toFixed(1)+'%'}</b></div>
+        <div class="analytics-kpi"><span>Оценок</span><b>${stats.rows.length}</b></div>
+        <div class="analytics-kpi"><span>История</span><b>${stats.days?Math.round(stats.days/30.44)+' мес.':'—'}</b></div>
+      </div>
+      <div class="analytics-chart-wrap"><canvas class="analytics-chart" data-analytics-canvas="${idx}"></canvas></div>
+      <div class="analytics-forecast-grid">
+        <div class="analytics-forecast-box"><span>Консервативный · ${rates?analyticsFmtPct(rates.conservative):'—'} / год</span><b>${endCons===null?'—':money(endCons)}</b></div>
+        <div class="analytics-forecast-box"><span>Базовый · ${rates?analyticsFmtPct(rates.base):'—'} / год</span><b>${endBase===null?'—':money(endBase)}</b></div>
+        <div class="analytics-forecast-box"><span>Оптимистичный · ${rates?analyticsFmtPct(rates.optimistic):'—'} / год</span><b>${endOpt===null?'—':money(endOpt)}</b></div>
+      </div>
+      <div class="analytics-note ${noteClass}">${analyticsConfidenceText(stats)} Прогноз строится по исторической доходности, очищенной от внешних пополнений и выводов; он не является гарантией будущего результата.</div>
+    </div>`;
+  }).join('');
+
+  entities.forEach((entity,idx)=>{
+    const canvas=list.querySelector(`[data-analytics-canvas="${idx}"]`);if(!canvas)return;
+    const all=analyticsEntityRows(entity);
+    if(!all.length){drawSeries(canvas,[],{xMode:'date'});return}
+    const lastDate=all.at(-1).date;
+    const start=analyticsRangeStart(range,lastDate);
+    const visible=start?all.filter(x=>x.date>=start):all;
+    const stats=analyticsTimeWeightedStats(entity);
+    const rates=analyticsForecastRates(stats);
+    const series=[{
+      name:'Факт',
+      points:visible.map(x=>({t:new Date(x.date+'T12:00:00').getTime(),v:Number(x.value)})),
+      ci:0
+    }];
+    if(rates&&all.at(-1)){
+      const last=all.at(-1);
+      series.push(
+        {name:'Консервативный',points:analyticsForecastPoints(last.value,last.date,rates.conservative,years),ci:3,dash:true},
+        {name:'Базовый',points:analyticsForecastPoints(last.value,last.date,rates.base,years),ci:1,dash:true},
+        {name:'Оптимистичный',points:analyticsForecastPoints(last.value,last.date,rates.optimistic,years),ci:2,dash:true}
+      );
+    }
+    drawSeries(canvas,series,{xMode:'date',fill:false});
+  });
+}
 
 function renderCapitalChart(){
  const cutoff=localISODate(new Date(Date.now()-chartRange*86400000)),dates=allDates().filter(d=>chartRange>=99999||d>=cutoff),mode=q('capitalChartMode')?.value||'total';
@@ -3682,7 +4007,7 @@ function drawSeries(canvas,series,options={}){
  for(let i=0;i<=targetXTicks;i++){const xv=xmin+xStep*i,x=pad.l+plotW*i/targetXTicks;c.strokeStyle='rgba(255,255,255,.025)';c.beginPath();c.moveTo(x,pad.t);c.lineTo(x,pad.t+plotH);c.stroke();c.fillStyle='#768592';c.textAlign=i===0?'left':i===targetXTicks?'right':'center';c.fillText(seriesXLabel(xv,options.xMode||'year'),x,pad.t+plotH+20)}
  valid.forEach((s,si)=>{const color=chartColor(s.ci??si),points=s.points;
    if(valid.length===1&&options.fill!==false){c.beginPath();points.forEach((p,i)=>{const x=pad.l+plotW*(Number(p.t)-xmin)/xspan,y=pad.t+plotH*(1-(Number(p.v)-scale.min)/(scale.max-scale.min));i?c.lineTo(x,y):c.moveTo(x,y)});const last=points[points.length-1],lx=pad.l+plotW*(Number(last.t)-xmin)/xspan;c.lineTo(lx,pad.t+plotH);c.lineTo(pad.l,pad.t+plotH);c.closePath();const g=c.createLinearGradient(0,pad.t,0,pad.t+plotH);g.addColorStop(0,color+'2f');g.addColorStop(1,color+'03');c.fillStyle=g;c.fill()}
-   c.strokeStyle=color;c.lineWidth=2.5;c.beginPath();points.forEach((p,i)=>{const x=pad.l+plotW*(Number(p.t)-xmin)/xspan,y=pad.t+plotH*(1-(Number(p.v)-scale.min)/(scale.max-scale.min));i?c.lineTo(x,y):c.moveTo(x,y)});c.stroke();
+   c.strokeStyle=color;c.lineWidth=2.5;c.setLineDash(s.dash?[7,5]:[]);c.beginPath();points.forEach((p,i)=>{const x=pad.l+plotW*(Number(p.t)-xmin)/xspan,y=pad.t+plotH*(1-(Number(p.v)-scale.min)/(scale.max-scale.min));i?c.lineTo(x,y):c.moveTo(x,y)});c.stroke();c.setLineDash([]);
    const last=points[points.length-1],lx=pad.l+plotW*(Number(last.t)-xmin)/xspan,ly=pad.t+plotH*(1-(Number(last.v)-scale.min)/(scale.max-scale.min));c.fillStyle=color;c.beginPath();c.arc(lx,ly,3.2,0,Math.PI*2);c.fill();
  });
  let lx=pad.l,ly=h-(legendRows===2?30:18);c.textAlign='left';valid.forEach((s,si)=>{const color=chartColor(s.ci??si),label=s.name||'',tw=c.measureText(label).width+34;if(lx+tw>w-pad.r&&lx>pad.l){lx=pad.l;ly+=16}c.strokeStyle=color;c.lineWidth=3;c.beginPath();c.moveTo(lx,ly-3);c.lineTo(lx+14,ly-3);c.stroke();c.fillStyle='#9aa6b2';c.fillText(label,lx+20,ly);lx+=tw+14});
@@ -3914,7 +4239,7 @@ function pdfReport(){
 }
 
 document.querySelectorAll('.nav-item').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
-function switchView(v){currentView=v;document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.view===v));document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));q('view-'+v).classList.add('active');const t={dashboard:'Планирование капитала',portfolios:'Портфель',history:'Источники и история',forecast:'Сценарии',withdrawals:'План вывода средств',reports:'Аналитика и отчёты',insights:'Дополнительная информация',settings:'Настройки'};q('viewTitle').textContent=t[v];if(v==='history')renderHistory();if(v==='withdrawals'){renderWithdrawalRules();if(!withdrawalResultsReady)markWithdrawalDirty();else{renderWithdrawalExitChart();const yrs=Math.max(1,Number(q('withdrawYears')?.value||30)),f=state.forecast,out=[['Консервативный',+f.conservative,0],['Базовый',+f.base,1],['Оптимистичный',+f.optimistic,2]].map(([name,r,ci])=>{const m=runWithdrawalModel(r,yrs);return{name,points:m.ptsTotal,ci}});drawSeries(q('withdrawalChart'),out,{xMode:'year'})}}if(v==='dashboard')renderCapitalChart();if(v==='forecast'){renderForecastChart();renderForecastOwnerChart()}if(v==='insights')renderInsights()}
+function switchView(v){currentView=v;document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.view===v));document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));q('view-'+v).classList.add('active');const t={dashboard:'Планирование капитала',portfolios:'Портфель',history:'Источники и история',forecast:'Сценарии',withdrawals:'План вывода средств',reports:'Аналитика и отчёты',portfolioanalytics:'Портфели: история и прогноз',insights:'Дополнительная информация',settings:'Настройки'};q('viewTitle').textContent=t[v];if(v==='history')renderHistory();if(v==='withdrawals'){renderWithdrawalRules();if(!withdrawalResultsReady)markWithdrawalDirty();else{renderWithdrawalExitChart();const yrs=Math.max(1,Number(q('withdrawYears')?.value||30)),f=state.forecast,out=[['Консервативный',+f.conservative,0],['Базовый',+f.base,1],['Оптимистичный',+f.optimistic,2]].map(([name,r,ci])=>{const m=runWithdrawalModel(r,yrs);return{name,points:m.ptsTotal,ci}});drawSeries(q('withdrawalChart'),out,{xMode:'year'})}}if(v==='dashboard')renderCapitalChart();if(v==='forecast'){renderForecastChart();renderForecastOwnerChart()}if(v==='portfolioanalytics')renderPortfolioAnalytics();if(v==='insights')renderInsights()}
 q('closeModalBtn').addEventListener('click',closeModal);q('modalBackdrop').addEventListener('click',e=>{if(e.target===q('modalBackdrop'))closeModal()});
 q('quickAddBtn').addEventListener('click',()=>openSnapshotModal());q('addSnapshotBtn').addEventListener('click',()=>openSnapshotModal());q('addFlowBtn').addEventListener('click',()=>openFlowModal());q('addPortfolioBtn').addEventListener('click',()=>openPortfolioModal());q('addPortfolioBtn2').addEventListener('click',()=>openPortfolioModal());
 if(q('btcWalletSyncBtn'))q('btcWalletSyncBtn').addEventListener('click',async()=>{
@@ -3938,6 +4263,17 @@ if(q('btcWalletAutoSync'))q('btcWalletAutoSync').addEventListener('change',()=>{
 });
 
 q('dashboardSort').addEventListener('change',renderDashboard);q('capitalChartMode').addEventListener('change',renderCapitalChart);q('historySearch').addEventListener('input',renderHistory);q('historyType').addEventListener('change',renderHistory);q('historySort').addEventListener('change',renderHistory);
+q('portfolioAnalyticsRange')?.querySelectorAll('[data-arange]').forEach(b=>b.addEventListener('click',()=>{
+  state.settings.analyticsRange=b.dataset.arange;
+  persistState({localOnly:true});
+  renderPortfolioAnalytics();
+}));
+if(q('portfolioAnalyticsYears'))q('portfolioAnalyticsYears').addEventListener('change',()=>{
+  state.settings.analyticsForecastYears=Math.max(1,Number(q('portfolioAnalyticsYears').value||5));
+  persistState({localOnly:true});
+  renderPortfolioAnalytics();
+});
+
 document.querySelectorAll('[data-range]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-range]').forEach(x=>x.classList.remove('active'));b.classList.add('active');chartRange=+b.dataset.range;renderCapitalChart()}));
 q('forecastYears').addEventListener('input',()=>syncAgeHorizon('forecastYears','forecastTargetAge','forecastHorizonDate','years'));
 q('forecastTargetAge').addEventListener('input',()=>{ /* allow free typing; recalc on change/blur */ });
@@ -4001,7 +4337,7 @@ q('saveSettingsBtn').addEventListener('click',()=>{const iso=parseDate(q('fyStar
 q('exportBtn').addEventListener('click',exportJSON);q('jsonReportBtn').addEventListener('click',exportJSON);q('excelReportBtn').addEventListener('click',excelReport);q('pdfReportBtn').addEventListener('click',pdfReport);q('reportsQuickBtn').addEventListener('click',()=>switchView('reports'));
 q('importFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const obj=JSON.parse(await f.text());if(!confirm('Импорт заменит текущие данные. Продолжить?'))return;state=normalizeState(obj);persistState();renderAll();withdrawalResultsReady=false;toast('Данные импортированы')}catch(err){toast('Не удалось прочитать файл')}e.target.value=''});
 q('resetBtn').addEventListener('click',()=>{if(confirm('Удалить текущие данные? Если вы вошли в облако, пустое состояние также будет синхронизировано. Сначала рекомендуется сделать резервную копию.')){state=normalizeState(defaultState());persistState();renderAll();withdrawalResultsReady=false;toast('Данные удалены')}});
-let resizeTimer=null;function rerenderVisibleCharts(){if(currentView==='dashboard')renderCapitalChart();if(currentView==='forecast'){renderForecastChart();renderForecastOwnerChart()}if(currentView==='withdrawals'&&withdrawalResultsReady){renderWithdrawalExitChart();const yrs=Math.max(1,Number(q('withdrawYears')?.value||30)),f=state.forecast,out=[['Консервативный',+f.conservative,0],['Базовый',+f.base,1],['Оптимистичный',+f.optimistic,2]].map(([name,r,ci])=>{const m=runWithdrawalModel(r,yrs);return{name,points:m.ptsTotal,ci}});drawSeries(q('withdrawalChart'),out,{xMode:'year'})}if(currentView==='insights')renderInsights()}
+let resizeTimer=null;function rerenderVisibleCharts(){if(currentView==='dashboard')renderCapitalChart();if(currentView==='forecast'){renderForecastChart();renderForecastOwnerChart()}if(currentView==='withdrawals'&&withdrawalResultsReady){renderWithdrawalExitChart();const yrs=Math.max(1,Number(q('withdrawYears')?.value||30)),f=state.forecast,out=[['Консервативный',+f.conservative,0],['Базовый',+f.base,1],['Оптимистичный',+f.optimistic,2]].map(([name,r,ci])=>{const m=runWithdrawalModel(r,yrs);return{name,points:m.ptsTotal,ci}});drawSeries(q('withdrawalChart'),out,{xMode:'year'})}if(currentView==='portfolioanalytics')renderPortfolioAnalytics();if(currentView==='insights')renderInsights()}
 window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(rerenderVisibleCharts,140)});
 renderAll();
 initCloud();
