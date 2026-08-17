@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HRT Health Studio v3.1.2 — Puhti Parser v2</title>
+<title>HRT Health Studio v3.1.3 — Robust Puhti + Design Fix</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -34,7 +34,7 @@ h1{margin:0;font-size:28px}.sub{color:var(--muted);font-size:13px;margin-top:6px
 .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textarea{width:100%;background:#09131d;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 10px;outline:none}
 textarea{min-height:80px;resize:vertical}.wide{grid-column:1/-1}
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.64);display:none;place-items:center;padding:18px;z-index:30}.modal-bg.show{display:grid}.modal{width:min(680px,100%);max-height:90vh;overflow:auto;background:#0d1824;border:1px solid var(--line);border-radius:18px;padding:18px}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.64);display:none;place-items:center;padding:18px;z-index:30}.modal-bg.show{display:grid}.modal{width:min(760px,100%);max-height:90vh;overflow:auto;background:#0d1824;border:1px solid var(--line);border-radius:18px;padding:18px}.modal.modal-wide{width:min(1180px,calc(100vw - 28px))}
 .modal h3{margin:0 0 14px}.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
 .timeline{display:grid;gap:10px}.event{border-left:3px solid rgba(214,173,98,.55);padding:8px 10px 8px 12px;background:rgba(255,255,255,.018);border-radius:0 10px 10px 0}.event b{font-size:13px}.event small{display:block;color:var(--muted);margin-top:4px}
 .marker-row{display:grid;grid-template-columns:1.4fr .8fr .7fr .7fr .7fr auto;gap:7px;align-items:end;margin-bottom:7px}
@@ -43,8 +43,46 @@ canvas{width:100%;height:280px;border-radius:12px;background:#08121b}
 @media(max-width:1000px){.app{grid-template-columns:1fr}aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}nav{grid-template-columns:repeat(4,minmax(140px,1fr));overflow:auto}.g4,.g3,.g2{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){main{padding:14px}.g4,.g3,.g2,.form-grid{grid-template-columns:1fr}.marker-row{grid-template-columns:1fr 1fr}.top{flex-direction:column}}
 
-.marker-row.map-row{grid-template-columns:1.35fr .9fr .65fr .65fr .65fr 1.35fr auto}
-@media(max-width:850px){.marker-row.map-row{grid-template-columns:1fr 1fr}.marker-row.map-row label:nth-child(6){grid-column:1/-1}}
+.marker-row.map-row{
+  grid-template-columns:minmax(180px,1.55fr) minmax(96px,.72fr) minmax(90px,.7fr) minmax(82px,.62fr) minmax(82px,.62fr) minmax(210px,1.35fr) auto;
+  gap:9px;align-items:end;padding:11px;border:1px solid rgba(255,255,255,.065);border-radius:12px;background:rgba(255,255,255,.018)
+}
+.marker-row.map-row label,.marker-row.map-row input,.marker-row.map-row select{min-width:0}
+.marker-row.map-row input,.marker-row.map-row select{overflow:hidden;text-overflow:ellipsis}
+.marker-row.map-row .pdf-name,.marker-row.map-row .mk-name{font-size:11px}
+.pdf-review-summary{display:grid;gap:8px;margin:12px 0}
+.pdf-review-status{padding:10px 12px;border-radius:11px;border:1px solid var(--line);font-size:11px;line-height:1.45}
+.pdf-review-status.good{border-color:rgba(115,217,154,.28);background:rgba(115,217,154,.055);color:#bfe9ce}
+.pdf-review-status.warn{border-color:rgba(214,173,98,.30);background:rgba(214,173,98,.055);color:#efd59b}
+.pdf-review-status.bad{border-color:rgba(255,126,138,.28);background:rgba(255,126,138,.055);color:#ffc0c7}
+.pdf-review-pagebadges{display:flex;gap:6px;flex-wrap:wrap}
+.pdf-review-title{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.card,.panel,.change-card,.readiness-box,.safety-box,.event{min-width:0}
+.card *, .panel *, .event *, .change-card *{overflow-wrap:anywhere}
+.head{flex-wrap:wrap}
+.actions{flex-wrap:wrap}
+table{table-layout:auto}
+td,th{max-width:420px}
+.table-wrap{max-width:100%}
+@media(max-width:980px){
+  .modal.modal-wide{width:min(820px,calc(100vw - 20px))}
+  .marker-row.map-row{grid-template-columns:1fr 1fr 1fr}
+  .marker-row.map-row label:nth-child(1),.marker-row.map-row label:nth-child(6){grid-column:1/-1}
+}
+@media(max-width:650px){
+  .modal-bg{padding:8px}
+  .modal,.modal.modal-wide{width:100%;max-height:94vh;padding:13px;border-radius:14px}
+  .marker-row.map-row{grid-template-columns:1fr 1fr;padding:9px}
+  .marker-row.map-row label:nth-child(1),.marker-row.map-row label:nth-child(6){grid-column:1/-1}
+  .marker-row.map-row button{align-self:end}
+  .top .actions{width:100%;justify-content:flex-start}
+  .top .actions .btn{flex:1 1 auto}
+  .site-version-badge{max-width:calc(100% - 28px);white-space:normal}
+}
+@media(max-width:420px){
+  .marker-row.map-row{grid-template-columns:1fr}
+  .marker-row.map-row label:nth-child(1),.marker-row.map-row label:nth-child(6){grid-column:auto}
+}
 
 .chart-dashboard{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .chart-panel{border:1px solid var(--line);background:#08121b;border-radius:14px;padding:14px;min-width:0}
@@ -184,10 +222,10 @@ aside{display:flex;flex-direction:column}
   </div>
 </div>
 <div id="hrtAppShell" class="auth-hidden">
-<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.1.2</div>
+<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.1.3</div>
 <div class="app">
 <aside>
-  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.1.2</small></div>
+  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.1.3</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Главная</button>
     <button class="nav" data-view="labs">Анализы</button>
@@ -436,7 +474,7 @@ state.goals=state.goals||[];
 state.labPlans=state.labPlans||[];
 state.settings=state.settings||{};
 state.settings.primaryGoal=state.settings.primaryGoal||'';
-state.settings.appVersion='3.1.2';
+state.settings.appVersion='3.1.3';
 state.labs.forEach(l=>{l.doseContext=l.doseContext||{medId:'',lastDoseAt:'',relation:'unknown',adherence:'unknown'}});
 
 // Repair aliases created by older parser versions where MCH/MCHC could be mistaken for hemoglobin.
@@ -495,7 +533,7 @@ function migrateHrtState(x){
   x.meds=x.meds||[];x.protocols=x.protocols||[];x.deviations=x.deviations||[];x.labs=x.labs||[];
   x.wellbeing=x.wellbeing||[];x.aliasMap=x.aliasMap||{};x.customAnalytes=x.customAnalytes||[];
   x.goals=x.goals||[];x.labPlans=x.labPlans||[];x.settings=x.settings||{};
-  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.1.2';
+  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.1.3';
   x.labs.forEach(l=>{l.doseContext=l.doseContext||{medId:'',lastDoseAt:'',relation:'unknown',adherence:'unknown'}});
   for(const dm of DEFAULT_MEDS){
     if(!x.meds.some(m=>String(m.name||'').trim().toLowerCase()===dm.name.toLowerCase()))x.meds.push({...dm});
@@ -646,7 +684,7 @@ document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{
   if(b.dataset.view==='goals')renderGoals();
 });
 
-function openModal(html){$('modal').innerHTML=html;$('modalBg').classList.add('show')}
+function openModal(html){$('modal').className='modal';$('modal').innerHTML=html;$('modalBg').classList.add('show')}
 function closeModal(){$('modalBg').classList.remove('show')}
 
 
@@ -769,21 +807,23 @@ function trtProtocolForDate(date){
   return activeTrtProtocols(date)[0]||null;
 }
 function expectedLastDoseAt(date,time=''){
+  if(!date)return '';
   const p=trtProtocolForDate(date);
-  if(!p || !p.time)return '';
+  if(!p || !p.time || !p.start || p.start>date)return '';
   const labDt=combineDateTime(date,time||'23:59');
   if(!labDt)return '';
-  let doseDate=new Date(`${p.start}T${p.time}:00`);
-  const end=new Date(labDt);
+  const protocolStart=new Date(`${p.start}T${p.time}:00`);
+  if(Number.isNaN(protocolStart.getTime()) || protocolStart>labDt)return '';
+  let doseDate=new Date(protocolStart);
   if(p.frequency==='daily'){
     doseDate=new Date(`${date}T${p.time}:00`);
     if(doseDate>labDt)doseDate.setDate(doseDate.getDate()-1);
   }else if(p.frequency==='every_n_days'){
     const interval=Math.max(1,Number(p.interval)||1);
-    const anchor=new Date(`${p.start}T${p.time}:00`);
-    const days=Math.floor((labDt-anchor)/86400000);
-    const n=Math.max(0,Math.floor(days/interval));
-    doseDate=new Date(anchor);doseDate.setDate(anchor.getDate()+n*interval);
+    const days=Math.floor((labDt-protocolStart)/86400000);
+    if(days<0)return '';
+    const n=Math.floor(days/interval);
+    doseDate=new Date(protocolStart);doseDate.setDate(protocolStart.getDate()+n*interval);
     while(doseDate>labDt)doseDate.setDate(doseDate.getDate()-interval);
   }else if(p.frequency==='weekly'){
     const wanted=Number(p.weekday);
@@ -792,15 +832,26 @@ function expectedLastDoseAt(date,time=''){
       if(doseDate.getDay()===wanted && doseDate<=labDt)break;
       doseDate.setDate(doseDate.getDate()-1);
     }
+    if(doseDate<protocolStart)return '';
   }else return '';
+  if(doseDate>labDt || doseDate<protocolStart)return '';
   const local=new Date(doseDate.getTime()-doseDate.getTimezoneOffset()*60000);
-  return local.toISOString().slice(0,16);
+  const iso=local.toISOString().slice(0,16);
+  return iso.slice(0,10)>date?'':iso;
 }
-function doseContextFromForm(prefix){
+function doseContextFromForm(prefix,labDate='',labTime=''){
   const medId=$(prefix+'DoseMed')?.value||'';
-  const lastDoseAt=$(prefix+'LastDoseAt')?.value||'';
+  let lastDoseAt=$(prefix+'LastDoseAt')?.value||'';
   const relation=$(prefix+'DoseRelation')?.value||'unknown';
   const adherence=$(prefix+'Adherence')?.value||'unknown';
+  if(lastDoseAt&&labDate){
+    const labDt=combineDateTime(labDate,labTime||'23:59');
+    const doseDt=new Date(lastDoseAt);
+    if(labDt&&!Number.isNaN(doseDt.getTime())&&doseDt>labDt){
+      lastDoseAt='';
+      hrtCloudToast('Последняя доза позже даты анализа — значение очищено');
+    }
+  }
   return {medId,lastDoseAt,relation,adherence};
 }
 function doseContextFields(prefix,lab={}){
@@ -1222,84 +1273,185 @@ function puhtiHeadingBefore(flatText, pos){
   return `${label} (${last[2]})`;
 }
 
-function parsePuhtiStructuredV2(text){
-  // Puhti Parser v2:
-  // 1) finds a clean analysis heading "Name (CODE)";
-  // 2) searches only inside that analysis block;
-  // 3) takes the numeric result after "Tulos";
-  // 4) reads "Viitearvot" independently;
-  // 5) ignores category headings such as Sydän / Hormonit / Munuaiset.
+const PUHTI_CODE_MAP={
+  'hba1c':{code:'HbA1c',name:'Pitkäaikainen sokeri (HbA1c)',key:'hba1c'},
+  'kol':{code:'Kol',name:'Kokonaiskolesteroli (Kol)',key:'total_cholesterol'},
+  'kol-ldl':{code:'Kol-LDL',name:'LDL-kolesteroli (Kol-LDL)',key:'ldl'},
+  'kol-hdl':{code:'Kol-HDL',name:'HDL-kolesteroli (Kol-HDL)',key:'hdl'},
+  'trigly':{code:'Trigly',name:'Triglyseridit (Trigly)',key:'triglycerides'},
+  'kol/hdlsuh':{code:'Kol/HDLsuh',name:'Kol/HDL-suhde (Kol/HDLsuh)',key:'chol_hdl_ratio'},
+  'non-hdl':{code:'Non-HDL',name:'Non-HDL (Non-HDL)',key:'non_hdl'},
+  'hcrp':{code:'hCRP',name:'C-reaktivinen proteiini, herkkä CRP (hCRP)',key:'hs_crp'},
+  'testovl':{code:'TestoVL',name:'Testosteroni vapaa, laskettu (TestoVL)',key:'free_testosterone'},
+  'e2':{code:'E2',name:'Estradioli (E2)',key:'estradiol'},
+  'fsh':{code:'FSH',name:'Follikkelia stimuloiva hormoni (FSH)',key:'fsh'},
+  'korsol':{code:'Korsol',name:'Kortisoli (Korsol)',key:'cortisol'},
+  'lh':{code:'LH',name:'Luteinisoiva hormoni (LH)',key:'lh'},
+  'prog':{code:'PROG',name:'Progesteroni (PROG)',key:'progesterone'},
+  'prug':{code:'PROG',name:'Progesteroni (PROG)',key:'progesterone'},
+  'prl':{code:'PRL',name:'Prolaktiini (PRL)',key:'prolactin'},
+  'testo':{code:'Testo',name:'Testosteroni (Testo)',key:'testosterone'},
+  'shbg':{code:'SHBG',name:'Sukupuolihormoneja sitova globuliini (SHBG)',key:'shbg'},
+  'shog':{code:'SHBG',name:'Sukupuolihormoneja sitova globuliini (SHBG)',key:'shbg'},
+  'psa':{code:'PSA',name:'Prostataspesifinen antigeeni, PSA (PSA)',key:'psa'},
+  'alb':{code:'Alb',name:'Albumiini (Alb)',key:'albumin'},
+  'k':{code:'K',name:'Kalium (K)',key:'potassium'},
+  'krea':{code:'Krea',name:'Kreatiniini (Krea)',key:'creatinine'},
+  'na':{code:'Na',name:'Natrium (Na)',key:'sodium'},
+  'uraat':{code:'Uraat',name:'Uraatti eli virtsahappo (Uraat)',key:'urate'},
+  'wraat':{code:'Uraat',name:'Uraatti eli virtsahappo (Uraat)',key:'urate'},
+  'mraat':{code:'Uraat',name:'Uraatti eli virtsahappo (Uraat)',key:'urate'},
+  'pt-gfre':{code:'Pt-GFRe',name:'Glomerulussuodosnopeus, estimoitu (Pt-GFRe)',key:'egfr'},
+  'alat':{code:'ALAT',name:'Alaniiniaminotransferaasi (ALAT)',key:'alt'},
+  'afos':{code:'AFOS',name:'Alkalinen fosfataasi (AFOS)',key:'alp'},
+  'afus':{code:'AFOS',name:'Alkalinen fosfataasi (AFOS)',key:'alp'},
+  'asat':{code:'ASAT',name:'Aspartaattiaminotransferaasi (ASAT)',key:'ast'},
+  'gt':{code:'GT',name:'Glutamyylitransferaasi (GT)',key:'ggt'},
+  'ferrit':{code:'Ferrit',name:'Ferritiini (Ferrit)',key:'ferritin'},
+  'tfr':{code:'TfR',name:'Transferriinireseptori, liukoinen (TfR)',key:'transferrin_receptor'},
+  't5r':{code:'TfR',name:'Transferriinireseptori, liukoinen (TfR)',key:'transferrin_receptor'},
+  'mg':{code:'Mg',name:'Magnesium (Mg)',key:'magnesium'},
+  'fg':{code:'Mg',name:'Magnesium (Mg)',key:'magnesium'},
+  'tsh':{code:'TSH',name:'Tyreotropiini (TSH)',key:'tsh'},
+  't4-v':{code:'T4-V',name:'Tyroksiini, vapaa (T4-V)',key:'free_t4'},
+  'b12-tc2':{code:'B12-TC2',name:'B12-vitamiini (B12-TC2)',key:'b12'},
+  'o12-tc2':{code:'B12-TC2',name:'B12-vitamiini (B12-TC2)',key:'b12'},
+  'd-25':{code:'D-25',name:'D-vitamiini (D-25)',key:'vitamin_d'},
+  'd-2%':{code:'D-25',name:'D-vitamiini (D-25)',key:'vitamin_d'},
+  'folaat':{code:'Folaat',name:'Folaatti (Folaat)',key:'folate'},
+  'leuk':{code:'Leuk',name:'Leukosyytit (Leuk)',key:'leukocytes'},
+  'eryt':{code:'Eryt',name:'Erytrosyytit (Eryt)',key:'erythrocytes'},
+  'hb':{code:'Hb',name:'Hemoglobiini (Hb)',key:'hemoglobin'},
+  'hkr':{code:'HKR',name:'Hematokriitti (HKR)',key:'hematocrit'},
+  'mcv':{code:'MCV',name:'Punasolujen keskitilavuus (MCV)',key:'mcv'},
+  'fcv':{code:'MCV',name:'Punasolujen keskitilavuus (MCV)',key:'mcv'},
+  'mch':{code:'MCH',name:'Punasolujen keskimääräinen hemoglobiinin määrä (MCH)',key:'mch'},
+  'fch':{code:'MCH',name:'Punasolujen keskimääräinen hemoglobiinin määrä (MCH)',key:'mch'},
+  'trom':{code:'Trom',name:'Trombosyytit (Trom)',key:'platelets'},
+  'eos':{code:'Eos',name:'Eosinofiilit (Eos)',key:'eosinophils'},
+  'baso':{code:'Baso',name:'Basofiilit (Baso)',key:'basophils'},
+  'ly':{code:'Ly',name:'Lymfosyytit (Ly)',key:'lymphocytes'},
+  'monos':{code:'Monos',name:'Monosyytit (Monos)',key:'monocytes'},
+  'fonos':{code:'Monos',name:'Monosyytit (Monos)',key:'monocytes'},
+  'neut':{code:'Neut',name:'Neutrofiilit (Neut)',key:'neutrophils'},
+  'baso%':{code:'Baso%',name:'Basofiilit-osuus (Baso%)',key:'basophils_pct'},
+  'basow':{code:'Baso%',name:'Basofiilit-osuus (Baso%)',key:'basophils_pct'},
+  'eos%':{code:'Eos%',name:'Eosinofiilit-osuus (Eos%)',key:'eosinophils_pct'},
+  'eosw':{code:'Eos%',name:'Eosinofiilit-osuus (Eos%)',key:'eosinophils_pct'},
+  'ly%':{code:'Ly%',name:'Lymfosyytit-osuus (Ly%)',key:'lymphocytes_pct'},
+  'lyw':{code:'Ly%',name:'Lymfosyytit-osuus (Ly%)',key:'lymphocytes_pct'},
+  'monos%':{code:'Monos%',name:'Monosyytit-osuus (Monos%)',key:'monocytes_pct'},
+  'monosw':{code:'Monos%',name:'Monosyytit-osuus (Monos%)',key:'monocytes_pct'},
+  'fonosw':{code:'Monos%',name:'Monosyytit-osuus (Monos%)',key:'monocytes_pct'},
+  'neut%':{code:'Neut%',name:'Neutrofiilit-osuus (Neut%)',key:'neutrophils_pct'},
+  'neutw':{code:'Neut%',name:'Neutrofiilit-osuus (Neut%)',key:'neutrophils_pct'},
+  'rdw':{code:'RDW',name:'Punasolujen koon vaihtelu (RDW)',key:'rdw'},
+  'rd;':{code:'RDW',name:'Punasolujen koon vaihtelu (RDW)',key:'rdw'},
+  'rd"':{code:'RDW',name:'Punasolujen koon vaihtelu (RDW)',key:'rdw'}
+};
+
+function puhtiCodeNorm(code){
+  return String(code||'').trim().toLowerCase().replace(/\s+/g,'');
+}
+function puhtiKnownTest(code,rawName=''){
+  return PUHTI_CODE_MAP[puhtiCodeNorm(code)]||null;
+}
+function puhtiFixNumericToken(raw){
+  let x=String(raw||'').trim().replace(/\s/g,'');
+  if(!x)return '';
+  // Known broken Puhti font mappings seen in text layer:
+  // ":" -> "9"; leading "I" before a number -> "<".
+  x=x.replace(/:/g,'9');
+  x=x.replace(/^I(?=\d)/,'<');
+  x=x.replace(/^l(?=\d)/,'<');
+  x=x.replace(/[−–—]/g,'-');
+  return x;
+}
+function puhtiFixUnit(unit){
+  let u=String(unit||'').trim();
+  u=u.replace(/^mW\/l$/i,'mU/l').replace(/^W\/l$/i,'U/l').replace(/^E:\/l$/i,'E9/l');
+  u=u.replace(/^fl$/i,'fL').replace(/^ug\/l$/i,'ug/l');
+  return u;
+}
+function puhtiParseNumber(raw){
+  const x=puhtiFixNumericToken(raw).replace(/[<>≤≥]/g,'').replace(',','.');
+  const n=Number(x);
+  return Number.isFinite(n)?n:null;
+}
+function puhtiResultToken(line){
+  const x=normalizePdfText(line);
+  const m=x.match(/^([<>≤≥Il]?\s*[-]?[0-9:,.;]+)\s*([A-Za-zµμ%0-9.^/:]+(?:\/[A-Za-z0-9.]+)?)?\s*$/i);
+  if(!m)return null;
+  const fixed=puhtiFixNumericToken(m[1]);
+  const value=puhtiParseNumber(fixed);
+  if(value===null)return null;
+  return {value,unit:puhtiFixUnit(m[2]||''),rawValue:fixed,qualifier:(fixed.match(/^[<>≤≥]/)||[])[0]||''};
+}
+function puhtiReferenceToken(line){
+  const x=normalizePdfText(line);
+  let m=x.match(/^([0-9:,.;]+)\s*[-–]\s*([0-9:,.;]+)\s*([A-Za-zµμ%0-9.^/:]+(?:\/[A-Za-z0-9.]+)?)?\s*$/i);
+  if(m)return {min:puhtiParseNumber(m[1]),max:puhtiParseNumber(m[2]),unit:puhtiFixUnit(m[3]||''),refText:x};
+  m=x.match(/^-\s*([0-9:,.;]+)\s*([A-Za-zµμ%0-9.^/:]+(?:\/[A-Za-z0-9.]+)?)?\s*$/i);
+  if(m)return {min:null,max:puhtiParseNumber(m[1]),unit:puhtiFixUnit(m[2]||''),refText:x};
+  m=x.match(/^([0-9:,.;]+)\s*-\s*([A-Za-zµμ%0-9.^/:]+(?:\/[A-Za-z0-9.]+)?)?\s*$/i);
+  if(m)return {min:puhtiParseNumber(m[1]),max:null,unit:puhtiFixUnit(m[2]||''),refText:x};
+  m=x.match(/^([<>≤≥])\s*([0-9:,.;]+)\s*([A-Za-zµμ%0-9.^/:]+(?:\/[A-Za-z0-9.]+)?)?\s*$/i);
+  if(m){
+    const n=puhtiParseNumber(m[2]);
+    return /^[<≤]$/.test(m[1])?{min:null,max:n,unit:puhtiFixUnit(m[3]||''),refText:x}:{min:n,max:null,unit:puhtiFixUnit(m[3]||''),refText:x};
+  }
+  return null;
+}
+function parsePuhtiSummaryExpected(text){
+  const t=String(text||'');
+  let count=0;
+  for(const re of [
+    /(\d+)\s+tulosta\s+alle\s+viitearvojen/ig,
+    /(\d+)\s+tulosta\s+viitearvojen\s+sisällä/ig,
+    /(\d+)\s+tulosta\s+yli\s+viitearvojen/ig
+  ]){
+    let m;while((m=re.exec(t))!==null)count+=Number(m[1])||0;
+  }
+  return count||null;
+}
+function parsePuhtiStructuredV3(text){
   const lines=String(text||'').split('\n').map(normalizePdfText).filter(Boolean);
   const out=[],seen=new Set();
-  const headingRe=/^(.+?)\s*\(([A-Za-z0-9+\/\-]+)\)\s*$/;
-  const junkHead=/^(Testin tulokset|Yhteenveto tuloksista|Raportin on tuottanut)/i;
-  const unitPattern='(?:nmol\\/l|pmol\\/l|mmol\\/l|mmol\\/mol|µmol\\/l|μmol\\/l|umol\\/l|g\\/l|mg\\/l|mg\\/dl|µg\\/l|μg\\/l|ug\\/l|ng\\/l|ng\\/ml|mU\\/l|U\\/l|IU\\/l|E9\\/l|E12\\/l|%|fL|fl|pg|ml\\/min\\/1\\.73m2)';
-  const resultRe=new RegExp('^([<>≤≥]?\\s*-?\\d+(?:[.,]\\d+)?)\\s*('+unitPattern+')?\\s*$','i');
+  const headingRe=/^(.+?)\s*\(([A-Za-z0-9+/%";\-]+)\)\s*$/;
+  const junk=/^(Testin tulokset|Yhteenveto tuloksista|Raportin on tuottanut)/i;
 
   function headingAt(i){
     const x=lines[i];
-    if(!x||junkHead.test(x)||x.length>120)return null;
-    return x.match(headingRe);
-  }
-  function resultAt(x){
-    const m=String(x||'').match(resultRe);
+    if(!x||junk.test(x)||x.length>140)return null;
+    const m=x.match(headingRe);
     if(!m)return null;
-    const raw=String(m[1]||'').replace(/\s/g,'');
-    const value=parseNumberLocal(raw.replace(/[<>≤≥]/g,''));
-    if(value===null)return null;
-    return {value,unit:m[2]||'',qualifier:(raw.match(/^[<>≤≥]/)||[])[0]||'',rawValue:raw};
+    return {raw:x,name:m[1].trim(),code:m[2].trim(),known:puhtiKnownTest(m[2],m[1])};
   }
-  function parseReference(x){
-    x=String(x||'').trim();
-    let m=x.match(new RegExp('^(\\d+(?:[.,]\\d+)?)\\s*[-–]\\s*(\\d+(?:[.,]\\d+)?)\\s*('+unitPattern+')?\\s*$','i'));
-    if(m)return {min:parseNumberLocal(m[1]),max:parseNumberLocal(m[2]),unit:m[3]||'',refText:x};
-    m=x.match(new RegExp('^-\\s*(\\d+(?:[.,]\\d+)?)\\s*('+unitPattern+')?\\s*$','i'));
-    if(m)return {min:null,max:parseNumberLocal(m[1]),unit:m[2]||'',refText:x};
-    m=x.match(new RegExp('^(\\d+(?:[.,]\\d+)?)\\s*-\\s*('+unitPattern+')?\\s*$','i'));
-    if(m)return {min:parseNumberLocal(m[1]),max:null,unit:m[2]||'',refText:x};
-    m=x.match(new RegExp('^([<>≤≥])\\s*(\\d+(?:[.,]\\d+)?)\\s*('+unitPattern+')?\\s*$','i'));
-    if(m){
-      const n=parseNumberLocal(m[2]);
-      return /^[<≤]$/.test(m[1])
-        ? {min:null,max:n,unit:m[3]||'',refText:x}
-        : {min:n,max:null,unit:m[3]||'',refText:x};
-    }
-    return null;
-  }
-
   for(let i=0;i<lines.length;i++){
-    const hm=headingAt(i);
-    if(!hm)continue;
-    const code=hm[2];
-    const name=cleanLabName(lines[i]);
-
+    const h=headingAt(i);if(!h)continue;
     let end=lines.length;
-    for(let j=i+1;j<lines.length;j++){
-      if(headingAt(j)){end=j;break}
-    }
-
+    for(let j=i+1;j<lines.length;j++){if(headingAt(j)){end=j;break}}
     let tulos=-1;
-    for(let j=i+1;j<Math.min(end,i+45);j++){
+    for(let j=i+1;j<Math.min(end,i+55);j++){
       if(/^Tulos$/i.test(lines[j])){tulos=j;break}
     }
     if(tulos<0)continue;
-
     let res=null,resIdx=-1;
-    for(let j=tulos+1;j<Math.min(end,tulos+5);j++){
-      if(/^(Tehty|Negat)/i.test(lines[j]))break; // group or qualitative result
-      res=resultAt(lines[j]);
-      if(res){resIdx=j;break}
+    for(let j=tulos+1;j<Math.min(end,tulos+6);j++){
+      if(/^(Tehty|Ei tehdä|Ei lasketa|Negat)/i.test(lines[j]))break;
+      const q=puhtiResultToken(lines[j]);
+      if(q){res=q;resIdx=j;break}
     }
     if(!res)continue;
 
-    let unit=res.unit,min=null,max=null,refText='';
+    let min=null,max=null,refText='',unit=res.unit;
     let refIdx=-1;
-    for(let j=resIdx+1;j<Math.min(end,resIdx+14);j++){
+    for(let j=resIdx+1;j<Math.min(end,resIdx+16);j++){
       if(/^Viitearvot?$/i.test(lines[j])){refIdx=j;break}
     }
     if(refIdx>=0){
       for(let j=refIdx+1;j<Math.min(end,refIdx+5);j++){
-        const r=parseReference(lines[j]);
+        const r=puhtiReferenceToken(lines[j]);
         if(r){
           min=r.min;max=r.max;refText=r.refText;
           if(!unit&&r.unit)unit=r.unit;
@@ -1307,31 +1459,28 @@ function parsePuhtiStructuredV2(text){
         }
       }
     }else{
-      // Some Puhti charts (Kol/HDL and Non-HDL) omit "Viitearvot" in the text layer.
-      // Typical extraction is: result, duplicated result, chart threshold.
       const bare=[];
       for(let j=resIdx+1;j<Math.min(end,resIdx+5);j++){
-        const q=resultAt(lines[j]);
+        const q=puhtiResultToken(lines[j]);
         if(q&&!q.unit)bare.push(q.value);
       }
-      if(bare.length>=2 && Math.abs(bare[0]-res.value)<1e-9){
-        max=bare[1];
-        refText=`≤ ${bare[1]} (граница графика Puhti)`;
+      if(bare.length>=3&&Math.abs(bare[0]-res.value)<1e-9){
+        min=bare[1];max=bare[2];refText=`${bare[1]}–${bare[2]} (границы графика Puhti)`;
+      }else if(bare.length>=2&&Math.abs(bare[0]-res.value)<1e-9){
+        max=bare[1];refText=`≤ ${bare[1]} (граница графика Puhti)`;
       }
     }
 
-    const cl=code.toLowerCase();
-    if(!unit&&cl==='non-hdl')unit='mmol/l';
-
+    const known=h.known;
+    const name=known?.name||cleanLabName(h.raw);
+    const code=known?.code||h.code;
     const item={
-      name,value:res.value,unit,min,max,refText,
-      rawValue:res.rawValue,qualifier:res.qualifier,
-      parser:'puhti-v2',code
+      name,value:res.value,unit,min,max,refText,rawValue:res.rawValue,qualifier:res.qualifier,
+      parser:'puhti-v3',code,canonicalKey:known?.key||''
     };
-    const key=markerIdentity(item);
+    const key=[puhtiCodeNorm(code),res.value,String(unit||'').toLowerCase()].join('|');
     if(seen.has(key))continue;
-    seen.add(key);
-    out.push(item);
+    seen.add(key);out.push(item);
   }
   return out;
 }
@@ -1374,11 +1523,16 @@ function parsePuhtiFlexible(text){
   return out;
 }
 function parseMarkersFromPdf(text){
+  const raw=String(text||'');
+  const isPuhti=/Puhti\s+Lab|Raportin on tuottanut Puhti|Testin tulokset/i.test(raw);
+  if(isPuhti){
+    const robust=parsePuhtiStructuredV3(raw);
+    if(robust.length)return robust;
+  }
   const candidates=[
-    ...parsePuhtiStructuredV2(text),
-    ...parseTerveystaloRows(text),
-    ...parseBlockResults(text),
-    ...parsePuhtiFlexible(text)
+    ...parseTerveystaloRows(raw),
+    ...parseBlockResults(raw),
+    ...parsePuhtiFlexible(raw)
   ];
   const out=[],seen=new Set();
   for(const m of candidates){
@@ -1487,7 +1641,8 @@ async function importLabPdf(event){
       markers:all,
       pageCount:extracted.pageCount,
       pageStats,
-      pages
+      pages,
+      expectedPuhtiCount:guessLabFromPdf(fullText).startsWith('Puhti')?parsePuhtiSummaryExpected(fullText):null
     });
   }catch(e){
     console.error(e);
@@ -1504,7 +1659,13 @@ const BASE_ANALYTES=[
   ['psa','PSA'],['alt','ALT'],['ast','AST'],['hdl','HDL'],['ldl','LDL'],['triglycerides','Триглицериды'],['ferritin','Ферритин'],
   ['total_cholesterol','Общий холестерин'],['non_hdl','Non-HDL'],['chol_hdl_ratio','Соотношение холестерин/HDL'],
   ['hs_crp','Высокочувствительный CRP'],['creatinine','Креатинин'],['egfr','eGFR'],
-  ['b12','Витамин B12'],['vitamin_d','Витамин D']
+  ['b12','Витамин B12'],['vitamin_d','Витамин D'],['folate','Фолат'],['progesterone','Прогестерон'],
+  ['albumin','Альбумин'],['potassium','Калий'],['sodium','Натрий'],['urate','Мочевая кислота'],
+  ['alp','Щелочная фосфатаза'],['ggt','ГГТ'],['transferrin_receptor','Растворимый рецептор трансферрина'],
+  ['magnesium','Магний'],['free_t4','Свободный T4'],['eosinophils','Эозинофилы'],['basophils','Базофилы'],
+  ['lymphocytes','Лимфоциты'],['monocytes','Моноциты'],['neutrophils','Нейтрофилы'],
+  ['basophils_pct','Базофилы %'],['eosinophils_pct','Эозинофилы %'],['lymphocytes_pct','Лимфоциты %'],
+  ['monocytes_pct','Моноциты %'],['neutrophils_pct','Нейтрофилы %']
 ];
 function aliasNorm(x){return String(x||'').toLowerCase().replace(/\s+/g,' ').trim()}
 function analyteCatalog(){
@@ -1764,7 +1925,14 @@ function openPdfReview(data){
     const cls=x.added?'good':(x.chars?'gold':'');
     return `<span class="badge ${cls}" title="Текст: ${x.chars} знаков · PDF-элементов: ${x.items} · visual: ${x.visual} · flow: ${x.flow}">стр. ${x.page}: ${x.added} показ.</span>`;
   }).join(' ');
-  openModal(`<h3>Проверка распознанного анализа</h3>
+  const expected=Number(data.expectedPuhtiCount)||null;
+  const recognized=(data.markers||[]).length;
+  let importState='good',importMsg=`Распознано ${recognized} числовых показателей.`;
+  if(expected){
+    if(recognized<expected){importState=recognized<expected*.8?'bad':'warn';importMsg=`Puhti сообщает минимум ${expected} результатов с референсной оценкой, а распознано ${recognized}. Импорт неполный — проверьте страницы с 0 и строки ниже.`}
+    else importMsg=`Puhti сообщает ${expected} результатов с референсной оценкой; распознано ${recognized}. Количество выглядит полным (возможны дополнительные показатели без референса).`;
+  }
+  openModal(`<div class="pdf-review-title"><h3 style="margin:0">Проверка распознанного анализа</h3><span class="badge blue">Robust Puhti Parser v3</span></div>
     <div class="form-grid">
       <label>Дата<input id="pdfDate" type="date" value="${data.date||today()}"></label>
       <label>Время<input id="pdfTime" type="time"></label>
@@ -1772,11 +1940,11 @@ function openPdfReview(data){
       <label>Исходный файл<input value="${data.fileName.replace(/"/g,'&quot;')}" disabled></label>
       ${doseContextFields('pdf',{date:data.date||today(),time:'',doseContext:{}})}
     </div>
-    <div class="note" style="margin:12px 0">
-      PDF содержит <b style="color:#f4f5f7">${data.pageCount||1}</b> стр. · распознано
-      <b style="color:#f4f5f7">${data.markers.length}</b> показателей.
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">${statHtml}</div>
-      <div style="margin-top:8px">Если на странице есть текст, но показателей 0, откройте её ниже: это значит, что формат строки пока не подошёл под автоматический разбор.</div>
+    <div class="pdf-review-summary">
+      <div class="pdf-review-status ${importState}">${safeHtml(importMsg)}</div>
+      <div class="note">PDF содержит <b style="color:#f4f5f7">${data.pageCount||1}</b> стр. · распознано <b style="color:#f4f5f7">${recognized}</b> числовых показателей.</div>
+      <div class="pdf-review-pagebadges">${statHtml}</div>
+      <div class="note">Если на странице есть текст, но показателей 0, откройте её ниже. Программа не сохраняет анализ автоматически: сначала проверьте распознанные строки.</div>
     </div>
     <div class="head"><h2 style="font-size:15px">Показатели со всех страниц PDF</h2><button class="btn" onclick="addPdfMarkerRow()">＋ Показатель</button></div>
     <div id="pdfMarkerRows"></div>
@@ -1792,6 +1960,7 @@ function openPdfReview(data){
       </div>
     </details>
     <div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="savePdfLab()">Подтвердить и сохранить</button></div>`);
+  $('modal').classList.add('modal-wide');
   if(data.markers.length)data.markers.forEach(m=>addPdfMarkerRow(m)); else addPdfMarkerRow();
 }
 function addPdfMarkerRow(m={}){
@@ -1832,7 +2001,7 @@ function savePdfLab(){
     };
   }).filter(m=>m.name&&m.value!==null&&isPlausibleMarkerName(m.name));
   if(!markers.length && !confirm('Показатели не заполнены. Всё равно сохранить анализ?'))return;
-  state.labs.push({id:uid(),date,time:$('pdfTime').value,lab:$('pdfLab').value.trim(),comment:'Импортировано из PDF',markers,protocolContext:protocolContext(date),doseContext:doseContextFromForm('pdf'),source:'pdf',sourceFile:document.querySelector('#modal input[disabled]')?.value||''});
+  state.labs.push({id:uid(),date,time:$('pdfTime').value,lab:$('pdfLab').value.trim(),comment:'Импортировано из PDF',markers,protocolContext:protocolContext(date),doseContext:doseContextFromForm('pdf',date,$('pdfTime').value),source:'pdf',sourceFile:document.querySelector('#modal input[disabled]')?.value||''});
   closeModal();save();
 }
 
@@ -1879,7 +2048,7 @@ function saveLab(){
       canonicalKey:choice?learnAnalyte(name,choice):''
     };
   }).filter(m=>m.name&&m.value!==null);
-  const data={date,time:$('lTime').value,lab:$('lLab').value.trim(),comment:$('lComment').value.trim(),markers,protocolContext:protocolContext(date),doseContext:doseContextFromForm('l')};
+  const data={date,time:$('lTime').value,lab:$('lLab').value.trim(),comment:$('lComment').value.trim(),markers,protocolContext:protocolContext(date),doseContext:doseContextFromForm('l',date,$('lTime').value)};
   if(id){const i=state.labs.findIndex(x=>x.id===id);if(i>=0)state.labs[i]={...state.labs[i],...data}}
   else state.labs.push({id:uid(),...data});
   closeModal();save();
@@ -1980,7 +2149,7 @@ function renderLatestChanges(){
   }
   box.innerHTML=cards.length?`<div class="change-grid">${cards.join('')}</div>`:`<div class="empty">Пока недостаточно повторных анализов для сравнения.</div>`;
 }
-const APP_VERSION='3.1.2';
+const APP_VERSION='3.1.3';
 
 function normalizedHctPercent(marker){
   if(!marker)return null;
@@ -2196,6 +2365,8 @@ function canonicalMarkerKey(name){
   if(/(^|[^a-z])testo([^a-z]|$)|testosteroni/.test(x)) return 'testosterone';
   if(/shbg|sukupuolihormoneja sitov/.test(x)) return 'shbg';
   if(/(^|[^a-z])lh([^a-z]|$)|luteinisoiva/.test(x)) return 'lh';
+  if(/(^|[^a-z])fsh([^a-z]|$)|follikkelia stimuloiva/.test(x)) return 'fsh';
+  if(/progester|\bprog\b/.test(x)) return 'progesterone';
   if(/estradiol|e2/.test(x)) return 'estradiol';
   if(/prolak|prl/.test(x)) return 'prolactin';
   if(/hba1c|hemoglobiini-a1c/.test(x)) return 'hba1c';
@@ -2227,6 +2398,26 @@ function canonicalMarkerKey(name){
   if(/trombosyyt|trom/.test(x)) return 'platelets';
   if(/rdw|punasolujen kokojakauma/.test(x)) return 'rdw';
   if(/erytrosyyt|\beryt\b/.test(x)) return 'erythrocytes';
+  if(/albumiini|\balb\b/.test(x)) return 'albumin';
+  if(/kalium|\(k\)/.test(x)) return 'potassium';
+  if(/natrium|\bna\b/.test(x)) return 'sodium';
+  if(/uraat|virtsahapp|wraat|mraat/.test(x)) return 'urate';
+  if(/alkalinen.*fos|\bafos\b|\bafus\b/.test(x)) return 'alp';
+  if(/glutamyyli|\bgt\b/.test(x)) return 'ggt';
+  if(/transferriiniresept|\btfr\b|\bt5r\b/.test(x)) return 'transferrin_receptor';
+  if(/magnesium/.test(x)) return 'magnesium';
+  if(/tyroksiini.*vapaa|t4-v/.test(x)) return 'free_t4';
+  if(/folaatti|folaat/.test(x)) return 'folate';
+  if(/eosino.*osuus/.test(x)) return 'eosinophils_pct';
+  if(/baso.*osuus/.test(x)) return 'basophils_pct';
+  if(/lymfo.*osuus/.test(x)) return 'lymphocytes_pct';
+  if(/mono.*osuus|fono.*osuus/.test(x)) return 'monocytes_pct';
+  if(/neutro.*osuus/.test(x)) return 'neutrophils_pct';
+  if(/eosino/.test(x)) return 'eosinophils';
+  if(/baso/.test(x)) return 'basophils';
+  if(/lymfo/.test(x)) return 'lymphocytes';
+  if(/monos|fonos/.test(x)) return 'monocytes';
+  if(/neutro/.test(x)) return 'neutrophils';
   return 'raw:'+x.replace(/[^a-z0-9åäö]+/gi,'_');
 }
 function canonicalMarkerLabel(key, fallback){
