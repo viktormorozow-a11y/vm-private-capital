@@ -1056,6 +1056,25 @@ body.auth-locked{overflow:hidden}
   #view-dashboard > .grid.two{grid-template-columns:1fr}
   #capitalChart{max-height:150px}
 }
+
+/* VM Private Suite app switch */
+.suite-switch-card{
+  margin-top:10px;border:1px solid rgba(158,208,255,.16);
+  background:linear-gradient(145deg,rgba(111,183,255,.07),rgba(112,224,194,.035));
+  border-radius:14px;padding:13px;
+}
+.suite-switch-card .eyebrow{color:#8fbfe9}
+.suite-switch-link{
+  margin-top:9px;width:100%;display:flex;align-items:center;justify-content:space-between;
+  gap:10px;text-decoration:none;border:1px solid rgba(158,208,255,.16);
+  background:rgba(255,255,255,.035);color:#dceeff;padding:10px 11px;border-radius:10px;
+  font-size:12px;font-weight:700;transition:.18s;
+}
+.suite-switch-link:hover{background:rgba(111,183,255,.10);transform:translateY(-1px)}
+.suite-switch-link .suite-icon{
+  width:28px;height:28px;border-radius:9px;display:grid;place-items:center;
+  background:rgba(120,227,155,.09);color:#79e1a0;border:1px solid rgba(120,227,155,.14)
+}
 </style>
 <style id="calcTooltipStyles">
 .calc-tooltip-target{cursor:help!important}
@@ -1115,6 +1134,15 @@ body.auth-locked{overflow:hidden}
         <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.11.1 BTC Intraday History</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
+    </div>
+
+    <div class="suite-switch-card">
+      <div class="eyebrow">PRIVATE SUITE</div>
+      <a class="suite-switch-link" href="./hrt/" title="Открыть HRT Health Studio">
+        <span class="suite-icon">♥</span>
+        <span style="flex:1">HRT HEALTH STUDIO</span>
+        <span>→</span>
+      </a>
     </div>
   </aside>
 

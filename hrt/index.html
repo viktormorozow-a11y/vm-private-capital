@@ -1,0 +1,2072 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HRT Health Studio — VM Private Suite</title>
+<style>
+:root{
+  --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
+  --line:rgba(255,255,255,.09);--gold:#d6ad62;--good:#73d99a;--bad:#ff7e8a;--blue:#7fc8ff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#050b11,#08131d 45%,#060d14);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif}
+.app{display:grid;grid-template-columns:230px minmax(0,1fr);min-height:100vh}
+aside{border-right:1px solid var(--line);background:rgba(5,13,20,.93);padding:24px 14px;position:sticky;top:0;height:100vh}
+.brand{padding:8px 10px 26px}.brand b{color:var(--gold);letter-spacing:.12em}.brand small{display:block;color:var(--muted);margin-top:5px}
+nav{display:grid;gap:7px}.nav{border:1px solid transparent;background:transparent;color:#aeb9c4;text-align:left;padding:11px 12px;border-radius:12px;cursor:pointer}
+.nav.active{background:rgba(214,173,98,.12);border-color:rgba(214,173,98,.25);color:#f4ddb1}
+main{padding:24px;max-width:1500px;width:100%;margin:0 auto}
+.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px}
+h1{margin:0;font-size:28px}.sub{color:var(--muted);font-size:13px;margin-top:6px}
+.btn{border:1px solid var(--line);background:#142333;color:var(--text);padding:9px 12px;border-radius:10px;cursor:pointer;font-weight:650}
+.btn.primary{background:linear-gradient(135deg,#e3bd73,#b88939);color:#111;border:0}
+.btn.danger{color:#ff9aa4;background:rgba(255,126,138,.08);border-color:rgba(255,126,138,.2)}
+.grid{display:grid;gap:14px}.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}
+.card,.panel{border:1px solid var(--line);background:rgba(13,24,36,.88);border-radius:16px;box-shadow:0 16px 40px rgba(0,0,0,.14)}
+.card{padding:16px}.panel{padding:18px;margin-bottom:14px}
+.klabel{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.kval{font-size:24px;font-weight:750;margin-top:7px}.ksub{font-size:12px;color:var(--muted);margin-top:5px}
+.head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}.head h2{font-size:18px;margin:0}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:11px 8px;border-bottom:1px solid var(--line);font-size:12px;text-align:left;white-space:nowrap}th{color:#8695a5;font-size:10px;text-transform:uppercase;letter-spacing:.07em}
+.badge{display:inline-flex;padding:4px 7px;border-radius:999px;border:1px solid var(--line);font-size:10px}.badge.good{color:var(--good);background:rgba(115,217,154,.07)}.badge.gold{color:#e2bd73;background:rgba(214,173,98,.07)}.badge.blue{color:var(--blue);background:rgba(127,200,255,.07)}
+.view{display:none}.view.active{display:block}
+.empty{padding:18px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:12px}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textarea{width:100%;background:#09131d;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 10px;outline:none}
+textarea{min-height:80px;resize:vertical}.wide{grid-column:1/-1}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.64);display:none;place-items:center;padding:18px;z-index:30}.modal-bg.show{display:grid}.modal{width:min(680px,100%);max-height:90vh;overflow:auto;background:#0d1824;border:1px solid var(--line);border-radius:18px;padding:18px}
+.modal h3{margin:0 0 14px}.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+.timeline{display:grid;gap:10px}.event{border-left:3px solid rgba(214,173,98,.55);padding:8px 10px 8px 12px;background:rgba(255,255,255,.018);border-radius:0 10px 10px 0}.event b{font-size:13px}.event small{display:block;color:var(--muted);margin-top:4px}
+.marker-row{display:grid;grid-template-columns:1.4fr .8fr .7fr .7fr .7fr auto;gap:7px;align-items:end;margin-bottom:7px}
+canvas{width:100%;height:280px;border-radius:12px;background:#08121b}
+.note{font-size:11px;color:var(--muted);line-height:1.5}
+@media(max-width:1000px){.app{grid-template-columns:1fr}aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}nav{grid-template-columns:repeat(4,minmax(140px,1fr));overflow:auto}.g4,.g3,.g2{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){main{padding:14px}.g4,.g3,.g2,.form-grid{grid-template-columns:1fr}.marker-row{grid-template-columns:1fr 1fr}.top{flex-direction:column}}
+
+.marker-row.map-row{grid-template-columns:1.35fr .9fr .65fr .65fr .65fr 1.35fr auto}
+@media(max-width:850px){.marker-row.map-row{grid-template-columns:1fr 1fr}.marker-row.map-row label:nth-child(6){grid-column:1/-1}}
+
+.chart-dashboard{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.chart-panel{border:1px solid var(--line);background:#08121b;border-radius:14px;padding:14px;min-width:0}
+.chart-panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+.chart-panel h3{margin:0;font-size:15px}
+.chart-canvas-wrap{height:245px;position:relative}
+.chart-canvas-wrap canvas{height:245px}
+.chart-meta{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.45}
+.chart-empty{height:245px;display:grid;place-items:center;border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:12px;text-align:center;padding:18px}
+@media(max-width:900px){.chart-dashboard{grid-template-columns:1fr}}
+
+.help-dot{
+  display:inline-grid;place-items:center;width:17px;height:17px;border-radius:50%;
+  border:1px solid rgba(127,200,255,.35);color:#9fd5ff;background:rgba(127,200,255,.07);
+  font-size:11px;font-weight:800;cursor:help;margin-left:6px;vertical-align:middle;position:relative
+}
+.help-dot:hover::after,.help-dot:focus::after{
+  content:attr(data-help);position:absolute;z-index:80;left:50%;top:24px;transform:translateX(-50%);
+  width:min(340px,80vw);padding:10px 12px;border-radius:11px;border:1px solid var(--line);
+  background:#101b27;color:#eaf0f4;box-shadow:0 18px 45px rgba(0,0,0,.35);
+  font-size:11px;font-weight:500;line-height:1.5;white-space:normal;text-align:left
+}
+.quick-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.quick-btn{border:1px solid var(--line);background:rgba(255,255,255,.025);color:#d7e0e7;padding:10px;border-radius:11px;cursor:pointer;text-align:left}
+.quick-btn b{display:block;font-size:12px}.quick-btn span{display:block;font-size:10px;color:var(--muted);margin-top:4px}
+.delta-up{color:var(--good)}.delta-down{color:#9fcfff}.delta-flat{color:var(--muted)}
+.change-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.change-card{border:1px solid var(--line);border-radius:12px;padding:12px;background:rgba(255,255,255,.018)}
+.change-card .name{font-size:11px;color:var(--muted)}.change-card .main{font-size:19px;font-weight:760;margin-top:5px}
+.change-card .delta{font-size:11px;margin-top:5px}
+select.smart-select{background:#09131d}
+@media(max-width:850px){.quick-grid,.change-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:550px){.quick-grid,.change-grid{grid-template-columns:1fr}}
+
+.chart-canvas-wrap{position:relative}
+.chart-hover-tip{
+  position:absolute;z-index:25;pointer-events:none;display:none;
+  min-width:250px;max-width:390px;padding:11px 13px;border-radius:11px;
+  border:1px solid var(--line);background:#101b27;color:#eaf0f4;
+  box-shadow:0 16px 38px rgba(0,0,0,.35);font-size:11px;line-height:1.5
+}
+.chart-hover-tip b{font-size:12px}
+.chart-hover-tip .muted{color:var(--muted)}
+.chart-hover-tip .protocol{margin-top:6px;padding-top:6px;border-top:1px solid var(--line)}
+
+.analyte-name-line{display:flex;align-items:center;gap:5px}
+.analyte-info-btn{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;border:1px solid rgba(127,200,255,.35);background:rgba(127,200,255,.07);color:#9fd5ff;font-size:11px;font-weight:800;cursor:pointer;flex:0 0 auto}
+.analyte-info-btn:hover{background:rgba(127,200,255,.14)}
+
+/* Shared VM Private Suite authentication */
+body.hrt-auth-locked{overflow:hidden}
+#hrtAuthGate{
+  position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 15%,rgba(214,173,98,.09),transparent 34%),linear-gradient(180deg,#050b11,#08131d 55%,#050b11);
+  padding:22px
+}
+#hrtAuthGate.hidden{display:none}
+.hrt-auth-card{
+  width:min(420px,100%);border:1px solid rgba(255,255,255,.09);border-radius:18px;
+  background:rgba(13,24,36,.98);box-shadow:0 28px 90px rgba(0,0,0,.52);padding:26px
+}
+.hrt-auth-brand{font-size:11px;letter-spacing:.16em;color:#d6ad62;text-align:center;font-weight:800}
+.hrt-auth-title{font-size:24px;font-weight:800;text-align:center;margin:8px 0 4px}
+.hrt-auth-sub{font-size:11px;color:#8ea0b1;text-align:center;margin-bottom:17px}
+.hrt-auth-card label{margin-top:10px}
+.hrt-auth-msg{min-height:18px;margin-top:10px;font-size:10px;color:#8ea0b1}
+.hrt-auth-msg.ok{color:var(--good)}.hrt-auth-msg.err{color:var(--bad)}
+#hrtAppShell.auth-hidden{visibility:hidden;pointer-events:none;user-select:none}
+aside{display:flex;flex-direction:column}
+.suite-back{
+  margin-top:auto;padding-top:14px;border-top:1px solid var(--line)
+}
+.suite-back a{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;text-decoration:none;
+  color:#d9e6ef;background:rgba(127,200,255,.055);border:1px solid rgba(127,200,255,.13);
+  padding:10px 11px;border-radius:11px;font-size:12px;font-weight:700
+}
+.suite-back a:hover{background:rgba(127,200,255,.10)}
+</style>
+</head>
+<body class="hrt-auth-locked">
+<div id="hrtAuthGate">
+  <div class="hrt-auth-card">
+    <div class="hrt-auth-brand">VM PRIVATE SUITE</div>
+    <div class="hrt-auth-title">HRT Health Studio</div>
+    <div class="hrt-auth-sub">Используйте тот же аккаунт, что и в Планировании капитала</div>
+    <label>Email<input id="hrtGateEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
+    <label>Пароль<input id="hrtGatePassword" type="password" autocomplete="current-password" placeholder="Введите пароль"></label>
+    <div id="hrtAuthMsg" class="hrt-auth-msg"></div>
+    <div class="actions" style="justify-content:stretch">
+      <button class="btn primary" id="hrtGateSignIn" style="width:100%">Войти</button>
+    </div>
+    <div class="note" style="margin-top:10px;text-align:center">Если вы уже вошли в Планирование капитала на этом сайте, HRT Studio откроется автоматически.</div>
+  </div>
+</div>
+<div id="hrtAppShell" class="auth-hidden">
+<div class="app">
+<aside>
+  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small></div>
+  <nav>
+    <button class="nav active" data-view="dashboard">Главная</button>
+    <button class="nav" data-view="labs">Анализы</button>
+    <button class="nav" data-view="meds">Препараты</button>
+    <button class="nav" data-view="protocols">Протоколы</button>
+    <button class="nav" data-view="wellbeing">Самочувствие</button>
+    <button class="nav" data-view="clinical">Анализ ГЗТ</button>
+    <button class="nav" data-view="schedule">План анализов</button>
+    <button class="nav" data-view="goals">Цели</button>
+    <button class="nav" data-view="analytics">Графики</button>
+    <button class="nav" data-view="settings">Настройки</button>
+  </nav>
+  <div class="suite-back">
+    <a href="../" title="Вернуться в Планирование капитала"><span>←</span><span>Планирование капитала</span></a>
+  </div>
+</aside>
+
+<main>
+<section id="dashboard" class="view active">
+  <div class="top"><div><h1>Контроль ГЗТ</h1><div class="sub">Протоколы действуют автоматически. Вручную добавляются только изменения и исключения.</div></div><button class="btn primary" onclick="openQuickDeviation()">Сегодня было иначе</button></div>
+  <div class="grid g4" id="dashKpis"></div>
+  <div class="panel">
+    <div class="head">
+      <div><h2>Быстрые действия <span class="help-dot" tabindex="0" data-help="Эти кнопки заполняют форму за вас. Вам остаётся только проверить дату, препарат и при необходимости изменить значение.">?</span></h2></div>
+    </div>
+    <div class="quick-grid">
+      <button class="quick-btn" onclick="quickDeviation('missed')"><b>Пропустил дозу</b><span>Сразу откроется готовая форма</span></button>
+      <button class="quick-btn" onclick="quickDeviation('different_dose')"><b>Другая доза</b><span>Выберите только фактическое количество</span></button>
+      <button class="quick-btn" onclick="quickDeviation('late')"><b>Укол / доза позже</b><span>Зафиксировать перенос по времени</span></button>
+      <button class="quick-btn" onclick="quickProtocolChange()"><b>Изменить протокол</b><span>Новая схема с сегодняшней даты</span></button>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="head">
+      <div><h2>Что изменилось с прошлого анализа <span class="help-dot" tabindex="0" data-help="Сравниваются два последних результата одного и того же показателя после объединения названий из разных лабораторий.">?</span></h2></div>
+    </div>
+    <div id="latestChanges"></div>
+  </div>
+
+  <div class="panel"><div class="head"><h2>Действующие протоколы <span class="help-dot" tabindex="0" data-help="Базовые схемы, которые считаются действующими на текущую дату. Разовые отклонения показываются отдельно.">?</span></h2><button class="btn" onclick="openProtocolModal()">＋ Протокол</button></div><div id="activeProtocols"></div></div>
+  <div class="grid g2">
+    <div class="panel"><div class="head"><h2>Последний анализ</h2><button class="btn" onclick="openLabModal()">＋ Анализ</button></div><div id="lastLab"></div></div>
+    <div class="panel"><div class="head"><h2>Последние события</h2></div><div id="recentEvents"></div></div>
+  </div>
+</section>
+
+<section id="labs" class="view">
+  <div class="top"><div><h1>Анализы</h1><div class="sub">Любой набор показателей, любые единицы и лабораторные референсы.</div></div>
+    <div class="actions" style="margin-top:0">
+      <label class="btn primary">⇧ Импорт PDF<input id="labPdfInput" type="file" accept="application/pdf,.pdf" style="display:none" onchange="importLabPdf(event)"></label>
+      <button class="btn" onclick="openLabModal()">＋ Вручную</button>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="note"><b style="color:#f4f5f7">Импорт PDF:</b> программа извлекает текст из лабораторного PDF, пытается определить дату, лабораторию, показатели, значения, единицы и референсы. Перед сохранением все распознанные данные обязательно показываются для проверки. Для сканированных PDF без текстового слоя автоматическое распознавание в этой версии может не сработать.</div>
+  </div>
+  <div class="panel"><div class="table-wrap"><table><thead><tr><th>Дата</th><th>Лаборатория</th><th>Показателей</th><th>Контекст ГЗТ</th><th></th></tr></thead><tbody id="labsBody"></tbody></table></div></div>
+</section>
+
+<section id="meds" class="view">
+  <div class="top"><div><h1>Препараты</h1><div class="sub">Справочник. Препарат можно использовать в разных протоколах и дозировках.</div></div><button class="btn primary" onclick="openMedModal()">＋ Добавить препарат</button></div>
+  <div class="panel"><div id="medList"></div></div>
+</section>
+
+<section id="protocols" class="view">
+  <div class="top"><div><h1>Протоколы и исключения</h1><div class="sub">Новый протокол начинает действовать с указанной даты. Старый остаётся в истории.</div></div><button class="btn primary" onclick="openProtocolModal()">＋ Новый протокол</button></div>
+  <div class="panel"><div class="head"><h2>История протоколов</h2></div><div id="protocolList"></div></div>
+  <div class="panel"><div class="head"><h2>Отклонения</h2><button class="btn" onclick="openQuickDeviation()">＋ Отклонение</button></div><div id="deviationList"></div></div>
+</section>
+
+<section id="wellbeing" class="view">
+  <div class="top"><div><h1>Самочувствие</h1><div class="sub">Короткие записи по дням: энергия, либидо, сон, настроение и восстановление.</div></div><button class="btn primary" onclick="openWellModal()">＋ Запись</button></div>
+  <div class="panel"><div class="table-wrap"><table><thead><tr><th>Дата</th><th>Энергия</th><th>Либидо</th><th>Сон</th><th>Настроение</th><th>Восстановление</th><th>Вес</th><th>АД</th><th></th></tr></thead><tbody id="wellBody"></tbody></table></div></div>
+</section>
+
+
+<section id="clinical" class="view">
+  <div class="top">
+    <div>
+      <h1>Анализ ГЗТ</h1>
+      <div class="sub">Автоматическое сопоставление последних анализов с вашими целями, протоколом, самочувствием и безопасностью терапии.</div>
+    </div>
+    <button class="btn primary" onclick="renderClinicalAnalysis()">↻ Пересчитать</button>
+  </div>
+  <div class="grid g4" id="clinicalKpis"></div>
+  <div class="panel">
+    <div class="head"><div><h2>Заключение</h2><div class="sub">Это поддержка решения для обсуждения с врачом, а не автоматическое назначение лечения.</div></div></div>
+    <div id="clinicalConclusion"></div>
+    <div class="note" style="margin-top:12px">Логика безопасности опирается на общепринятые принципы мониторинга тестостерон-заместительной терапии: контроль тестостерона, гематокрита и оценки риска простаты; конкретные решения о дозировке и препарате подтверждаются врачом.</div>
+  </div>
+  <div class="grid g2">
+    <div class="panel">
+      <div class="head"><h2>Что обсудить с врачом</h2></div>
+      <div id="clinicalActions"></div>
+    </div>
+    <div class="panel">
+      <div class="head"><h2>Какая схема подходит лучше</h2></div>
+      <div id="protocolRanking"></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="head"><h2>Показатели относительно целей <span class="help-dot" tabindex="0" data-help="Здесь сравниваются последние результаты с вашими личными целями. Это отдельно от референсов лаборатории.">?</span></h2></div>
+    <div id="clinicalMarkers"></div>
+  </div>
+</section>
+
+<section id="schedule" class="view">
+  <div class="top">
+    <div><h1>План анализов</h1><div class="sub">Запланируйте будущие лабораторные проверки и привяжите их к изменению протокола.</div></div>
+    <button class="btn primary" onclick="openLabPlanModal()">＋ Запланировать</button>
+  </div>
+  <div class="grid g4" id="scheduleKpis"></div>
+  <div class="panel">
+    <div class="head"><h2>Будущие и просроченные</h2></div>
+    <div id="labPlanList"></div>
+  </div>
+</section>
+
+<section id="goals" class="view">
+  <div class="top">
+    <div><h1>Цели ГЗТ</h1><div class="sub">Ваши собственные целевые диапазоны хранятся отдельно от лабораторных референсов.</div></div>
+    <button class="btn primary" onclick="openGoalModal()">＋ Цель</button>
+  </div>
+  <div class="panel">
+    <div class="head"><div><h2>Целевые показатели</h2><div class="sub">Например: общий тестостерон, свободный тестостерон, SHBG, гематокрит и другие показатели.</div></div></div>
+    <div id="goalList"></div>
+  </div>
+  <div class="panel">
+    <div class="head"><h2>Главная цель лечения</h2></div>
+    <div class="form-grid">
+      <label class="wide">Описание цели<textarea id="primaryGoalText" placeholder="Например: устойчивое улучшение симптомов и поддержание общего/свободного тестостерона в выбранном диапазоне без ухудшения показателей безопасности."></textarea></label>
+    </div>
+    <div class="actions"><button class="btn primary" onclick="savePrimaryGoal()">Сохранить</button></div>
+  </div>
+</section>
+
+<section id="analytics" class="view">
+  <div class="top">
+    <div>
+      <h1>Графики</h1>
+      <div class="sub">Ключевые показатели показываются одновременно. Наведите курсор или нажмите на точку: появятся точное значение, дата, лабораторный референс, действовавший протокол и пояснение самого показателя.</div>
+    </div>
+    <div class="actions" style="margin-top:0">
+      <button class="btn primary" onclick="openAddChartModal()">＋ Добавить график</button>
+      <button class="btn" onclick="resetChartDashboard()">По умолчанию</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="head">
+      <div>
+        <h2>Панель показателей <span class="help-dot" tabindex="0" data-help="Вы можете добавлять и убирать графики. Выбранный набор сохраняется в браузере.">?</span></h2>
+        <div class="sub">Каждый график объединяет одинаковый анализ из разных лабораторий по выученным соответствиям.</div>
+      </div>
+    </div>
+    <div id="chartDashboard" class="chart-dashboard"></div>
+  </div>
+</section>
+
+<section id="settings" class="view">
+  <div class="top"><div><h1>Настройки</h1><div class="sub">Резервная копия хранится в JSON. Основные данные сохраняются локально в браузере.</div></div></div>
+  <div class="panel">
+    <div class="head"><h2>Данные</h2></div>
+    <div class="actions" style="justify-content:flex-start">
+      <button class="btn" onclick="exportData()">Экспорт JSON</button>
+      <label class="btn">Импорт JSON<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label>
+      <button class="btn danger" onclick="resetData()">Удалить все данные</button>
+    </div>
+    <p class="note">Программа предназначена для ведения личной истории и визуализации данных. Она не ставит диагнозы и не заменяет назначения врача.</p>
+  </div>
+  <div class="panel">
+    <div class="head"><div><h2>Справочник анализов</h2><div class="sub">Пояснения ко всем стандартным показателям программы. Нажмите на показатель, чтобы открыть подробности.</div></div></div>
+    <div id="analyteGlossary"></div>
+  </div>
+  <div class="panel">
+    <div class="head"><div><h2>Выученные названия анализов</h2><div class="sub">Когда при импорте вы сопоставляете название новой лаборатории с нашим показателем, программа запоминает выбор.</div></div></div>
+    <div id="aliasList"></div>
+  </div>
+</section>
+</main>
+</div>
+
+</div><!-- /hrtAppShell -->
+
+<div id="modalBg" class="modal-bg" onclick="if(event.target===this)closeModal()"><div id="modal" class="modal"></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL='https://hlrvwzqwxqmycuttvzbx.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_RBRKa6zqrw7-CW77RW__QQ_vrqebWCp';
+const hrtSupabase=(window.supabase&&window.supabase.createClient)?window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}):null;
+const KEY='hrt_health_studio_v1';
+const DEFAULT_MEDS=[
+  {id:'med_testogel',name:'Testogel',form:'Гель',unit:'нажатий',comment:''},
+  {id:'med_hcg',name:'HCG',form:'Инъекция',unit:'IU',comment:''},
+  {id:'med_mounjaro',name:'Mounjaro',form:'Инъекция',unit:'mg',comment:''},
+  {id:'med_plavix',name:'Plavix',form:'Таблетка',unit:'mg',comment:''},
+  {id:'med_atorvastatin',name:'Atorvastatin',form:'Таблетка',unit:'mg',comment:''},
+  {id:'med_sildenafil',name:'Sildenafil',form:'Таблетка',unit:'mg',comment:''},
+  {id:'med_testosterone_undecanoate',name:'Testosterone Undecanoate',form:'Инъекция',unit:'mg',comment:''},
+  {id:'med_testavan',name:'Testavan',form:'Гель',unit:'нажатий',comment:'20 mg/g transdermal gel'},
+  {id:'med_testosterone_enanthate',name:'Testosterone Enanthate',form:'Инъекция',unit:'mg',comment:'250 mg/ml · Hilma Biocare'}
+];
+let state=JSON.parse(localStorage.getItem(KEY)||'null')||{
+  meds:[], protocols:[], deviations:[], labs:[], wellbeing:[], aliasMap:{}, customAnalytes:[]
+};
+state.meds=state.meds||[];
+state.protocols=state.protocols||[];
+state.deviations=state.deviations||[];
+state.labs=state.labs||[];
+state.wellbeing=state.wellbeing||[];
+state.aliasMap=state.aliasMap||{};
+state.customAnalytes=state.customAnalytes||[];
+state.goals=state.goals||[];
+state.labPlans=state.labPlans||[];
+state.settings=state.settings||{};
+state.settings.primaryGoal=state.settings.primaryGoal||'';
+
+// Repair aliases created by older parser versions where MCH/MCHC could be mistaken for hemoglobin.
+for(const [alias,key] of Object.entries(state.aliasMap||{})){
+  const a=aliasNorm(alias);
+  if(key==='hemoglobin' && (/mchc|keskimassakonsentraatio/.test(a))) state.aliasMap[alias]='mchc';
+  else if(key==='hemoglobin' && (/\bmch\b|hemoglobiini.*keskimassa/.test(a))) state.aliasMap[alias]='mch';
+  else if(key==='hemoglobin' && (/\bmcv\b|erytrosyyt.*keskitilavuus/.test(a))) state.aliasMap[alias]='mcv';
+}
+state.settings.chartKeys=Array.isArray(state.settings.chartKeys)?state.settings.chartKeys:[
+  'testosterone','free_testosterone','shbg','estradiol','hematocrit','hemoglobin'
+];
+
+// Add known medicines only if they are not already present. Existing user entries are never overwritten.
+for(const dm of DEFAULT_MEDS){
+  if(!state.meds.some(m=>String(m.name||'').trim().toLowerCase()===dm.name.toLowerCase())){
+    state.meds.push({...dm});
+  }
+}
+localStorage.setItem(KEY,JSON.stringify(state));
+const $=id=>document.getElementById(id);
+const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);
+const today=()=>new Date().toISOString().slice(0,10);
+const fmtDate=s=>s?new Date(s+'T12:00:00').toLocaleDateString('ru-RU'):'—';
+const save=()=>{localStorage.setItem(KEY,JSON.stringify(state));renderAll()};
+
+const medName=id=>state.meds.find(x=>x.id===id)?.name||'Неизвестный препарат';
+
+function hrtGateMessage(text,kind=''){
+  const el=document.getElementById('hrtAuthMsg');if(!el)return;
+  el.textContent=text||'';el.className='hrt-auth-msg '+kind;
+}
+function hrtLockApp(){
+  document.body.classList.add('hrt-auth-locked');
+  document.getElementById('hrtAuthGate')?.classList.remove('hidden');
+  document.getElementById('hrtAppShell')?.classList.add('auth-hidden');
+}
+function hrtUnlockApp(){
+  document.getElementById('hrtAuthGate')?.classList.add('hidden');
+  document.getElementById('hrtAppShell')?.classList.remove('auth-hidden');
+  document.body.classList.remove('hrt-auth-locked');
+}
+async function hrtSignIn(){
+  if(!hrtSupabase)return hrtGateMessage('Сервис авторизации недоступен. Проверьте интернет.','err');
+  const email=document.getElementById('hrtGateEmail')?.value.trim()||'';
+  const password=document.getElementById('hrtGatePassword')?.value||'';
+  if(!email||!password)return hrtGateMessage('Введите email и пароль.','err');
+  const btn=document.getElementById('hrtGateSignIn');
+  if(btn){btn.disabled=true;btn.textContent='Вхожу…'}
+  hrtGateMessage('Выполняю вход…');
+  try{
+    const {data,error}=await hrtSupabase.auth.signInWithPassword({email,password});
+    if(error)throw error;
+    if(!data?.session?.user)throw new Error('Сессия не получена.');
+    hrtGateMessage('Вход выполнен.','ok');
+    hrtUnlockApp();
+  }catch(e){
+    hrtGateMessage(e?.message||'Не удалось войти.','err');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Войти'}
+  }
+}
+async function initHrtAuth(){
+  hrtLockApp();
+  if(!hrtSupabase){
+    hrtGateMessage('Не удалось загрузить авторизацию. Проверьте интернет.','err');
+    return;
+  }
+  try{
+    const {data:{session}}=await hrtSupabase.auth.getSession();
+    if(session?.user) hrtUnlockApp();
+    else hrtLockApp();
+  }catch(e){
+    hrtGateMessage(e?.message||'Ошибка проверки авторизации.','err');
+  }
+  hrtSupabase.auth.onAuthStateChange((_event,session)=>{
+    if(session?.user)hrtUnlockApp();else hrtLockApp();
+  });
+}
+
+
+document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));$(b.dataset.view).classList.add('active');
+  if(b.dataset.view==='analytics')setTimeout(renderChartDashboard,0);
+  if(b.dataset.view==='clinical')renderClinicalAnalysis();
+  if(b.dataset.view==='schedule')renderLabSchedule();
+  if(b.dataset.view==='goals')renderGoals();
+});
+
+function openModal(html){$('modal').innerHTML=html;$('modalBg').classList.add('show')}
+function closeModal(){$('modalBg').classList.remove('show')}
+
+
+function isoTodayLocal(){
+  const d=new Date();
+  const off=d.getTimezoneOffset();
+  return new Date(d.getTime()-off*60000).toISOString().slice(0,10);
+}
+function daysBetween(a,b){
+  if(!a||!b)return null;
+  return Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/86400000);
+}
+function latestMarker(key){
+  const rows=[];
+  for(const l of state.labs||[]){
+    for(const m of l.markers||[]){
+      const mk=m.canonicalKey||state.aliasMap?.[aliasNorm(m.name)]||canonicalMarkerKey(m.name);
+      if(mk===key && Number.isFinite(Number(m.value))) rows.push({lab:l,marker:m});
+    }
+  }
+  return rows.sort((a,b)=>b.lab.date.localeCompare(a.lab.date))[0]||null;
+}
+function markerHistory(key){
+  const rows=[];
+  for(const l of state.labs||[]){
+    for(const m of l.markers||[]){
+      const mk=m.canonicalKey||state.aliasMap?.[aliasNorm(m.name)]||canonicalMarkerKey(m.name);
+      if(mk===key && Number.isFinite(Number(m.value))) rows.push({date:l.date,value:Number(m.value),unit:m.unit||'',lab:l,marker:m});
+    }
+  }
+  return rows.sort((a,b)=>a.date.localeCompare(b.date));
+}
+function goalFor(key){
+  return (state.goals||[]).find(g=>g.key===key)||null;
+}
+function goalStatus(key,value){
+  const g=goalFor(key); if(!g || !Number.isFinite(Number(value)))return {status:'none',text:'Цель не задана'};
+  const v=Number(value),lo=g.min===null||g.min===''?null:Number(g.min),hi=g.max===null||g.max===''?null:Number(g.max);
+  if(lo!==null&&v<lo)return {status:'low',text:`Ниже цели ${lo}${hi!==null?'–'+hi:''}`};
+  if(hi!==null&&v>hi)return {status:'high',text:`Выше цели ${lo!==null?lo+'–':''}${hi}`};
+  return {status:'ok',text:'В вашей цели'};
+}
+function latestWellbeing(){
+  return [...(state.wellbeing||[])].sort((a,b)=>b.date.localeCompare(a.date))[0]||null;
+}
+function activeTrtProtocols(date=isoTodayLocal()){
+  const keys=['testogel','testavan','testosterone enanthate','testosterone undecanoate'];
+  return activeProtocols(date).filter(p=>keys.some(k=>medName(p.medId).toLowerCase().includes(k)));
+}
+function protocolAtDate(date){
+  return activeProtocols(date);
+}
+function protocolSummaryAt(date){
+  const ps=protocolAtDate(date);
+  return ps.length?ps.map(p=>{
+    const sched=scheduleText(p);
+    return `${medName(p.medId)} · ${sched}${p.time?` · ${p.time}`:''}`;
+  }).join('; '):'Нет записанного протокола';
+}
+function safeHtml(x){
+  return String(x??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+const HELP_TEXT={
+  protocol:'Протокол — это базовая схема, которая считается действующей каждый день или по расписанию, пока вы её не измените.',
+  deviation:'Отклонение — разовое событие: пропуск, другая доза, перенос по времени или дополнительный приём. Базовый протокол при этом не меняется.',
+  lab_ref:'Лабораторный референс — диапазон конкретной лаборатории. Он не равен вашей личной цели ГЗТ.',
+  personal_goal:'Ваша цель — диапазон, который вы хотите обсуждать с врачом для конкретного показателя.',
+  canonical:'Сопоставление объединяет разные названия одного и того же анализа из разных лабораторий в один показатель и один график.',
+  hct:'Гематокрит — один из важных показателей безопасности при терапии тестостероном. В программе он не заменяет медицинскую оценку.',
+  chart:'На графике одинаковый показатель объединяется между лабораториями. Значения в несовместимых единицах не смешиваются.'
+};
+function helpDot(key,text=''){
+  const t=(text||HELP_TEXT[key]||'').replace(/"/g,'&quot;');
+  return `<span class="help-dot" tabindex="0" data-help="${t}">?</span>`;
+}
+function freqOptions(selected='daily'){
+  return [
+    ['daily','Каждый день'],
+    ['every_n_days','Каждые N дней'],
+    ['weekly','Раз в неделю']
+  ].map(([v,l])=>`<option value="${v}" ${selected===v?'selected':''}>${l}</option>`).join('');
+}
+function timePresetOptions(selected=''){
+  const vals=[['','Не указывать'],['07:00','Утро 07:00'],['08:00','Утро 08:00'],['12:00','День 12:00'],['20:00','Вечер 20:00'],['22:00','Вечер 22:00']];
+  return vals.map(([v,l])=>`<option value="${v}" ${selected===v?'selected':''}>${l}</option>`).join('');
+}
+function unitOptions(selected=''){
+  const vals=['нажатий','mg','IU','ml','таблетка','капсула','г'];
+  return `<option value="">— выберите —</option>`+vals.map(v=>`<option value="${v}" ${selected===v?'selected':''}>${v}</option>`).join('')+`<option value="__custom__">Другая…</option>`;
+}
+function fillUnitFromMed(selectId,unitId){
+  const med=state.meds.find(m=>m.id===$(selectId)?.value);
+  if(!med)return;
+  const el=$(unitId);if(!el)return;
+  if(el.tagName==='SELECT'){
+    const known=[...el.options].some(o=>o.value===med.unit);
+    if(known)el.value=med.unit;
+  }else if(!el.value)el.value=med.unit||'';
+}
+function currentProtocolForMed(medId,date=today()){
+  return state.protocols.filter(p=>p.medId===medId && p.start<=date && (!p.end || p.end>=date))
+    .sort((a,b)=>b.start.localeCompare(a.start))[0]||null;
+}
+function activeProtocols(date=today()){
+  const medIds=[...new Set(state.protocols.map(p=>p.medId))];
+  return medIds.map(id=>currentProtocolForMed(id,date)).filter(Boolean);
+}
+function scheduleText(p){
+  if(!p)return '—';
+  if(p.frequency==='daily') return `${p.dose} ${p.unit} ежедневно${p.time?' · '+p.time:''}`;
+  if(p.frequency==='every_n_days') return `${p.dose} ${p.unit} каждые ${p.interval} дн.${p.time?' · '+p.time:''}`;
+  if(p.frequency==='weekly') return `${p.dose} ${p.unit} раз в неделю${p.weekday!==''?' · день '+['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][Number(p.weekday)]:''}${p.time?' · '+p.time:''}`;
+  return `${p.dose} ${p.unit}`;
+}
+function protocolContext(date){
+  const ps=activeProtocols(date);
+  if(!ps.length)return 'Нет активного протокола';
+  return ps.map(p=>`${medName(p.medId)}: ${scheduleText(p)}`).join('; ');
+}
+function lastDeviationBefore(medId,date){
+  return state.deviations.filter(d=>d.medId===medId && d.date<=date).sort((a,b)=>b.date.localeCompare(a.date))[0]||null;
+}
+
+function openMedModal(id=''){
+  const m=state.meds.find(x=>x.id===id)||null;
+  openModal(`<h3>${m?'Редактировать препарат':'Новый препарат'}</h3><div class="form-grid">
+    <label>Название<input id="mName" placeholder="Например Testavan"></label>
+    <label>Форма<select id="mForm"><option>Гель</option><option>Инъекция</option><option>Таблетка</option><option>Капсула</option><option>Другое</option></select></label>
+    <label>Единица дозы<input id="mUnit" placeholder="нажатий, mg, IU..."></label>
+    <label>Комментарий<input id="mComment"></label>
+  </div><input type="hidden" id="mEditId" value="${m?.id||''}">
+  <div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveMed()">Сохранить</button></div>`);
+  if(m){$('mName').value=m.name||'';$('mForm').value=m.form||'Другое';$('mUnit').value=m.unit||'';$('mComment').value=m.comment||''}
+}
+function saveMed(){
+  const name=$('mName').value.trim(),unit=$('mUnit').value.trim(),id=$('mEditId')?.value||'';
+  if(!name)return alert('Введите название');
+  const data={name,form:$('mForm').value,unit,comment:$('mComment').value.trim()};
+  if(id){const i=state.meds.findIndex(x=>x.id===id);if(i>=0)state.meds[i]={...state.meds[i],...data}}
+  else state.meds.push({id:uid(),...data});
+  closeModal();save();
+}
+
+function medOptions(selected=''){return state.meds.map(m=>`<option value="${m.id}" ${m.id===selected?'selected':''}>${m.name}</option>`).join('')}
+
+function openProtocolModal(id=''){
+  if(!state.meds.length){alert('Сначала добавьте препарат');return}
+  const p=state.protocols.find(x=>x.id===id)||null;
+  const unit=p?.unit||state.meds.find(m=>m.id===(p?.medId||state.meds[0]?.id))?.unit||'';
+  openModal(`<h3>${p?'Редактировать протокол':'Новый протокол'} ${helpDot('protocol')}</h3><div class="form-grid">
+    <label>Препарат<select id="pMed" class="smart-select" onchange="fillUnitFromMed('pMed','pUnit')">${medOptions(p?.medId||'')}</select></label>
+    <label>Доза<input id="pDose" type="number" step="0.01" inputmode="decimal"></label>
+    <label>Единица<select id="pUnit" class="smart-select">${unitOptions(unit)}</select></label>
+    <label>Частота<select id="pFreq" class="smart-select" onchange="toggleFreq()">${freqOptions(p?.frequency||'daily')}</select></label>
+    <label id="intervalLabel" style="display:none">Интервал, дней<select id="pInterval" class="smart-select">${[2,3,4,5,6,7,10,14,21,28].map(n=>`<option value="${n}" ${(p?.interval||2)===n?'selected':''}>${n} дней</option>`).join('')}</select></label>
+    <label id="weekdayLabel" style="display:none">День недели<select id="pWeekday" class="smart-select"><option value="1">Пн</option><option value="2">Вт</option><option value="3">Ср</option><option value="4">Чт</option><option value="5">Пт</option><option value="6">Сб</option><option value="0">Вс</option></select></label>
+    <label>Обычное время<select id="pTime" class="smart-select">${timePresetOptions(p?.time||'')}</select></label>
+    <label>Действует с<input id="pStart" type="date" value="${p?.start||today()}"></label>
+    <label>Действует до<input id="pEnd" type="date" value="${p?.end||''}"></label>
+    <label class="wide">Комментарий<textarea id="pComment" placeholder="Необязательно"></textarea></label>
+  </div><input type="hidden" id="pEditId" value="${p?.id||''}">
+  <div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveProtocol()">Сохранить</button></div>`);
+  if(p){
+    $('pDose').value=p.dose??'';$('pWeekday').value=p.weekday??'1';$('pComment').value=p.comment||'';
+  } else {
+    fillUnitFromMed('pMed','pUnit');
+  }
+  toggleFreq();
+}
+function toggleFreq(){
+  const f=$('pFreq').value;$('intervalLabel').style.display=f==='every_n_days'?'grid':'none';$('weekdayLabel').style.display=f==='weekly'?'grid':'none';
+}
+function saveProtocol(){
+  const medId=$('pMed').value,dose=Number($('pDose').value),start=$('pStart').value,id=$('pEditId')?.value||'';
+  if(!medId||!Number.isFinite(dose)||!start)return alert('Проверьте препарат, дозу и дату');
+  let unit=$('pUnit').value.trim();if(unit==='__custom__')unit=prompt('Введите единицу дозы')||'';unit=unit||state.meds.find(m=>m.id===medId)?.unit||'';
+  const data={medId,dose,unit,frequency:$('pFreq').value,interval:Number($('pInterval')?.value||1),weekday:$('pWeekday')?.value??'',time:$('pTime').value,start,end:$('pEnd')?.value||'',comment:$('pComment').value.trim()};
+  if(id){
+    const i=state.protocols.findIndex(x=>x.id===id);if(i>=0)state.protocols[i]={...state.protocols[i],...data};
+  }else{
+    state.protocols.filter(x=>x.medId===medId&&!x.end&&x.start<start).forEach(x=>{
+      const d=new Date(start+'T12:00:00');d.setDate(d.getDate()-1);x.end=d.toISOString().slice(0,10);
+    });
+    state.protocols.push({id:uid(),...data});
+  }
+  closeModal();save();
+}
+
+function openQuickDeviation(id=''){
+  if(!state.meds.length){alert('Сначала добавьте препарат');return}
+  const d=state.deviations.find(x=>x.id===id)||null;
+  const selectedMed=d?.medId||activeProtocols(today())[0]?.medId||state.meds[0]?.id||'';
+  const unit=d?.unit||state.meds.find(m=>m.id===selectedMed)?.unit||'';
+  openModal(`<h3>${d?'Редактировать отклонение':'Сегодня было иначе'} ${helpDot('deviation')}</h3><div class="form-grid">
+    <label>Препарат<select id="dMed" class="smart-select" onchange="fillUnitFromMed('dMed','dUnit')">${medOptions(selectedMed)}</select></label>
+    <label>Дата<input id="dDate" type="date" value="${d?.date||today()}"></label>
+    <label>Тип<select id="dType" class="smart-select"><option value="different_dose">Другая доза</option><option value="missed">Пропуск</option><option value="late">Позже / перенёс</option><option value="extra">Дополнительный приём</option><option value="other">Другое</option></select></label>
+    <label>Фактическая доза<input id="dDose" type="number" step="0.01" inputmode="decimal"></label>
+    <label>Единица<select id="dUnit" class="smart-select">${unitOptions(unit)}</select></label>
+    <label>Фактическое время<select id="dTime" class="smart-select">${timePresetOptions(d?.time||'')}</select></label>
+    <label class="wide">Комментарий<textarea id="dComment" placeholder="Необязательно"></textarea></label>
+  </div><input type="hidden" id="dEditId" value="${d?.id||''}">
+  <div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveDeviation()">Сохранить</button></div>`);
+  $('dType').value=d?.type||'different_dose';
+  if(d){$('dDose').value=d.dose??'';$('dComment').value=d.comment||''}
+}
+function quickDeviation(type){
+  openQuickDeviation();
+  setTimeout(()=>{
+    if($('dType'))$('dType').value=type;
+    if(type==='missed'&&$('dDose'))$('dDose').value='';
+  },0);
+}
+function quickProtocolChange(){openProtocolModal()}
+function saveDeviation(){
+  const medId=$('dMed').value,date=$('dDate').value,type=$('dType').value,id=$('dEditId')?.value||'';
+  if(!medId||!date)return alert('Проверьте данные');
+  let unit=$('dUnit').value.trim();if(unit==='__custom__')unit=prompt('Введите единицу дозы')||'';unit=unit||state.meds.find(m=>m.id===medId)?.unit||'';
+  const data={medId,date,type,dose:$('dDose').value===''?null:Number($('dDose').value),unit,time:$('dTime').value,comment:$('dComment').value.trim()};
+  if(id){const i=state.deviations.findIndex(x=>x.id===id);if(i>=0)state.deviations[i]={...state.deviations[i],...data}}
+  else state.deviations.push({id:uid(),...data});
+  closeModal();save();
+}
+
+
+async function ensurePdfJs(){
+  if(window.pdfjsLib){
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    return window.pdfjsLib;
+  }
+  await new Promise((resolve,reject)=>{
+    const sc=document.createElement('script');
+    sc.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    sc.onload=resolve;
+    sc.onerror=()=>reject(new Error('Не удалось загрузить PDF.js 3.11.174'));
+    document.head.appendChild(sc);
+  });
+  if(!window.pdfjsLib)throw new Error('Не удалось загрузить PDF.js 3.11.174');
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  return window.pdfjsLib;
+}
+function normalizePdfText(t){
+  return String(t||'').replace(/\u00a0/g,' ').replace(/[ \t]+/g,' ').replace(/\r/g,'').trim();
+}
+function parseDateFromPdf(text){
+  const t=String(text||'');
+  const specific=[
+    /näytteenottopäivä\s+(\d{1,2})[.](\d{1,2})[.](20\d{2})/i,
+    /näytteenotto(?:aika)?[^\d]{0,20}(\d{1,2})[.\-/](\d{1,2})[.\-/](20\d{2})/i,
+    /Testin tulokset\s*-\s*(\d{1,2})[.](\d{1,2})[.](20\d{2})/i
+  ];
+  for(const r of specific){
+    const m=t.match(r); if(m)return `${m[3]}-${String(m[2]).padStart(2,'0')}-${String(m[1]).padStart(2,'0')}`;
+  }
+  const iso=t.match(/\b(20\d{2})-(\d{1,2})-(\d{1,2})\b/);
+  if(iso)return `${iso[1]}-${String(iso[2]).padStart(2,'0')}-${String(iso[3]).padStart(2,'0')}`;
+  const dmy=t.match(/\b(\d{1,2})[.](\d{1,2})[.](20\d{2})\b/);
+  if(dmy)return `${dmy[3]}-${String(dmy[2]).padStart(2,'0')}-${String(dmy[1]).padStart(2,'0')}`;
+  return today();
+}
+function guessLabFromPdf(text){
+  const t=String(text||'').toLowerCase();
+  if(t.includes('terveystalo'))return 'Terveystalo';
+  if(t.includes('puhti lab'))return 'Puhti / Mehiläinen';
+  if(t.includes('mehiläinen'))return 'Mehiläinen';
+  if(t.includes('synlab'))return 'SYNLAB';
+  if(t.includes('fimlab'))return 'Fimlab';
+  if(t.includes('pihlajalinna'))return 'Pihlajalinna';
+  if(t.includes('hus'))return 'HUS';
+  return '';
+}
+function parseNumberLocal(x){
+  if(x==null)return null;
+  const n=Number(String(x).replace(',','.').replace(/\s/g,''));
+  return Number.isFinite(n)?n:null;
+}
+function cleanLabName(name){
+  return String(name||'')
+    .replace(/\s+/g,' ')
+    .replace(/^[*•·\-\s]+/,'')
+    .trim();
+}
+function markerKey(m){
+  return [String(m.name||'').toLowerCase(),m.value,m.unit||'',m.min??'',m.max??'',m.refText||''].join('|');
+}
+function markerIdentity(m){
+  const raw=String(m.name||'').toLowerCase();
+  const code=(raw.match(/\(([a-z0-9+\-]+)\)/i)||[])[1]||'';
+  const normName=raw
+    .replace(/\([^)]*\)/g,'')
+    .replace(/[^a-z0-9åäö]+/gi,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+  const unit=String(m.unit||'').toLowerCase().replace(/\s+/g,'');
+  const val=Number(m.value);
+  const value=Number.isFinite(val)?String(val):String(m.value??'');
+  return [code||normName,value,unit].join('|');
+}
+function parseTerveystaloRows(text){
+  const lines=String(text||'').split('\n').map(normalizePdfText).filter(Boolean);
+  const out=[],seen=new Set();
+  const unitPattern='(?:nmol\\/l|pmol\\/l|mmol\\/l|mmol\\/mol|µmol\\/l|umol\\/l|g\\/l|mg\\/l|mg\\/dl|µg\\/l|ug\\/l|ng\\/l|ng\\/ml|mU\\/l|U\\/l|IU\\/l|E9\\/l|E12\\/l|%|fL|fl|pg)';
+  const num='[<>]?\\s*-?\\d+(?:[.,]\\d+)?';
+  const rangeRe=new RegExp('^(.+?)\\s+('+num+')\\s+('+num+')\\s*[-–]\\s*('+num+')\\s+('+unitPattern+')\\s*$','i');
+  const oneSidedRe=new RegExp('^(.+?)\\s+('+num+')\\s+([<>≤≥]\\s*-?\\d+(?:[.,]\\d+)?)\\s+('+unitPattern+')\\s*$','i');
+  const noRefRe=new RegExp('^(.+?)\\s+('+num+')\\s+('+unitPattern+')\\s*$','i');
+
+  for(let raw of lines){
+    raw=raw.replace(/[|;]/g,' ').replace(/\s+/g,' ').trim();
+    if(raw.length>220)continue;
+    if(/^(Tutkimus|Tulos|Viitearvo|Yksikkö)(\s|$)/i.test(raw))continue;
+    if(/^(Laboratoriotulos|Ajanvaraus|Muut yhteystiedot|Lataa |©|https?:)/i.test(raw))continue;
+
+    let name='',value=null,unit='',min=null,max=null,refText='';
+    let m=raw.match(rangeRe);
+    if(m){
+      name=cleanLabName(m[1]);
+      value=parseNumberLocal(String(m[2]).replace(/[<>≤≥]/g,''));
+      min=parseNumberLocal(String(m[3]).replace(/[<>≤≥]/g,''));
+      max=parseNumberLocal(String(m[4]).replace(/[<>≤≥]/g,''));
+      unit=m[5]; refText=`${m[3]} - ${m[4]}`;
+    }else{
+      m=raw.match(oneSidedRe);
+      if(m){
+        name=cleanLabName(m[1]);
+        value=parseNumberLocal(String(m[2]).replace(/[<>≤≥]/g,''));
+        unit=m[4]; refText=String(m[3]).replace(/\s/g,'');
+        const refNum=parseNumberLocal(refText.replace(/[<>≤≥]/g,''));
+        if(/^[<≤]/.test(refText))max=refNum;
+        if(/^[>≥]/.test(refText))min=refNum;
+      }else{
+        m=raw.match(noRefRe);
+        if(!m)continue;
+        name=cleanLabName(m[1]);
+        value=parseNumberLocal(String(m[2]).replace(/[<>≤≥]/g,''));
+        unit=m[3];
+      }
+    }
+    if(!name || value===null || /^\d/.test(name))continue;
+    const item={name,value,unit,min,max,refText,parser:'table'};
+    const key=markerKey(item); if(seen.has(key))continue; seen.add(key); out.push(item);
+  }
+  return out;
+}
+function looksLikeAnalysisHeading(line){
+  const x=normalizePdfText(line);
+  if(!x || x.length<2 || x.length>90)return false;
+  if(/^(Tulos|Viitearvot?|Lausunto|Hormonit|Yhteenveto tuloksista|Raportin on tuottanut|Mehiläinen|Testin tulokset|Ajanvaraus)/i.test(x))return false;
+  if(/[.!?]$/.test(x))return false;
+  if(/^\d+\s*\/\s*\d+$/.test(x))return false;
+  return /[A-Za-zÅÄÖåäö]/.test(x);
+}
+function parseBlockResults(text){
+  // Puhti / Mehiläinen / Synlab PDFs often store each test as a block:
+  // Test name -> description -> "Tulos" -> value+unit -> "Viitearvot" -> reference+unit.
+  const lines=String(text||'').split('\n').map(normalizePdfText).filter(Boolean);
+  const out=[],seen=new Set();
+  const valRe=/^([<>≤≥]?\s*-?\d+(?:[.,]\d+)?)\s+([A-Za-zµμ%0-9^/]+(?:\/[A-Za-z]+)?)\s*$/i;
+  const rangeRe=/^([<>≤≥]?\s*-?\d+(?:[.,]\d+)?)\s*[-–]\s*([<>≤≥]?\s*-?\d+(?:[.,]\d+)?)\s+([A-Za-zµμ%0-9^/]+(?:\/[A-Za-z]+)?)\s*$/i;
+  const oneRefRe=/^([<>≤≥]\s*-?\d+(?:[.,]\d+)?)\s+([A-Za-zµμ%0-9^/]+(?:\/[A-Za-z]+)?)\s*$/i;
+  // Some extracted PDFs lose the '<' sign and leave "-0,16 nmol/l".
+  const dashUpperRe=/^-\s*(\d+(?:[.,]\d+)?)\s+([A-Za-zµμ%0-9^/]+(?:\/[A-Za-z]+)?)\s*$/i;
+
+  for(let i=0;i<lines.length;i++){
+    if(!/^Tulos$/i.test(lines[i]))continue;
+
+    // Value line immediately after "Tulos".
+    let vi=i+1;
+    while(vi<lines.length && !valRe.test(lines[vi]) && vi<i+4)vi++;
+    if(vi>=lines.length || vi>=i+4)continue;
+    const vm=lines[vi].match(valRe); if(!vm)continue;
+    const value=parseNumberLocal(String(vm[1]).replace(/[<>≤≥]/g,''));
+    const unit=vm[2];
+    if(value===null)continue;
+
+    // Find the closest plausible analysis title above this "Tulos".
+    let name='';
+    for(let j=i-1;j>=Math.max(0,i-18);j--){
+      const cand=lines[j];
+      if(/^Viitearvot?$/i.test(cand) || /^Lausunto$/i.test(cand))continue;
+      if(looksLikeAnalysisHeading(cand)){
+        // Prefer headings containing known lab-test patterns, parentheses or short names.
+        if(/\([A-Za-z0-9]+\)/.test(cand) || /(testoster|estradi|hormoni|globuliini|SHBG|LH|FSH|TSH|prolak|kortisol|IGF|hemogl|hematokri|insuliin)/i.test(cand)){
+          name=cand; break;
+        }
+        if(!name)name=cand;
+      }
+    }
+    if(!name)continue;
+
+    // Find "Viitearvot" after the value, but before another "Tulos".
+    let refIdx=-1;
+    for(let j=vi+1;j<Math.min(lines.length,vi+12);j++){
+      if(/^Tulos$/i.test(lines[j]))break;
+      if(/^Viitearvot?$/i.test(lines[j])){refIdx=j;break}
+    }
+    let min=null,max=null,refText='';
+    if(refIdx>=0){
+      for(let j=refIdx+1;j<Math.min(lines.length,refIdx+4);j++){
+        let m=lines[j].match(rangeRe);
+        if(m){
+          min=parseNumberLocal(String(m[1]).replace(/[<>≤≥]/g,''));
+          max=parseNumberLocal(String(m[2]).replace(/[<>≤≥]/g,''));
+          refText=`${m[1]}-${m[2]} ${m[3]}`; break;
+        }
+        m=lines[j].match(oneRefRe);
+        if(m){
+          const n=parseNumberLocal(String(m[1]).replace(/[<>≤≥]/g,''));
+          refText=`${m[1]} ${m[2]}`;
+          if(/^[<≤]/.test(m[1].trim()))max=n;
+          if(/^[>≥]/.test(m[1].trim()))min=n;
+          break;
+        }
+        m=lines[j].match(dashUpperRe);
+        if(m){
+          // Ambiguous extraction, seen in Puhti for an upper-only range. Preserve raw ref;
+          // treat it as max only for usability, but the raw text remains visible in review.
+          max=parseNumberLocal(m[1]); refText=`<${m[1]} ${m[2]} (из PDF: ${lines[j]})`; break;
+        }
+      }
+    }
+    const item={name:cleanLabName(name),value,unit,min,max,refText,parser:'block'};
+    const key=markerKey(item); if(seen.has(key))continue; seen.add(key); out.push(item);
+  }
+  return out;
+}
+function puhtiHeadingBefore(flatText, pos){
+  const pre=flatText.slice(Math.max(0,pos-1800),pos);
+  const re=/([A-ZÅÄÖ][A-Za-zÅÄÖåäö ,\-]{1,90})\s*\(([A-Za-z0-9+\-]+)\)/g;
+  let m,last=null;
+  while((m=re.exec(pre))!==null)last=m;
+  if(!last)return '';
+  let label=String(last[1]||'').replace(/\s+/g,' ').trim();
+  label=label.replace(/^(?:Hormonit|Tutkimukset|Tulokset)\s+/i,'').trim();
+  // If a long category leaked into the title, keep the shortest useful tail.
+  const words=label.split(/\s+/);
+  if(words.length>9)label=words.slice(-9).join(' ');
+  return `${label} (${last[2]})`;
+}
+function parsePuhtiFlexible(text){
+  // Does not depend on PDF line breaks. It searches the semantic block:
+  // Tulos -> result+unit -> Viitearvot -> reference+unit.
+  const flat=String(text||'').replace(/\u00a0/g,' ').replace(/\s+/g,' ').trim();
+  const out=[],seen=new Set();
+  const unit='(?:nmol\\/l|pmol\\/l|mmol\\/l|mmol\\/mol|µmol\\/l|μmol\\/l|umol\\/l|g\\/l|mg\\/l|mg\\/dl|µg\\/l|μg\\/l|ug\\/l|ng\\/l|ng\\/ml|mU\\/l|U\\/l|IU\\/l|E9\\/l|E12\\/l|%|fL|fl|pg)';
+  const num='[<>≤≥]?\\s*-?\\d+(?:[.,]\\d+)?';
+  const re=new RegExp(
+    'Tulos\\s*('+num+')\\s*('+unit+')\\s*Viitearvot?\\s*('+num+')(?:\\s*[-–]\\s*('+num+'))?\\s*('+unit+')',
+    'gi'
+  );
+  let m;
+  while((m=re.exec(flat))!==null){
+    const value=parseNumberLocal(String(m[1]).replace(/[<>≤≥]/g,''));
+    if(value===null)continue;
+    let min=null,max=null,refText='';
+    const a=String(m[3]||'').replace(/\s/g,'');
+    const b=m[4]==null?'':String(m[4]).replace(/\s/g,'');
+    if(b){
+      min=parseNumberLocal(a.replace(/[<>≤≥]/g,''));
+      max=parseNumberLocal(b.replace(/[<>≤≥]/g,''));
+      refText=`${a}-${b} ${m[5]}`;
+    }else{
+      const n=parseNumberLocal(a.replace(/[<>≤≥]/g,''));
+      // Puhti extraction can turn "<0,16" into "-0,16".
+      if(/^[<≤]/.test(a) || /^-/.test(a)){max=Math.abs(n);refText=`<${Math.abs(n)} ${m[5]}`;}
+      else if(/^[>≥]/.test(a)){min=n;refText=`>${n} ${m[5]}`;}
+      else {min=n;refText=`${a} ${m[5]}`;}
+    }
+    const name=puhtiHeadingBefore(flat,m.index)||'Неизвестный показатель';
+    const item={name,value,unit:m[2],min,max,refText,parser:'puhti-flex'};
+    const key=markerKey(item);
+    if(seen.has(key))continue;
+    seen.add(key);out.push(item);
+  }
+  return out;
+}
+function parseMarkersFromPdf(text){
+  const candidates=[
+    ...parseTerveystaloRows(text),
+    ...parseBlockResults(text),
+    ...parsePuhtiFlexible(text)
+  ];
+  const out=[],seen=new Set();
+  for(const m of candidates){
+    const key=markerIdentity(m);
+    if(seen.has(key))continue;
+    seen.add(key);out.push(m);
+  }
+  return out;
+}
+async function extractPdfPages(file){
+  const pdfjs=await ensurePdfJs();
+  const buf=await file.arrayBuffer();
+  const pdf=await pdfjs.getDocument({data:buf}).promise;
+  const pages=[];
+  for(let i=1;i<=pdf.numPages;i++){
+    const page=await pdf.getPage(i);
+    const tc=await page.getTextContent();
+
+    // Strategy A: visual rows by Y/X.
+    const rows=new Map();
+    for(const it of tc.items){
+      const y=Math.round(it.transform?.[5]||0);
+      if(!rows.has(y))rows.set(y,[]);
+      rows.get(y).push({x:it.transform?.[4]||0,s:it.str||''});
+    }
+    const visualText=[...rows.entries()]
+      .sort((a,b)=>b[0]-a[0])
+      .map(([y,arr])=>arr.sort((a,b)=>a.x-b.x).map(z=>z.s).join(' '))
+      .join('\n');
+
+    // Strategy B: original PDF text order with explicit EOL hints.
+    let flowText='';
+    for(const it of tc.items){
+      const str=String(it.str||'');
+      if(str){
+        flowText += str;
+        flowText += it.hasEOL ? '\n' : ' ';
+      }
+    }
+    flowText=flowText.replace(/[ \t]+\n/g,'\n').replace(/[ \t]{2,}/g,' ').trim();
+
+    pages.push({
+      page:i,
+      visualText,
+      flowText,
+      text: visualText || flowText,
+      itemCount: tc.items.length
+    });
+  }
+  return {pageCount:pdf.numPages,pages};
+}
+async function importLabPdf(event){
+  const file=event.target.files?.[0]; event.target.value='';
+  if(!file)return;
+  openModal(`<h3>Импорт PDF</h3><div class="empty">Читаю <b>${file.name}</b>…</div><div class="note" style="margin-top:10px">Обрабатываю каждую страницу отдельно и двумя способами извлечения текста.</div>`);
+  try{
+    const extracted=await extractPdfPages(file);
+    const pages=extracted.pages;
+    const fullText=pages.map(p=>p.visualText+'\n'+p.flowText).join('\n');
+    if(!normalizePdfText(fullText)){
+      openModal(`<h3>Импорт PDF</h3><div class="empty">В PDF не найден текстовый слой. Похоже, это скан/изображение. Эта версия пока не выполняет OCR.</div><div class="actions"><button class="btn" onclick="closeModal()">Закрыть</button></div>`);
+      return;
+    }
+
+    const all=[];
+    const seen=new Set();
+    const pageStats=[];
+
+    for(const p of pages){
+      const visual=parseMarkersFromPdf(p.visualText||'');
+      const flow=parseMarkersFromPdf(p.flowText||'');
+      const combined=[...visual,...flow];
+      let added=0;
+      for(const m of combined){
+        const key=markerIdentity(m);
+        if(seen.has(key))continue;
+        seen.add(key);
+        all.push({...m,page:p.page});
+        added++;
+      }
+      pageStats.push({
+        page:p.page,
+        visual:visual.length,
+        flow:flow.length,
+        added,
+        chars:normalizePdfText((p.visualText||'')+(p.flowText||'')).length,
+        items:p.itemCount||0
+      });
+    }
+
+    // Final pass over the entire document. This catches reports where PDF.js
+    // splits one logical result block across items/visual rows.
+    for(const m of parseMarkersFromPdf(fullText)){
+      const key=markerIdentity(m);
+      if(seen.has(key))continue;
+      seen.add(key);
+      all.push({...m,page:null});
+    }
+
+    const date=parseDateFromPdf(fullText), lab=guessLabFromPdf(fullText);
+    openPdfReview({
+      fileName:file.name,
+      text:fullText,
+      date,
+      lab,
+      markers:all,
+      pageCount:extracted.pageCount,
+      pageStats,
+      pages
+    });
+  }catch(e){
+    console.error(e);
+    openModal(`<h3>Импорт PDF</h3><div class="empty">Не удалось прочитать PDF: ${String(e.message||e)}</div><div class="actions"><button class="btn" onclick="closeModal()">Закрыть</button></div>`);
+  }
+}
+
+const BASE_ANALYTES=[
+  ['testosterone','Тестостерон'],['free_testosterone','Свободный тестостерон'],['shbg','SHBG'],
+  ['estradiol','Эстрадиол (E2)'],['lh','LH'],['fsh','FSH'],['prolactin','Пролактин'],
+  ['hematocrit','Гематокрит'],['hemoglobin','Гемоглобин'],['leukocytes','Лейкоциты'],
+  ['erythrocytes','Эритроциты'],['platelets','Тромбоциты'],['mcv','MCV'],['mch','MCH'],['mchc','MCHC'],['rdw','RDW'],
+  ['hba1c','HbA1c'],['insulin','Инсулин'],['tsh','TSH'],['cortisol','Кортизол'],['igf1','IGF-1'],
+  ['psa','PSA'],['alt','ALT'],['ast','AST'],['hdl','HDL'],['ldl','LDL'],['triglycerides','Триглицериды'],['ferritin','Ферритин']
+];
+function aliasNorm(x){return String(x||'').toLowerCase().replace(/\s+/g,' ').trim()}
+function analyteCatalog(){
+  return [...BASE_ANALYTES.map(x=>({key:x[0],label:x[1]})),...(state.customAnalytes||[])];
+}
+
+const ANALYTE_INFO={
+  testosterone:{
+    title:'Тестостерон общий',
+    what:'Общее количество тестостерона в крови: и связанного с белками, и свободного.',
+    why:'Основной показатель для оценки уровня тестостерона. На ГЗТ его нужно интерпретировать вместе со временем относительно последней дозы, SHBG, свободным тестостероном и симптомами.',
+    high:'Высокое значение может означать слишком большую экспозицию тестостерона, но зависит от времени анализа и формы препарата.',
+    low:'Низкое значение может означать недостаточную экспозицию, слишком длинный интервал или особенности всасывания.',
+    trt:'Один из главных показателей эффективности ГЗТ.'
+  },
+  free_testosterone:{
+    title:'Свободный тестостерон',
+    what:'Доля тестостерона, не связанная с белками и доступная тканям. Часто рассчитывается по общему тестостерону и SHBG.',
+    why:'Помогает понять фактическую доступность тестостерона, особенно когда общий тестостерон и симптомы не совпадают.',
+    high:'Высокое значение может соответствовать избыточной андрогенной экспозиции.',
+    low:'Низкое значение может сохраняться даже при нормальном общем тестостероне, например при высоком SHBG.',
+    trt:'Очень важен для оценки того, достигается ли ваша цель ГЗТ.'
+  },
+  shbg:{
+    title:'SHBG',
+    what:'Белок, который связывает тестостерон и эстрогены и влияет на количество свободных половых гормонов.',
+    why:'Помогает объяснить, почему при одинаковом общем тестостероне свободный тестостерон у разных людей различается.',
+    high:'При более высоком SHBG доля свободного тестостерона обычно ниже.',
+    low:'При более низком SHBG доля свободного тестостерона обычно выше.',
+    trt:'Нужен для корректной интерпретации общего и свободного тестостерона.'
+  },
+  estradiol:{
+    title:'Эстрадиол (E2)',
+    what:'Основной активный эстроген. У мужчин часть эстрадиола образуется из тестостерона.',
+    why:'Влияет на кости, половую функцию и другие системы. Интерпретируется вместе с симптомами и уровнем тестостерона.',
+    high:'Изолированное повышение без симптомов не означает автоматически, что его нужно снижать.',
+    low:'Слишком низкий уровень также может быть нежелателен, особенно для костной ткани и самочувствия.',
+    trt:'На фоне ГЗТ может изменяться вслед за изменением уровня тестостерона.'
+  },
+  lh:{
+    title:'LH',
+    what:'Лютеинизирующий гормон гипофиза. У мужчин стимулирует клетки Лейдига в яичках к выработке тестостерона.',
+    why:'До начала ГЗТ помогает различать первичную и вторичную причины низкого тестостерона.',
+    high:'До лечения может указывать на недостаточный ответ яичек при соответствующем контексте.',
+    low:'На экзогенном тестостероне LH часто подавляется.',
+    trt:'После начала заместительного тестостерона снижение LH обычно ожидаемо и само по себе не является целью лечения.'
+  },
+  fsh:{
+    title:'FSH',
+    what:'Фолликулостимулирующий гормон гипофиза. У мужчин участвует в регуляции сперматогенеза.',
+    why:'Полезен для оценки функции гипофиза/яичек и вопросов фертильности.',
+    high:'До лечения может сопровождать первичную недостаточность яичек.',
+    low:'Экзогенный тестостерон может подавлять FSH.',
+    trt:'Особенно важен, если имеет значение сохранение фертильности.'
+  },
+  prolactin:{
+    title:'Пролактин',
+    what:'Гормон гипофиза, участвующий в регуляции репродуктивной системы.',
+    why:'Повышенный пролактин может быть одной из причин снижения половой функции и нарушения оси гипофиз–гонады.',
+    high:'Выраженное или стойкое повышение требует оценки причины врачом.',
+    low:'Низкие значения обычно имеют меньшее диагностическое значение, чем повышенные.',
+    trt:'Полезен при оценке причин исходно низкого тестостерона или изменения либидо.'
+  },
+  hematocrit:{
+    title:'Гематокрит (Hct/HKR)',
+    what:'Процент объёма крови, который занимают эритроциты.',
+    why:'Показывает концентрацию красных клеток в крови.',
+    high:'Повышение может отражать эритроцитоз, обезвоживание и другие причины.',
+    low:'Снижение может встречаться при анемии, кровопотере и других состояниях.',
+    trt:'Один из основных показателей безопасности на терапии тестостероном, потому что тестостерон может повышать образование эритроцитов.'
+  },
+  hemoglobin:{
+    title:'Гемоглобин (Hb)',
+    what:'Железосодержащий белок внутри эритроцитов, который переносит кислород.',
+    why:'Используется вместе с гематокритом и другими показателями крови для оценки анемии или повышения массы эритроцитов.',
+    high:'Может повышаться вместе с гематокритом.',
+    low:'Может быть признаком анемии или кровопотери в соответствующем контексте.',
+    trt:'На ГЗТ может увеличиваться вследствие стимуляции эритропоэза.'
+  },
+  leukocytes:{
+    title:'Лейкоциты (WBC)',
+    what:'Белые клетки крови, участвующие в иммунной защите.',
+    why:'Общий показатель иммунных клеток; оценивается при инфекциях, воспалении и других состояниях.',
+    high:'Может повышаться при инфекции, воспалении, стрессе и ряде других причин.',
+    low:'Может быть связано с лекарствами, инфекциями, заболеваниями костного мозга и другими причинами.',
+    trt:'Не является основным показателем ГЗТ, но входит в общий контроль здоровья.'
+  },
+  erythrocytes:{
+    title:'Эритроциты (RBC)',
+    what:'Красные клетки крови, переносящие кислород с помощью гемоглобина.',
+    why:'Количество эритроцитов оценивается вместе с гемоглобином, гематокритом и эритроцитарными индексами.',
+    high:'Может сопровождать эритроцитоз.',
+    low:'Может сопровождать анемию.',
+    trt:'Тестостерон может стимулировать образование эритроцитов, поэтому динамика важна.'
+  },
+  platelets:{
+    title:'Тромбоциты',
+    what:'Клеточные элементы крови, участвующие в образовании кровяного сгустка и остановке кровотечения.',
+    why:'Помогают оценивать систему кроветворения и риск некоторых нарушений свертывания.',
+    high:'Повышение имеет множество возможных причин и оценивается вместе с клинической картиной.',
+    low:'Снижение может увеличивать риск кровоточивости.',
+    trt:'Не является специфическим показателем ГЗТ, но полезен как часть общего анализа крови.'
+  },
+  mcv:{
+    title:'MCV — средний объём эритроцита',
+    what:'Показывает средний размер одного эритроцита.',
+    why:'Помогает классифицировать анемии: эритроциты могут быть меньше, нормального размера или больше обычного.',
+    high:'Может встречаться, например, при дефиците B12/фолата и ряде других причин.',
+    low:'Часто встречается при дефиците железа и некоторых других состояниях.',
+    trt:'Не оценивает ГЗТ напрямую, но помогает понимать изменения гемоглобина и эритроцитов.'
+  },
+  mch:{
+    title:'MCH — среднее содержание гемоглобина в эритроците',
+    what:'Показывает среднее количество гемоглобина в одном эритроците.',
+    why:'Используется вместе с MCV, MCHC и RDW при оценке анемий.',
+    high:'Обычно интерпретируется вместе с размером эритроцитов и другими индексами.',
+    low:'Может встречаться при состояниях, где эритроциты содержат меньше гемоглобина.',
+    trt:'Дополнительный показатель общего анализа крови, а не непосредственная цель ГЗТ.'
+  },
+  mchc:{
+    title:'MCHC — средняя концентрация гемоглобина в эритроцитах',
+    what:'Показывает, насколько концентрирован гемоглобин внутри эритроцитов.',
+    why:'Используется вместе с MCV, MCH и RDW для оценки типа анемии и качества эритроцитов.',
+    high:'Небольшое отклонение оценивают вместе с остальным общим анализом крови; возможны как клинические, так и технические причины.',
+    low:'Может означать, что эритроциты содержат относительно мало гемоглобина, например при некоторых железодефицитных состояниях.',
+    trt:'Сам по себе не показывает эффективность ГЗТ. В контексте ГЗТ важнее смотреть его вместе с Hb, Hct и количеством эритроцитов.'
+  },
+  rdw:{
+    title:'RDW — ширина распределения эритроцитов',
+    what:'Показывает, насколько сильно эритроциты различаются между собой по размеру.',
+    why:'Используется вместе с MCV и другими индексами для выяснения причины анемии.',
+    high:'Означает большую неоднородность размеров эритроцитов.',
+    low:'Обычно имеет меньшее клиническое значение, если остальные показатели нормальны.',
+    trt:'Дополнительный показатель качества эритроцитов, не прямая цель ГЗТ.'
+  },
+  hba1c:{
+    title:'HbA1c',
+    what:'Показывает средний уровень глюкозы крови примерно за последние 2–3 месяца.',
+    why:'Используется для оценки нарушений углеводного обмена и контроля диабета.',
+    high:'Более высокие значения отражают более высокую среднюю глюкозу.',
+    low:'Интерпретация необычно низких значений зависит от кроветворения и других факторов.',
+    trt:'Не является прямой целью ГЗТ, но полезен для общей метаболической оценки.'
+  },
+  insulin:{
+    title:'Инсулин',
+    what:'Гормон поджелудочной железы, регулирующий поступление глюкозы из крови в клетки.',
+    why:'Может использоваться в оценке углеводного обмена и инсулинорезистентности вместе с глюкозой и другими показателями.',
+    high:'Может сопровождать инсулинорезистентность, но одиночное значение оценивается с учётом условий сдачи.',
+    low:'Интерпретируется вместе с глюкозой и клинической ситуацией.',
+    trt:'Дополнительный метаболический показатель.'
+  },
+  tsh:{
+    title:'TSH',
+    what:'Тиреотропный гормон гипофиза, который регулирует работу щитовидной железы.',
+    why:'Изменения функции щитовидной железы могут влиять на энергию, вес, половую функцию и SHBG.',
+    high:'Часто требует оценки функции щитовидной железы вместе со свободным T4.',
+    low:'Также требует интерпретации вместе с гормонами щитовидной железы.',
+    trt:'Полезен, чтобы не приписывать все симптомы только уровню тестостерона.'
+  },
+  cortisol:{
+    title:'Кортизол',
+    what:'Гормон надпочечников, участвующий в реакции на стресс, обмене веществ и поддержании артериального давления.',
+    why:'Сильно зависит от времени суток и условий сдачи.',
+    high:'Одиночное повышение не устанавливает диагноз; важен контекст и время.',
+    low:'Низкое значение в подходящих условиях может требовать дополнительной оценки.',
+    trt:'Не является прямой целью ГЗТ.'
+  },
+  igf1:{
+    title:'IGF-1',
+    what:'Инсулиноподобный фактор роста-1, показатель активности оси гормона роста.',
+    why:'Используется при оценке избытка или недостатка гормона роста.',
+    high:'Стойкое повышение оценивается врачом в контексте возраста и симптомов.',
+    low:'Может встречаться при недостаточной активности оси гормона роста и других состояниях.',
+    trt:'Не является прямой целью ГЗТ.'
+  },
+  psa:{
+    title:'PSA',
+    what:'Белок, вырабатываемый тканью простаты и измеряемый в крови.',
+    why:'Используется в оценке состояния простаты вместе с возрастом, симптомами и другими факторами.',
+    high:'Повышение не означает автоматически рак простаты; существует много возможных причин.',
+    low:'Низкое значение обычно не вызывает беспокойства.',
+    trt:'Вопрос мониторинга PSA может быть важен при терапии тестостероном в зависимости от возраста и индивидуального риска.'
+  },
+  alt:{title:'ALT',what:'Фермент, преимущественно связанный с клетками печени.',why:'Используется как один из маркеров повреждения клеток печени.',high:'Повышение имеет множество возможных причин и оценивается вместе с другими печёночными показателями.',low:'Низкое значение обычно не является основной проблемой.',trt:'Дополнительный показатель общего контроля здоровья.'},
+  ast:{title:'AST',what:'Фермент, присутствующий в печени, мышцах и других тканях.',why:'Интерпретируется вместе с ALT и клиническим контекстом.',high:'Может повышаться не только при заболеваниях печени, но и после мышечной нагрузки.',low:'Низкое значение обычно не имеет большого клинического значения.',trt:'Дополнительный показатель общего контроля.'},
+  hdl:{title:'HDL',what:'Фракция холестерина липопротеинов высокой плотности.',why:'Используется как часть оценки липидного профиля и сердечно-сосудистого риска.',high:'Интерпретируется в составе общего липидного профиля.',low:'Низкий HDL может сопровождать повышенный сердечно-сосудистый риск.',trt:'Полезно наблюдать в общей оценке сердечно-сосудистого риска.'},
+  ldl:{title:'LDL',what:'Фракция холестерина липопротеинов низкой плотности.',why:'Один из основных липидных показателей, связанных с атеросклеротическим риском.',high:'Более высокий LDL обычно связан с большим атеросклеротическим риском.',low:'Целевой уровень зависит от индивидуального сердечно-сосудистого риска.',trt:'Не является прямой целью ГЗТ, но важен для общего риска.'},
+  triglycerides:{title:'Триглицериды',what:'Жиры, циркулирующие в крови и используемые организмом как источник энергии.',why:'Входят в липидный профиль и метаболическую оценку.',high:'Могут повышаться при метаболических нарушениях, алкоголе, питании и других причинах.',low:'Обычно не является отдельной проблемой.',trt:'Дополнительный показатель общего метаболического риска.'},
+  ferritin:{title:'Ферритин',what:'Белок, отражающий запасы железа в организме, хотя он также меняется при воспалении.',why:'Полезен для оценки запасов железа вместе с гемоглобином и другими железными показателями.',high:'Может повышаться при избытке железа, воспалении и других состояниях.',low:'Низкий ферритин часто указывает на истощение запасов железа.',trt:'Особенно полезен, если меняются Hb/Hct или есть подозрение на дефицит железа.'}
+};
+function analyteKeyForMarker(m){
+  const autoKey=canonicalMarkerKey(m?.name||'');
+  if(['mchc','mch','mcv'].includes(autoKey)) return autoKey;
+  return state.aliasMap?.[aliasNorm(m?.name)]||m?.canonicalKey||autoKey;
+}
+function analyteInfo(key){
+  return ANALYTE_INFO[key]||{
+    title:analyteLabel(key,key),
+    what:'Описание для этого показателя пока не добавлено в справочник.',
+    why:'Если это новый показатель из другой лаборатории, его можно сопоставить с нашим стандартным показателем или оставить как новый.',
+    high:'Интерпретация зависит от конкретного анализа и лабораторного референса.',
+    low:'Интерпретация зависит от конкретного анализа и лабораторного референса.',
+    trt:'Связь с ГЗТ пока не задана.'
+  };
+}
+function analyteHelpHtml(key,rawName=''){
+  const i=analyteInfo(key);
+  const raw=rawName&&rawName!==i.title?`<div class="muted" style="margin-bottom:7px">Название лаборатории: ${safeHtml(rawName)}</div>`:'';
+  return `${raw}<b>${safeHtml(i.title)}</b>
+    <div style="margin-top:7px"><b>Что это:</b> ${safeHtml(i.what)}</div>
+    <div style="margin-top:6px"><b>Зачем смотрят:</b> ${safeHtml(i.why)}</div>
+    <div style="margin-top:6px"><b>Если выше:</b> ${safeHtml(i.high)}</div>
+    <div style="margin-top:6px"><b>Если ниже:</b> ${safeHtml(i.low)}</div>
+    <div style="margin-top:6px"><b>В контексте ГЗТ:</b> ${safeHtml(i.trt)}</div>
+    <div class="muted" style="margin-top:8px">Это пояснение показателя, а не диагноз по одному результату.</div>`;
+}
+function analyteHelpDot(key,rawName=''){
+  const i=analyteInfo(key);
+  const text=`${i.title}. ${i.what} ${i.why} В контексте ГЗТ: ${i.trt}`.replace(/"/g,'&quot;');
+  return `<span class="help-dot" tabindex="0" data-help="${text}">?</span>`;
+}
+function openAnalyteInfo(key,rawName=''){
+  openModal(`<h3>${safeHtml(analyteInfo(key).title)}</h3>
+    <div class="panel" style="margin:0">${analyteHelpHtml(key,rawName)}</div>
+    <div class="actions"><button class="btn" onclick="closeModal()">Закрыть</button></div>`);
+}
+function analyteLabel(key,fallback=''){
+  return analyteCatalog().find(x=>x.key===key)?.label||fallback||key||'';
+}
+function analyteSelectOptions(selected='',rawName=''){
+  const remembered=state.aliasMap[aliasNorm(rawName)]||'';
+  const auto=remembered||canonicalMarkerKey(rawName);
+  const choice=selected||((auto&&!String(auto).startsWith('raw:'))?auto:'');
+  return `<option value="">— выбрать соответствие —</option>`+
+    analyteCatalog().map(x=>`<option value="${x.key}" ${x.key===choice?'selected':''}>${x.label}</option>`).join('')+
+    `<option value="__new__">＋ Новый показатель: оставить это название</option>`;
+}
+function learnAnalyte(rawName,choice){
+  const raw=String(rawName||'').trim(); if(!raw||!choice)return '';
+  let key=choice;
+  if(choice==='__new__'){
+    const existing=(state.customAnalytes||[]).find(x=>aliasNorm(x.label)===aliasNorm(raw));
+    if(existing)key=existing.key;
+    else{
+      key='custom_'+uid();
+      state.customAnalytes.push({key,label:raw});
+    }
+  }
+  state.aliasMap[aliasNorm(raw)]=key;
+  return key;
+}
+function forgetAlias(alias){
+  delete state.aliasMap[alias];save();
+}
+function openPdfReview(data){
+  const statHtml=(data.pageStats||[]).map(x=>{
+    const cls=x.added?'good':(x.chars?'gold':'');
+    return `<span class="badge ${cls}" title="Текст: ${x.chars} знаков · PDF-элементов: ${x.items} · visual: ${x.visual} · flow: ${x.flow}">стр. ${x.page}: ${x.added} показ.</span>`;
+  }).join(' ');
+  openModal(`<h3>Проверка распознанного анализа</h3>
+    <div class="form-grid">
+      <label>Дата<input id="pdfDate" type="date" value="${data.date||today()}"></label>
+      <label>Время<input id="pdfTime" type="time"></label>
+      <label>Лаборатория<input id="pdfLab" value="${(data.lab||'').replace(/"/g,'&quot;')}"></label>
+      <label>Исходный файл<input value="${data.fileName.replace(/"/g,'&quot;')}" disabled></label>
+    </div>
+    <div class="note" style="margin:12px 0">
+      PDF содержит <b style="color:#f4f5f7">${data.pageCount||1}</b> стр. · распознано
+      <b style="color:#f4f5f7">${data.markers.length}</b> показателей.
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">${statHtml}</div>
+      <div style="margin-top:8px">Если на странице есть текст, но показателей 0, откройте её ниже: это значит, что формат строки пока не подошёл под автоматический разбор.</div>
+    </div>
+    <div class="head"><h2 style="font-size:15px">Показатели со всех страниц PDF</h2><button class="btn" onclick="addPdfMarkerRow()">＋ Показатель</button></div>
+    <div id="pdfMarkerRows"></div>
+    <details style="margin-top:12px"><summary class="note" style="cursor:pointer">Показать текст всех страниц</summary>
+      <div style="margin-top:8px;display:grid;gap:12px">
+        ${(data.pages||[]).map(p=>`<div class="panel" style="margin:0;padding:10px">
+          <div class="badge blue">Страница ${p.page}</div>
+          <div class="note" style="margin-top:7px">Визуальная раскладка</div>
+          <textarea style="margin-top:5px;min-height:120px" readonly>${String(p.visualText||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')}</textarea>
+          <div class="note" style="margin-top:7px">Порядок текста PDF</div>
+          <textarea style="margin-top:5px;min-height:120px" readonly>${String(p.flowText||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')}</textarea>
+        </div>`).join('')}
+      </div>
+    </details>
+    <div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="savePdfLab()">Подтвердить и сохранить</button></div>`);
+  if(data.markers.length)data.markers.forEach(m=>addPdfMarkerRow(m)); else addPdfMarkerRow();
+}
+function addPdfMarkerRow(m={}){
+  const div=document.createElement('div');div.className='marker-row map-row';
+  div.innerHTML=`<label>Как написано в PDF<input class="pdf-name"></label>
+    <label>Значение<input class="pdf-value" type="number" step="any"></label>
+    <label>Ед.<input class="pdf-unit"></label>
+    <label>Мин.<input class="pdf-min" type="number" step="any"></label>
+    <label>Макс.<input class="pdf-max" type="number" step="any"></label>
+    <label>Соответствует нашему показателю ${helpDot("canonical")}<select class="pdf-map"></select></label>
+    <button class="btn danger" onclick="this.parentElement.remove()">×</button>`;
+  div.querySelector('.pdf-name').value=m.name||'';
+  div.querySelector('.pdf-value').value=m.value??'';
+  div.querySelector('.pdf-unit').value=m.unit||'';
+  div.querySelector('.pdf-min').value=m.min??'';
+  div.querySelector('.pdf-max').value=m.max??'';
+  div.querySelector('.pdf-map').innerHTML=analyteSelectOptions(m.canonicalKey||'',m.name||'');
+  if(m.page)div.title='Распознано на странице '+m.page+(m.refText?' · референс '+m.refText:'');
+  $('pdfMarkerRows').appendChild(div);
+}
+function savePdfLab(){
+  const date=$('pdfDate').value;if(!date)return alert('Введите дату');
+  const markers=[...document.querySelectorAll('#pdfMarkerRows .marker-row')].map(r=>{
+    const name=r.querySelector('.pdf-name').value.trim();
+    const value=r.querySelector('.pdf-value').value===''?null:Number(r.querySelector('.pdf-value').value);
+    const choice=r.querySelector('.pdf-map').value;
+    const canonicalKey=choice?learnAnalyte(name,choice):'';
+    return {
+      name,value,
+      unit:r.querySelector('.pdf-unit').value.trim(),
+      min:r.querySelector('.pdf-min').value===''?null:Number(r.querySelector('.pdf-min').value),
+      max:r.querySelector('.pdf-max').value===''?null:Number(r.querySelector('.pdf-max').value),
+      canonicalKey
+    };
+  }).filter(m=>m.name&&m.value!==null&&isPlausibleMarkerName(m.name));
+  if(!markers.length && !confirm('Показатели не заполнены. Всё равно сохранить анализ?'))return;
+  state.labs.push({id:uid(),date,time:$('pdfTime').value,lab:$('pdfLab').value.trim(),comment:'Импортировано из PDF',markers,protocolContext:protocolContext(date),source:'pdf',sourceFile:document.querySelector('#modal input[disabled]')?.value||''});
+  closeModal();save();
+}
+
+function openLabModal(id=''){
+  const l=state.labs.find(x=>x.id===id)||null;
+  openModal(`<h3>${l?'Редактировать анализ':'Новый анализ'}</h3><div class="form-grid">
+    <label>Дата<input id="lDate" type="date" value="${l?.date||today()}"></label>
+    <label>Время<input id="lTime" type="time" value="${l?.time||''}"></label>
+    <label>Лаборатория<input id="lLab" placeholder="Synlab, HUS..." value="${String(l?.lab||'').replace(/"/g,'&quot;')}"></label>
+    <label class="wide">Комментарий<input id="lComment" value="${String(l?.comment||'').replace(/"/g,'&quot;')}"></label>
+  </div><input type="hidden" id="lEditId" value="${l?.id||''}">
+  <div style="margin-top:14px"><div class="head"><h2 style="font-size:15px">Показатели</h2><button class="btn" onclick="addMarkerRow()">＋ Показатель</button></div><div id="markerRows"></div></div>
+  <div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveLab()">Сохранить анализ</button></div>`);
+  if(l?.markers?.length)l.markers.forEach(m=>addMarkerRow(m)); else {addMarkerRow();addMarkerRow();addMarkerRow()}
+}
+function addMarkerRow(m={}){
+  const div=document.createElement('div');div.className='marker-row map-row';
+  div.innerHTML=`<label>Название<input class="mk-name" placeholder="Testosterone"></label>
+    <label>Значение<input class="mk-value" type="number" step="any"></label>
+    <label>Ед.<input class="mk-unit" placeholder="nmol/l"></label>
+    <label>Мин.<input class="mk-min" type="number" step="any"></label>
+    <label>Макс.<input class="mk-max" type="number" step="any"></label>
+    <label>Наш показатель<select class="mk-map"></select></label>
+    <button class="btn danger" onclick="this.parentElement.remove()">×</button>`;
+  div.querySelector('.mk-name').value=m.name||'';
+  div.querySelector('.mk-value').value=m.value??'';
+  div.querySelector('.mk-unit').value=m.unit||'';
+  div.querySelector('.mk-min').value=m.min??'';
+  div.querySelector('.mk-max').value=m.max??'';
+  div.querySelector('.mk-map').innerHTML=analyteSelectOptions(m.canonicalKey||'',m.name||'');
+  $('markerRows').appendChild(div);
+}
+function saveLab(){
+  const date=$('lDate').value,id=$('lEditId')?.value||'';if(!date)return alert('Введите дату');
+  const markers=[...document.querySelectorAll('#markerRows .marker-row')].map(r=>{
+    const name=r.querySelector('.mk-name').value.trim(),choice=r.querySelector('.mk-map').value;
+    return {
+      name,
+      value:r.querySelector('.mk-value').value===''?null:Number(r.querySelector('.mk-value').value),
+      unit:r.querySelector('.mk-unit').value.trim(),
+      min:r.querySelector('.mk-min').value===''?null:Number(r.querySelector('.mk-min').value),
+      max:r.querySelector('.mk-max').value===''?null:Number(r.querySelector('.mk-max').value),
+      canonicalKey:choice?learnAnalyte(name,choice):''
+    };
+  }).filter(m=>m.name&&m.value!==null);
+  const data={date,time:$('lTime').value,lab:$('lLab').value.trim(),comment:$('lComment').value.trim(),markers,protocolContext:protocolContext(date)};
+  if(id){const i=state.labs.findIndex(x=>x.id===id);if(i>=0)state.labs[i]={...state.labs[i],...data}}
+  else state.labs.push({id:uid(),...data});
+  closeModal();save();
+}
+
+function openWellModal(id=''){
+  const w=state.wellbeing.find(x=>x.id===id)||null;
+  openModal(`<h3>${w?'Редактировать запись':'Самочувствие'}</h3><div class="form-grid">
+    <label>Дата<input id="wDate" type="date" value="${w?.date||today()}"></label>
+    <label>Энергия 1–10<input id="wEnergy" type="number" min="1" max="10"></label>
+    <label>Либидо 1–10<input id="wLibido" type="number" min="1" max="10"></label>
+    <label>Сон 1–10<input id="wSleep" type="number" min="1" max="10"></label>
+    <label>Настроение 1–10<input id="wMood" type="number" min="1" max="10"></label>
+    <label>Восстановление 1–10<input id="wRecovery" type="number" min="1" max="10"></label>
+    <label>Вес, кг<input id="wWeight" type="number" step="0.1"></label>
+    <label>Давление<input id="wBp" placeholder="120/80"></label>
+    <label>Пульс<input id="wPulse" type="number"></label>
+    <label class="wide">Комментарий<textarea id="wComment"></textarea></label>
+  </div><input type="hidden" id="wEditId" value="${w?.id||''}">
+  <div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveWell()">Сохранить</button></div>`);
+  if(w){
+    for(const [idv,key] of [['wEnergy','energy'],['wLibido','libido'],['wSleep','sleep'],['wMood','mood'],['wRecovery','recovery'],['wWeight','weight'],['wPulse','pulse']])$(idv).value=w[key]??'';
+    $('wBp').value=w.bp||'';$('wComment').value=w.comment||'';
+  }
+}
+function saveWell(){
+  const date=$('wDate').value,id=$('wEditId')?.value||'';if(!date)return;
+  const num=x=>$(x).value===''?null:Number($(x).value);
+  const data={date,energy:num('wEnergy'),libido:num('wLibido'),sleep:num('wSleep'),mood:num('wMood'),recovery:num('wRecovery'),weight:num('wWeight'),bp:$('wBp').value.trim(),pulse:num('wPulse'),comment:$('wComment').value.trim()};
+  if(id){const i=state.wellbeing.findIndex(x=>x.id===id);if(i>=0)state.wellbeing[i]={...state.wellbeing[i],...data}}
+  else state.wellbeing.push({id:uid(),...data});
+  closeModal();save();
+}
+
+function del(kind,id){if(confirm('Удалить запись?')){state[kind]=state[kind].filter(x=>x.id!==id);save()}}
+
+
+function openLabDetails(id){
+  const l=state.labs.find(x=>x.id===id);if(!l)return;
+  const rows=(l.markers||[]).map(m=>{
+    let ref='—';
+    if(m.min!==null&&m.min!==undefined && m.max!==null&&m.max!==undefined) ref=`${m.min} – ${m.max}`;
+    else if(m.max!==null&&m.max!==undefined) ref=`< ${m.max}`;
+    else if(m.min!==null&&m.min!==undefined) ref=`> ${m.min}`;
+    let flag='';
+    if(m.min!==null&&m.min!==undefined && m.value<m.min)flag='<span class="badge blue">ниже реф.</span>';
+    if(m.max!==null&&m.max!==undefined && m.value>m.max)flag='<span class="badge gold">выше реф.</span>';
+    const key=analyteKeyForMarker(m);
+    const std=analyteLabel(key,m.name);
+    const display=std&&std!==m.name?`<b>${safeHtml(std)}</b><div class="note">${safeHtml(m.name)}</div>`:`<b>${safeHtml(m.name)}</b>`;
+    return `<tr><td><div class="analyte-name-line"><div>${display}</div><button class="analyte-info-btn" onclick="openAnalyteInfo('${key.replace(/'/g,"\\'")}','${String(m.name||'').replace(/'/g,"\\'")}')" title="Что означает этот показатель?">?</button></div></td><td>${m.value}</td><td>${m.unit||'—'}</td><td>${ref}</td><td>${flag}</td></tr>`;
+  }).join('');
+  openModal(`<h3>Результаты анализа</h3>
+    <div class="grid g3" style="margin-bottom:12px">
+      <div class="card"><div class="klabel">Дата</div><div class="kval" style="font-size:18px">${fmtDate(l.date)}${l.time?' · '+l.time:''}</div></div>
+      <div class="card"><div class="klabel">Лаборатория</div><div class="kval" style="font-size:18px">${l.lab||'—'}</div></div>
+      <div class="card"><div class="klabel">Показателей</div><div class="kval" style="font-size:18px">${(l.markers||[]).length}</div></div>
+    </div>
+    ${l.sourceFile?`<div class="note" style="margin-bottom:10px">PDF: ${l.sourceFile}</div>`:''}
+    <div class="note" style="margin-bottom:10px"><b style="color:#f4f5f7">Контекст ГЗТ:</b> ${l.protocolContext||'—'}</div>
+    <div class="table-wrap"><table><thead><tr><th>Показатель</th><th>Результат</th><th>Единица</th><th>Референс</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="5">Нет показателей</td></tr>'}</tbody></table></div>
+    ${l.comment?`<div class="note" style="margin-top:10px">${l.comment}</div>`:''}
+    <div class="actions"><button class="btn" onclick="openLabModal('${id}')">Редактировать</button><button class="btn" onclick="closeModal()">Закрыть</button></div>`);
+}
+
+function latestTwoForKey(key){
+  const arr=markerHistory(key);
+  if(arr.length<2)return null;
+  return [arr[arr.length-2],arr[arr.length-1]];
+}
+function renderLatestChanges(){
+  const box=$('latestChanges');if(!box)return;
+  const keys=['testosterone','free_testosterone','shbg','estradiol','hematocrit','hemoglobin'];
+  const cards=[];
+  for(const key of keys){
+    const pair=latestTwoForKey(key);if(!pair)continue;
+    const [a,b]=pair;
+    if(a.unit!==b.unit)continue;
+    const delta=b.value-a.value;
+    const pct=a.value!==0?delta/a.value*100:null;
+    const cls=delta>0?'delta-up':(delta<0?'delta-down':'delta-flat');
+    const arrow=delta>0?'↑':(delta<0?'↓':'→');
+    cards.push(`<div class="change-card">
+      <div class="name">${analyteLabel(key,key)}</div>
+      <div class="main">${a.value} → ${b.value} ${b.unit||''}</div>
+      <div class="delta ${cls}">${arrow} ${Math.abs(delta).toFixed(Math.abs(delta)<1?2:1)}${pct!==null?` · ${pct>=0?'+':''}${pct.toFixed(1)}%`:''}</div>
+      <div class="note">${fmtDate(a.date)} → ${fmtDate(b.date)}</div>
+    </div>`);
+  }
+  box.innerHTML=cards.length?`<div class="change-grid">${cards.join('')}</div>`:`<div class="empty">Пока недостаточно повторных анализов для сравнения.</div>`;
+}
+function renderAll(){
+  const aps=activeProtocols();
+  $('dashKpis').innerHTML=[
+    ['Активных протоколов',aps.length,aps.length?'Схемы действуют автоматически':'Добавьте первый протокол'],
+    ['Препаратов',state.meds.length,'В справочнике'],
+    ['Анализов',state.labs.length,state.labs.length?'Последний: '+fmtDate([...state.labs].sort((a,b)=>b.date.localeCompare(a.date))[0].date):'Пока нет данных'],
+    ['Отклонений',state.deviations.length,'Пропуски, переносы, другие дозы']
+  ].map(x=>`<div class="card"><div class="klabel">${x[0]}</div><div class="kval">${x[1]}</div><div class="ksub">${x[2]}</div></div>`).join('');
+
+  $('activeProtocols').innerHTML=aps.length?`<div class="timeline">${aps.map(p=>`<div class="event"><b>${medName(p.medId)} · ${scheduleText(p)}</b><small>с ${fmtDate(p.start)}${p.comment?' · '+p.comment:''}</small></div>`).join('')}</div>`:`<div class="empty">Нет действующих протоколов.</div>`;
+
+  const last=[...state.labs].sort((a,b)=>b.date.localeCompare(a.date))[0];
+  $('lastLab').innerHTML=last?`<b>${fmtDate(last.date)}${last.time?' · '+last.time:''}</b><div class="sub">${last.lab||'Лаборатория не указана'} · ${last.markers.length} показателей</div><div class="note" style="margin-top:10px">${last.protocolContext||''}</div>`:`<div class="empty">Анализов пока нет.</div>`;
+
+  const ev=[
+    ...state.protocols.map(x=>({date:x.start,text:`Новый протокол · ${medName(x.medId)} · ${scheduleText(x)}`})),
+    ...state.deviations.map(x=>({date:x.date,text:`Отклонение · ${medName(x.medId)} · ${x.type}`})),
+    ...state.labs.map(x=>({date:x.date,text:`Анализ · ${x.markers.length} показателей`}))
+  ].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);
+  $('recentEvents').innerHTML=ev.length?`<div class="timeline">${ev.map(x=>`<div class="event"><b>${fmtDate(x.date)}</b><small>${x.text}</small></div>`).join('')}</div>`:`<div class="empty">Событий пока нет.</div>`;
+
+  $('medList').innerHTML=state.meds.length?`<div class="table-wrap"><table><thead><tr><th>Название</th><th>Форма</th><th>Единица</th><th>Комментарий</th><th></th></tr></thead><tbody>${state.meds.map(m=>`<tr><td><b>${m.name}</b></td><td>${m.form}</td><td>${m.unit||'—'}</td><td>${m.comment||'—'}</td><td><div class="actions" style="margin:0"><button class="btn" onclick="openMedModal('${m.id}')">Изменить</button><button class="btn danger" onclick="del('meds','${m.id}')">Удалить</button></div></td></tr>`).join('')}</tbody></table></div>`:`<div class="empty">Добавьте препараты, которые хотите учитывать.</div>`;
+
+  $('protocolList').innerHTML=state.protocols.length?`<div class="table-wrap"><table><thead><tr><th>Препарат</th><th>Период</th><th>Схема</th><th>Комментарий</th><th></th></tr></thead><tbody>${[...state.protocols].sort((a,b)=>b.start.localeCompare(a.start)).map(p=>`<tr><td><b>${medName(p.medId)}</b></td><td>${fmtDate(p.start)} → ${p.end?fmtDate(p.end):'сейчас'}</td><td>${scheduleText(p)}</td><td>${p.comment||'—'}</td><td><div class="actions" style="margin:0"><button class="btn" onclick="openProtocolModal('${p.id}')">Изменить</button><button class="btn danger" onclick="del('protocols','${p.id}')">Удалить</button></div></td></tr>`).join('')}</tbody></table></div>`:`<div class="empty">История протоколов пока пустая.</div>`;
+
+  $('deviationList').innerHTML=state.deviations.length?`<div class="table-wrap"><table><thead><tr><th>Дата</th><th>Препарат</th><th>Тип</th><th>Факт</th><th>Комментарий</th><th></th></tr></thead><tbody>${[...state.deviations].sort((a,b)=>b.date.localeCompare(a.date)).map(d=>`<tr><td>${fmtDate(d.date)}</td><td>${medName(d.medId)}</td><td>${d.type}</td><td>${d.dose??'—'} ${d.unit||''}${d.time?' · '+d.time:''}</td><td>${d.comment||'—'}</td><td><div class="actions" style="margin:0"><button class="btn" onclick="openQuickDeviation('${d.id}')">Изменить</button><button class="btn danger" onclick="del('deviations','${d.id}')">Удалить</button></div></td></tr>`).join('')}</tbody></table></div>`:`<div class="empty">Отклонений пока нет.</div>`;
+
+  $('labsBody').innerHTML=[...state.labs].sort((a,b)=>b.date.localeCompare(a.date)).map(l=>`<tr><td><b>${fmtDate(l.date)}</b>${l.time?' · '+l.time:''}</td><td>${l.lab||'—'}</td><td>${l.markers.length}</td><td title="${l.protocolContext||''}">${(l.protocolContext||'—').slice(0,75)}${(l.protocolContext||'').length>75?'…':''}</td><td><div class="actions" style="margin:0;justify-content:flex-start"><button class="btn" onclick="openLabDetails('${l.id}')">Посмотреть</button><button class="btn" onclick="openLabModal('${l.id}')">Изменить</button><button class="btn danger" onclick="del('labs','${l.id}')">Удалить</button></div></td></tr>`).join('')||`<tr><td colspan="5"><div class="empty">Анализов пока нет.</div></td></tr>`;
+
+  $('wellBody').innerHTML=[...state.wellbeing].sort((a,b)=>b.date.localeCompare(a.date)).map(w=>`<tr><td>${fmtDate(w.date)}</td><td>${w.energy??'—'}</td><td>${w.libido??'—'}</td><td>${w.sleep??'—'}</td><td>${w.mood??'—'}</td><td>${w.recovery??'—'}</td><td>${w.weight??'—'}</td><td>${w.bp||'—'}</td><td><div class="actions" style="margin:0"><button class="btn" onclick="openWellModal('${w.id}')">Изменить</button><button class="btn danger" onclick="del('wellbeing','${w.id}')">Удалить</button></div></td></tr>`).join('')||`<tr><td colspan="9"><div class="empty">Записей пока нет.</div></td></tr>`;
+
+  renderChartDashboard();
+  renderLatestChanges();
+  renderGoals();
+  renderLabSchedule();
+  renderClinicalAnalysis();
+    if($('analyteGlossary')){
+    const rows=analyteCatalog().map(x=>{
+      const i=analyteInfo(x.key);
+      return `<tr><td><b>${safeHtml(x.label)}</b></td><td>${safeHtml(i.what)}</td><td><button class="btn" onclick="openAnalyteInfo('${x.key.replace(/'/g,"\\'")}')">Подробнее</button></td></tr>`;
+    }).join('');
+    $('analyteGlossary').innerHTML=`<div class="table-wrap"><table><thead><tr><th>Показатель</th><th>Кратко</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  }
+  if($('aliasList')){
+    const rows=Object.entries(state.aliasMap||{}).sort((a,b)=>a[0].localeCompare(b[0],'ru'));
+    $('aliasList').innerHTML=rows.length?`<div class="table-wrap"><table><thead><tr><th>Название лаборатории</th><th>Наш показатель</th><th></th></tr></thead><tbody>${rows.map(([a,k])=>`<tr><td>${a}</td><td><b>${analyteLabel(k,k)}</b></td><td><button class="btn danger" onclick="forgetAlias('${a.replace(/'/g,"\\'")}')">Забыть</button></td></tr>`).join('')}</tbody></table></div>`:`<div class="empty">Пока нет выученных соответствий.</div>`;
+  }
+}
+
+
+function isPlausibleMarkerName(name){
+  const x=String(name||'').trim();
+  if(!x)return false;
+  // Reject accidental "names" that are actually result values or reference lines,
+  // e.g. "<0,09 nmol/l", "220-800 pmol/l", "25.5 nmol/l".
+  if(/^[<>≤≥]?\s*-?\d+(?:[.,]\d+)?(?:\s*[-–]\s*-?\d+(?:[.,]\d+)?)?\s*(?:nmol\/l|pmol\/l|mmol\/l|mmol\/mol|µmol\/l|μmol\/l|umol\/l|g\/l|mg\/l|mg\/dl|µg\/l|μg\/l|ug\/l|ng\/l|ng\/ml|mU\/l|U\/l|IU\/l|E9\/l|E12\/l|%|fL|fl|pg)?$/i.test(x)) return false;
+  if(/^(tulos|viitearvot?|yksikkö|lausunto)$/i.test(x)) return false;
+  return /[A-Za-zÅÄÖåäö]/.test(x);
+}
+function canonicalMarkerKey(name){
+  const x=String(name||'').toLowerCase()
+    .replace(/[–—]/g,'-')
+    .replace(/\s+/g,' ')
+    .trim();
+
+  if(/testovl|vapaa.*testoster|free.*testoster/.test(x)) return 'free_testosterone';
+  if(/(^|[^a-z])testo([^a-z]|$)|testosteroni/.test(x)) return 'testosterone';
+  if(/shbg|sukupuolihormoneja sitov/.test(x)) return 'shbg';
+  if(/(^|[^a-z])lh([^a-z]|$)|luteinisoiva/.test(x)) return 'lh';
+  if(/estradiol|e2/.test(x)) return 'estradiol';
+  if(/prolak|prl/.test(x)) return 'prolactin';
+  if(/hba1c|hemoglobiini-a1c/.test(x)) return 'hba1c';
+  if(/insuliin(?!in kaltainen)|\binsu\b/.test(x)) return 'insulin';
+  if(/tsh|tyreotrop/.test(x)) return 'tsh';
+  if(/kortisol|korsol/.test(x)) return 'cortisol';
+  if(/igf1|insuliinin kaltainen/.test(x)) return 'igf1';
+  if(/hematokri|hkr/.test(x)) return 'hematocrit';
+  if(/mchc|keskimassakonsentraatio/.test(x)) return 'mchc';
+  if(/erytrosyyt.*keskitilavuus|\bmcv\b/.test(x)) return 'mcv';
+  if(/hemoglobiini.*keskimassa|\bmch\b/.test(x)) return 'mch';
+  if(/hemoglobiini(?!-a1c)|\bhb\b/.test(x)) return 'hemoglobin';
+  if(/leukosyyt|leuk/.test(x)) return 'leukocytes';
+  if(/trombosyyt|trom/.test(x)) return 'platelets';
+  if(/rdw|punasolujen kokojakauma/.test(x)) return 'rdw';
+  if(/erytrosyyt|\beryt\b/.test(x)) return 'erythrocytes';
+  return 'raw:'+x.replace(/[^a-z0-9åäö]+/gi,'_');
+}
+function canonicalMarkerLabel(key, fallback){
+  const labels={
+    free_testosterone:'Свободный тестостерон',
+    testosterone:'Тестостерон',
+    shbg:'SHBG',
+    lh:'LH',
+    estradiol:'Эстрадиол (E2)',
+    prolactin:'Пролактин',
+    hba1c:'HbA1c',
+    insulin:'Инсулин',
+    tsh:'TSH',
+    cortisol:'Кортизол',
+    igf1:'IGF-1',
+    hematocrit:'Гематокрит',
+    hemoglobin:'Гемоглобин',
+    leukocytes:'Лейкоциты',
+    erythrocytes:'Эритроциты',
+    mcv:'MCV',
+    mch:'MCH',
+    mchc:'MCHC',
+    platelets:'Тромбоциты',
+    rdw:'RDW'
+  };
+  return labels[key]||fallback||key;
+}
+function markerGroupEntries(){
+  const groups=new Map();
+  for(const lab of state.labs||[]){
+    for(const m of lab.markers||[]){
+      if(!isPlausibleMarkerName(m.name))continue;
+      const autoKey=canonicalMarkerKey(m.name);
+      const forceAuto=['mchc','mch','mcv'].includes(autoKey);
+      const key=forceAuto?autoKey:(state.aliasMap[aliasNorm(m.name)]||m.canonicalKey||autoKey);
+      if(!groups.has(key))groups.set(key,{key,label:analyteLabel(key,canonicalMarkerLabel(key,m.name)),items:[]});
+      groups.get(key).items.push({lab,marker:m});
+    }
+  }
+  return [...groups.values()].sort((a,b)=>a.label.localeCompare(b.label,'ru'));
+}
+function chartColorForIndex(i){
+  return ['#d6ad62','#7fc8ff','#73d99a','#df9cff','#ff9f7f','#a8d47b'][i%6];
+}
+function chartSeriesForKey(key){
+  const group=markerGroupEntries().find(g=>g.key===key);
+  const pts=(group?.items||[])
+    .map(x=>({
+      date:x.lab.date,
+      value:Number(x.marker.value),
+      unit:x.marker.unit||'',
+      min:x.marker.min,
+      max:x.marker.max,
+      source:x.lab.lab||'',
+      originalName:x.marker.name||''
+    }))
+    .filter(p=>Number.isFinite(p.value))
+    .sort((a,b)=>a.date.localeCompare(b.date));
+
+  if(!pts.length)return {group,points:[],unit:'',skipped:0};
+
+  const unitCounts={};
+  pts.forEach(p=>unitCounts[p.unit]=(unitCounts[p.unit]||0)+1);
+  const dominantUnit=Object.entries(unitCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||'';
+  const points=pts.filter(p=>p.unit===dominantUnit);
+  return {group,points,unit:dominantUnit,skipped:pts.length-points.length};
+}
+function drawMiniMetricChart(canvas,key,index){
+  const ctx=canvas.getContext('2d');
+  const c=canvas;
+  const dpr=Math.max(1,window.devicePixelRatio||1);
+  const cssW=Math.max(320,canvas.parentElement.clientWidth||600);
+  const cssH=245;
+  c.width=Math.round(cssW*dpr);c.height=Math.round(cssH*dpr);
+  c.style.width='100%';c.style.height=cssH+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+
+  const {points,unit}=chartSeriesForKey(key);
+  ctx.clearRect(0,0,cssW,cssH);
+  ctx.fillStyle='#08121b';ctx.fillRect(0,0,cssW,cssH);
+  if(!points.length)return;
+
+  const vals=points.map(p=>p.value),min=Math.min(...vals),max=Math.max(...vals);
+  const pad=(max-min||Math.max(Math.abs(max)*.08,1))*.22;
+  const ymin=min-pad,ymax=max+pad;
+  const L=48,R=15,T=18,B=38,W=cssW-L-R,H=cssH-T-B;
+
+  ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1;
+  ctx.fillStyle='#8192a3';ctx.font='10px sans-serif';
+  for(let i=0;i<4;i++){
+    const y=T+H*i/3;
+    ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(L+W,y);ctx.stroke();
+    const v=ymax-(ymax-ymin)*i/3;
+    const decimals=Math.abs(ymax-ymin)<5?2:(Math.abs(ymax-ymin)<20?1:0);
+    ctx.fillText(v.toFixed(decimals),5,y+3);
+  }
+
+  const color=chartColorForIndex(index);
+  ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.beginPath();
+  const hitPoints=[];
+  points.forEach((p,i)=>{
+    const x=L+(points.length===1?W/2:W*i/(points.length-1));
+    const y=T+H*(1-(p.value-ymin)/(ymax-ymin));
+    hitPoints.push({x,y,p});
+    i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+  });
+  ctx.stroke();
+
+  hitPoints.forEach(({x,y,p})=>{
+    ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#8ea0b1';ctx.font='10px sans-serif';
+    const label=p.date.slice(5).split('-').reverse().join('.');
+    ctx.fillText(label,x-13,cssH-16);
+  });
+
+  if(unit){
+    ctx.fillStyle='#8ea0b1';ctx.font='10px sans-serif';ctx.fillText(unit,L,T-5);
+  }
+
+  c.__hrtHitPoints=hitPoints;
+  c.__hrtKey=key;
+
+  const wrap=c.parentElement;
+  let tip=wrap.querySelector('.chart-hover-tip');
+  if(!tip){
+    tip=document.createElement('div');
+    tip.className='chart-hover-tip';
+    wrap.appendChild(tip);
+  }
+
+  function hideTip(){tip.style.display='none'}
+  function showPoint(h,clientX,clientY){
+    const p=h.p;
+    const target=goalFor(key);
+    const goal=target?goalStatus(key,p.value).text:'Цель не задана';
+    const protocol=protocolSummaryAt(p.date);
+    const info=analyteInfo(key);
+    const ref=(p.min!==null&&p.min!==undefined&&p.max!==null&&p.max!==undefined)
+      ? `${p.min}–${p.max} ${p.unit||''}`
+      : (p.max!==null&&p.max!==undefined?`< ${p.max} ${p.unit||''}`:(p.min!==null&&p.min!==undefined?`> ${p.min} ${p.unit||''}`:'—'));
+    tip.innerHTML=`<b>${safeHtml(analyteLabel(key,key))}</b>
+      <div style="font-size:16px;margin:3px 0 2px"><strong>${p.value} ${p.unit||''}</strong></div>
+      <div>Дата анализа: <strong>${fmtDate(p.date)}</strong></div>
+      ${p.source?`<div>Лаборатория: ${safeHtml(p.source)}</div>`:''}
+      <div>Референс лаборатории: <strong>${safeHtml(ref)}</strong></div>
+      <div class="muted">${safeHtml(goal)}</div>
+      <div class="protocol"><span class="muted">Протокол на дату анализа:</span><br><strong>${safeHtml(protocol)}</strong></div>
+      <div class="protocol"><span class="muted">Что означает показатель:</span><br>${safeHtml(info.what)}</div>
+      <div style="margin-top:5px"><span class="muted">Для чего смотрят:</span><br>${safeHtml(info.why)}</div>
+      <div style="margin-top:5px"><span class="muted">В контексте ГЗТ:</span><br>${safeHtml(info.trt)}</div>`;
+    tip.style.display='block';
+
+    const r=wrap.getBoundingClientRect();
+    let left=clientX-r.left+12;
+    let top=clientY-r.top-12;
+    const tw=tip.offsetWidth,th=tip.offsetHeight;
+    if(left+tw>r.width-6)left=Math.max(6,clientX-r.left-tw-12);
+    if(top+th>r.height-6)top=Math.max(6,r.height-th-6);
+    if(top<6)top=6;
+    tip.style.left=left+'px';
+    tip.style.top=top+'px';
+  }
+  function nearestHit(ev){
+    const rect=c.getBoundingClientRect();
+    const x=ev.clientX-rect.left,y=ev.clientY-rect.top;
+    let best=null,dist=Infinity;
+    for(const h of hitPoints){
+      const d=Math.hypot(h.x-x,h.y-y);
+      if(d<dist){dist=d;best=h}
+    }
+    return dist<=14?best:null;
+  }
+
+  c.onmousemove=(ev)=>{
+    const h=nearestHit(ev);
+    if(h){c.style.cursor='pointer';showPoint(h,ev.clientX,ev.clientY)}
+    else{c.style.cursor='default';hideTip()}
+  };
+  c.onmouseleave=hideTip;
+  c.onclick=(ev)=>{
+    const h=nearestHit(ev);
+    if(h)showPoint(h,ev.clientX,ev.clientY);
+  };
+  c.ontouchstart=(ev)=>{
+    if(!ev.touches?.length)return;
+    const t=ev.touches[0];
+    const fake={clientX:t.clientX,clientY:t.clientY};
+    const h=nearestHit(fake);
+    if(h){showPoint(h,t.clientX,t.clientY);ev.preventDefault()}
+  };
+}
+function renderChartDashboard(){
+  const box=$('chartDashboard');if(!box)return;
+  const keys=(state.settings.chartKeys||[]).filter(Boolean);
+  if(!keys.length){
+    box.innerHTML=`<div class="empty" style="grid-column:1/-1">Графиков пока нет. Нажмите «Добавить график».</div>`;
+    return;
+  }
+  box.innerHTML=keys.map((key,i)=>{
+    const series=chartSeriesForKey(key);
+    const label=analyteLabel(key,series.group?.label||key);
+    const p=series.points;
+    const latest=p.at(-1);
+    const goal=goalFor(key);
+    let goalText='';
+    if(goal){
+      const range=(goal.min!==null&&goal.max!==null)?`${goal.min}–${goal.max}`:(goal.min!==null?`≥${goal.min}`:`≤${goal.max}`);
+      goalText=` · цель ${range} ${goal.unit||series.unit||''}`;
+    }
+    const summary=latest
+      ? `${p.length} измерений · последнее <b>${latest.value} ${series.unit||''}</b>${goalText}${series.skipped?` · ${series.skipped} в другой единице не показано`:''}`
+      : `Нет данных для этого показателя`;
+    return `<div class="chart-panel">
+      <div class="chart-panel-head">
+        <div><h3>${label} <button class="analyte-info-btn" onclick="openAnalyteInfo('${key.replace(/'/g,"\\'")}')" title="Что означает этот показатель?">?</button></h3></div>
+        <button class="btn danger compact" onclick="removeChart('${key}')" title="Убрать график">×</button>
+      </div>
+      ${p.length?`<div class="chart-canvas-wrap"><canvas id="dashChart_${i}"></canvas></div>`:`<div class="chart-empty">Пока нет измерений<br>${label}</div>`}
+      <div class="chart-meta">${summary}</div>
+    </div>`;
+  }).join('');
+
+  keys.forEach((key,i)=>{
+    const canvas=$(`dashChart_${i}`);
+    if(canvas)drawMiniMetricChart(canvas,key,i);
+  });
+}
+function openAddChartModal(){
+  const groups=markerGroupEntries();
+  const existing=new Set(state.settings.chartKeys||[]);
+  const allKeys=[...new Set([
+    ...analyteCatalog().map(x=>x.key),
+    ...groups.map(g=>g.key)
+  ])];
+  const available=allKeys
+    .filter(k=>!existing.has(k))
+    .map(k=>{
+      const hasData=groups.some(g=>g.key===k);
+      return {key:k,label:analyteLabel(k,groups.find(g=>g.key===k)?.label||k),hasData};
+    })
+    .sort((a,b)=>(b.hasData-a.hasData)||a.label.localeCompare(b.label,'ru'));
+
+  openModal(`<h3>Добавить график</h3>
+    <div class="note" style="margin-bottom:12px">Сначала показаны показатели, по которым уже есть данные.</div>
+    <div style="display:grid;gap:8px;max-height:55vh;overflow:auto">
+      ${available.length?available.map(x=>`<button class="btn" style="text-align:left;display:flex;justify-content:space-between;align-items:center" onclick="addChart('${x.key}')"><span>${x.label}</span><span class="badge ${x.hasData?'good':''}">${x.hasData?'есть данные':'нет данных'}</span></button>`).join(''):`<div class="empty">Все доступные показатели уже добавлены.</div>`}
+    </div>
+    <div class="actions"><button class="btn" onclick="closeModal()">Закрыть</button></div>`);
+}
+function addChart(key){
+  state.settings.chartKeys=state.settings.chartKeys||[];
+  if(!state.settings.chartKeys.includes(key))state.settings.chartKeys.push(key);
+  closeModal();save();
+  setTimeout(renderChartDashboard,0);
+}
+function removeChart(key){
+  state.settings.chartKeys=(state.settings.chartKeys||[]).filter(x=>x!==key);
+  save();setTimeout(renderChartDashboard,0);
+}
+function resetChartDashboard(){
+  state.settings.chartKeys=['testosterone','free_testosterone','shbg','estradiol','hematocrit','hemoglobin'];
+  save();setTimeout(renderChartDashboard,0);
+}
+function openGoalModal(id=''){
+  const g=(state.goals||[]).find(x=>x.id===id)||null;
+  const catalog=analyteCatalog();
+  openModal(`<h3>${g?'Редактировать цель':'Новая цель'}</h3><div class="form-grid">
+    <label>Показатель<select id="gKey">${catalog.map(x=>`<option value="${x.key}" ${g?.key===x.key?'selected':''}>${x.label}</option>`).join('')}</select></label>
+    <label>Единица<input id="gUnit" placeholder="nmol/l, pmol/l, %..." value="${safeHtml(g?.unit||'')}"></label>
+    <label>Минимальная цель <span class="help-dot" tabindex="0" data-help="Это ваша личная цель, а не нижняя граница лабораторного референса.">?</span><input id="gMin" type="number" step="any" value="${g?.min??''}"></label>
+    <label>Максимальная цель <span class="help-dot" tabindex="0" data-help="Это ваша личная верхняя цель для обсуждения с врачом.">?</span><input id="gMax" type="number" step="any" value="${g?.max??''}"></label>
+    <label class="wide">Комментарий<textarea id="gComment" placeholder="Почему выбрана такая цель, что обсудили с врачом и т.п.">${safeHtml(g?.comment||'')}</textarea></label>
+  </div><input type="hidden" id="gEditId" value="${g?.id||''}">
+  <div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveGoal()">Сохранить</button></div>`);
+}
+function saveGoal(){
+  const id=$('gEditId').value,key=$('gKey').value;
+  const min=$('gMin').value===''?null:Number($('gMin').value);
+  const max=$('gMax').value===''?null:Number($('gMax').value);
+  if(min!==null&&max!==null&&min>max)return alert('Минимальная цель не может быть выше максимальной');
+  const data={key,unit:$('gUnit').value.trim(),min,max,comment:$('gComment').value.trim()};
+  const duplicate=(state.goals||[]).find(x=>x.key===key&&x.id!==id);
+  if(duplicate && !confirm('Для этого показателя уже есть цель. Заменить её?'))return;
+  if(duplicate)state.goals=state.goals.filter(x=>x.id!==duplicate.id);
+  if(id){const i=state.goals.findIndex(x=>x.id===id);if(i>=0)state.goals[i]={...state.goals[i],...data}}
+  else state.goals.push({id:uid(),...data});
+  closeModal();save();
+}
+function savePrimaryGoal(){
+  state.settings.primaryGoal=$('primaryGoalText').value.trim();save();
+}
+function renderGoals(){
+  if(!$('goalList'))return;
+  $('primaryGoalText').value=state.settings.primaryGoal||'';
+  const rows=(state.goals||[]).map(g=>{
+    const range=(g.min!==null&&g.max!==null)?`${g.min} – ${g.max}`:(g.min!==null?`≥ ${g.min}`:(g.max!==null?`≤ ${g.max}`:'—'));
+    return `<tr><td><b>${analyteLabel(g.key,g.key)}</b></td><td>${range}</td><td>${g.unit||'—'}</td><td>${safeHtml(g.comment||'—')}</td><td><div class="actions" style="margin:0"><button class="btn" onclick="openGoalModal('${g.id}')">Изменить</button><button class="btn danger" onclick="del('goals','${g.id}')">Удалить</button></div></td></tr>`;
+  }).join('');
+  $('goalList').innerHTML=rows?`<div class="table-wrap"><table><thead><tr><th>Показатель</th><th>Цель</th><th>Единица</th><th>Комментарий</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="empty">Цели ещё не заданы. Добавьте целевые диапазоны, которые хотите обсуждать с врачом.</div>`;
+}
+
+function openLabPlanModal(id=''){
+  const p=(state.labPlans||[]).find(x=>x.id===id)||null;
+  const catalog=analyteCatalog();
+  const selected=new Set(p?.keys||[]);
+  openModal(`<h3>${p?'Редактировать план':'Запланировать анализы'}</h3><div class="form-grid">
+    <label>Дата<input id="lpDate" type="date" value="${p?.date||isoTodayLocal()}"></label>
+    <label>Причина<select id="lpReason"><option value="routine">Плановый контроль</option><option value="dose_change">После изменения дозы</option><option value="new_drug">После смены препарата</option><option value="safety">Контроль безопасности</option><option value="other">Другое</option></select></label>
+    <label class="wide">Какие анализы<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:6px">${catalog.map(x=>`<label style="display:flex;align-items:center;gap:7px"><input class="lpKey" type="checkbox" value="${x.key}" ${selected.has(x.key)?'checked':''} style="width:auto">${x.label}</label>`).join('')}</div></label>
+    <label class="wide">Комментарий<textarea id="lpComment">${safeHtml(p?.comment||'')}</textarea></label>
+  </div><input type="hidden" id="lpEditId" value="${p?.id||''}">
+  <div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveLabPlan()">Сохранить</button></div>`);
+  if(p)$('lpReason').value=p.reason||'routine';
+}
+function saveLabPlan(){
+  const id=$('lpEditId').value,date=$('lpDate').value;if(!date)return alert('Укажите дату');
+  const keys=[...document.querySelectorAll('.lpKey:checked')].map(x=>x.value);
+  const data={date,reason:$('lpReason').value,keys,comment:$('lpComment').value.trim(),done:false};
+  if(id){const i=state.labPlans.findIndex(x=>x.id===id);if(i>=0)state.labPlans[i]={...state.labPlans[i],...data,done:state.labPlans[i].done||false}}
+  else state.labPlans.push({id:uid(),...data});
+  closeModal();save();
+}
+function toggleLabPlan(id){
+  const p=state.labPlans.find(x=>x.id===id);if(!p)return;p.done=!p.done;save();
+}
+function renderLabSchedule(){
+  if(!$('labPlanList'))return;
+  const now=isoTodayLocal();
+  const open=(state.labPlans||[]).filter(x=>!x.done);
+  const overdue=open.filter(x=>x.date<now).length;
+  const next=[...open].filter(x=>x.date>=now).sort((a,b)=>a.date.localeCompare(b.date))[0];
+  $('scheduleKpis').innerHTML=[
+    ['Запланировано',open.length,'Открытых задач'],
+    ['Просрочено',overdue,overdue?'Требует внимания':'Нет просроченных'],
+    ['Следующий',next?fmtDate(next.date):'—',next?`${daysBetween(now,next.date)} дн.`:'Не запланирован'],
+    ['Выполнено',(state.labPlans||[]).filter(x=>x.done).length,'В истории']
+  ].map(x=>`<div class="card"><div class="klabel">${x[0]}</div><div class="kval" style="${typeof x[1]==='string'?'font-size:18px':''}">${x[1]}</div><div class="ksub">${x[2]}</div></div>`).join('');
+
+  const rows=[...(state.labPlans||[])].sort((a,b)=>a.done-b.done||a.date.localeCompare(b.date)).map(p=>{
+    const status=p.done?'Выполнено':(p.date<now?'Просрочено':'Запланировано');
+    const badge=p.done?'good':(p.date<now?'gold':'blue');
+    const tests=(p.keys||[]).map(k=>analyteLabel(k,k)).join(', ')||'Не указаны';
+    return `<tr><td><b>${fmtDate(p.date)}</b></td><td><span class="badge ${badge}">${status}</span></td><td>${tests}</td><td>${safeHtml(p.comment||'—')}</td><td><div class="actions" style="margin:0"><button class="btn" onclick="toggleLabPlan('${p.id}')">${p.done?'Вернуть':'Готово'}</button><button class="btn" onclick="openLabPlanModal('${p.id}')">Изменить</button><button class="btn danger" onclick="del('labPlans','${p.id}')">Удалить</button></div></td></tr>`;
+  }).join('');
+  $('labPlanList').innerHTML=rows?`<div class="table-wrap"><table><thead><tr><th>Дата</th><th>Статус</th><th>Анализы</th><th>Комментарий</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="empty">План анализов пока пуст.</div>`;
+}
+
+function clinicalAdvice(){
+  const T=latestMarker('testosterone'),FT=latestMarker('free_testosterone'),Hct=latestMarker('hematocrit'),Hb=latestMarker('hemoglobin'),PSA=latestMarker('psa'),E2=latestMarker('estradiol');
+  const latestLab=[...(state.labs||[])].sort((a,b)=>b.date.localeCompare(a.date))[0]||null;
+  const trt=activeTrtProtocols(latestLab?.date||isoTodayLocal());
+  const conclusions=[],actions=[],warnings=[];
+  let goalScore=0,goalCount=0;
+
+  for(const key of ['testosterone','free_testosterone']){
+    const x=key==='testosterone'?T:FT;
+    if(x&&goalFor(key)){
+      goalCount++; const st=goalStatus(key,x.marker.value);
+      if(st.status==='ok')goalScore++;
+    }
+  }
+
+  if(T){
+    const st=goalStatus('testosterone',T.marker.value);
+    if(st.status==='low')actions.push(`Общий тестостерон ${T.marker.value} ${T.marker.unit||''} ниже вашей цели. Если анализ сдан в корректное для препарата время и схема соблюдалась, обсудите с врачом увеличение экспозиции тестостерона: дозу, частоту или способ введения.`);
+    if(st.status==='high')actions.push(`Общий тестостерон ${T.marker.value} ${T.marker.unit||''} выше вашей цели. Обсудите снижение дозы или увеличение интервала между введениями, учитывая время анализа относительно последней дозы.`);
+    if(st.status==='ok')conclusions.push(`Общий тестостерон находится в вашем целевом диапазоне.`);
+  }
+  if(FT){
+    const st=goalStatus('free_testosterone',FT.marker.value);
+    if(st.status==='low')actions.push(`Свободный тестостерон ${FT.marker.value} ${FT.marker.unit||''} ниже вашей цели. Перед изменением дозы стоит сопоставить общий тестостерон, SHBG, время анализа и фактическое соблюдение протокола.`);
+    if(st.status==='high')actions.push(`Свободный тестостерон ${FT.marker.value} ${FT.marker.unit||''} выше вашей цели. Обсудите с врачом уменьшение экспозиции тестостерона.`);
+    if(st.status==='ok')conclusions.push(`Свободный тестостерон находится в вашем целевом диапазоне.`);
+  }
+
+  if(Hct){
+    const v=Number(Hct.marker.value);
+    if(v>=54)warnings.push(`Гематокрит ${v}% достиг порога 54% или выше. Это требует оперативного обсуждения терапии с врачом; автоматическое повышение дозы в такой ситуации не предлагается.`);
+    else if(v>=50)actions.push(`Гематокрит ${v}% повышен относительно обычной исходной зоны. Перед повышением дозы тестостерона обсудите с врачом тренд гематокрита и частоту контроля.`);
+  }
+  if(!Hct)actions.push('В базе нет гематокрита, пригодного для текущей оценки безопасности. Добавьте его в план контроля.');
+  if(!PSA)actions.push('PSA пока не найден в базе. Для мужчин старше 40 лет мониторинг простаты обычно обсуждается до/во время терапии тестостероном.');
+  if(E2){
+    const st=goalStatus('estradiol',E2.marker.value);
+    if(st.status==='high'||st.status==='low')actions.push(`Эстрадиол ${E2.marker.value} ${E2.marker.unit||''} вне вашей личной цели. Не стоит корректировать его изолированно без симптомов и контекста всей схемы; обсудите это вместе с врачом.`);
+  }
+
+  if(!T&&!FT)warnings.push('Недостаточно данных по общему и свободному тестостерону для оценки основной цели ГЗТ.');
+  if(trt.length)conclusions.push(`На дату последнего анализа записан протокол: ${protocolSummaryAt(latestLab?.date||isoTodayLocal())}.`);
+  else conclusions.push('К последнему анализу не найден записанный активный протокол тестостерона, поэтому причинную связь с дозой оценить нельзя.');
+
+  return {T,FT,Hct,Hb,PSA,E2,latestLab,trt,conclusions,actions,warnings,goalScore,goalCount};
+}
+function protocolPerformance(){
+  const candidates=[];
+  const trtNames=['testogel','testavan','testosterone enanthate','testosterone undecanoate'];
+  for(const med of state.meds||[]){
+    if(!trtNames.some(k=>med.name.toLowerCase().includes(k)))continue;
+    const relatedLabs=(state.labs||[]).filter(l=>{
+      const ps=protocolAtDate(l.date);
+      return ps.some(p=>p.medId===med.id);
+    });
+    if(!relatedLabs.length)continue;
+    let score=0,parts=0;
+    for(const l of relatedLabs){
+      for(const m of l.markers||[]){
+        const key=m.canonicalKey||state.aliasMap?.[aliasNorm(m.name)]||canonicalMarkerKey(m.name);
+        if(['testosterone','free_testosterone'].includes(key)&&goalFor(key)){
+          parts++; if(goalStatus(key,m.value).status==='ok')score+=2;
+        }
+        if(key==='hematocrit'){parts++; const v=Number(m.value); if(v<50)score+=2; else if(v<54)score+=1;}
+      }
+    }
+    const well=(state.wellbeing||[]).filter(w=>{
+      const ps=protocolAtDate(w.date);return ps.some(p=>p.medId===med.id);
+    });
+    const symptomVals=well.flatMap(w=>[w.energy,w.libido,w.sleep,w.mood,w.recovery]).filter(x=>Number.isFinite(Number(x))).map(Number);
+    const avg=symptomVals.length?symptomVals.reduce((a,b)=>a+b,0)/symptomVals.length:null;
+    if(avg!==null){parts+=2;score+=Math.min(2,Math.max(0,(avg-4)/3));}
+    candidates.push({med,labs:relatedLabs.length,score:parts?score/parts:null,avg});
+  }
+  return candidates.sort((a,b)=>(b.score??-1)-(a.score??-1));
+}
+function renderClinicalAnalysis(){
+  if(!$('clinicalConclusion'))return;
+  const a=clinicalAdvice();
+  const T=a.T?.marker,FT=a.FT?.marker,Hct=a.Hct?.marker;
+  $('clinicalKpis').innerHTML=[
+    ['Общий T',T?`${T.value} ${T.unit||''}`:'—',T?goalStatus('testosterone',T.value).text:'Нет данных'],
+    ['Свободный T',FT?`${FT.value} ${FT.unit||''}`:'—',FT?goalStatus('free_testosterone',FT.value).text:'Нет данных'],
+    ['Гематокрит',Hct?`${Hct.value} ${Hct.unit||'%'}`:'—',Hct?'Последнее значение':'Нет данных'],
+    ['Последний анализ',a.latestLab?fmtDate(a.latestLab.date):'—',a.latestLab?a.latestLab.lab||'':'Нет данных']
+  ].map(x=>`<div class="card"><div class="klabel">${x[0]}</div><div class="kval" style="font-size:19px">${x[1]}</div><div class="ksub">${x[2]}</div></div>`).join('');
+
+  const warn=a.warnings.map(x=>`<div class="event" style="border-left-color:#ff7e8a"><b>Важно</b><small>${x}</small></div>`).join('');
+  const conc=a.conclusions.map(x=>`<div class="event"><b>Наблюдение</b><small>${x}</small></div>`).join('');
+  $('clinicalConclusion').innerHTML=(warn||conc)?`<div class="timeline">${warn}${conc}</div>`:`<div class="empty">Недостаточно данных.</div>`;
+
+  $('clinicalActions').innerHTML=a.actions.length?`<div class="timeline">${a.actions.map(x=>`<div class="event"><b>Обсудить</b><small>${x}</small></div>`).join('')}</div>`:`<div class="empty">По текущим данным программа не видит очевидной темы для изменения схемы. Это не означает, что изменение не требуется клинически.</div>`;
+
+  const rank=protocolPerformance();
+  $('protocolRanking').innerHTML=rank.length?`<div class="timeline">${rank.map((r,i)=>`<div class="event"><b>${i+1}. ${r.med.name}</b><small>${r.labs} анализов под этой схемой${r.avg!==null?` · среднее самочувствие ${r.avg.toFixed(1)}/10`:''}${r.score!==null?` · внутренний балл ${(r.score*100).toFixed(0)}%`:''}</small></div>`).join('')}</div><div class="note" style="margin-top:10px">Рейтинг основан только на ваших фактических данных и целях. Если данных мало, он не является основанием выбирать препарат.</div>`:`<div class="empty">Пока недостаточно анализов, привязанных к конкретным протоколам, чтобы сравнить препараты.</div>`;
+
+  const tracked=[...new Set([...(state.goals||[]).map(g=>g.key),'testosterone','free_testosterone','hematocrit'])];
+  const rows=tracked.map(key=>{
+    const x=latestMarker(key),g=goalFor(key);if(!x&&!g)return '';
+    const value=x?`${x.marker.value} ${x.marker.unit||''}`:'—';
+    const target=g?`${g.min!==null?g.min:'—'} – ${g.max!==null?g.max:'—'} ${g.unit||''}`:'Не задана';
+    const st=x?goalStatus(key,x.marker.value):{text:'Нет результата'};
+    return `<tr><td><div class="analyte-name-line"><b>${analyteLabel(key,key)}</b><button class="analyte-info-btn" onclick="openAnalyteInfo('${key.replace(/'/g,"\\'")}')" title="Что означает этот показатель?">?</button></div></td><td>${value}</td><td>${target}</td><td>${st.text}</td><td>${x?fmtDate(x.lab.date):'—'}</td></tr>`;
+  }).join('');
+  $('clinicalMarkers').innerHTML=rows?`<div class="table-wrap"><table><thead><tr><th>Показатель</th><th>Последний</th><th>Ваша цель</th><th>Оценка</th><th>Дата</th></tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="empty">Добавьте цели и анализы.</div>`;
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='HRT_Health_Studio_backup_'+today()+'.json';a.click();URL.revokeObjectURL(a.href);
+}
+function importData(e){
+  const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x||!x.meds||!x.protocols)throw 0;state=x;save();alert('Импорт завершён')}catch{alert('Не удалось прочитать файл')}};r.readAsText(f);
+}
+function resetData(){if(confirm('Удалить все данные программы?')){state={meds:DEFAULT_MEDS.map(x=>({...x})),protocols:[],deviations:[],labs:[],wellbeing:[],aliasMap:{},customAnalytes:[],goals:[],labPlans:[],settings:{primaryGoal:''}};save()}}
+window.addEventListener('resize',()=>{clearTimeout(window.__hrtChartResize);window.__hrtChartResize=setTimeout(()=>{if($('analytics')?.classList.contains('active'))renderChartDashboard()},120)});
+
+document.getElementById('hrtGateSignIn')?.addEventListener('click',hrtSignIn);
+document.getElementById('hrtGatePassword')?.addEventListener('keydown',e=>{if(e.key==='Enter')hrtSignIn()});
+initHrtAuth();
+renderAll();
+</script>
+</body>
+</html>
