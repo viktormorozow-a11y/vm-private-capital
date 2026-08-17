@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HRT Health Studio — VM Private Suite</title>
+<title>HRT Health Studio v3.0 — VM Private Suite</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -123,13 +123,49 @@ aside{display:flex;flex-direction:column}
   padding:10px 11px;border-radius:11px;font-size:12px;font-weight:700
 }
 .suite-back a:hover{background:rgba(127,200,255,.10)}
+
+/* v3.0 clinical intelligence */
+.site-version-badge{
+  position:fixed;top:10px;right:14px;z-index:25;
+  border:1px solid var(--line);background:rgba(7,16,25,.88);backdrop-filter:blur(10px);
+  color:#aebdca;border-radius:999px;padding:6px 9px;font-size:10px;font-weight:750;letter-spacing:.04em
+}
+.readiness-box,.safety-box{
+  border:1px solid var(--line);border-radius:13px;padding:13px;background:rgba(255,255,255,.018)
+}
+.readiness-box.good{border-color:rgba(115,217,154,.28);background:rgba(115,217,154,.055)}
+.readiness-box.warn{border-color:rgba(214,173,98,.28);background:rgba(214,173,98,.05)}
+.readiness-box.bad{border-color:rgba(255,126,138,.26);background:rgba(255,126,138,.05)}
+.readiness-title{font-size:15px;font-weight:780}
+.readiness-reasons{display:grid;gap:6px;margin-top:9px}
+.readiness-reason{font-size:11px;color:var(--muted);line-height:1.45}
+.safety-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.safety-item{border:1px solid var(--line);border-radius:11px;padding:10px;background:rgba(255,255,255,.018)}
+.safety-item .label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.safety-item .value{font-size:18px;font-weight:760;margin-top:5px}
+.safety-item .state{font-size:10px;margin-top:5px;color:var(--muted)}
+.safety-item.good .state{color:var(--good)}
+.safety-item.warn .state{color:#e2bd73}
+.safety-item.bad .state{color:var(--bad)}
+.dose-context{
+  margin-top:12px;padding-top:12px;border-top:1px solid var(--line)
+}
+.dose-context-title{font-size:12px;font-weight:750;color:#dce7f0;margin-bottom:9px}
+.protocol-event-label{
+  font-size:9px;font-weight:700
+}
+.report-print-note{font-size:10px;color:var(--muted);margin-top:8px}
+@media(max-width:650px){
+  .site-version-badge{position:static;display:inline-flex;margin:8px 14px 0}
+  .safety-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body class="hrt-auth-locked">
 <div id="hrtAuthGate">
   <div class="hrt-auth-card">
     <div class="hrt-auth-brand">VM PRIVATE SUITE</div>
-    <div class="hrt-auth-title">HRT Health Studio</div>
+    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.0</span></div>
     <div class="hrt-auth-sub">Используйте тот же аккаунт, что и в Планировании капитала</div>
     <label>Email<input id="hrtGateEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
     <label>Пароль<input id="hrtGatePassword" type="password" autocomplete="current-password" placeholder="Введите пароль"></label>
@@ -141,9 +177,10 @@ aside{display:flex;flex-direction:column}
   </div>
 </div>
 <div id="hrtAppShell" class="auth-hidden">
+<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.0</div>
 <div class="app">
 <aside>
-  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small></div>
+  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.0</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Главная</button>
     <button class="nav" data-view="labs">Анализы</button>
@@ -165,6 +202,16 @@ aside{display:flex;flex-direction:column}
 <section id="dashboard" class="view active">
   <div class="top"><div><h1>Контроль ГЗТ</h1><div class="sub">Протоколы действуют автоматически. Вручную добавляются только изменения и исключения.</div></div><button class="btn primary" onclick="openQuickDeviation()">Сегодня было иначе</button></div>
   <div class="grid g4" id="dashKpis"></div>
+  <div class="grid g2">
+    <div class="panel">
+      <div class="head"><h2>Готовность к оценке схемы</h2></div>
+      <div id="dashboardReadiness"></div>
+    </div>
+    <div class="panel">
+      <div class="head"><h2>Безопасность</h2></div>
+      <div id="dashboardSafety"></div>
+    </div>
+  </div>
   <div class="panel">
     <div class="head">
       <div><h2>Быстрые действия <span class="help-dot" tabindex="0" data-help="Эти кнопки заполняют форму за вас. Вам остаётся только проверить дату, препарат и при необходимости изменить значение.">?</span></h2></div>
@@ -226,9 +273,22 @@ aside{display:flex;flex-direction:column}
       <h1>Анализ ГЗТ</h1>
       <div class="sub">Автоматическое сопоставление последних анализов с вашими целями, протоколом, самочувствием и безопасностью терапии.</div>
     </div>
-    <button class="btn primary" onclick="renderClinicalAnalysis()">↻ Пересчитать</button>
+    <div class="actions" style="margin-top:0">
+      <button class="btn" onclick="printDoctorReport()">Отчёт врачу / PDF</button>
+      <button class="btn primary" onclick="renderClinicalAnalysis()">↻ Пересчитать</button>
+    </div>
   </div>
   <div class="grid g4" id="clinicalKpis"></div>
+  <div class="grid g2">
+    <div class="panel">
+      <div class="head"><div><h2>Можно ли оценивать текущую схему? <span class="help-dot" tabindex="0" data-help="Это внутренняя оценка качества данных: стабильность протокола, известность времени последней дозы и наличие недавних отклонений. Это не медицинский порог и не заменяет решение врача.">?</span></h2></div></div>
+      <div id="doseReadiness"></div>
+    </div>
+    <div class="panel">
+      <div class="head"><div><h2>Safety Dashboard <span class="help-dot" tabindex="0" data-help="Здесь собраны показатели безопасности и общего риска. Лабораторные значения интерпретируются отдельно от ваших целей тестостерона.">?</span></h2></div></div>
+      <div id="safetyDashboard"></div>
+    </div>
+  </div>
   <div class="panel">
     <div class="head"><div><h2>Заключение</h2><div class="sub">Это поддержка решения для обсуждения с врачом, а не автоматическое назначение лечения.</div></div></div>
     <div id="clinicalConclusion"></div>
@@ -361,6 +421,8 @@ state.goals=state.goals||[];
 state.labPlans=state.labPlans||[];
 state.settings=state.settings||{};
 state.settings.primaryGoal=state.settings.primaryGoal||'';
+state.settings.appVersion='3.0';
+state.labs.forEach(l=>{l.doseContext=l.doseContext||{medId:'',lastDoseAt:'',relation:'unknown',adherence:'unknown'}});
 
 // Repair aliases created by older parser versions where MCH/MCHC could be mistaken for hemoglobin.
 for(const [alias,key] of Object.entries(state.aliasMap||{})){
@@ -550,6 +612,135 @@ function fillUnitFromMed(selectId,unitId){
     const known=[...el.options].some(o=>o.value===med.unit);
     if(known)el.value=med.unit;
   }else if(!el.value)el.value=med.unit||'';
+}
+
+function combineDateTime(date,time){
+  if(!date)return null;
+  const t=time||'12:00';
+  const d=new Date(`${date}T${t}:00`);
+  return Number.isNaN(d.getTime())?null:d;
+}
+function hoursBetweenDateTimes(a,b){
+  if(!a||!b)return null;
+  const aa=new Date(a),bb=new Date(b);
+  if(Number.isNaN(aa.getTime())||Number.isNaN(bb.getTime()))return null;
+  return (bb-aa)/3600000;
+}
+function trtProtocolForDate(date){
+  return activeTrtProtocols(date)[0]||null;
+}
+function expectedLastDoseAt(date,time=''){
+  const p=trtProtocolForDate(date);
+  if(!p || !p.time)return '';
+  const labDt=combineDateTime(date,time||'23:59');
+  if(!labDt)return '';
+  let doseDate=new Date(`${p.start}T${p.time}:00`);
+  const end=new Date(labDt);
+  if(p.frequency==='daily'){
+    doseDate=new Date(`${date}T${p.time}:00`);
+    if(doseDate>labDt)doseDate.setDate(doseDate.getDate()-1);
+  }else if(p.frequency==='every_n_days'){
+    const interval=Math.max(1,Number(p.interval)||1);
+    const anchor=new Date(`${p.start}T${p.time}:00`);
+    const days=Math.floor((labDt-anchor)/86400000);
+    const n=Math.max(0,Math.floor(days/interval));
+    doseDate=new Date(anchor);doseDate.setDate(anchor.getDate()+n*interval);
+    while(doseDate>labDt)doseDate.setDate(doseDate.getDate()-interval);
+  }else if(p.frequency==='weekly'){
+    const wanted=Number(p.weekday);
+    doseDate=new Date(`${date}T${p.time}:00`);
+    for(let i=0;i<7;i++){
+      if(doseDate.getDay()===wanted && doseDate<=labDt)break;
+      doseDate.setDate(doseDate.getDate()-1);
+    }
+  }else return '';
+  const local=new Date(doseDate.getTime()-doseDate.getTimezoneOffset()*60000);
+  return local.toISOString().slice(0,16);
+}
+function doseContextFromForm(prefix){
+  const medId=$(prefix+'DoseMed')?.value||'';
+  const lastDoseAt=$(prefix+'LastDoseAt')?.value||'';
+  const relation=$(prefix+'DoseRelation')?.value||'unknown';
+  const adherence=$(prefix+'Adherence')?.value||'unknown';
+  return {medId,lastDoseAt,relation,adherence};
+}
+function doseContextFields(prefix,lab={}){
+  const p=trtProtocolForDate(lab.date||today());
+  const medId=lab.doseContext?.medId||p?.medId||'';
+  const lastDoseAt=lab.doseContext?.lastDoseAt||expectedLastDoseAt(lab.date||today(),lab.time||'');
+  const relation=lab.doseContext?.relation||'unknown';
+  const adherence=lab.doseContext?.adherence||'unknown';
+  return `<div class="dose-context wide">
+    <div class="dose-context-title">Контекст анализа относительно тестостерона ${helpDot('chart','Эти данные помогают понять, насколько корректно сравнивать результат с предыдущими анализами и текущей дозировкой.')}</div>
+    <div class="form-grid">
+      <label>Препарат<select id="${prefix}DoseMed"><option value="">— не указывать —</option>${medOptions(medId)}</select></label>
+      <label>Последняя доза / введение<input id="${prefix}LastDoseAt" type="datetime-local" value="${lastDoseAt}"></label>
+      <label>Тип точки<select id="${prefix}DoseRelation">
+        <option value="unknown" ${relation==='unknown'?'selected':''}>Не знаю / обычный контроль</option>
+        <option value="trough" ${relation==='trough'?'selected':''}>Перед следующей дозой (минимум / trough)</option>
+        <option value="post_dose" ${relation==='post_dose'?'selected':''}>После дозы / введения</option>
+        <option value="peak" ${relation==='peak'?'selected':''}>Ожидаемый пик</option>
+        <option value="random" ${relation==='random'?'selected':''}>Случайное время</option>
+      </select></label>
+      <label>Соблюдение схемы<select id="${prefix}Adherence">
+        <option value="unknown" ${adherence==='unknown'?'selected':''}>Не указано</option>
+        <option value="yes" ${adherence==='yes'?'selected':''}>Да, без отклонений</option>
+        <option value="minor" ${adherence==='minor'?'selected':''}>Были небольшие отклонения</option>
+        <option value="no" ${adherence==='no'?'selected':''}>Нет, были существенные отклонения</option>
+      </select></label>
+    </div>
+    <div class="note" style="margin-top:7px">Если время протокола задано, программа пытается подставить ожидаемую последнюю дозу автоматически. При необходимости исправьте вручную.</div>
+  </div>`;
+}
+function doseContextSummary(lab){
+  const c=lab?.doseContext||{};
+  const med=c.medId?medName(c.medId):'—';
+  let hours=null;
+  if(c.lastDoseAt && lab?.date){
+    const labDt=combineDateTime(lab.date,lab.time||'12:00');
+    if(labDt)hours=hoursBetweenDateTimes(c.lastDoseAt,labDt.toISOString());
+  }
+  const relLabels={unknown:'не указано',trough:'перед следующей дозой / trough',post_dose:'после дозы',peak:'ожидаемый пик',random:'случайное время'};
+  const adhLabels={unknown:'не указано',yes:'без отклонений',minor:'небольшие отклонения',no:'существенные отклонения'};
+  return {
+    med,
+    lastDoseAt:c.lastDoseAt||'',
+    hours,
+    relation:relLabels[c.relation]||c.relation||'не указано',
+    adherence:adhLabels[c.adherence]||c.adherence||'не указано'
+  };
+}
+function recentDeviationsForProtocol(p,labDate,days=14){
+  if(!p)return [];
+  const end=new Date(`${labDate}T12:00:00`);
+  const start=new Date(end);start.setDate(start.getDate()-days);
+  return state.deviations.filter(d=>{
+    if(d.medId!==p.medId)return false;
+    const dt=new Date(`${d.date}T12:00:00`);
+    return dt>=start&&dt<=end;
+  });
+}
+function assessLabReadiness(lab){
+  if(!lab)return {level:'bad',label:'Нет анализа',score:0,reasons:['Добавьте лабораторный анализ.']};
+  const p=trtProtocolForDate(lab.date);
+  if(!p)return {level:'bad',label:'Низкая уверенность',score:0,reasons:['На дату анализа не найден активный протокол тестостерона.']};
+  const stableDays=Math.max(0,daysBetween(p.start,lab.date)||0);
+  const deviations=recentDeviationsForProtocol(p,lab.date,14);
+  const c=lab.doseContext||{};
+  const timingKnown=!!c.lastDoseAt || (c.relation&&c.relation!=='unknown');
+  let score=0,reasons=[];
+  if(stableDays>=42){score+=2;reasons.push(`Протокол не менялся ${stableDays} дней.`)}
+  else if(stableDays>=21){score+=1;reasons.push(`Протокол не менялся ${stableDays} дней; это промежуточный срок.`)}
+  else reasons.push(`Протокол действует только ${stableDays} дней — тренд может ещё отражать недавнее изменение.`);
+  if(timingKnown){score+=2;reasons.push('Контекст последней дозы относительно анализа указан.')}
+  else reasons.push('Не указано время/тип точки относительно последней дозы.');
+  if(!deviations.length && c.adherence!=='no'){score+=2;reasons.push('За последние 14 дней в журнале нет отклонений от этого протокола.')}
+  else reasons.push(`За последние 14 дней найдено отклонений: ${deviations.length}${c.adherence==='no'?' · отмечено существенное несоблюдение схемы':''}.`);
+  if(c.adherence==='yes')score+=1;
+  if(c.adherence==='no')score=Math.max(0,score-2);
+  const level=score>=6?'good':(score>=3?'warn':'bad');
+  const label=level==='good'?'Высокая пригодность данных':(level==='warn'?'Средняя пригодность данных':'Низкая пригодность данных');
+  return {level,label,score,stableDays,deviations,reasons,protocol:p};
 }
 function currentProtocolForMed(medId,date=today()){
   return state.protocols.filter(p=>p.medId===medId && p.start<=date && (!p.end || p.end>=date))
@@ -1321,6 +1512,7 @@ function openPdfReview(data){
       <label>Время<input id="pdfTime" type="time"></label>
       <label>Лаборатория<input id="pdfLab" value="${(data.lab||'').replace(/"/g,'&quot;')}"></label>
       <label>Исходный файл<input value="${data.fileName.replace(/"/g,'&quot;')}" disabled></label>
+      ${doseContextFields('pdf',{date:data.date||today(),time:'',doseContext:{}})}
     </div>
     <div class="note" style="margin:12px 0">
       PDF содержит <b style="color:#f4f5f7">${data.pageCount||1}</b> стр. · распознано
@@ -1378,7 +1570,7 @@ function savePdfLab(){
     };
   }).filter(m=>m.name&&m.value!==null&&isPlausibleMarkerName(m.name));
   if(!markers.length && !confirm('Показатели не заполнены. Всё равно сохранить анализ?'))return;
-  state.labs.push({id:uid(),date,time:$('pdfTime').value,lab:$('pdfLab').value.trim(),comment:'Импортировано из PDF',markers,protocolContext:protocolContext(date),source:'pdf',sourceFile:document.querySelector('#modal input[disabled]')?.value||''});
+  state.labs.push({id:uid(),date,time:$('pdfTime').value,lab:$('pdfLab').value.trim(),comment:'Импортировано из PDF',markers,protocolContext:protocolContext(date),doseContext:doseContextFromForm('pdf'),source:'pdf',sourceFile:document.querySelector('#modal input[disabled]')?.value||''});
   closeModal();save();
 }
 
@@ -1389,6 +1581,7 @@ function openLabModal(id=''){
     <label>Время<input id="lTime" type="time" value="${l?.time||''}"></label>
     <label>Лаборатория<input id="lLab" placeholder="Synlab, HUS..." value="${String(l?.lab||'').replace(/"/g,'&quot;')}"></label>
     <label class="wide">Комментарий<input id="lComment" value="${String(l?.comment||'').replace(/"/g,'&quot;')}"></label>
+    ${doseContextFields('l',l||{date:today(),time:''})}
   </div><input type="hidden" id="lEditId" value="${l?.id||''}">
   <div style="margin-top:14px"><div class="head"><h2 style="font-size:15px">Показатели</h2><button class="btn" onclick="addMarkerRow()">＋ Показатель</button></div><div id="markerRows"></div></div>
   <div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveLab()">Сохранить анализ</button></div>`);
@@ -1424,7 +1617,7 @@ function saveLab(){
       canonicalKey:choice?learnAnalyte(name,choice):''
     };
   }).filter(m=>m.name&&m.value!==null);
-  const data={date,time:$('lTime').value,lab:$('lLab').value.trim(),comment:$('lComment').value.trim(),markers,protocolContext:protocolContext(date)};
+  const data={date,time:$('lTime').value,lab:$('lLab').value.trim(),comment:$('lComment').value.trim(),markers,protocolContext:protocolContext(date),doseContext:doseContextFromForm('l')};
   if(id){const i=state.labs.findIndex(x=>x.id===id);if(i>=0)state.labs[i]={...state.labs[i],...data}}
   else state.labs.push({id:uid(),...data});
   closeModal();save();
@@ -1485,6 +1678,15 @@ function openLabDetails(id){
     </div>
     ${l.sourceFile?`<div class="note" style="margin-bottom:10px">PDF: ${l.sourceFile}</div>`:''}
     <div class="note" style="margin-bottom:10px"><b style="color:#f4f5f7">Контекст ГЗТ:</b> ${l.protocolContext||'—'}</div>
+    ${(()=>{
+      const dc=doseContextSummary(l),ra=assessLabReadiness(l);
+      const lastDose=dc.lastDoseAt?new Date(dc.lastDoseAt).toLocaleString('ru-RU'):'—';
+      const hrs=Number.isFinite(dc.hours)?` · ${dc.hours.toFixed(1)} ч до анализа`:'';
+      return `<div class="readiness-box ${ra.level}" style="margin-bottom:10px">
+        <div class="readiness-title">${ra.label}</div>
+        <div class="note" style="margin-top:6px">Последняя доза: <b style="color:var(--text)">${safeHtml(lastDose)}</b>${hrs}<br>Тип точки: ${safeHtml(dc.relation)} · Соблюдение: ${safeHtml(dc.adherence)}</div>
+      </div>`;
+    })()}
     <div class="table-wrap"><table><thead><tr><th>Показатель</th><th>Результат</th><th>Единица</th><th>Референс</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="5">Нет показателей</td></tr>'}</tbody></table></div>
     ${l.comment?`<div class="note" style="margin-top:10px">${l.comment}</div>`:''}
     <div class="actions"><button class="btn" onclick="openLabModal('${id}')">Редактировать</button><button class="btn" onclick="closeModal()">Закрыть</button></div>`);
@@ -1516,6 +1718,127 @@ function renderLatestChanges(){
   }
   box.innerHTML=cards.length?`<div class="change-grid">${cards.join('')}</div>`:`<div class="empty">Пока недостаточно повторных анализов для сравнения.</div>`;
 }
+const APP_VERSION='3.0';
+
+function firstMarker(key){
+  const arr=markerHistory(key);return arr.length?arr[0]:null;
+}
+function latestBp(){
+  const w=latestWellbeing();return w?.bp||'—';
+}
+function safetySnapshot(){
+  const hct=latestMarker('hematocrit');
+  const hb=latestMarker('hemoglobin');
+  const psa=latestMarker('psa');
+  const psaFirst=firstMarker('psa');
+  const ldl=latestMarker('ldl');
+  const hdl=latestMarker('hdl');
+  const hba1c=latestMarker('hba1c');
+  const w=latestWellbeing();
+  const items=[];
+  if(hct){
+    const v=Number(hct.marker.value);
+    const level=v>=54?'bad':(v>=50?'warn':'good');
+    const stateText=v>=54?'≥54%: требуется обсудить коррекцию терапии с врачом':(v>=50?'Повышен — следить за динамикой':'Без сигнала по порогу 54%');
+    items.push({key:'hematocrit',label:'Гематокрит',value:`${v} ${hct.marker.unit||'%'}`,level,state:stateText,date:hct.lab.date});
+  }else items.push({key:'hematocrit',label:'Гематокрит',value:'—',level:'warn',state:'Нет данных',date:''});
+
+  if(hb)items.push({key:'hemoglobin',label:'Гемоглобин',value:`${hb.marker.value} ${hb.marker.unit||''}`,level:'',state:'Последнее значение',date:hb.lab.date});
+  else items.push({key:'hemoglobin',label:'Гемоглобин',value:'—',level:'',state:'Нет данных',date:''});
+
+  if(psa){
+    let psaLevel='',psaState='Последнее значение';
+    if(psaFirst && psaFirst.date!==psa.lab.date){
+      const delta=Number(psa.marker.value)-Number(psaFirst.value);
+      const months=Math.abs(daysBetween(psaFirst.date,psa.lab.date)||0)/30.44;
+      psaState=`Δ от первого в базе ${delta>=0?'+':''}${delta.toFixed(2)} ${psa.marker.unit||''}`;
+      if(months<=12 && delta>1.4){psaLevel='warn';psaState+=' · обсудить с врачом';}
+    }
+    items.push({key:'psa',label:'PSA',value:`${psa.marker.value} ${psa.marker.unit||''}`,level:psaLevel,state:psaState,date:psa.lab.date});
+  }else items.push({key:'psa',label:'PSA',value:'—',level:'',state:'Нет данных',date:''});
+
+  if(ldl)items.push({key:'ldl',label:'LDL',value:`${ldl.marker.value} ${ldl.marker.unit||''}`,level:'',state:'Липидный профиль',date:ldl.lab.date});
+  if(hdl)items.push({key:'hdl',label:'HDL',value:`${hdl.marker.value} ${hdl.marker.unit||''}`,level:'',state:'Липидный профиль',date:hdl.lab.date});
+  if(hba1c)items.push({key:'hba1c',label:'HbA1c',value:`${hba1c.marker.value} ${hba1c.marker.unit||''}`,level:'',state:'Гликемический профиль',date:hba1c.lab.date});
+  items.push({key:'bp',label:'Давление',value:w?.bp||'—',level:'',state:w?.date?`Самочувствие · ${fmtDate(w.date)}`:'Нет данных',date:w?.date||''});
+  items.push({key:'weight',label:'Вес',value:w?.weight!=null?`${w.weight} кг`:'—',level:'',state:w?.date?`Самочувствие · ${fmtDate(w.date)}`:'Нет данных',date:w?.date||''});
+  return items;
+}
+function safetyOverall(){
+  const items=safetySnapshot();
+  if(items.some(x=>x.level==='bad'))return {level:'bad',label:'Требует внимания'};
+  if(items.some(x=>x.level==='warn'))return {level:'warn',label:'Есть показатели для контроля'};
+  return {level:'good',label:'Критических сигналов по заданным правилам нет'};
+}
+function safetyHtml(compact=false){
+  const items=safetySnapshot();
+  const shown=compact?items.slice(0,4):items;
+  const overall=safetyOverall();
+  return `<div class="safety-box"><div class="readiness-title">${overall.label}</div>
+    <div class="safety-grid" style="margin-top:9px">
+      ${shown.map(x=>`<div class="safety-item ${x.level||''}">
+        <div class="label">${safeHtml(x.label)}</div>
+        <div class="value">${safeHtml(x.value)}</div>
+        <div class="state">${safeHtml(x.state)}${x.date?` · ${fmtDate(x.date)}`:''}</div>
+      </div>`).join('')}
+    </div>
+    ${compact?`<div class="note" style="margin-top:8px">Полная панель — во вкладке «Анализ ГЗТ».</div>`:''}
+  </div>`;
+}
+function readinessHtml(lab){
+  const a=assessLabReadiness(lab);
+  return `<div class="readiness-box ${a.level}">
+    <div class="readiness-title">${a.label}</div>
+    <div class="readiness-reasons">${a.reasons.map(r=>`<div class="readiness-reason">• ${safeHtml(r)}</div>`).join('')}</div>
+    <div class="note" style="margin-top:9px">Эта оценка — эвристика качества данных для сравнения схем, а не клинический срок ожидания.</div>
+  </div>`;
+}
+function printDoctorReport(){
+  const labs=[...state.labs].sort((a,b)=>b.date.localeCompare(a.date));
+  const last=labs[0]||null;
+  const a=clinicalAdvice();
+  const readiness=assessLabReadiness(last);
+  const safety=safetySnapshot();
+  const protocols=[...state.protocols].sort((a,b)=>b.start.localeCompare(a.start)).slice(0,8);
+  const well=[...state.wellbeing].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);
+  const goals=state.goals||[];
+  const markerRows=last?.markers?.map(m=>{
+    const key=analyteKeyForMarker(m),g=goalFor(key);
+    let ref='—';if(m.min!=null&&m.max!=null)ref=`${m.min}–${m.max}`;else if(m.max!=null)ref=`<${m.max}`;else if(m.min!=null)ref=`>${m.min}`;
+    let target='—';if(g)target=`${g.min??'—'}–${g.max??'—'} ${g.unit||m.unit||''}`;
+    return `<tr><td>${safeHtml(analyteLabel(key,m.name))}</td><td><b>${m.value} ${safeHtml(m.unit||'')}</b></td><td>${safeHtml(ref)}</td><td>${safeHtml(target)}</td></tr>`;
+  }).join('')||'<tr><td colspan="4">Нет анализов</td></tr>';
+  const dc=last?doseContextSummary(last):null;
+  const win=window.open('','_blank');
+  if(!win)return alert('Браузер заблокировал новое окно. Разрешите всплывающие окна для создания отчёта.');
+  const style=`<style>
+    body{font-family:Arial,sans-serif;color:#17212b;margin:28px;font-size:12px}h1{font-size:24px;margin:0 0 4px}h2{font-size:16px;margin:22px 0 8px;border-bottom:1px solid #d9e1e8;padding-bottom:6px}.muted{color:#697988}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.box{border:1px solid #d9e1e8;border-radius:8px;padding:10px}table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid #e2e7ec;padding:7px;text-align:left}th{font-size:10px;text-transform:uppercase;color:#697988}.warn{color:#a45d00}.bad{color:#b52f3d}.good{color:#218454}.small{font-size:10px}.no-print{margin:12px 0}@media print{.no-print{display:none}body{margin:10mm}}</style>`;
+  const html=`<!doctype html><html><head><meta charset="utf-8"><title>HRT report ${today()}</title>${style}</head><body>
+    <div class="no-print"><button onclick="window.print()">Печать / Сохранить как PDF</button></div>
+    <h1>HRT Health Studio — отчёт врачу</h1>
+    <div class="muted">Версия v${APP_VERSION||'${APP_VERSION}'} · сформирован ${new Date().toLocaleString('ru-RU')}</div>
+    <h2>Текущая цель</h2><div class="box">${safeHtml(state.settings.primaryGoal||'Не указана')}</div>
+    <h2>Текущие протоколы</h2>
+    <div class="grid">${activeProtocols().map(p=>`<div class="box"><b>${safeHtml(medName(p.medId))}</b><br>${safeHtml(scheduleText(p))}<br><span class="muted">с ${fmtDate(p.start)}</span></div>`).join('')||'<div class="box">Нет активных протоколов</div>'}</div>
+    <h2>Последний анализ</h2>
+    <div class="box"><b>${last?fmtDate(last.date):'—'}</b>${last?.time?' · '+last.time:''} · ${safeHtml(last?.lab||'—')}<br>
+      <span class="muted">Контекст дозы: ${dc?`${safeHtml(dc.med)} · ${safeHtml(dc.relation)} · соблюдение: ${safeHtml(dc.adherence)}`:'—'}</span></div>
+    <table><thead><tr><th>Показатель</th><th>Результат</th><th>Референс</th><th>Моя цель</th></tr></thead><tbody>${markerRows}</tbody></table>
+    <h2>Пригодность анализа для оценки схемы</h2>
+    <div class="box ${readiness.level}"><b>${safeHtml(readiness.label)}</b><br>${readiness.reasons.map(x=>`• ${safeHtml(x)}`).join('<br>')}</div>
+    <h2>Safety Dashboard</h2>
+    <div class="grid">${safety.map(x=>`<div class="box ${x.level||''}"><b>${safeHtml(x.label)}</b><br>${safeHtml(x.value)}<br><span class="muted">${safeHtml(x.state)}</span></div>`).join('')}</div>
+    <h2>Что программа предлагает обсудить с врачом</h2>
+    <div class="box">${[...a.warnings,...a.actions].map(x=>`• ${safeHtml(x)}`).join('<br>')||'Нет автоматических пунктов.'}</div>
+    <h2>Последние изменения протокола</h2>
+    <table><thead><tr><th>Дата</th><th>Препарат</th><th>Схема</th></tr></thead><tbody>${protocols.map(p=>`<tr><td>${fmtDate(p.start)}</td><td>${safeHtml(medName(p.medId))}</td><td>${safeHtml(scheduleText(p))}</td></tr>`).join('')||'<tr><td colspan="3">Нет данных</td></tr>'}</tbody></table>
+    <h2>Последнее самочувствие</h2>
+    <table><thead><tr><th>Дата</th><th>Энергия</th><th>Либидо</th><th>Сон</th><th>Настроение</th><th>Восстановление</th><th>Вес</th><th>АД</th></tr></thead><tbody>${well.map(w=>`<tr><td>${fmtDate(w.date)}</td><td>${w.energy??'—'}</td><td>${w.libido??'—'}</td><td>${w.sleep??'—'}</td><td>${w.mood??'—'}</td><td>${w.recovery??'—'}</td><td>${w.weight??'—'}</td><td>${safeHtml(w.bp||'—')}</td></tr>`).join('')||'<tr><td colspan="8">Нет данных</td></tr>'}</tbody></table>
+    <p class="small muted" style="margin-top:24px">Отчёт предназначен для обсуждения с врачом. Автоматические оценки программы не являются диагнозом или назначением лечения.</p>
+    </body></html>`;
+  win.document.open();win.document.write(html);win.document.close();
+  setTimeout(()=>{try{win.focus()}catch{}},250);
+}
 function renderAll(){
   const aps=activeProtocols();
   $('dashKpis').innerHTML=[
@@ -1528,6 +1851,10 @@ function renderAll(){
   $('activeProtocols').innerHTML=aps.length?`<div class="timeline">${aps.map(p=>`<div class="event"><b>${medName(p.medId)} · ${scheduleText(p)}</b><small>с ${fmtDate(p.start)}${p.comment?' · '+p.comment:''}</small></div>`).join('')}</div>`:`<div class="empty">Нет действующих протоколов.</div>`;
 
   const last=[...state.labs].sort((a,b)=>b.date.localeCompare(a.date))[0];
+  if($('dashboardReadiness'))$('dashboardReadiness').innerHTML=readinessHtml(last);
+  if($('dashboardSafety'))$('dashboardSafety').innerHTML=safetyHtml(true);
+  if($('doseReadiness'))$('doseReadiness').innerHTML=readinessHtml(last);
+  if($('safetyDashboard'))$('safetyDashboard').innerHTML=safetyHtml(false);
   $('lastLab').innerHTML=last?`<b>${fmtDate(last.date)}${last.time?' · '+last.time:''}</b><div class="sub">${last.lab||'Лаборатория не указана'} · ${last.markers.length} показателей</div><div class="note" style="margin-top:10px">${last.protocolContext||''}</div>`:`<div class="empty">Анализов пока нет.</div>`;
 
   const ev=[
@@ -1588,6 +1915,13 @@ function canonicalMarkerKey(name){
   if(/estradiol|e2/.test(x)) return 'estradiol';
   if(/prolak|prl/.test(x)) return 'prolactin';
   if(/hba1c|hemoglobiini-a1c/.test(x)) return 'hba1c';
+  if(/(^|[^a-z])psa([^a-z]|$)|prostataspesif/.test(x)) return 'psa';
+  if(/(^|[^a-z])ldl([^a-z]|$)/.test(x)) return 'ldl';
+  if(/(^|[^a-z])hdl([^a-z]|$)/.test(x)) return 'hdl';
+  if(/trigly|triglyser/.test(x)) return 'triglycerides';
+  if(/ferriti/.test(x)) return 'ferritin';
+  if(/(^|[^a-z])alt([^a-z]|$)|alat/.test(x)) return 'alt';
+  if(/(^|[^a-z])ast([^a-z]|$)|asat/.test(x)) return 'ast';
   if(/insuliin(?!in kaltainen)|\binsu\b/.test(x)) return 'insulin';
   if(/tsh|tyreotrop/.test(x)) return 'tsh';
   if(/kortisol|korsol/.test(x)) return 'cortisol';
@@ -1668,6 +2002,15 @@ function chartSeriesForKey(key){
   const points=pts.filter(p=>p.unit===dominantUnit);
   return {group,points,unit:dominantUnit,skipped:pts.length-points.length};
 }
+
+function protocolEventsForChart(points){
+  if(!points?.length)return [];
+  const minDate=points[0].date,maxDate=points.at(-1).date;
+  return state.protocols
+    .filter(p=>p.start>=minDate&&p.start<=maxDate)
+    .filter(p=>['testogel','testavan','testosterone enanthate','testosterone undecanoate'].some(k=>medName(p.medId).toLowerCase().includes(k)))
+    .sort((a,b)=>a.start.localeCompare(b.start));
+}
 function drawMiniMetricChart(canvas,key,index){
   const ctx=canvas.getContext('2d');
   const c=canvas;
@@ -1699,12 +2042,29 @@ function drawMiniMetricChart(canvas,key,index){
   }
 
   const color=chartColorForIndex(index);
+  const firstDate=new Date(points[0].date+'T12:00:00').getTime();
+  const lastDate=new Date(points.at(-1).date+'T12:00:00').getTime();
+  const span=Math.max(1,lastDate-firstDate);
+  const eventHitPoints=[];
+  for(const ev of protocolEventsForChart(points)){
+    const tx=new Date(ev.start+'T12:00:00').getTime();
+    const x=L+W*((tx-firstDate)/span);
+    ctx.save();
+    ctx.setLineDash([5,5]);ctx.strokeStyle='rgba(214,173,98,.55)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(x,T);ctx.lineTo(x,T+H);ctx.stroke();ctx.restore();
+    ctx.fillStyle='#d6ad62';ctx.beginPath();ctx.moveTo(x-5,T+2);ctx.lineTo(x+5,T+2);ctx.lineTo(x,T+10);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#bfa36e';ctx.font='9px sans-serif';
+    const short=(medName(ev.medId).replace('Testosterone ','T. ').slice(0,18));
+    ctx.fillText(short,x+5,T+11);
+    eventHitPoints.push({kind:'event',x,y:T+8,event:ev});
+  }
+
   ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.beginPath();
   const hitPoints=[];
   points.forEach((p,i)=>{
     const x=L+(points.length===1?W/2:W*i/(points.length-1));
     const y=T+H*(1-(p.value-ymin)/(ymax-ymin));
-    hitPoints.push({x,y,p});
+    hitPoints.push({kind:'point',x,y,p});
     i?ctx.lineTo(x,y):ctx.moveTo(x,y);
   });
   ctx.stroke();
@@ -1733,24 +2093,40 @@ function drawMiniMetricChart(canvas,key,index){
 
   function hideTip(){tip.style.display='none'}
   function showPoint(h,clientX,clientY){
-    const p=h.p;
-    const target=goalFor(key);
-    const goal=target?goalStatus(key,p.value).text:'Цель не задана';
-    const protocol=protocolSummaryAt(p.date);
-    const info=analyteInfo(key);
-    const ref=(p.min!==null&&p.min!==undefined&&p.max!==null&&p.max!==undefined)
-      ? `${p.min}–${p.max} ${p.unit||''}`
-      : (p.max!==null&&p.max!==undefined?`< ${p.max} ${p.unit||''}`:(p.min!==null&&p.min!==undefined?`> ${p.min} ${p.unit||''}`:'—'));
-    tip.innerHTML=`<b>${safeHtml(analyteLabel(key,key))}</b>
-      <div style="font-size:16px;margin:3px 0 2px"><strong>${p.value} ${p.unit||''}</strong></div>
-      <div>Дата анализа: <strong>${fmtDate(p.date)}</strong></div>
-      ${p.source?`<div>Лаборатория: ${safeHtml(p.source)}</div>`:''}
-      <div>Референс лаборатории: <strong>${safeHtml(ref)}</strong></div>
-      <div class="muted">${safeHtml(goal)}</div>
-      <div class="protocol"><span class="muted">Протокол на дату анализа:</span><br><strong>${safeHtml(protocol)}</strong></div>
-      <div class="protocol"><span class="muted">Что означает показатель:</span><br>${safeHtml(info.what)}</div>
-      <div style="margin-top:5px"><span class="muted">Для чего смотрят:</span><br>${safeHtml(info.why)}</div>
-      <div style="margin-top:5px"><span class="muted">В контексте ГЗТ:</span><br>${safeHtml(info.trt)}</div>`;
+    if(h.kind==='event'){
+      const ev=h.event;
+      tip.innerHTML=`<b>Изменение протокола</b>
+        <div style="font-size:15px;margin:4px 0"><strong>${safeHtml(medName(ev.medId))}</strong></div>
+        <div>Дата: <strong>${fmtDate(ev.start)}</strong></div>
+        <div>${safeHtml(scheduleText(ev))}</div>
+        ${ev.comment?`<div class="protocol">${safeHtml(ev.comment)}</div>`:''}`;
+    }else{
+      const p=h.p;
+      const target=goalFor(key);
+      const goal=target?goalStatus(key,p.value).text:'Цель не задана';
+      const lab=state.labs.find(l=>l.date===p.date && (l.lab||'')===(p.source||'')) || state.labs.find(l=>l.date===p.date);
+      const protocol=protocolSummaryAt(p.date);
+      const info=analyteInfo(key);
+      const dc=lab?doseContextSummary(lab):null;
+      const ref=(p.min!==null&&p.min!==undefined&&p.max!==null&&p.max!==undefined)
+        ? `${p.min}–${p.max} ${p.unit||''}`
+        : (p.max!==null&&p.max!==undefined?`< ${p.max} ${p.unit||''}`:(p.min!==null&&p.min!==undefined?`> ${p.min} ${p.unit||''}`:'—'));
+      const timing=dc?.lastDoseAt
+        ? `${new Date(dc.lastDoseAt).toLocaleString('ru-RU')}${Number.isFinite(dc.hours)?` · ${dc.hours.toFixed(1)} ч до анализа`:''}`
+        : 'не указано';
+      tip.innerHTML=`<b>${safeHtml(analyteLabel(key,key))}</b>
+        <div style="font-size:16px;margin:3px 0 2px"><strong>${p.value} ${p.unit||''}</strong></div>
+        <div>Дата анализа: <strong>${fmtDate(p.date)}</strong></div>
+        ${p.source?`<div>Лаборатория: ${safeHtml(p.source)}</div>`:''}
+        <div>Референс лаборатории: <strong>${safeHtml(ref)}</strong></div>
+        <div class="muted">${safeHtml(goal)}</div>
+        <div class="protocol"><span class="muted">Протокол на дату анализа:</span><br><strong>${safeHtml(protocol)}</strong></div>
+        <div style="margin-top:5px"><span class="muted">Последняя доза:</span><br>${safeHtml(timing)}</div>
+        ${dc?`<div style="margin-top:4px"><span class="muted">Тип точки:</span> ${safeHtml(dc.relation)} · <span class="muted">соблюдение:</span> ${safeHtml(dc.adherence)}</div>`:''}
+        <div class="protocol"><span class="muted">Что означает показатель:</span><br>${safeHtml(info.what)}</div>
+        <div style="margin-top:5px"><span class="muted">Для чего смотрят:</span><br>${safeHtml(info.why)}</div>
+        <div style="margin-top:5px"><span class="muted">В контексте ГЗТ:</span><br>${safeHtml(info.trt)}</div>`;
+    }
     tip.style.display='block';
 
     const r=wrap.getBoundingClientRect();
@@ -1767,11 +2143,11 @@ function drawMiniMetricChart(canvas,key,index){
     const rect=c.getBoundingClientRect();
     const x=ev.clientX-rect.left,y=ev.clientY-rect.top;
     let best=null,dist=Infinity;
-    for(const h of hitPoints){
+    for(const h of [...hitPoints,...eventHitPoints]){
       const d=Math.hypot(h.x-x,h.y-y);
       if(d<dist){dist=d;best=h}
     }
-    return dist<=14?best:null;
+    return dist<=16?best:null;
   }
 
   c.onmousemove=(ev)=>{
@@ -2026,6 +2402,9 @@ function protocolPerformance(){
 }
 function renderClinicalAnalysis(){
   if(!$('clinicalConclusion'))return;
+  const last=[...state.labs].sort((a,b)=>b.date.localeCompare(a.date))[0]||null;
+  if($('doseReadiness'))$('doseReadiness').innerHTML=readinessHtml(last);
+  if($('safetyDashboard'))$('safetyDashboard').innerHTML=safetyHtml(false);
   const a=clinicalAdvice();
   const T=a.T?.marker,FT=a.FT?.marker,Hct=a.Hct?.marker;
   $('clinicalKpis').innerHTML=[
@@ -2058,9 +2437,14 @@ function exportData(){
   const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='HRT_Health_Studio_backup_'+today()+'.json';a.click();URL.revokeObjectURL(a.href);
 }
 function importData(e){
-  const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x||!x.meds||!x.protocols)throw 0;state=x;save();alert('Импорт завершён')}catch{alert('Не удалось прочитать файл')}};r.readAsText(f);
+  const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{
+    const x=JSON.parse(r.result);if(!x||!x.meds||!x.protocols)throw 0;
+    x.labs=x.labs||[];x.labs.forEach(l=>{l.doseContext=l.doseContext||{medId:'',lastDoseAt:'',relation:'unknown',adherence:'unknown'}});
+    x.settings=x.settings||{};x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion=APP_VERSION;
+    state=x;save();alert('Импорт завершён')
+  }catch{alert('Не удалось прочитать файл')}};r.readAsText(f);
 }
-function resetData(){if(confirm('Удалить все данные программы?')){state={meds:DEFAULT_MEDS.map(x=>({...x})),protocols:[],deviations:[],labs:[],wellbeing:[],aliasMap:{},customAnalytes:[],goals:[],labPlans:[],settings:{primaryGoal:''}};save()}}
+function resetData(){if(confirm('Удалить все данные программы?')){state={meds:DEFAULT_MEDS.map(x=>({...x})),protocols:[],deviations:[],labs:[],wellbeing:[],aliasMap:{},customAnalytes:[],goals:[],labPlans:[],settings:{primaryGoal:'',appVersion:'3.0'}};save()}}
 window.addEventListener('resize',()=>{clearTimeout(window.__hrtChartResize);window.__hrtChartResize=setTimeout(()=>{if($('analytics')?.classList.contains('active'))renderChartDashboard()},120)});
 
 document.getElementById('hrtGateSignIn')?.addEventListener('click',hrtSignIn);
