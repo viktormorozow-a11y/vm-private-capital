@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HRT Health Studio v3.1.1 — Cloud Sync</title>
+<title>HRT Health Studio v3.1.2 — Puhti Parser v2</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -184,10 +184,10 @@ aside{display:flex;flex-direction:column}
   </div>
 </div>
 <div id="hrtAppShell" class="auth-hidden">
-<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.1.1</div>
+<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.1.2</div>
 <div class="app">
 <aside>
-  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.1.1</small></div>
+  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.1.2</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Главная</button>
     <button class="nav" data-view="labs">Анализы</button>
@@ -436,7 +436,7 @@ state.goals=state.goals||[];
 state.labPlans=state.labPlans||[];
 state.settings=state.settings||{};
 state.settings.primaryGoal=state.settings.primaryGoal||'';
-state.settings.appVersion='3.1.1';
+state.settings.appVersion='3.1.2';
 state.labs.forEach(l=>{l.doseContext=l.doseContext||{medId:'',lastDoseAt:'',relation:'unknown',adherence:'unknown'}});
 
 // Repair aliases created by older parser versions where MCH/MCHC could be mistaken for hemoglobin.
@@ -495,7 +495,7 @@ function migrateHrtState(x){
   x.meds=x.meds||[];x.protocols=x.protocols||[];x.deviations=x.deviations||[];x.labs=x.labs||[];
   x.wellbeing=x.wellbeing||[];x.aliasMap=x.aliasMap||{};x.customAnalytes=x.customAnalytes||[];
   x.goals=x.goals||[];x.labPlans=x.labPlans||[];x.settings=x.settings||{};
-  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.1.1';
+  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.1.2';
   x.labs.forEach(l=>{l.doseContext=l.doseContext||{medId:'',lastDoseAt:'',relation:'unknown',adherence:'unknown'}});
   for(const dm of DEFAULT_MEDS){
     if(!x.meds.some(m=>String(m.name||'').trim().toLowerCase()===dm.name.toLowerCase()))x.meds.push({...dm});
@@ -708,6 +708,11 @@ function protocolSummaryAt(date){
 }
 function safeHtml(x){
   return String(x??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function markerDisplayValue(m){
+  if(!m)return '—';
+  if(m.rawValue && /^[<>≤≥]/.test(String(m.rawValue)))return String(m.rawValue).replace('.',',');
+  return String(m.value??'—');
 }
 
 const HELP_TEXT={
@@ -1216,6 +1221,121 @@ function puhtiHeadingBefore(flatText, pos){
   if(words.length>9)label=words.slice(-9).join(' ');
   return `${label} (${last[2]})`;
 }
+
+function parsePuhtiStructuredV2(text){
+  // Puhti Parser v2:
+  // 1) finds a clean analysis heading "Name (CODE)";
+  // 2) searches only inside that analysis block;
+  // 3) takes the numeric result after "Tulos";
+  // 4) reads "Viitearvot" independently;
+  // 5) ignores category headings such as Sydän / Hormonit / Munuaiset.
+  const lines=String(text||'').split('\n').map(normalizePdfText).filter(Boolean);
+  const out=[],seen=new Set();
+  const headingRe=/^(.+?)\s*\(([A-Za-z0-9+\/\-]+)\)\s*$/;
+  const junkHead=/^(Testin tulokset|Yhteenveto tuloksista|Raportin on tuottanut)/i;
+  const unitPattern='(?:nmol\\/l|pmol\\/l|mmol\\/l|mmol\\/mol|µmol\\/l|μmol\\/l|umol\\/l|g\\/l|mg\\/l|mg\\/dl|µg\\/l|μg\\/l|ug\\/l|ng\\/l|ng\\/ml|mU\\/l|U\\/l|IU\\/l|E9\\/l|E12\\/l|%|fL|fl|pg|ml\\/min\\/1\\.73m2)';
+  const resultRe=new RegExp('^([<>≤≥]?\\s*-?\\d+(?:[.,]\\d+)?)\\s*('+unitPattern+')?\\s*$','i');
+
+  function headingAt(i){
+    const x=lines[i];
+    if(!x||junkHead.test(x)||x.length>120)return null;
+    return x.match(headingRe);
+  }
+  function resultAt(x){
+    const m=String(x||'').match(resultRe);
+    if(!m)return null;
+    const raw=String(m[1]||'').replace(/\s/g,'');
+    const value=parseNumberLocal(raw.replace(/[<>≤≥]/g,''));
+    if(value===null)return null;
+    return {value,unit:m[2]||'',qualifier:(raw.match(/^[<>≤≥]/)||[])[0]||'',rawValue:raw};
+  }
+  function parseReference(x){
+    x=String(x||'').trim();
+    let m=x.match(new RegExp('^(\\d+(?:[.,]\\d+)?)\\s*[-–]\\s*(\\d+(?:[.,]\\d+)?)\\s*('+unitPattern+')?\\s*$','i'));
+    if(m)return {min:parseNumberLocal(m[1]),max:parseNumberLocal(m[2]),unit:m[3]||'',refText:x};
+    m=x.match(new RegExp('^-\\s*(\\d+(?:[.,]\\d+)?)\\s*('+unitPattern+')?\\s*$','i'));
+    if(m)return {min:null,max:parseNumberLocal(m[1]),unit:m[2]||'',refText:x};
+    m=x.match(new RegExp('^(\\d+(?:[.,]\\d+)?)\\s*-\\s*('+unitPattern+')?\\s*$','i'));
+    if(m)return {min:parseNumberLocal(m[1]),max:null,unit:m[2]||'',refText:x};
+    m=x.match(new RegExp('^([<>≤≥])\\s*(\\d+(?:[.,]\\d+)?)\\s*('+unitPattern+')?\\s*$','i'));
+    if(m){
+      const n=parseNumberLocal(m[2]);
+      return /^[<≤]$/.test(m[1])
+        ? {min:null,max:n,unit:m[3]||'',refText:x}
+        : {min:n,max:null,unit:m[3]||'',refText:x};
+    }
+    return null;
+  }
+
+  for(let i=0;i<lines.length;i++){
+    const hm=headingAt(i);
+    if(!hm)continue;
+    const code=hm[2];
+    const name=cleanLabName(lines[i]);
+
+    let end=lines.length;
+    for(let j=i+1;j<lines.length;j++){
+      if(headingAt(j)){end=j;break}
+    }
+
+    let tulos=-1;
+    for(let j=i+1;j<Math.min(end,i+45);j++){
+      if(/^Tulos$/i.test(lines[j])){tulos=j;break}
+    }
+    if(tulos<0)continue;
+
+    let res=null,resIdx=-1;
+    for(let j=tulos+1;j<Math.min(end,tulos+5);j++){
+      if(/^(Tehty|Negat)/i.test(lines[j]))break; // group or qualitative result
+      res=resultAt(lines[j]);
+      if(res){resIdx=j;break}
+    }
+    if(!res)continue;
+
+    let unit=res.unit,min=null,max=null,refText='';
+    let refIdx=-1;
+    for(let j=resIdx+1;j<Math.min(end,resIdx+14);j++){
+      if(/^Viitearvot?$/i.test(lines[j])){refIdx=j;break}
+    }
+    if(refIdx>=0){
+      for(let j=refIdx+1;j<Math.min(end,refIdx+5);j++){
+        const r=parseReference(lines[j]);
+        if(r){
+          min=r.min;max=r.max;refText=r.refText;
+          if(!unit&&r.unit)unit=r.unit;
+          break;
+        }
+      }
+    }else{
+      // Some Puhti charts (Kol/HDL and Non-HDL) omit "Viitearvot" in the text layer.
+      // Typical extraction is: result, duplicated result, chart threshold.
+      const bare=[];
+      for(let j=resIdx+1;j<Math.min(end,resIdx+5);j++){
+        const q=resultAt(lines[j]);
+        if(q&&!q.unit)bare.push(q.value);
+      }
+      if(bare.length>=2 && Math.abs(bare[0]-res.value)<1e-9){
+        max=bare[1];
+        refText=`≤ ${bare[1]} (граница графика Puhti)`;
+      }
+    }
+
+    const cl=code.toLowerCase();
+    if(!unit&&cl==='non-hdl')unit='mmol/l';
+
+    const item={
+      name,value:res.value,unit,min,max,refText,
+      rawValue:res.rawValue,qualifier:res.qualifier,
+      parser:'puhti-v2',code
+    };
+    const key=markerIdentity(item);
+    if(seen.has(key))continue;
+    seen.add(key);
+    out.push(item);
+  }
+  return out;
+}
+
 function parsePuhtiFlexible(text){
   // Does not depend on PDF line breaks. It searches the semantic block:
   // Tulos -> result+unit -> Viitearvot -> reference+unit.
@@ -1255,6 +1375,7 @@ function parsePuhtiFlexible(text){
 }
 function parseMarkersFromPdf(text){
   const candidates=[
+    ...parsePuhtiStructuredV2(text),
     ...parseTerveystaloRows(text),
     ...parseBlockResults(text),
     ...parsePuhtiFlexible(text)
@@ -1380,7 +1501,10 @@ const BASE_ANALYTES=[
   ['hematocrit','Гематокрит'],['hemoglobin','Гемоглобин'],['leukocytes','Лейкоциты'],
   ['erythrocytes','Эритроциты'],['platelets','Тромбоциты'],['mcv','MCV'],['mch','MCH'],['mchc','MCHC'],['rdw','RDW'],
   ['hba1c','HbA1c'],['insulin','Инсулин'],['tsh','TSH'],['cortisol','Кортизол'],['igf1','IGF-1'],
-  ['psa','PSA'],['alt','ALT'],['ast','AST'],['hdl','HDL'],['ldl','LDL'],['triglycerides','Триглицериды'],['ferritin','Ферритин']
+  ['psa','PSA'],['alt','ALT'],['ast','AST'],['hdl','HDL'],['ldl','LDL'],['triglycerides','Триглицериды'],['ferritin','Ферритин'],
+  ['total_cholesterol','Общий холестерин'],['non_hdl','Non-HDL'],['chol_hdl_ratio','Соотношение холестерин/HDL'],
+  ['hs_crp','Высокочувствительный CRP'],['creatinine','Креатинин'],['egfr','eGFR'],
+  ['b12','Витамин B12'],['vitamin_d','Витамин D']
 ];
 function aliasNorm(x){return String(x||'').toLowerCase().replace(/\s+/g,' ').trim()}
 function analyteCatalog(){
@@ -1685,6 +1809,8 @@ function addPdfMarkerRow(m={}){
   div.querySelector('.pdf-min').value=m.min??'';
   div.querySelector('.pdf-max').value=m.max??'';
   div.querySelector('.pdf-map').innerHTML=analyteSelectOptions(m.canonicalKey||'',m.name||'');
+  div.dataset.rawValue=m.rawValue||'';
+  div.dataset.qualifier=m.qualifier||'';
   if(m.page)div.title='Распознано на странице '+m.page+(m.refText?' · референс '+m.refText:'');
   $('pdfMarkerRows').appendChild(div);
 }
@@ -1700,7 +1826,9 @@ function savePdfLab(){
       unit:r.querySelector('.pdf-unit').value.trim(),
       min:r.querySelector('.pdf-min').value===''?null:Number(r.querySelector('.pdf-min').value),
       max:r.querySelector('.pdf-max').value===''?null:Number(r.querySelector('.pdf-max').value),
-      canonicalKey
+      canonicalKey,
+      rawValue:r.dataset.rawValue||'',
+      qualifier:r.dataset.qualifier||''
     };
   }).filter(m=>m.name&&m.value!==null&&isPlausibleMarkerName(m.name));
   if(!markers.length && !confirm('Показатели не заполнены. Всё равно сохранить анализ?'))return;
@@ -1802,7 +1930,7 @@ function openLabDetails(id){
     const key=analyteKeyForMarker(m);
     const std=analyteLabel(key,m.name);
     const display=std&&std!==m.name?`<b>${safeHtml(std)}</b><div class="note">${safeHtml(m.name)}</div>`:`<b>${safeHtml(m.name)}</b>`;
-    return `<tr><td><div class="analyte-name-line"><div>${display}</div><button class="analyte-info-btn" onclick="openAnalyteInfo('${key.replace(/'/g,"\\'")}','${String(m.name||'').replace(/'/g,"\\'")}')" title="Что означает этот показатель?">?</button></div></td><td>${m.value}</td><td>${m.unit||'—'}</td><td>${ref}</td><td>${flag}</td></tr>`;
+    return `<tr><td><div class="analyte-name-line"><div>${display}</div><button class="analyte-info-btn" onclick="openAnalyteInfo('${key.replace(/'/g,"\\'")}','${String(m.name||'').replace(/'/g,"\\'")}')" title="Что означает этот показатель?">?</button></div></td><td>${markerDisplayValue(m)}</td><td>${m.unit||'—'}</td><td>${ref}</td><td>${flag}</td></tr>`;
   }).join('');
   openModal(`<h3>Результаты анализа</h3>
     <div class="grid g3" style="margin-bottom:12px">
@@ -1852,7 +1980,7 @@ function renderLatestChanges(){
   }
   box.innerHTML=cards.length?`<div class="change-grid">${cards.join('')}</div>`:`<div class="empty">Пока недостаточно повторных анализов для сравнения.</div>`;
 }
-const APP_VERSION='3.1.1';
+const APP_VERSION='3.1.2';
 
 function normalizedHctPercent(marker){
   if(!marker)return null;
@@ -2072,6 +2200,14 @@ function canonicalMarkerKey(name){
   if(/prolak|prl/.test(x)) return 'prolactin';
   if(/hba1c|hemoglobiini-a1c/.test(x)) return 'hba1c';
   if(/(^|[^a-z])psa([^a-z]|$)|prostataspesif/.test(x)) return 'psa';
+  if(/kokonaiskolester|\(kol\)/.test(x)) return 'total_cholesterol';
+  if(/kol\/hdl-suh|kol\/hdlsuh/.test(x)) return 'chol_hdl_ratio';
+  if(/non-hdl/.test(x)) return 'non_hdl';
+  if(/herkkä\s*crp|hcrp/.test(x)) return 'hs_crp';
+  if(/kreatiniini|\bkrea\b/.test(x)) return 'creatinine';
+  if(/glomerulussuodos|pt-gfre|\begfr\b/.test(x)) return 'egfr';
+  if(/b12-vitamiini|b12-tc2/.test(x)) return 'b12';
+  if(/d-vitamiini|d-25/.test(x)) return 'vitamin_d';
   if(/(^|[^a-z])ldl([^a-z]|$)/.test(x)) return 'ldl';
   if(/(^|[^a-z])hdl([^a-z]|$)/.test(x)) return 'hdl';
   if(/trigly|triglyser/.test(x)) return 'triglycerides';
@@ -2114,7 +2250,15 @@ function canonicalMarkerLabel(key, fallback){
     mch:'MCH',
     mchc:'MCHC',
     platelets:'Тромбоциты',
-    rdw:'RDW'
+    rdw:'RDW',
+    total_cholesterol:'Общий холестерин',
+    non_hdl:'Non-HDL',
+    chol_hdl_ratio:'Соотношение холестерин/HDL',
+    hs_crp:'Высокочувствительный CRP',
+    creatinine:'Креатинин',
+    egfr:'eGFR',
+    b12:'Витамин B12',
+    vitamin_d:'Витамин D'
   };
   return labels[key]||fallback||key;
 }
