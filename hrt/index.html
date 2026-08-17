@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HRT Health Studio v3.1 — Cloud Sync</title>
+<title>HRT Health Studio v3.1.1 — Cloud Sync</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -124,7 +124,7 @@ aside{display:flex;flex-direction:column}
 }
 .suite-back a:hover{background:rgba(127,200,255,.10)}
 
-/* v3.0 clinical intelligence */
+/* Clinical intelligence */
 .site-version-badge{
   position:fixed;top:10px;right:14px;z-index:25;
   border:1px solid var(--line);background:rgba(7,16,25,.88);backdrop-filter:blur(10px);
@@ -160,18 +160,19 @@ aside{display:flex;flex-direction:column}
   .safety-grid{grid-template-columns:1fr}
 }
 
-/* v3.1 HRT cloud sync */
+/* v3.1.1 cloud sync */
 .hrt-cloud-card{margin:12px 0 0;padding:11px;border:1px solid var(--line);border-radius:12px;background:rgba(127,200,255,.035)}
 .hrt-cloud-row{display:flex;gap:9px;align-items:center}.hrt-cloud-dot{width:10px;height:10px;border-radius:50%;background:#82909d;box-shadow:0 0 0 4px rgba(130,144,157,.08);flex:0 0 auto}
 .hrt-cloud-dot.ok{background:var(--good);box-shadow:0 0 0 4px rgba(115,217,154,.10)}.hrt-cloud-dot.busy{background:#e2bd73;box-shadow:0 0 0 4px rgba(226,189,115,.10)}.hrt-cloud-dot.err{background:var(--bad);box-shadow:0 0 0 4px rgba(255,126,138,.10)}
 .hrt-cloud-title{font-size:11px;font-weight:760}.hrt-cloud-sub{font-size:9px;color:var(--muted);margin-top:2px;line-height:1.35}.hrt-cloud-actions{display:flex;gap:6px;margin-top:8px}.hrt-cloud-actions .btn{padding:6px 8px;font-size:9px}
+
 </style>
 </head>
 <body class="hrt-auth-locked">
 <div id="hrtAuthGate">
   <div class="hrt-auth-card">
     <div class="hrt-auth-brand">VM PRIVATE SUITE</div>
-    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.1</span></div>
+    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.1.1</span></div>
     <div class="hrt-auth-sub">Используйте тот же аккаунт, что и в Планировании капитала</div>
     <label>Email<input id="hrtGateEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
     <label>Пароль<input id="hrtGatePassword" type="password" autocomplete="current-password" placeholder="Введите пароль"></label>
@@ -183,10 +184,10 @@ aside{display:flex;flex-direction:column}
   </div>
 </div>
 <div id="hrtAppShell" class="auth-hidden">
-<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.1</div>
+<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.1.1</div>
 <div class="app">
 <aside>
-  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.1</small></div>
+  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.1.1</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Главная</button>
     <button class="nav" data-view="labs">Анализы</button>
@@ -374,7 +375,7 @@ aside{display:flex;flex-direction:column}
 </section>
 
 <section id="settings" class="view">
-  <div class="top"><div><h1>Настройки</h1><div class="sub">Резервная копия хранится в JSON. Данные сохраняются локально и автоматически синхронизируются с вашим облаком Supabase.</div></div></div>
+  <div class="top"><div><h1>Настройки</h1><div class="sub">Резервная копия хранится в JSON. Основные данные сохраняются локально в браузере.</div></div></div>
   <div class="panel">
     <div class="head"><h2>Данные</h2></div>
     <div class="actions" style="justify-content:flex-start">
@@ -408,6 +409,7 @@ const hrtSupabase=(window.supabase&&window.supabase.createClient)?window.supabas
 const KEY='hrt_health_studio_v1';
 const HRT_CLOUD_DIRTY_KEY='hrt_cloud_dirty_v1';
 const HRT_CLOUD_LAST_SYNC_KEY='hrt_cloud_last_sync_v1';
+const HRT_LOCAL_UPDATED_KEY='hrt_local_updated_v1';
 let hrtCloudUser=null,hrtCloudBusy=false,hrtCloudSaveTimer=null,hrtSuppressCloudSave=false;
 const DEFAULT_MEDS=[
   {id:'med_testogel',name:'Testogel',form:'Гель',unit:'нажатий',comment:''},
@@ -434,7 +436,7 @@ state.goals=state.goals||[];
 state.labPlans=state.labPlans||[];
 state.settings=state.settings||{};
 state.settings.primaryGoal=state.settings.primaryGoal||'';
-state.settings.appVersion='3.1';
+state.settings.appVersion='3.1.1';
 state.labs.forEach(l=>{l.doseContext=l.doseContext||{medId:'',lastDoseAt:'',relation:'unknown',adherence:'unknown'}});
 
 // Repair aliases created by older parser versions where MCH/MCHC could be mistaken for hemoglobin.
@@ -457,10 +459,11 @@ for(const dm of DEFAULT_MEDS){
 localStorage.setItem(KEY,JSON.stringify(state));
 const $=id=>document.getElementById(id);
 const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);
-const today=()=>new Date().toISOString().slice(0,10);
+const today=()=>isoTodayLocal();
 const fmtDate=s=>s?new Date(s+'T12:00:00').toLocaleDateString('ru-RU'):'—';
 function persistHrtLocal({markDirty=true}={}){
   localStorage.setItem(KEY,JSON.stringify(state));
+  localStorage.setItem(HRT_LOCAL_UPDATED_KEY,new Date().toISOString());
   if(markDirty&&!hrtSuppressCloudSave)localStorage.setItem(HRT_CLOUD_DIRTY_KEY,'1');
 }
 function scheduleHrtCloudSave(){
@@ -473,10 +476,10 @@ const save=()=>{persistHrtLocal();renderAll();scheduleHrtCloudSave()};
 const medName=id=>state.meds.find(x=>x.id===id)?.name||'Неизвестный препарат';
 
 function hrtCloudSetStatus(kind,title,sub=''){
-  const dot=$('hrtCloudDot'),t=$('hrtCloudTitle'),s=$('hrtCloudSub');
-  if(dot){dot.className='hrt-cloud-dot '+(kind||'')}
+  const dot=$('hrtCloudDot'),t=$('hrtCloudTitle'),ss=$('hrtCloudSub');
+  if(dot)dot.className='hrt-cloud-dot '+(kind||'');
   if(t)t.textContent=title||'';
-  if(s)s.textContent=sub||'';
+  if(ss)ss.textContent=sub||'';
 }
 function hrtCloudHasMeaningfulData(x=state){
   return !!((x?.labs?.length)||(x?.protocols?.length)||(x?.deviations?.length)||(x?.wellbeing?.length)||(x?.goals?.length)||(x?.labPlans?.length));
@@ -487,6 +490,18 @@ function hrtCloudToast(msg){
   Object.assign(el.style,{position:'fixed',right:'16px',bottom:'16px',zIndex:999999,background:'#101b27',color:'#eef4f7',border:'1px solid rgba(255,255,255,.12)',borderRadius:'10px',padding:'9px 12px',fontSize:'11px',boxShadow:'0 12px 35px rgba(0,0,0,.35)'});
   document.body.appendChild(el);setTimeout(()=>el.remove(),2600);
 }
+function migrateHrtState(x){
+  x=x||{};
+  x.meds=x.meds||[];x.protocols=x.protocols||[];x.deviations=x.deviations||[];x.labs=x.labs||[];
+  x.wellbeing=x.wellbeing||[];x.aliasMap=x.aliasMap||{};x.customAnalytes=x.customAnalytes||[];
+  x.goals=x.goals||[];x.labPlans=x.labPlans||[];x.settings=x.settings||{};
+  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.1.1';
+  x.labs.forEach(l=>{l.doseContext=l.doseContext||{medId:'',lastDoseAt:'',relation:'unknown',adherence:'unknown'}});
+  for(const dm of DEFAULT_MEDS){
+    if(!x.meds.some(m=>String(m.name||'').trim().toLowerCase()===dm.name.toLowerCase()))x.meds.push({...dm});
+  }
+  return x;
+}
 async function saveHrtCloudState(showToast=false){
   if(!hrtSupabase||!hrtCloudUser||hrtCloudBusy)return false;
   hrtCloudBusy=true;hrtCloudSetStatus('busy','Сохраняю в облако…',hrtCloudUser.email||'');
@@ -494,7 +509,8 @@ async function saveHrtCloudState(showToast=false){
     const payload=JSON.parse(JSON.stringify(state));
     const {error}=await hrtSupabase.from('hrt_user_data').upsert({user_id:hrtCloudUser.id,payload,updated_at:new Date().toISOString()},{onConflict:'user_id'});
     if(error)throw error;
-    const now=new Date().toISOString();localStorage.setItem(HRT_CLOUD_LAST_SYNC_KEY,now);localStorage.removeItem(HRT_CLOUD_DIRTY_KEY);
+    const now=new Date().toISOString();
+    localStorage.setItem(HRT_CLOUD_LAST_SYNC_KEY,now);localStorage.removeItem(HRT_CLOUD_DIRTY_KEY);
     hrtCloudSetStatus('ok','Облако синхронизировано',`${hrtCloudUser.email||''} · ${new Date(now).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}`);
     if(showToast)hrtCloudToast('HRT данные сохранены в облако');
     return true;
@@ -520,17 +536,12 @@ async function loadHrtCloudState({force=false,showToast=false}={}){
       hrtCloudSetStatus('ok','Облако подключено','Пока нет данных HRT');return true;
     }
     hrtSuppressCloudSave=true;
-    const payload=data.payload||{};
-    state={...state,...payload};
-    state.meds=state.meds||[];state.protocols=state.protocols||[];state.deviations=state.deviations||[];state.labs=state.labs||[];state.wellbeing=state.wellbeing||[];state.aliasMap=state.aliasMap||{};state.customAnalytes=state.customAnalytes||[];state.goals=state.goals||[];state.labPlans=state.labPlans||[];state.settings=state.settings||{};
-    state.settings.appVersion='3.1';state.settings.primaryGoal=state.settings.primaryGoal||'';
-    state.labs.forEach(l=>{l.doseContext=l.doseContext||{medId:'',lastDoseAt:'',relation:'unknown',adherence:'unknown'}});
-    for(const dm of DEFAULT_MEDS){if(!state.meds.some(m=>String(m.name||'').trim().toLowerCase()===dm.name.toLowerCase()))state.meds.push({...dm})}
+    state=migrateHrtState({...state,...(data.payload||{})});
     persistHrtLocal({markDirty:false});localStorage.removeItem(HRT_CLOUD_DIRTY_KEY);
     hrtSuppressCloudSave=false;renderAll();
     const stamp=data.updated_at||new Date().toISOString();localStorage.setItem(HRT_CLOUD_LAST_SYNC_KEY,stamp);
     hrtCloudSetStatus('ok','Облако синхронизировано',`${hrtCloudUser.email||''} · ${new Date(stamp).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}`);
-    if(showToast)hrtCloudToast('HRT данные загружены из облака');
+    if(showToast)hrtCloudToast('HRT данные загружены из облако');
     return true;
   }catch(e){
     hrtSuppressCloudSave=false;console.error('HRT cloud load error',e);hrtCloudSetStatus('err','Ошибка облака',e?.message||'Проверьте интернет');
@@ -546,7 +557,16 @@ async function handleHrtCloudSession(session,{initial=false}={}){
   if(data){
     const dirty=localStorage.getItem(HRT_CLOUD_DIRTY_KEY)==='1';
     if(dirty&&hrtCloudHasMeaningfulData(state)){
-      hrtCloudSetStatus('busy','Есть локальные изменения','Сначала сохраняю их в облако');
+      const lastSync=Date.parse(localStorage.getItem(HRT_CLOUD_LAST_SYNC_KEY)||'')||0;
+      const cloudTime=Date.parse(data.updated_at||'')||0;
+      if(initial && cloudTime>lastSync && lastSync>0){
+        const useCloud=confirm('Есть несинхронизированные локальные изменения, но облачная копия тоже обновлялась после последней синхронизации.\n\nOK — загрузить облачную копию.\nОтмена — сохранить локальную копию в облако.');
+        if(useCloud){
+          localStorage.removeItem(HRT_CLOUD_DIRTY_KEY);
+          return await loadHrtCloudState({force:false,showToast:false});
+        }
+      }
+      hrtCloudSetStatus('busy','Есть локальные изменения','Сохраняю их в облако');
       return await saveHrtCloudState(false);
     }
     return await loadHrtCloudState({force:false,showToast:false});
@@ -557,7 +577,6 @@ async function handleHrtCloudSession(session,{initial=false}={}){
   }
   hrtCloudSetStatus('ok','Облако подключено',hrtCloudUser.email||'');return true;
 }
-
 function hrtGateMessage(text,kind=''){
   const el=document.getElementById('hrtAuthMsg');if(!el)return;
   el.textContent=text||'';el.className='hrt-auth-msg '+kind;
@@ -617,7 +636,6 @@ async function initHrtAuth(){
     },0);
   });
 }
-
 
 document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));b.classList.add('active');
@@ -812,8 +830,8 @@ function doseContextSummary(lab){
   const c=lab?.doseContext||{};
   const med=c.medId?medName(c.medId):'—';
   let hours=null;
-  if(c.lastDoseAt && lab?.date){
-    const labDt=combineDateTime(lab.date,lab.time||'12:00');
+  if(c.lastDoseAt && lab?.date && lab?.time){
+    const labDt=combineDateTime(lab.date,lab.time);
     if(labDt)hours=hoursBetweenDateTimes(c.lastDoseAt,labDt.toISOString());
   }
   const relLabels={unknown:'не указано',trough:'перед следующей дозой / trough',post_dose:'после дозы',peak:'ожидаемый пик',random:'случайное время'};
@@ -1834,7 +1852,24 @@ function renderLatestChanges(){
   }
   box.innerHTML=cards.length?`<div class="change-grid">${cards.join('')}</div>`:`<div class="empty">Пока недостаточно повторных анализов для сравнения.</div>`;
 }
-const APP_VERSION='3.1';
+const APP_VERSION='3.1.1';
+
+function normalizedHctPercent(marker){
+  if(!marker)return null;
+  let v=Number(marker.value);if(!Number.isFinite(v))return null;
+  const u=String(marker.unit||'').trim().toLowerCase().replace(/\s/g,'');
+  if(u==='l/l'||u==='lperliter'||(v>0&&v<=1.2))v*=100;
+  return v;
+}
+function psaNgMlValue(marker){
+  if(!marker)return null;
+  const v=Number(marker.value);if(!Number.isFinite(v))return null;
+  const u=String(marker.unit||'').trim().toLowerCase().replace(/\s/g,'');
+  // 1 µg/L = 1 ng/mL numerically.
+  if(!u || ['ng/ml','ng/mL'.toLowerCase(),'µg/l','μg/l','ug/l'].includes(u))return v;
+  return null;
+}
+
 
 function firstMarker(key){
   const arr=markerHistory(key);return arr.length?arr[0]:null;
@@ -1853,10 +1888,10 @@ function safetySnapshot(){
   const w=latestWellbeing();
   const items=[];
   if(hct){
-    const v=Number(hct.marker.value);
-    const level=v>=54?'bad':(v>=50?'warn':'good');
-    const stateText=v>=54?'≥54%: требуется обсудить коррекцию терапии с врачом':(v>=50?'Повышен — следить за динамикой':'Без сигнала по порогу 54%');
-    items.push({key:'hematocrit',label:'Гематокрит',value:`${v} ${hct.marker.unit||'%'}`,level,state:stateText,date:hct.lab.date});
+    const v=normalizedHctPercent(hct.marker);
+    const level=v===null?'warn':(v>=54?'bad':(v>=50?'warn':'good'));
+    const stateText=v===null?'Не удалось нормализовать единицы':(v>=54?'≥54%: требуется обсудить коррекцию терапии с врачом':(v>=50?'Повышен — следить за динамикой':'Без сигнала по порогу 54%'));
+    items.push({key:'hematocrit',label:'Гематокрит',value:v===null?`${hct.marker.value} ${hct.marker.unit||''}`:`${v.toFixed(v%1?1:0)} %`,level,state:stateText,date:hct.lab.date});
   }else items.push({key:'hematocrit',label:'Гематокрит',value:'—',level:'warn',state:'Нет данных',date:''});
 
   if(hb)items.push({key:'hemoglobin',label:'Гемоглобин',value:`${hb.marker.value} ${hb.marker.unit||''}`,level:'',state:'Последнее значение',date:hb.lab.date});
@@ -1864,11 +1899,16 @@ function safetySnapshot(){
 
   if(psa){
     let psaLevel='',psaState='Последнее значение';
-    if(psaFirst && psaFirst.date!==psa.lab.date){
-      const delta=Number(psa.marker.value)-Number(psaFirst.value);
+    const currentPsa=psaNgMlValue(psa.marker);
+    const firstPsa=psaFirst?psaNgMlValue(psaFirst.marker):null;
+    if(psaFirst && psaFirst.date!==psa.lab.date && currentPsa!==null && firstPsa!==null){
+      const delta=currentPsa-firstPsa;
       const months=Math.abs(daysBetween(psaFirst.date,psa.lab.date)||0)/30.44;
-      psaState=`Δ от первого в базе ${delta>=0?'+':''}${delta.toFixed(2)} ${psa.marker.unit||''}`;
+      psaState=`Δ от первого PSA в базе ${delta>=0?'+':''}${delta.toFixed(2)} ng/ml`;
       if(months<=12 && delta>1.4){psaLevel='warn';psaState+=' · обсудить с врачом';}
+      psaState+=' · первый PSA в базе не обязательно является клиническим baseline';
+    }else if(psaFirst && psaFirst.date!==psa.lab.date && (currentPsa===null || firstPsa===null)){
+      psaState='Динамика не рассчитана: несовместимые или неизвестные единицы';
     }
     items.push({key:'psa',label:'PSA',value:`${psa.marker.value} ${psa.marker.unit||''}`,level:psaLevel,state:psaState,date:psa.lab.date});
   }else items.push({key:'psa',label:'PSA',value:'—',level:'',state:'Нет данных',date:''});
@@ -1932,7 +1972,7 @@ function printDoctorReport(){
   const html=`<!doctype html><html><head><meta charset="utf-8"><title>HRT report ${today()}</title>${style}</head><body>
     <div class="no-print"><button onclick="window.print()">Печать / Сохранить как PDF</button></div>
     <h1>HRT Health Studio — отчёт врачу</h1>
-    <div class="muted">Версия v${APP_VERSION||'${APP_VERSION}'} · сформирован ${new Date().toLocaleString('ru-RU')}</div>
+    <div class="muted">Версия v${APP_VERSION} · сформирован ${new Date().toLocaleString('ru-RU')}</div>
     <h2>Текущая цель</h2><div class="box">${safeHtml(state.settings.primaryGoal||'Не указана')}</div>
     <h2>Текущие протоколы</h2>
     <div class="grid">${activeProtocols().map(p=>`<div class="box"><b>${safeHtml(medName(p.medId))}</b><br>${safeHtml(scheduleText(p))}<br><span class="muted">с ${fmtDate(p.start)}</span></div>`).join('')||'<div class="box">Нет активных протоколов</div>'}</div>
@@ -2469,9 +2509,9 @@ function clinicalAdvice(){
   }
 
   if(Hct){
-    const v=Number(Hct.marker.value);
-    if(v>=54)warnings.push(`Гематокрит ${v}% достиг порога 54% или выше. Это требует оперативного обсуждения терапии с врачом; автоматическое повышение дозы в такой ситуации не предлагается.`);
-    else if(v>=50)actions.push(`Гематокрит ${v}% повышен относительно обычной исходной зоны. Перед повышением дозы тестостерона обсудите с врачом тренд гематокрита и частоту контроля.`);
+    const v=normalizedHctPercent(Hct.marker);
+    if(v!==null&&v>=54)warnings.push(`Гематокрит ${v.toFixed(v%1?1:0)}% достиг порога 54% или выше. Это требует оперативного обсуждения терапии с врачом; автоматическое повышение дозы в такой ситуации не предлагается.`);
+    else if(v!==null&&v>=50)actions.push(`Гематокрит ${v.toFixed(v%1?1:0)}% повышен относительно обычной исходной зоны. Перед повышением дозы тестостерона обсудите с врачом тренд гематокрита и частоту контроля.`);
   }
   if(!Hct)actions.push('В базе нет гематокрита, пригодного для текущей оценки безопасности. Добавьте его в план контроля.');
   if(!PSA)actions.push('PSA пока не найден в базе. Для мужчин старше 40 лет мониторинг простаты обычно обсуждается до/во время терапии тестостероном.');
@@ -2526,7 +2566,7 @@ function renderClinicalAnalysis(){
   $('clinicalKpis').innerHTML=[
     ['Общий T',T?`${T.value} ${T.unit||''}`:'—',T?goalStatus('testosterone',T.value).text:'Нет данных'],
     ['Свободный T',FT?`${FT.value} ${FT.unit||''}`:'—',FT?goalStatus('free_testosterone',FT.value).text:'Нет данных'],
-    ['Гематокрит',Hct?`${Hct.value} ${Hct.unit||'%'}`:'—',Hct?'Последнее значение':'Нет данных'],
+    ['Гематокрит',Hct?(normalizedHctPercent(Hct)!==null?`${normalizedHctPercent(Hct).toFixed(normalizedHctPercent(Hct)%1?1:0)} %`:`${Hct.value} ${Hct.unit||''}`):'—',Hct?'Последнее значение':'Нет данных'],
     ['Последний анализ',a.latestLab?fmtDate(a.latestLab.date):'—',a.latestLab?a.latestLab.lab||'':'Нет данных']
   ].map(x=>`<div class="card"><div class="klabel">${x[0]}</div><div class="kval" style="font-size:19px">${x[1]}</div><div class="ksub">${x[2]}</div></div>`).join('');
 
@@ -2560,7 +2600,7 @@ function importData(e){
     state=x;save();alert('Импорт завершён')
   }catch{alert('Не удалось прочитать файл')}};r.readAsText(f);
 }
-function resetData(){if(confirm('Удалить все данные программы?')){state={meds:DEFAULT_MEDS.map(x=>({...x})),protocols:[],deviations:[],labs:[],wellbeing:[],aliasMap:{},customAnalytes:[],goals:[],labPlans:[],settings:{primaryGoal:'',appVersion:'3.0'}};save()}}
+function resetData(){if(confirm('Удалить все данные программы?')){state={meds:DEFAULT_MEDS.map(x=>({...x})),protocols:[],deviations:[],labs:[],wellbeing:[],aliasMap:{},customAnalytes:[],goals:[],labPlans:[],settings:{primaryGoal:'',appVersion:APP_VERSION}};save()}}
 window.addEventListener('resize',()=>{clearTimeout(window.__hrtChartResize);window.__hrtChartResize=setTimeout(()=>{if($('analytics')?.classList.contains('active'))renderChartDashboard()},120)});
 
 document.getElementById('hrtGateSignIn')?.addEventListener('click',hrtSignIn);
