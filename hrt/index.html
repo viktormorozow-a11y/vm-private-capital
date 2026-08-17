@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HRT Health Studio v3.0 — VM Private Suite</title>
+<title>HRT Health Studio v3.1 — Cloud Sync</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -159,13 +159,19 @@ aside{display:flex;flex-direction:column}
   .site-version-badge{position:static;display:inline-flex;margin:8px 14px 0}
   .safety-grid{grid-template-columns:1fr}
 }
+
+/* v3.1 HRT cloud sync */
+.hrt-cloud-card{margin:12px 0 0;padding:11px;border:1px solid var(--line);border-radius:12px;background:rgba(127,200,255,.035)}
+.hrt-cloud-row{display:flex;gap:9px;align-items:center}.hrt-cloud-dot{width:10px;height:10px;border-radius:50%;background:#82909d;box-shadow:0 0 0 4px rgba(130,144,157,.08);flex:0 0 auto}
+.hrt-cloud-dot.ok{background:var(--good);box-shadow:0 0 0 4px rgba(115,217,154,.10)}.hrt-cloud-dot.busy{background:#e2bd73;box-shadow:0 0 0 4px rgba(226,189,115,.10)}.hrt-cloud-dot.err{background:var(--bad);box-shadow:0 0 0 4px rgba(255,126,138,.10)}
+.hrt-cloud-title{font-size:11px;font-weight:760}.hrt-cloud-sub{font-size:9px;color:var(--muted);margin-top:2px;line-height:1.35}.hrt-cloud-actions{display:flex;gap:6px;margin-top:8px}.hrt-cloud-actions .btn{padding:6px 8px;font-size:9px}
 </style>
 </head>
 <body class="hrt-auth-locked">
 <div id="hrtAuthGate">
   <div class="hrt-auth-card">
     <div class="hrt-auth-brand">VM PRIVATE SUITE</div>
-    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.0</span></div>
+    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.1</span></div>
     <div class="hrt-auth-sub">Используйте тот же аккаунт, что и в Планировании капитала</div>
     <label>Email<input id="hrtGateEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
     <label>Пароль<input id="hrtGatePassword" type="password" autocomplete="current-password" placeholder="Введите пароль"></label>
@@ -177,10 +183,10 @@ aside{display:flex;flex-direction:column}
   </div>
 </div>
 <div id="hrtAppShell" class="auth-hidden">
-<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.0</div>
+<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.1</div>
 <div class="app">
 <aside>
-  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.0</small></div>
+  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.1</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Главная</button>
     <button class="nav" data-view="labs">Анализы</button>
@@ -193,6 +199,10 @@ aside{display:flex;flex-direction:column}
     <button class="nav" data-view="analytics">Графики</button>
     <button class="nav" data-view="settings">Настройки</button>
   </nav>
+  <div class="hrt-cloud-card" id="hrtCloudCard">
+    <div class="hrt-cloud-row"><span class="hrt-cloud-dot" id="hrtCloudDot"></span><div><div class="hrt-cloud-title" id="hrtCloudTitle">Проверяю облако…</div><div class="hrt-cloud-sub" id="hrtCloudSub">Подключение к Supabase</div></div></div>
+    <div class="hrt-cloud-actions"><button class="btn" type="button" onclick="saveHrtCloudState(true)">Сохранить</button><button class="btn" type="button" onclick="loadHrtCloudState({force:true,showToast:true})">Загрузить</button></div>
+  </div>
   <div class="suite-back">
     <a href="../" title="Вернуться в Планирование капитала"><span>←</span><span>Планирование капитала</span></a>
   </div>
@@ -364,7 +374,7 @@ aside{display:flex;flex-direction:column}
 </section>
 
 <section id="settings" class="view">
-  <div class="top"><div><h1>Настройки</h1><div class="sub">Резервная копия хранится в JSON. Основные данные сохраняются локально в браузере.</div></div></div>
+  <div class="top"><div><h1>Настройки</h1><div class="sub">Резервная копия хранится в JSON. Данные сохраняются локально и автоматически синхронизируются с вашим облаком Supabase.</div></div></div>
   <div class="panel">
     <div class="head"><h2>Данные</h2></div>
     <div class="actions" style="justify-content:flex-start">
@@ -396,6 +406,9 @@ const SUPABASE_URL='https://hlrvwzqwxqmycuttvzbx.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_RBRKa6zqrw7-CW77RW__QQ_vrqebWCp';
 const hrtSupabase=(window.supabase&&window.supabase.createClient)?window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}):null;
 const KEY='hrt_health_studio_v1';
+const HRT_CLOUD_DIRTY_KEY='hrt_cloud_dirty_v1';
+const HRT_CLOUD_LAST_SYNC_KEY='hrt_cloud_last_sync_v1';
+let hrtCloudUser=null,hrtCloudBusy=false,hrtCloudSaveTimer=null,hrtSuppressCloudSave=false;
 const DEFAULT_MEDS=[
   {id:'med_testogel',name:'Testogel',form:'Гель',unit:'нажатий',comment:''},
   {id:'med_hcg',name:'HCG',form:'Инъекция',unit:'IU',comment:''},
@@ -421,7 +434,7 @@ state.goals=state.goals||[];
 state.labPlans=state.labPlans||[];
 state.settings=state.settings||{};
 state.settings.primaryGoal=state.settings.primaryGoal||'';
-state.settings.appVersion='3.0';
+state.settings.appVersion='3.1';
 state.labs.forEach(l=>{l.doseContext=l.doseContext||{medId:'',lastDoseAt:'',relation:'unknown',adherence:'unknown'}});
 
 // Repair aliases created by older parser versions where MCH/MCHC could be mistaken for hemoglobin.
@@ -446,9 +459,104 @@ const $=id=>document.getElementById(id);
 const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);
 const today=()=>new Date().toISOString().slice(0,10);
 const fmtDate=s=>s?new Date(s+'T12:00:00').toLocaleDateString('ru-RU'):'—';
-const save=()=>{localStorage.setItem(KEY,JSON.stringify(state));renderAll()};
+function persistHrtLocal({markDirty=true}={}){
+  localStorage.setItem(KEY,JSON.stringify(state));
+  if(markDirty&&!hrtSuppressCloudSave)localStorage.setItem(HRT_CLOUD_DIRTY_KEY,'1');
+}
+function scheduleHrtCloudSave(){
+  if(hrtSuppressCloudSave||!hrtCloudUser)return;
+  clearTimeout(hrtCloudSaveTimer);
+  hrtCloudSaveTimer=setTimeout(()=>saveHrtCloudState(false),850);
+}
+const save=()=>{persistHrtLocal();renderAll();scheduleHrtCloudSave()};
 
 const medName=id=>state.meds.find(x=>x.id===id)?.name||'Неизвестный препарат';
+
+function hrtCloudSetStatus(kind,title,sub=''){
+  const dot=$('hrtCloudDot'),t=$('hrtCloudTitle'),s=$('hrtCloudSub');
+  if(dot){dot.className='hrt-cloud-dot '+(kind||'')}
+  if(t)t.textContent=title||'';
+  if(s)s.textContent=sub||'';
+}
+function hrtCloudHasMeaningfulData(x=state){
+  return !!((x?.labs?.length)||(x?.protocols?.length)||(x?.deviations?.length)||(x?.wellbeing?.length)||(x?.goals?.length)||(x?.labPlans?.length));
+}
+function hrtCloudToast(msg){
+  const old=document.getElementById('hrtCloudToast');if(old)old.remove();
+  const el=document.createElement('div');el.id='hrtCloudToast';el.textContent=msg;
+  Object.assign(el.style,{position:'fixed',right:'16px',bottom:'16px',zIndex:999999,background:'#101b27',color:'#eef4f7',border:'1px solid rgba(255,255,255,.12)',borderRadius:'10px',padding:'9px 12px',fontSize:'11px',boxShadow:'0 12px 35px rgba(0,0,0,.35)'});
+  document.body.appendChild(el);setTimeout(()=>el.remove(),2600);
+}
+async function saveHrtCloudState(showToast=false){
+  if(!hrtSupabase||!hrtCloudUser||hrtCloudBusy)return false;
+  hrtCloudBusy=true;hrtCloudSetStatus('busy','Сохраняю в облако…',hrtCloudUser.email||'');
+  try{
+    const payload=JSON.parse(JSON.stringify(state));
+    const {error}=await hrtSupabase.from('hrt_user_data').upsert({user_id:hrtCloudUser.id,payload,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+    if(error)throw error;
+    const now=new Date().toISOString();localStorage.setItem(HRT_CLOUD_LAST_SYNC_KEY,now);localStorage.removeItem(HRT_CLOUD_DIRTY_KEY);
+    hrtCloudSetStatus('ok','Облако синхронизировано',`${hrtCloudUser.email||''} · ${new Date(now).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}`);
+    if(showToast)hrtCloudToast('HRT данные сохранены в облако');
+    return true;
+  }catch(e){
+    console.error('HRT cloud save error',e);localStorage.setItem(HRT_CLOUD_DIRTY_KEY,'1');
+    hrtCloudSetStatus('err','Ошибка синхронизации',e?.message||'Проверьте интернет');
+    if(showToast)hrtCloudToast('Не удалось сохранить в облако');
+    return false;
+  }finally{hrtCloudBusy=false}
+}
+async function loadHrtCloudState({force=false,showToast=false}={}){
+  if(!hrtSupabase||!hrtCloudUser||hrtCloudBusy)return false;
+  if(force&&localStorage.getItem(HRT_CLOUD_DIRTY_KEY)==='1'){
+    if(!confirm('Есть локальные изменения, ещё не сохранённые в облако. Загрузка из облака их заменит. Продолжить?'))return false;
+  }
+  hrtCloudBusy=true;hrtCloudSetStatus('busy','Загружаю из облака…',hrtCloudUser.email||'');
+  try{
+    const {data,error}=await hrtSupabase.from('hrt_user_data').select('payload,updated_at').eq('user_id',hrtCloudUser.id).maybeSingle();
+    if(error)throw error;
+    if(!data){
+      hrtCloudSetStatus('busy','Облако пока пустое','Подготавливаю первую копию');
+      if(hrtCloudHasMeaningfulData(state)){hrtCloudBusy=false;return await saveHrtCloudState(showToast)}
+      hrtCloudSetStatus('ok','Облако подключено','Пока нет данных HRT');return true;
+    }
+    hrtSuppressCloudSave=true;
+    const payload=data.payload||{};
+    state={...state,...payload};
+    state.meds=state.meds||[];state.protocols=state.protocols||[];state.deviations=state.deviations||[];state.labs=state.labs||[];state.wellbeing=state.wellbeing||[];state.aliasMap=state.aliasMap||{};state.customAnalytes=state.customAnalytes||[];state.goals=state.goals||[];state.labPlans=state.labPlans||[];state.settings=state.settings||{};
+    state.settings.appVersion='3.1';state.settings.primaryGoal=state.settings.primaryGoal||'';
+    state.labs.forEach(l=>{l.doseContext=l.doseContext||{medId:'',lastDoseAt:'',relation:'unknown',adherence:'unknown'}});
+    for(const dm of DEFAULT_MEDS){if(!state.meds.some(m=>String(m.name||'').trim().toLowerCase()===dm.name.toLowerCase()))state.meds.push({...dm})}
+    persistHrtLocal({markDirty:false});localStorage.removeItem(HRT_CLOUD_DIRTY_KEY);
+    hrtSuppressCloudSave=false;renderAll();
+    const stamp=data.updated_at||new Date().toISOString();localStorage.setItem(HRT_CLOUD_LAST_SYNC_KEY,stamp);
+    hrtCloudSetStatus('ok','Облако синхронизировано',`${hrtCloudUser.email||''} · ${new Date(stamp).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}`);
+    if(showToast)hrtCloudToast('HRT данные загружены из облака');
+    return true;
+  }catch(e){
+    hrtSuppressCloudSave=false;console.error('HRT cloud load error',e);hrtCloudSetStatus('err','Ошибка облака',e?.message||'Проверьте интернет');
+    if(showToast)hrtCloudToast('Не удалось загрузить облачные данные');return false;
+  }finally{hrtCloudBusy=false}
+}
+async function handleHrtCloudSession(session,{initial=false}={}){
+  hrtCloudUser=session?.user||null;
+  if(!hrtCloudUser){hrtCloudSetStatus('','Облако не подключено','Требуется вход');return false}
+  hrtCloudSetStatus('busy','Подключаю облако…',hrtCloudUser.email||'');
+  const {data,error}=await hrtSupabase.from('hrt_user_data').select('payload,updated_at').eq('user_id',hrtCloudUser.id).maybeSingle();
+  if(error)throw error;
+  if(data){
+    const dirty=localStorage.getItem(HRT_CLOUD_DIRTY_KEY)==='1';
+    if(dirty&&hrtCloudHasMeaningfulData(state)){
+      hrtCloudSetStatus('busy','Есть локальные изменения','Сначала сохраняю их в облако');
+      return await saveHrtCloudState(false);
+    }
+    return await loadHrtCloudState({force:false,showToast:false});
+  }
+  if(hrtCloudHasMeaningfulData(state)){
+    hrtCloudSetStatus('busy','Первая синхронизация','Загружаю локальные данные в облако');
+    return await saveHrtCloudState(false);
+  }
+  hrtCloudSetStatus('ok','Облако подключено',hrtCloudUser.email||'');return true;
+}
 
 function hrtGateMessage(text,kind=''){
   const el=document.getElementById('hrtAuthMsg');if(!el)return;
@@ -476,7 +584,8 @@ async function hrtSignIn(){
     const {data,error}=await hrtSupabase.auth.signInWithPassword({email,password});
     if(error)throw error;
     if(!data?.session?.user)throw new Error('Сессия не получена.');
-    hrtGateMessage('Вход выполнен.','ok');
+    hrtGateMessage('Вход выполнен. Загружаю данные…','ok');
+    await handleHrtCloudSession(data.session,{initial:true});
     hrtUnlockApp();
   }catch(e){
     hrtGateMessage(e?.message||'Не удалось войти.','err');
@@ -492,13 +601,20 @@ async function initHrtAuth(){
   }
   try{
     const {data:{session}}=await hrtSupabase.auth.getSession();
-    if(session?.user) hrtUnlockApp();
+    if(session?.user){await handleHrtCloudSession(session,{initial:true});hrtUnlockApp();}
     else hrtLockApp();
   }catch(e){
     hrtGateMessage(e?.message||'Ошибка проверки авторизации.','err');
   }
   hrtSupabase.auth.onAuthStateChange((_event,session)=>{
-    if(session?.user)hrtUnlockApp();else hrtLockApp();
+    setTimeout(async()=>{
+      try{
+        if(session?.user){
+          if(hrtCloudUser?.id!==session.user.id)await handleHrtCloudSession(session,{initial:false});
+          hrtUnlockApp();
+        }else{hrtCloudUser=null;hrtLockApp();hrtCloudSetStatus('','Облако не подключено','Требуется вход')}
+      }catch(e){console.error('HRT auth cloud sync error',e);hrtCloudSetStatus('err','Ошибка облака',e?.message||'')}
+    },0);
   });
 }
 
@@ -1718,7 +1834,7 @@ function renderLatestChanges(){
   }
   box.innerHTML=cards.length?`<div class="change-grid">${cards.join('')}</div>`:`<div class="empty">Пока недостаточно повторных анализов для сравнения.</div>`;
 }
-const APP_VERSION='3.0';
+const APP_VERSION='3.1';
 
 function firstMarker(key){
   const arr=markerHistory(key);return arr.length?arr[0]:null;
@@ -2449,6 +2565,8 @@ window.addEventListener('resize',()=>{clearTimeout(window.__hrtChartResize);wind
 
 document.getElementById('hrtGateSignIn')?.addEventListener('click',hrtSignIn);
 document.getElementById('hrtGatePassword')?.addEventListener('keydown',e=>{if(e.key==='Enter')hrtSignIn()});
+window.addEventListener('online',()=>{if(hrtCloudUser&&localStorage.getItem(HRT_CLOUD_DIRTY_KEY)==='1')saveHrtCloudState(false)});
+setInterval(()=>{if(hrtCloudUser&&localStorage.getItem(HRT_CLOUD_DIRTY_KEY)==='1'&&!hrtCloudBusy)saveHrtCloudState(false)},30000);
 initHrtAuth();
 renderAll();
 </script>
