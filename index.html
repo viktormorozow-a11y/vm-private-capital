@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.11.1 BTC Intraday History</title>
+<title>VM Private Capital — Wealth Studio v7.11.2 Crypto Breakdown</title>
 <style>
 
 :root{
@@ -668,10 +668,16 @@ th,td{border-color:rgba(255,255,255,.055)}
 
 
 
-/* v7.11.1 BTC Intraday History */
-.crypto-return-detail{display:grid;gap:2px;margin-top:3px;font-size:9px;line-height:1.35}
+/* v7.11.2 Crypto Breakdown */
+.crypto-return-detail{display:grid;gap:3px;margin-top:4px;font-size:9px;line-height:1.35}
+.crypto-return-detail .crypto-line{display:flex;gap:5px;align-items:baseline;flex-wrap:wrap}
+.crypto-return-detail .label{color:#8293a7}
 .crypto-return-detail .mining{color:#d7b76e}
 .crypto-return-detail .market{color:#a8c7dd}
+.crypto-return-detail .wallet{color:#c8d5e2}
+.crypto-return-detail b{font-size:10px}
+.crypto-pct-stack{display:grid;gap:4px;justify-items:end}
+.crypto-pct-row{display:flex;align-items:center;gap:5px;font-size:9px;color:#8293a7}
 .crypto-pct-pill{display:inline-flex;align-items:center;padding:3px 6px;border-radius:999px;border:1px solid var(--line);font-size:9px;font-weight:750}
 .crypto-pct-pill.good{background:rgba(120,227,155,.06)}
 .crypto-pct-pill.bad{background:rgba(255,123,136,.06)}
@@ -1131,7 +1137,7 @@ body.auth-locked{overflow:hidden}
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.11.1 BTC Intraday History</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.11.2 Crypto Breakdown</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -1710,7 +1716,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.11.1 BTC Intraday History';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.11.2 Crypto Breakdown';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -2449,6 +2455,24 @@ function cryptoPerf(pid,from,to=todayISO()){
   const pct=denominator?profit/denominator*100:null;
   return{start,end,flow:netFlow,profit,pct,denominator,sufficient:true,startDate,endDate,miningBtc,miningEur};
 }
+function cryptoWalletGrowth(pid,from,to=todayISO()){
+  const rows=uniqueSnapshots(pid).filter(x=>x.date<=to);
+  if(!rows.length)return{start:0,end:0,change:0,pct:null,sufficient:false,startDate:'',endDate:''};
+  let startSnap=[...rows].reverse().find(x=>x.date<=from);
+  if(!startSnap)startSnap=rows.find(x=>x.date>=from);
+  const endSnap=[...rows].reverse().find(x=>x.date<=to);
+  if(!startSnap||!endSnap)return{start:0,end:0,change:0,pct:null,sufficient:false,startDate:'',endDate:''};
+  const start=Number(startSnap.value)||0,end=Number(endSnap.value)||0,startDate=startSnap.date,endDate=endSnap.date;
+  if(endDate<=startDate||!(start>0))return{start,end,change:end-start,pct:null,sufficient:false,startDate,endDate};
+  const change=end-start;
+  return{start,end,change,pct:change/start*100,sufficient:true,startDate,endDate};
+}
+function cryptoAllTimeWalletGrowth(pid){
+  const rows=uniqueSnapshots(pid);
+  if(rows.length<2)return{start:rows[0]?Number(rows[0].value):0,end:rows.at(-1)?Number(rows.at(-1).value):0,change:0,pct:null,sufficient:false,startDate:rows[0]?.date||'',endDate:rows.at(-1)?.date||''};
+  return cryptoWalletGrowth(pid,rows[0].date,rows.at(-1).date);
+}
+
 function cryptoAllTimePerf(pid){
   const rows=uniqueSnapshots(pid);
   if(rows.length<2)return{start:rows[0]?Number(rows[0].value):0,end:rows.at(-1)?Number(rows.at(-1).value):0,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:rows[0]?.date||'',endDate:rows.at(-1)?.date||''};
@@ -2555,8 +2579,14 @@ function renderDashboard(){
    const isCrypto=p.type==='Крипто';
    const allRow=allTimePerfForDashboardRow(p,isNordea);
    const miningYtd=isCrypto?cryptoMiningSummary(p.id,state.settings.fyStart,todayISO()):null;
+   const walletYtd=isCrypto?cryptoWalletGrowth(p.id,state.settings.fyStart,todayISO()):null;
+   const walletAll=isCrypto?cryptoAllTimeWalletGrowth(p.id):null;
    const ytdProfit = isCrypto
-     ? (r.sufficient?`<div><span class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</span><div class="crypto-return-detail"><span class="market">только изменение цены BTC</span><span class="mining">майнинг YTD: +${miningYtd.btc.toFixed(8)} BTC · ${money(miningYtd.eur)}</span></div></div>`:'—')
+     ? (r.sufficient?`<div class="crypto-return-detail">
+          <div class="crypto-line market"><span class="label">Цена BTC:</span><b class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</b></div>
+          <div class="crypto-line mining"><span class="label">Майнинг:</span><b>+${miningYtd.btc.toFixed(8)} BTC · ${money(miningYtd.eur)}</b></div>
+          <div class="crypto-line wallet"><span class="label">Кошелёк:</span><b class="${walletYtd?.change>=0?'good':'bad'}">${walletYtd?.change>=0?'+':''}${money(walletYtd?.change||0)}</b></div>
+        </div>`:'—')
      : isNordea
      ? (r.sufficient?`<span class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</span>`:'—')
      : role==='excluded'
@@ -2566,16 +2596,24 @@ function renderDashboard(){
          : (r.sufficient?`<span class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</span>`:'—');
 
    const ytdPct = isCrypto
-     ? (r.sufficient?`<span class="crypto-pct-pill ${r.pct===null?'':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</span>`:'—')
+     ? (r.sufficient?`<div class="crypto-pct-stack">
+          <div class="crypto-pct-row"><span>Цена BTC</span><span class="crypto-pct-pill ${r.pct===null?'':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</span></div>
+          <div class="crypto-pct-row"><span>Кошелёк</span><span class="crypto-pct-pill ${walletYtd?.pct===null?'':walletYtd?.pct>=0?'good':'bad'}">${walletYtd?.sufficient?fmtReturn(walletYtd.pct):'—'}</span></div>
+        </div>`:'—')
      : isNordea
        ? (r.sufficient?`<span class="${r.pct===null?'return-na':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</span>`:'—')
        : (role==='excluded'||role==='exit')
          ? '<span class="return-na">—</span>'
          : (r.sufficient?`<span class="${r.pct===null?'return-na':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</span>`:'—');
 
-   const allPct = allRow?.sufficient
-     ? `<span class="${allRow.pct===null?'return-na':allRow.pct>=0?'good':'bad'}">${fmtReturn(allRow.pct)}</span>`
-     : '<span class="return-na">—</span>';
+   const allPct = isCrypto
+     ? (allRow?.sufficient?`<div class="crypto-pct-stack">
+          <div class="crypto-pct-row"><span>Цена BTC</span><span class="crypto-pct-pill ${allRow.pct===null?'':allRow.pct>=0?'good':'bad'}">${fmtReturn(allRow.pct)}</span></div>
+          <div class="crypto-pct-row"><span>Кошелёк</span><span class="crypto-pct-pill ${walletAll?.pct===null?'':walletAll?.pct>=0?'good':'bad'}">${walletAll?.sufficient?fmtReturn(walletAll.pct):'—'}</span></div>
+        </div>`:'<span class="return-na">—</span>')
+     : allRow?.sufficient
+       ? `<span class="${allRow.pct===null?'return-na':allRow.pct>=0?'good':'bad'}">${fmtReturn(allRow.pct)}</span>`
+       : '<span class="return-na">—</span>';
 
    const nameHtml=isNordea
      ? `<b>Nordea</b><div class="nordea-breakdown"><span>Investments ${money(invValue||0)}</span><span>Cash ${money(cashValue||0)}</span></div>`
@@ -3040,6 +3078,7 @@ function renderPortfolios(){
             <div class="crypto-kpi"><span>Текущий BTC/EUR</span><b>${crypto.currentRate?money(crypto.currentRate):'—'}</b></div>
             <div class="crypto-kpi"><span>Приход от майнинга</span><b>${money(crypto.miningIncome)}</b></div>
             <div class="crypto-kpi"><span>Доходность BTC (цена)</span><b>${cryptoAllTimePerf(p.id)?.sufficient?fmtReturn(cryptoAllTimePerf(p.id).pct):'—'}</b></div>
+            <div class="crypto-kpi"><span>Изменение стоимости кошелька</span><b>${cryptoAllTimeWalletGrowth(p.id)?.sufficient?fmtReturn(cryptoAllTimeWalletGrowth(p.id).pct):'—'}</b></div>
           </div>`
        : '';
 
@@ -4603,9 +4642,10 @@ setInterval(()=>{if(cloudUser&&localStorage.getItem(CLOUD_DIRTY_KEY)==='1'&&!clo
     const tr=td.parentElement, cells=[...tr.children],i=cells.indexOf(td),name=cells[0]?.innerText?.trim().split('\n')[0]||'Портфель';
     const val=td.innerText.trim();
     if(i===2)return box(`${name}: текущая стоимость`,[['Значение',val]],'Берётся последняя сохранённая оценка портфеля на текущую дату. Для Nordea показывается Investments + Nordea cash.');
-    if(i===3)return box(`${name}: YTD €`,[['Результат',val]],'Результат = конечная оценка − начальная оценка − чистые внешние потоки + доходные события.');
-    if(i===4)return box(`${name}: YTD %`,[['Доходность',val]],'Доходность рассчитывается методом Modified Dietz: инвестиционный результат делится на капитал, скорректированный по времени внешних денежных потоков.');
-    if(i===5)return box(`${name}: доля`,[['Доля',val]],'Доля = текущая стоимость этого портфеля / общий текущий капитал × 100%.');
+    if(i===3)return box(`${name}: YTD €`,[['Результат',val]], name==='Crypto'?'Цена BTC = изменение стоимости после исключения стоимости новых BTC/переводов. Майнинг показывается отдельно. «Кошелёк» = конечная оценка − начальная оценка, без исключения новых BTC.':'Результат = конечная оценка − начальная оценка − чистые внешние потоки + доходные события.');
+    if(i===4)return box(`${name}: YTD %`,[['Доходность',val]], name==='Crypto'?'«Цена BTC» считается методом Modified Dietz после исключения стоимости входящих/исходящих BTC. «Кошелёк» = (конечная оценка − начальная оценка) / начальная оценка × 100%; это изменение стоимости кошелька, а не инвестиционная доходность.':'Доходность рассчитывается методом Modified Dietz: инвестиционный результат делится на капитал, скорректированный по времени внешних денежных потоков.');
+    if(i===5)return box(`${name}: вся история %`,[['Доходность',val]], name==='Crypto'?'Показаны два показателя за всю доступную историю: доходность цены BTC с исключением потоков и простое изменение стоимости всего кошелька.':'Доходность за всю измеримую историю портфеля.');
+    if(i===6)return box(`${name}: доля`,[['Доля',val]],'Доля = текущая стоимость этого портфеля / общий текущий капитал × 100%.');
     return null;
   }
 
@@ -4627,7 +4667,7 @@ setInterval(()=>{if(cloudUser&&localStorage.getItem(CLOUD_DIRTY_KEY)==='1'&&!clo
   }
 
   function getHelp(el){return topMetric(el)||tableHelp(el)||genericHelp(el)}
-  const eligible='#heroTotal,#personalCapital,#companyCapital,#planningCapital,#excludedCapital,#exitAssetsCapital,#companyTaxLabel,#mYtd,#mAll,#mYearEnd,#mFlows,#portfolioSummaryBody td:nth-child(3),#portfolioSummaryBody td:nth-child(4),#portfolioSummaryBody td:nth-child(5),#portfolioSummaryBody td:nth-child(6),.allocation-item,.forecast-scenario-card,.scenario-info-card,.tax-summary .mini-stat,#insightMetrics .metric-card,.source-board,canvas';
+  const eligible='#heroTotal,#personalCapital,#companyCapital,#planningCapital,#excludedCapital,#exitAssetsCapital,#companyTaxLabel,#mYtd,#mAll,#mYearEnd,#mFlows,#portfolioSummaryBody td:nth-child(3),#portfolioSummaryBody td:nth-child(4),#portfolioSummaryBody td:nth-child(5),#portfolioSummaryBody td:nth-child(6),#portfolioSummaryBody td:nth-child(7),.allocation-item,.forecast-scenario-card,.scenario-info-card,.tax-summary .mini-stat,#insightMetrics .metric-card,.source-board,canvas';
 
   let tip=null,active=null;
   function ensure(){if(tip)return tip;tip=document.createElement('div');tip.id='calcTooltip';tip.setAttribute('role','tooltip');document.body.appendChild(tip);return tip}
