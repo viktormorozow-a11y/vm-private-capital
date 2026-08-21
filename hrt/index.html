@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HRT Health Studio v3.1.3 — Robust Puhti + Design Fix</title>
+<title>HRT Health Studio v3.1.4 — Robust Puhti + Design Fix</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -222,7 +222,7 @@ aside{display:flex;flex-direction:column}
   </div>
 </div>
 <div id="hrtAppShell" class="auth-hidden">
-<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.1.3</div>
+<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.1.4</div>
 <div class="app">
 <aside>
   <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.1.3</small></div>
@@ -474,7 +474,7 @@ state.goals=state.goals||[];
 state.labPlans=state.labPlans||[];
 state.settings=state.settings||{};
 state.settings.primaryGoal=state.settings.primaryGoal||'';
-state.settings.appVersion='3.1.3';
+state.settings.appVersion='3.1.4';
 state.labs.forEach(l=>{l.doseContext=l.doseContext||{medId:'',lastDoseAt:'',relation:'unknown',adherence:'unknown'}});
 
 // Repair aliases created by older parser versions where MCH/MCHC could be mistaken for hemoglobin.
@@ -533,7 +533,7 @@ function migrateHrtState(x){
   x.meds=x.meds||[];x.protocols=x.protocols||[];x.deviations=x.deviations||[];x.labs=x.labs||[];
   x.wellbeing=x.wellbeing||[];x.aliasMap=x.aliasMap||{};x.customAnalytes=x.customAnalytes||[];
   x.goals=x.goals||[];x.labPlans=x.labPlans||[];x.settings=x.settings||{};
-  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.1.3';
+  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.1.4';
   x.labs.forEach(l=>{l.doseContext=l.doseContext||{medId:'',lastDoseAt:'',relation:'unknown',adherence:'unknown'}});
   for(const dm of DEFAULT_MEDS){
     if(!x.meds.some(m=>String(m.name||'').trim().toLowerCase()===dm.name.toLowerCase()))x.meds.push({...dm});
@@ -1294,6 +1294,8 @@ const PUHTI_CODE_MAP={
   'shbg':{code:'SHBG',name:'Sukupuolihormoneja sitova globuliini (SHBG)',key:'shbg'},
   'shog':{code:'SHBG',name:'Sukupuolihormoneja sitova globuliini (SHBG)',key:'shbg'},
   'psa':{code:'PSA',name:'Prostataspesifinen antigeeni, PSA (PSA)',key:'psa'},
+  'ps-':{code:'PSA',name:'Prostataspesifinen antigeeni, PSA (PSA)',key:'psa'},
+  'pse':{code:'PSA',name:'Prostataspesifinen antigeeni, PSA (PSA)',key:'psa'},
   'alb':{code:'Alb',name:'Albumiini (Alb)',key:'albumin'},
   'k':{code:'K',name:'Kalium (K)',key:'potassium'},
   'krea':{code:'Krea',name:'Kreatiniini (Krea)',key:'creatinine'},
@@ -1365,6 +1367,10 @@ function puhtiFixNumericToken(raw){
   x=x.replace(/^I(?=\d)/,'<');
   x=x.replace(/^l(?=\d)/,'<');
   x=x.replace(/[−–—]/g,'-');
+  // Puhti can place a comparison sign after/in the number in the PDF text layer:
+  // "65<" means "<65" and "0,<4" means "<0,4".
+  x=x.replace(/^(\d+)([.,])([<>≤≥])(\d+)$/,'$3$1$2$4');
+  x=x.replace(/^(\d+(?:[.,]\d+)?)([<>≤≥])$/,'$2$1');
   return x;
 }
 function puhtiFixUnit(unit){
@@ -1380,7 +1386,9 @@ function puhtiParseNumber(raw){
 }
 function puhtiResultToken(line){
   const x=normalizePdfText(line);
-  const m=x.match(/^([<>≤≥Il]?\s*[-]?[0-9:,.;]+)\s*([A-Za-zµμ%0-9.^/:]+(?:\/[A-Za-z0-9.]+)?)?\s*$/i);
+  // Allow comparison signs that Puhti's embedded font may expose in the wrong
+  // position (for example 65< or 0,<4); puhtiFixNumericToken canonicalizes them.
+  const m=x.match(/^([<>≤≥Il]?\s*[-]?[0-9:,.;<>≤≥]+)\s*([A-Za-zµμ%0-9.^/:]+(?:\/[A-Za-z0-9.]+)?)?\s*$/i);
   if(!m)return null;
   const fixed=puhtiFixNumericToken(m[1]);
   const value=puhtiParseNumber(fixed);
@@ -1404,15 +1412,23 @@ function puhtiReferenceToken(line){
 }
 function parsePuhtiSummaryExpected(text){
   const t=String(text||'');
-  let count=0;
+  let count=0,found=false;
+  // fullText contains both visualText and flowText, so the Puhti summary can
+  // occur twice. For each category keep the largest reported count instead of
+  // summing duplicate copies.
   for(const re of [
     /(\d+)\s+tulosta\s+alle\s+viitearvojen/ig,
     /(\d+)\s+tulosta\s+viitearvojen\s+sisällä/ig,
     /(\d+)\s+tulosta\s+yli\s+viitearvojen/ig
   ]){
-    let m;while((m=re.exec(t))!==null)count+=Number(m[1])||0;
+    let m,maxForCategory=null;
+    while((m=re.exec(t))!==null){
+      const n=Number(m[1]);
+      if(Number.isFinite(n))maxForCategory=maxForCategory===null?n:Math.max(maxForCategory,n);
+    }
+    if(maxForCategory!==null){found=true;count+=maxForCategory;}
   }
-  return count||null;
+  return found?count:null;
 }
 function parsePuhtiStructuredV3(text){
   const lines=String(text||'').split('\n').map(normalizePdfText).filter(Boolean);
