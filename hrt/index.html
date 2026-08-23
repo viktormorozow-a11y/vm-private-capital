@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HRT Health Studio v3.2.1 — Text Import + Robust Puhti</title>
+<title>HRT Health Studio v3.3.0 — Text Import + Robust Puhti</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -204,13 +204,32 @@ aside{display:flex;flex-direction:column}
 .hrt-cloud-dot.ok{background:var(--good);box-shadow:0 0 0 4px rgba(115,217,154,.10)}.hrt-cloud-dot.busy{background:#e2bd73;box-shadow:0 0 0 4px rgba(226,189,115,.10)}.hrt-cloud-dot.err{background:var(--bad);box-shadow:0 0 0 4px rgba(255,126,138,.10)}
 .hrt-cloud-title{font-size:11px;font-weight:760}.hrt-cloud-sub{font-size:9px;color:var(--muted);margin-top:2px;line-height:1.35}.hrt-cloud-actions{display:flex;gap:6px;margin-top:8px}.hrt-cloud-actions .btn{padding:6px 8px;font-size:9px}
 
+
+
+/* v3.3.0 — Complete Withings integration */
+.withings-status-grid{display:grid;grid-template-columns:minmax(240px,1.2fr) minmax(180px,.7fr) minmax(190px,.7fr);gap:10px;align-items:end}
+.withings-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.withings-kpi{border:1px solid var(--line);background:rgba(255,255,255,.018);border-radius:13px;padding:13px;min-width:0}
+.withings-kpi .label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.withings-kpi .value{font-size:22px;font-weight:760;margin-top:5px}
+.withings-kpi .meta{font-size:10px;color:var(--muted);margin-top:5px;line-height:1.4}
+.withings-chart-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.withings-chart{border:1px solid var(--line);border-radius:13px;background:#08121b;padding:12px;min-width:0}
+.withings-chart h3{margin:0 0 8px;font-size:14px}
+.withings-chart canvas{height:220px}
+.withings-source{display:inline-flex;align-items:center;gap:5px;font-size:9px;color:var(--good);border:1px solid rgba(115,217,154,.22);background:rgba(115,217,154,.05);padding:3px 6px;border-radius:999px}
+.withings-actions{display:flex;gap:8px;flex-wrap:wrap}
+.withings-sync-note{font-size:10px;color:var(--muted);line-height:1.45;margin-top:8px}
+@media(max-width:1050px){.withings-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.withings-status-grid{grid-template-columns:1fr 1fr}.withings-status-grid>div:first-child{grid-column:1/-1}}
+@media(max-width:720px){.withings-chart-grid,.withings-kpis,.withings-status-grid{grid-template-columns:1fr}.withings-status-grid>div:first-child{grid-column:auto}}
+
 </style>
 </head>
 <body class="hrt-auth-locked">
 <div id="hrtAuthGate">
   <div class="hrt-auth-card">
     <div class="hrt-auth-brand">VM PRIVATE SUITE</div>
-    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.2.1</span></div>
+    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.3.0</span></div>
     <div class="hrt-auth-sub">Используйте тот же аккаунт, что и в Планировании капитала</div>
     <label>Email<input id="hrtGateEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
     <label>Пароль<input id="hrtGatePassword" type="password" autocomplete="current-password" placeholder="Введите пароль"></label>
@@ -222,10 +241,10 @@ aside{display:flex;flex-direction:column}
   </div>
 </div>
 <div id="hrtAppShell" class="auth-hidden">
-<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.2.1</div>
+<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.3.0</div>
 <div class="app">
 <aside>
-  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.2.1</small></div>
+  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.3.0</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Главная</button>
     <button class="nav" data-view="labs">Анализы</button>
@@ -236,6 +255,7 @@ aside{display:flex;flex-direction:column}
     <button class="nav" data-view="schedule">План анализов</button>
     <button class="nav" data-view="goals">Цели</button>
     <button class="nav" data-view="analytics">Графики</button>
+    <button class="nav" data-view="withings">Withings</button>
     <button class="nav" data-view="settings">Настройки</button>
   </nav>
   <div class="hrt-cloud-card" id="hrtCloudCard">
@@ -251,6 +271,10 @@ aside{display:flex;flex-direction:column}
 <section id="dashboard" class="view active">
   <div class="top"><div><h1>Контроль ГЗТ</h1><div class="sub">Протоколы действуют автоматически. Вручную добавляются только изменения и исключения.</div></div><button class="btn primary" onclick="openQuickDeviation()">Сегодня было иначе</button></div>
   <div class="grid g4" id="dashKpis"></div>
+  <div class="panel" id="dashboardWithingsPanel">
+    <div class="head"><div><h2>Withings</h2><div class="sub">Последние объективные показатели из подключённых устройств.</div></div><button class="btn" onclick="openView('withings')">Открыть Withings</button></div>
+    <div id="dashboardWithings"></div>
+  </div>
   <div class="grid g2">
     <div class="panel">
       <div class="head"><h2>Готовность к оценке схемы</h2></div>
@@ -413,22 +437,71 @@ aside{display:flex;flex-direction:column}
   </div>
 </section>
 
-<section id="settings" class="view">
-  <div class="top"><div><h1>Настройки</h1><div class="sub">Резервная копия хранится в JSON. Основные данные сохраняются локально в браузере.</div></div></div>
-  <div class="panel" id="withingsPanel">
-    <div class="head">
-      <div>
-        <h2>Withings</h2>
-        <div class="sub">Подключение через официальный Withings OAuth. Пароль Withings и секрет API в браузере не хранятся.</div>
-      </div>
-      <span class="badge" id="withingsStatusBadge">Не проверено</span>
-    </div>
-    <div id="withingsStatusText" class="note">Нажмите «Проверить» или подключите свой аккаунт Withings.</div>
-    <div class="actions" style="justify-content:flex-start">
+
+<section id="withings" class="view">
+  <div class="top">
+    <div><h1>Withings</h1><div class="sub">Вес и состав тела, давление и пульс, активность, сон и тренировки — напрямую из Withings Health Data API.</div></div>
+    <div class="withings-actions">
       <button class="btn primary" id="withingsConnectBtn" type="button" onclick="connectWithings()">Подключить Withings</button>
-      <button class="btn" id="withingsCheckBtn" type="button" onclick="refreshWithingsStatus()">↻ Проверить</button>
+      <button class="btn" id="withingsSyncBtn" type="button" onclick="syncWithings()">↻ Синхронизировать</button>
+      <button class="btn danger" id="withingsDisconnectBtn" type="button" onclick="disconnectWithings()">Отключить</button>
     </div>
   </div>
+
+  <div class="panel">
+    <div class="head">
+      <div><h2>Подключение</h2><div class="sub">API-secret и токены хранятся только на серверной стороне Supabase.</div></div>
+      <span class="badge" id="withingsStatusBadge">Не проверено</span>
+    </div>
+    <div class="withings-status-grid">
+      <div>
+        <div id="withingsStatusText" class="note">Проверяю подключение…</div>
+        <div id="withingsLastSyncText" class="withings-sync-note"></div>
+      </div>
+      <label>Период синхронизации
+        <select id="withingsDays" onchange="saveWithingsPrefs()">
+          <option value="30">30 дней</option>
+          <option value="90">90 дней</option>
+          <option value="365" selected>1 год</option>
+          <option value="1095">3 года</option>
+        </select>
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;padding:9px 0;color:var(--text)"><input id="withingsAutoSync" type="checkbox" style="width:auto" onchange="saveWithingsPrefs()"> Автосинхронизация</label>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="head"><div><h2>Последние показатели</h2><div class="sub">Показываются только метрики, которые реально доступны в вашем аккаунте Withings.</div></div><span class="withings-source">Compatible with Withings</span></div>
+    <div id="withingsKpis" class="withings-kpis"></div>
+  </div>
+
+  <div class="panel">
+    <div class="head"><h2>Динамика</h2></div>
+    <div class="withings-chart-grid">
+      <div class="withings-chart"><h3>Вес</h3><canvas id="withingsWeightChart"></canvas></div>
+      <div class="withings-chart"><h3>Жир и мышечная масса</h3><canvas id="withingsBodyChart"></canvas></div>
+      <div class="withings-chart"><h3>Артериальное давление</h3><canvas id="withingsBpChart"></canvas></div>
+      <div class="withings-chart"><h3>Шаги</h3><canvas id="withingsStepsChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="panel"><div class="head"><h2>Измерения</h2></div><div id="withingsMeasuresTable"></div></div>
+    <div class="panel"><div class="head"><h2>Активность</h2></div><div id="withingsActivityTable"></div></div>
+  </div>
+  <div class="grid g2">
+    <div class="panel"><div class="head"><h2>Сон</h2></div><div id="withingsSleepTable"></div></div>
+    <div class="panel"><div class="head"><h2>Тренировки</h2></div><div id="withingsWorkoutsTable"></div></div>
+  </div>
+  <div class="panel">
+    <div class="head"><h2>Управление локальной историей</h2></div>
+    <div class="note">Отключение аккаунта удаляет серверные токены доступа, но уже загруженная история остаётся в HRT Health Studio. Её можно удалить отдельно.</div>
+    <div class="actions" style="justify-content:flex-start"><button class="btn danger" onclick="clearWithingsData()">Удалить загруженные данные Withings</button></div>
+  </div>
+</section>
+
+<section id="settings" class="view">
+  <div class="top"><div><h1>Настройки</h1><div class="sub">Резервная копия хранится в JSON. Основные данные сохраняются локально в браузере.</div></div></div>
   <div class="panel">
     <div class="head"><h2>Данные</h2></div>
     <div class="actions" style="justify-content:flex-start">
@@ -489,7 +562,10 @@ state.goals=state.goals||[];
 state.labPlans=state.labPlans||[];
 state.settings=state.settings||{};
 state.settings.primaryGoal=state.settings.primaryGoal||'';
-state.settings.appVersion='3.2.1';
+state.settings.appVersion='3.3.0';
+state.withings=state.withings||{measurements:[],activity:[],sleep:[],workouts:[],lastSyncAt:'',autoSync:true,syncDays:365};
+state.withings.measurements=state.withings.measurements||[];state.withings.activity=state.withings.activity||[];state.withings.sleep=state.withings.sleep||[];state.withings.workouts=state.withings.workouts||[];
+if(state.withings.autoSync===undefined)state.withings.autoSync=true;if(!state.withings.syncDays)state.withings.syncDays=365;
 state.labs.forEach(l=>{l.doseContext=l.doseContext||{medId:'',lastDoseAt:'',relation:'unknown',adherence:'unknown'}});
 
 // Repair aliases created by older parser versions where MCH/MCHC could be mistaken for hemoglobin.
@@ -548,7 +624,7 @@ function migrateHrtState(x){
   x.meds=x.meds||[];x.protocols=x.protocols||[];x.deviations=x.deviations||[];x.labs=x.labs||[];
   x.wellbeing=x.wellbeing||[];x.aliasMap=x.aliasMap||{};x.customAnalytes=x.customAnalytes||[];
   x.goals=x.goals||[];x.labPlans=x.labPlans||[];x.settings=x.settings||{};
-  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.2.1';
+  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.3.0';x.withings=x.withings||{measurements:[],activity:[],sleep:[],workouts:[],lastSyncAt:'',autoSync:true,syncDays:365};x.withings.measurements=x.withings.measurements||[];x.withings.activity=x.withings.activity||[];x.withings.sleep=x.withings.sleep||[];x.withings.workouts=x.withings.workouts||[];if(x.withings.autoSync===undefined)x.withings.autoSync=true;if(!x.withings.syncDays)x.withings.syncDays=365;
   x.labs.forEach(l=>{l.doseContext=l.doseContext||{medId:'',lastDoseAt:'',relation:'unknown',adherence:'unknown'}});
   for(const dm of DEFAULT_MEDS){
     if(!x.meds.some(m=>String(m.name||'').trim().toLowerCase()===dm.name.toLowerCase()))x.meds.push({...dm});
@@ -658,7 +734,7 @@ async function hrtSignIn(){
     if(!data?.session?.user)throw new Error('Сессия не получена.');
     hrtGateMessage('Вход выполнен. Загружаю данные…','ok');
     await handleHrtCloudSession(data.session,{initial:true});
-    hrtUnlockApp();
+    hrtUnlockApp();setTimeout(autoSyncWithings,900);
   }catch(e){
     hrtGateMessage(e?.message||'Не удалось войти.','err');
   }finally{
@@ -673,7 +749,7 @@ async function initHrtAuth(){
   }
   try{
     const {data:{session}}=await hrtSupabase.auth.getSession();
-    if(session?.user){await handleHrtCloudSession(session,{initial:true});hrtUnlockApp();}
+    if(session?.user){await handleHrtCloudSession(session,{initial:true});hrtUnlockApp();setTimeout(autoSyncWithings,900);}
     else hrtLockApp();
   }catch(e){
     hrtGateMessage(e?.message||'Ошибка проверки авторизации.','err');
@@ -683,7 +759,7 @@ async function initHrtAuth(){
       try{
         if(session?.user){
           if(hrtCloudUser?.id!==session.user.id)await handleHrtCloudSession(session,{initial:false});
-          hrtUnlockApp();
+          hrtUnlockApp();setTimeout(autoSyncWithings,900);
         }else{hrtCloudUser=null;hrtLockApp();hrtCloudSetStatus('','Облако не подключено','Требуется вход')}
       }catch(e){console.error('HRT auth cloud sync error',e);hrtCloudSetStatus('err','Ошибка облака',e?.message||'')}
     },0);
@@ -691,113 +767,121 @@ async function initHrtAuth(){
 }
 
 
-let withingsPopup=null,withingsPollTimer=null;
+let withingsPopup=null,withingsPollTimer=null,withingsSyncBusy=false;
+
+const WITHINGS_META={
+  1:['Вес','кг'],5:['Безжировая масса','кг'],6:['Жир','%'],8:['Жировая масса','кг'],9:['Диастолическое АД','мм рт. ст.'],10:['Систолическое АД','мм рт. ст.'],11:['Пульс','уд/мин'],12:['Температура','°C'],54:['SpO₂','%'],71:['Температура тела','°C'],73:['Температура кожи','°C'],76:['Мышечная масса','кг'],77:['Вода','кг'],88:['Костная масса','кг'],91:['Скорость пульсовой волны','м/с'],123:['VO₂ max','мл/мин/кг'],155:['Сосудистый возраст','лет'],167:['Nerve Health Score',''],168:['Внеклеточная вода','кг'],169:['Внутриклеточная вода','кг'],170:['Висцеральный жир',''],226:['BMR','ккал/сут'],227:['Метаболический возраст','лет'],229:['Проводимость кожи','']
+};
+
+function ensureWithingsState(){
+  state.withings=state.withings||{};
+  state.withings.measurements=state.withings.measurements||[];
+  state.withings.activity=state.withings.activity||[];
+  state.withings.sleep=state.withings.sleep||[];
+  state.withings.workouts=state.withings.workouts||[];
+  if(state.withings.autoSync===undefined)state.withings.autoSync=true;
+  if(!state.withings.syncDays)state.withings.syncDays=365;
+  return state.withings;
+}
+function withingsDate(ts){return ts?new Date(Number(ts)*1000).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—'}
+function withingsDay(ts){return ts?new Date(Number(ts)*1000).toLocaleDateString('ru-RU'):'—'}
+function wNum(v,d=1){const n=Number(v);return Number.isFinite(n)?n.toLocaleString('ru-RU',{maximumFractionDigits:d,minimumFractionDigits:0}):'—'}
+function wDuration(sec){const n=Number(sec);if(!Number.isFinite(n)||n<=0)return '—';const h=Math.floor(n/3600),m=Math.round((n%3600)/60);return `${h} ч ${m} мин`}
+function wGroups(){return [...ensureWithingsState().measurements].sort((a,b)=>Number(b.date)-Number(a.date))}
+function latestWithingsMetric(type){for(const g of wGroups()){const v=g.values?.[String(type)];if(v&&Number.isFinite(Number(v.value)))return {group:g,...v}}return null}
+function latestWithingsBp(){for(const g of wGroups()){const sys=g.values?.['10'],dia=g.values?.['9'];if(sys&&dia)return {date:g.date,sys:Number(sys.value),dia:Number(dia.value),pulse:g.values?.['11']?Number(g.values['11'].value):null}}return null}
+function latestWithingsPulse(){const bp=latestWithingsBp();if(bp?.pulse)return {value:bp.pulse,date:bp.date};const p=latestWithingsMetric(11);return p?{value:p.value,date:p.group.date}:null}
+function latestWithingsActivity(){return [...ensureWithingsState().activity].sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')))[0]||null}
+function latestWithingsSleep(){return [...ensureWithingsState().sleep].sort((a,b)=>Number(b.enddate||b.startdate||0)-Number(a.enddate||a.startdate||0))[0]||null}
 
 function setWithingsStatus(kind,title,detail=''){
   const badge=$('withingsStatusBadge'),box=$('withingsStatusText'),btn=$('withingsConnectBtn');
-  if(badge){
-    badge.className='badge '+(kind==='ok'?'good':kind==='busy'?'gold':kind==='err'?'':'blue');
-    badge.textContent=title||'—';
-  }
+  if(badge){badge.className='badge '+(kind==='ok'?'good':kind==='busy'?'gold':kind==='err'?'':'blue');badge.textContent=title||'—'}
   if(box)box.textContent=detail||'';
   if(btn)btn.textContent=kind==='ok'?'Переподключить Withings':'Подключить Withings';
 }
-
-async function currentHrtSession(){
-  if(!hrtSupabase)return null;
-  const {data:{session}}=await hrtSupabase.auth.getSession();
-  return session||null;
+async function currentHrtSession(){if(!hrtSupabase)return null;const {data:{session}}=await hrtSupabase.auth.getSession();return session||null}
+async function withingsApiFetch(path,{method='GET'}={}){
+  const session=await currentHrtSession();if(!session)throw new Error('Сначала войдите в HRT Health Studio.');
+  const r=await fetch(`${SUPABASE_URL}/functions/v1/${path}`,{method,headers:{'Authorization':`Bearer ${session.access_token}`,'apikey':SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json'}});
+  const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j?.error||`HTTP ${r.status}`);return j;
 }
-
 async function refreshWithingsStatus({silent=false}={}){
   try{
-    const session=await currentHrtSession();
-    if(!session){
-      setWithingsStatus('err','Требуется вход','Сначала войдите в HRT Health Studio.');
-      return false;
-    }
     if(!silent)setWithingsStatus('busy','Проверяю…','Проверяю подключение Withings.');
-    const r=await fetch(`${SUPABASE_URL}/functions/v1/withings-oauth?action=status`,{
-      method:'GET',
-      headers:{
-        'Authorization':`Bearer ${session.access_token}`,
-        'apikey':SUPABASE_PUBLISHABLE_KEY
-      }
-    });
-    const j=await r.json().catch(()=>({}));
-    if(!r.ok)throw new Error(j?.error||`HTTP ${r.status}`);
-    if(j.connected){
-      const updated=j.connection?.updated_at?new Date(j.connection.updated_at).toLocaleString('ru-RU'):'';
-      setWithingsStatus('ok','Подключено',updated?`Аккаунт Withings подключён. Последнее подтверждение: ${updated}.`:'Аккаунт Withings подключён.');
-      return true;
-    }
-    setWithingsStatus('','Не подключено','Аккаунт Withings пока не связан с HRT Health Studio.');
-    return false;
-  }catch(e){
-    console.error('Withings status error',e);
-    setWithingsStatus('err','Ошибка проверки',e?.message||'Не удалось проверить подключение Withings.');
-    return false;
-  }
+    const j=await withingsApiFetch('withings-oauth?action=status');
+    if(j.connected){const updated=j.connection?.updated_at?new Date(j.connection.updated_at).toLocaleString('ru-RU'):'';setWithingsStatus('ok','Подключено',updated?`Аккаунт связан. Токены обновлены: ${updated}.`:'Аккаунт Withings подключён.');renderWithings();return true}
+    setWithingsStatus('','Не подключено','Аккаунт Withings пока не связан с HRT Health Studio.');renderWithings();return false;
+  }catch(e){console.error('Withings status error',e);if(!silent)setWithingsStatus('err','Ошибка проверки',e?.message||'Не удалось проверить подключение Withings.');return false}
 }
-
 async function connectWithings(){
-  const btn=$('withingsConnectBtn');
-  let popup=null;
+  const btn=$('withingsConnectBtn');let popup=null;
   try{
-    const session=await currentHrtSession();
-    if(!session)throw new Error('Сначала войдите в HRT Health Studio.');
-
-    popup=window.open('about:blank','withings_oauth','width=600,height=780,resizable=yes,scrollbars=yes');
-    if(!popup)throw new Error('Браузер заблокировал окно Withings. Разрешите всплывающие окна для этого сайта.');
-
-    if(btn){btn.disabled=true;btn.textContent='Открываю Withings…'}
-    setWithingsStatus('busy','Подключение…','Создаю защищённую ссылку авторизации Withings.');
-
-    const r=await fetch(`${SUPABASE_URL}/functions/v1/withings-oauth?action=start`,{
-      method:'GET',
-      headers:{
-        'Authorization':`Bearer ${session.access_token}`,
-        'apikey':SUPABASE_PUBLISHABLE_KEY
-      }
-    });
-    const j=await r.json().catch(()=>({}));
-    if(!r.ok||!j.authorization_url)throw new Error(j?.error||`Не удалось начать OAuth (HTTP ${r.status})`);
-
-    withingsPopup=popup;
-    popup.location.replace(j.authorization_url);
-    setWithingsStatus('busy','Ожидаю разрешение','Разрешите доступ в окне Withings. После подтверждения статус обновится автоматически.');
-
-    clearInterval(withingsPollTimer);
-    const started=Date.now();
+    const session=await currentHrtSession();if(!session)throw new Error('Сначала войдите в HRT Health Studio.');
+    popup=window.open('about:blank','withings_oauth','width=600,height=780,resizable=yes,scrollbars=yes');if(!popup)throw new Error('Браузер заблокировал окно Withings. Разрешите всплывающие окна для этого сайта.');
+    if(btn){btn.disabled=true;btn.textContent='Открываю Withings…'}setWithingsStatus('busy','Подключение…','Создаю защищённую одноразовую ссылку авторизации.');
+    const j=await withingsApiFetch('withings-oauth?action=start');if(!j.authorization_url)throw new Error('Сервер не вернул ссылку авторизации.');
+    withingsPopup=popup;popup.location.replace(j.authorization_url);setWithingsStatus('busy','Ожидаю разрешение','Разрешите доступ в окне Withings. После подтверждения данные загрузятся автоматически.');
+    clearInterval(withingsPollTimer);const started=Date.now();
     withingsPollTimer=setInterval(async()=>{
       const connected=await refreshWithingsStatus({silent:true});
-      if(connected){
-        clearInterval(withingsPollTimer);withingsPollTimer=null;
-        try{if(withingsPopup&&!withingsPopup.closed)withingsPopup.close()}catch{}
-        withingsPopup=null;
-        if(btn){btn.disabled=false;btn.textContent='Переподключить Withings'}
-        hrtCloudToast('Withings подключён');
-        return;
-      }
-      if(Date.now()-started>2*60*1000 || (withingsPopup&&withingsPopup.closed)){
-        clearInterval(withingsPollTimer);withingsPollTimer=null;
-        if(btn){btn.disabled=false;btn.textContent='Подключить Withings'}
-        if(!(await refreshWithingsStatus({silent:true})))setWithingsStatus('','Не подключено','Подключение не завершено. Можно попробовать ещё раз.');
-      }
+      if(connected){clearInterval(withingsPollTimer);withingsPollTimer=null;try{if(withingsPopup&&!withingsPopup.closed)withingsPopup.close()}catch{}withingsPopup=null;if(btn)btn.disabled=false;hrtCloudToast('Withings подключён');await syncWithings({silent:true});return}
+      if(Date.now()-started>2*60*1000||(withingsPopup&&withingsPopup.closed)){clearInterval(withingsPollTimer);withingsPollTimer=null;if(btn)btn.disabled=false;await refreshWithingsStatus({silent:true})}
     },1600);
-  }catch(e){
-    console.error('Withings connect error',e);
-    try{if(popup&&!popup.closed)popup.close()}catch{}
-    setWithingsStatus('err','Не удалось подключить',e?.message||'Ошибка запуска Withings OAuth.');
-    if(btn){btn.disabled=false;btn.textContent='Подключить Withings'}
-  }
+  }catch(e){console.error('Withings connect error',e);try{if(popup&&!popup.closed)popup.close()}catch{}setWithingsStatus('err','Не удалось подключить',e?.message||'Ошибка запуска Withings OAuth.');if(btn)btn.disabled=false}
 }
+async function disconnectWithings(){
+  if(!confirm('Отключить аккаунт Withings от HRT Health Studio? Уже загруженная история останется в программе.'))return;
+  try{await withingsApiFetch('withings-oauth?action=disconnect',{method:'POST'});setWithingsStatus('','Не подключено','Серверные токены Withings удалены. Загруженная история сохранена.');renderWithings();hrtCloudToast('Withings отключён')}catch(e){alert('Не удалось отключить Withings: '+(e?.message||e))}
+}
+function mergeWithingsRows(oldRows,newRows,keyFn){const m=new Map();for(const x of oldRows||[])m.set(keyFn(x),x);for(const x of newRows||[])m.set(keyFn(x),x);return [...m.values()]}
+async function syncWithings({silent=false}={}){
+  if(withingsSyncBusy)return false;withingsSyncBusy=true;const btn=$('withingsSyncBtn');
+  try{
+    ensureWithingsState();const days=Number($('withingsDays')?.value||state.withings.syncDays||365);state.withings.syncDays=days;
+    if(btn){btn.disabled=true;btn.textContent='Синхронизация…'}if(!silent)setWithingsStatus('busy','Синхронизация…',`Загружаю последние ${days} дней.`);
+    const j=await withingsApiFetch(`withings-data?action=sync&days=${encodeURIComponent(days)}`);
+    state.withings.measurements=mergeWithingsRows(state.withings.measurements,j.measurements||[],x=>String(x.grpid||'')+'|'+String(x.date||''));
+    state.withings.activity=mergeWithingsRows(state.withings.activity,j.activity||[],x=>String(x.date||x.day||x.startdate||''));
+    state.withings.sleep=mergeWithingsRows(state.withings.sleep,j.sleep||[],x=>String(x.id||'')+'|'+String(x.startdate||x.date||''));
+    state.withings.workouts=mergeWithingsRows(state.withings.workouts,j.workouts||[],x=>String(x.id||'')+'|'+String(x.startdate||x.date||''));
+    state.withings.lastSyncAt=j.synced_at||new Date().toISOString();persistHrtLocal();renderAll();scheduleHrtCloudSave();setWithingsStatus('ok','Подключено',`Синхронизация завершена: ${new Date(state.withings.lastSyncAt).toLocaleString('ru-RU')}.`);if(!silent)hrtCloudToast('Данные Withings обновлены');return true;
+  }catch(e){console.error('Withings sync error',e);if(!silent)setWithingsStatus('err','Ошибка синхронизации',e?.message||'Не удалось получить данные Withings.');return false}
+  finally{withingsSyncBusy=false;if(btn){btn.disabled=false;btn.textContent='↻ Синхронизировать'}}
+}
+function saveWithingsPrefs(){ensureWithingsState();state.withings.syncDays=Number($('withingsDays')?.value||365);state.withings.autoSync=!!$('withingsAutoSync')?.checked;persistHrtLocal();scheduleHrtCloudSave()}
+async function autoSyncWithings(){ensureWithingsState();if(!state.withings.autoSync||withingsSyncBusy)return;const ok=await refreshWithingsStatus({silent:true});if(!ok)return;const last=Date.parse(state.withings.lastSyncAt||'')||0;if(Date.now()-last>6*60*60*1000)await syncWithings({silent:true})}
+function clearWithingsData(){if(!confirm('Удалить из HRT Health Studio всю уже загруженную историю Withings? Подключение аккаунта останется.'))return;state.withings={measurements:[],activity:[],sleep:[],workouts:[],lastSyncAt:'',autoSync:state.withings?.autoSync!==false,syncDays:state.withings?.syncDays||365};save();renderWithings()}
 
-window.addEventListener('message',e=>{
-  if(e?.data?.type==='withings-connected'){
-    setTimeout(()=>refreshWithingsStatus(),350);
-  }
-});
+function metricSeries(type){return wGroups().filter(g=>g.values?.[String(type)]).map(g=>({x:Number(g.date)*1000,y:Number(g.values[String(type)].value)})).sort((a,b)=>a.x-b.x)}
+function bpSeries(type){return metricSeries(type)}
+function activitySeries(field){return [...ensureWithingsState().activity].filter(a=>a.date&&Number.isFinite(Number(a[field]))).map(a=>({x:new Date(a.date+'T12:00:00').getTime(),y:Number(a[field])})).sort((a,b)=>a.x-b.x)}
+function drawWithingsChart(canvasId,sets){
+  const c=$(canvasId);if(!c)return;const rect=c.getBoundingClientRect(),dpr=window.devicePixelRatio||1;c.width=Math.max(320,rect.width*dpr);c.height=Math.max(180,220*dpr);const ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);const w=c.width/dpr,h=c.height/dpr;ctx.clearRect(0,0,w,h);
+  const all=sets.flatMap(s=>s.points||[]);if(!all.length){ctx.fillStyle='#8ea0b1';ctx.font='12px sans-serif';ctx.textAlign='center';ctx.fillText('Нет данных',w/2,h/2);return}
+  const pad={l:42,r:12,t:12,b:28},xs=all.map(p=>p.x),ys=all.map(p=>p.y);let xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys);if(xmin===xmax){xmin-=86400000;xmax+=86400000}if(ymin===ymax){ymin-=1;ymax+=1}const yr=(ymax-ymin)||1;ymin-=yr*.12;ymax+=yr*.12;
+  ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1;for(let i=0;i<=4;i++){const y=pad.t+(h-pad.t-pad.b)*i/4;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();const val=ymax-(ymax-ymin)*i/4;ctx.fillStyle='#8ea0b1';ctx.font='9px sans-serif';ctx.textAlign='right';ctx.fillText(wNum(val,1),pad.l-5,y+3)}
+  const mapX=x=>pad.l+(x-xmin)/(xmax-xmin)*(w-pad.l-pad.r),mapY=y=>pad.t+(ymax-y)/(ymax-ymin)*(h-pad.t-pad.b);const cols=['#d6ad62','#7fc8ff','#73d99a','#df9cff'];
+  sets.forEach((set,idx)=>{const pts=set.points||[];if(!pts.length)return;ctx.strokeStyle=set.color||cols[idx%cols.length];ctx.lineWidth=2;ctx.beginPath();pts.forEach((p,i)=>{const x=mapX(p.x),y=mapY(p.y);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke()});
+  ctx.fillStyle='#8ea0b1';ctx.font='9px sans-serif';ctx.textAlign='left';ctx.fillText(new Date(xmin).toLocaleDateString('ru-RU'),pad.l,h-8);ctx.textAlign='right';ctx.fillText(new Date(xmax).toLocaleDateString('ru-RU'),w-pad.r,h-8);
+  let lx=pad.l;ctx.textAlign='left';sets.forEach((set,idx)=>{if(!(set.points||[]).length)return;ctx.fillStyle=set.color||cols[idx%cols.length];ctx.fillRect(lx,2,9,3);ctx.fillStyle='#cfd8df';ctx.fillText(set.label||'',lx+13,7);lx+=13+ctx.measureText(set.label||'').width+14});
+}
+function renderDashboardWithings(){const box=$('dashboardWithings');if(!box)return;ensureWithingsState();const weight=latestWithingsMetric(1),fat=latestWithingsMetric(6),muscle=latestWithingsMetric(76),bp=latestWithingsBp();if(!weight&&!fat&&!muscle&&!bp){box.innerHTML='<div class="empty">Withings ещё не синхронизирован. Откройте раздел Withings и подключите аккаунт.</div>';return}const rows=[];if(weight)rows.push(['Вес',`${wNum(weight.value,2)} кг`,withingsDay(weight.group.date)]);if(fat)rows.push(['Жир',`${wNum(fat.value,2)} %`,withingsDay(fat.group.date)]);if(muscle)rows.push(['Мышечная масса',`${wNum(muscle.value,2)} кг`,withingsDay(muscle.group.date)]);if(bp)rows.push(['Давление',`${Math.round(bp.sys)}/${Math.round(bp.dia)}`,withingsDay(bp.date)]);box.innerHTML=`<div class="withings-kpis">${rows.map(x=>`<div class="withings-kpi"><div class="label">${x[0]}</div><div class="value">${x[1]}</div><div class="meta">${x[2]}</div></div>`).join('')}</div>`}
+function renderWithings(){
+  ensureWithingsState();const auto=$('withingsAutoSync'),days=$('withingsDays');if(auto)auto.checked=state.withings.autoSync!==false;if(days)days.value=String(state.withings.syncDays||365);const ls=$('withingsLastSyncText');if(ls)ls.textContent=state.withings.lastSyncAt?`Последняя загрузка данных: ${new Date(state.withings.lastSyncAt).toLocaleString('ru-RU')}`:'Данные ещё не загружались.';
+  renderDashboardWithings();
+  const weight=latestWithingsMetric(1),fat=latestWithingsMetric(6),fatMass=latestWithingsMetric(8),ffm=latestWithingsMetric(5),muscle=latestWithingsMetric(76),water=latestWithingsMetric(77),bone=latestWithingsMetric(88),visceral=latestWithingsMetric(170),bp=latestWithingsBp(),pulse=latestWithingsPulse(),pwv=latestWithingsMetric(91),vascular=latestWithingsMetric(155),bmr=latestWithingsMetric(226),metAge=latestWithingsMetric(227),vo2=latestWithingsMetric(123),spo2=latestWithingsMetric(54),act=latestWithingsActivity(),sl=latestWithingsSleep();
+  const sleepData=sl?.data||{};const cards=[];const add=(label,value,meta)=>{if(value!==null&&value!==undefined&&value!=='—')cards.push({label,value,meta})};
+  if(weight)add('Вес',`${wNum(weight.value,2)} кг`,withingsDay(weight.group.date));if(fat)add('Жир',`${wNum(fat.value,2)} %`,withingsDay(fat.group.date));if(fatMass)add('Жировая масса',`${wNum(fatMass.value,2)} кг`,withingsDay(fatMass.group.date));if(ffm)add('Безжировая масса',`${wNum(ffm.value,2)} кг`,withingsDay(ffm.group.date));if(muscle)add('Мышечная масса',`${wNum(muscle.value,2)} кг`,withingsDay(muscle.group.date));if(water)add('Вода',`${wNum(water.value,2)} кг`,withingsDay(water.group.date));if(bone)add('Костная масса',`${wNum(bone.value,2)} кг`,withingsDay(bone.group.date));if(visceral)add('Висцеральный жир',wNum(visceral.value,1),withingsDay(visceral.group.date));if(bp)add('Давление',`${Math.round(bp.sys)}/${Math.round(bp.dia)} мм рт. ст.`,withingsDay(bp.date));if(pulse)add('Пульс',`${Math.round(pulse.value)} уд/мин`,withingsDay(pulse.date));if(spo2)add('SpO₂',`${wNum(spo2.value,1)} %`,withingsDay(spo2.group.date));if(pwv)add('PWV',`${wNum(pwv.value,2)} м/с`,withingsDay(pwv.group.date));if(vascular)add('Сосудистый возраст',`${wNum(vascular.value,0)} лет`,withingsDay(vascular.group.date));if(metAge)add('Метаболический возраст',`${wNum(metAge.value,0)} лет`,withingsDay(metAge.group.date));if(bmr)add('BMR',`${wNum(bmr.value,0)} ккал/сут`,withingsDay(bmr.group.date));if(vo2)add('VO₂ max',wNum(vo2.value,1),withingsDay(vo2.group.date));if(act)add('Шаги',`${Math.round(Number(act.steps)||0).toLocaleString('ru-RU')}`,act.date||'');if(sl)add('Сон',wDuration(sleepData.total_sleep_time||sleepData.asleepduration),sl.date||withingsDay(sl.enddate));
+  if($('withingsKpis'))$('withingsKpis').innerHTML=cards.length?cards.map(c=>`<div class="withings-kpi"><div class="label">${safeHtml(c.label)}</div><div class="value">${safeHtml(c.value)}</div><div class="meta">${safeHtml(c.meta||'')}</div></div>`).join(''):'<div class="empty" style="grid-column:1/-1">После подключения нажмите «Синхронизировать». Появятся только данные, которые реально есть в вашем Withings.</div>';
+  setTimeout(()=>{drawWithingsChart('withingsWeightChart',[{label:'Вес',points:metricSeries(1)}]);drawWithingsChart('withingsBodyChart',[{label:'Жир %',points:metricSeries(6)},{label:'Мышцы кг',points:metricSeries(76)}]);drawWithingsChart('withingsBpChart',[{label:'Сист.',points:bpSeries(10)},{label:'Диаст.',points:bpSeries(9)}]);drawWithingsChart('withingsStepsChart',[{label:'Шаги',points:activitySeries('steps')}])},0);
+  const ms=wGroups().slice(0,40);if($('withingsMeasuresTable'))$('withingsMeasuresTable').innerHTML=ms.length?`<div class="table-wrap"><table><thead><tr><th>Дата</th><th>Показатели</th></tr></thead><tbody>${ms.map(g=>`<tr><td>${withingsDate(g.date)}</td><td>${Object.values(g.values||{}).map(v=>`${safeHtml(v.label||WITHINGS_META[v.type]?.[0]||String(v.type))}: <b>${wNum(v.value,2)} ${safeHtml(v.unit||WITHINGS_META[v.type]?.[1]||'')}</b>`).join('<br>')}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Нет измерений.</div>';
+  const acts=[...state.withings.activity].sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))).slice(0,30);if($('withingsActivityTable'))$('withingsActivityTable').innerHTML=acts.length?`<div class="table-wrap"><table><thead><tr><th>Дата</th><th>Шаги</th><th>Расстояние</th><th>Ккал</th><th>HR avg</th></tr></thead><tbody>${acts.map(a=>`<tr><td>${safeHtml(a.date||'—')}</td><td>${Number(a.steps||0).toLocaleString('ru-RU')}</td><td>${Number.isFinite(Number(a.distance))?wNum(Number(a.distance)/1000,2)+' км':'—'}</td><td>${wNum(a.calories,0)}</td><td>${wNum(a.hr_average,0)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Нет данных активности.</div>';
+  const sleeps=[...state.withings.sleep].sort((a,b)=>Number(b.enddate||b.startdate||0)-Number(a.enddate||a.startdate||0)).slice(0,30);if($('withingsSleepTable'))$('withingsSleepTable').innerHTML=sleeps.length?`<div class="table-wrap"><table><thead><tr><th>Дата</th><th>Сон</th><th>Deep</th><th>REM</th><th>Score</th><th>HR avg</th></tr></thead><tbody>${sleeps.map(x=>{const d=x.data||{};return `<tr><td>${safeHtml(x.date||withingsDay(x.enddate))}</td><td>${wDuration(d.total_sleep_time||d.asleepduration)}</td><td>${wDuration(d.deepsleepduration)}</td><td>${wDuration(d.remsleepduration)}</td><td>${wNum(d.sleep_score,0)}</td><td>${wNum(d.hr_average,0)}</td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty">Нет данных сна.</div>';
+  const workouts=[...state.withings.workouts].sort((a,b)=>Number(b.startdate||0)-Number(a.startdate||0)).slice(0,30);if($('withingsWorkoutsTable'))$('withingsWorkoutsTable').innerHTML=workouts.length?`<div class="table-wrap"><table><thead><tr><th>Дата</th><th>Категория</th><th>Длительность</th><th>Ккал</th><th>HR avg</th></tr></thead><tbody>${workouts.map(x=>{const d=x.data||x;return `<tr><td>${withingsDay(x.startdate||x.date)}</td><td>${safeHtml(String(x.category??x.sport??'—'))}</td><td>${wDuration(x.enddate&&x.startdate?Number(x.enddate)-Number(x.startdate):d.duration)}</td><td>${wNum(d.calories,0)}</td><td>${wNum(d.hr_average,0)}</td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty">Нет тренировок.</div>';
+}
+function openView(id){const b=[...document.querySelectorAll('.nav')].find(x=>x.dataset.view===id);if(b)b.click()}
+window.addEventListener('message',async e=>{if(e?.data?.type==='withings-connected'){setTimeout(async()=>{if(await refreshWithingsStatus())await syncWithings({silent:true})},450)}});
 
 document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));b.classList.add('active');
@@ -806,7 +890,7 @@ document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{
   if(b.dataset.view==='clinical')renderClinicalAnalysis();
   if(b.dataset.view==='schedule')renderLabSchedule();
   if(b.dataset.view==='goals')renderGoals();
-  if(b.dataset.view==='settings')refreshWithingsStatus();
+  if(b.dataset.view==='withings'){renderWithings();refreshWithingsStatus({silent:true});setTimeout(autoSyncWithings,300)}
 });
 
 function openModal(html){$('modal').className='modal';$('modal').innerHTML=html;$('modalBg').classList.add('show')}
@@ -2421,7 +2505,7 @@ function renderLatestChanges(){
   }
   box.innerHTML=cards.length?`<div class="change-grid">${cards.join('')}</div>`:`<div class="empty">Пока недостаточно повторных анализов для сравнения.</div>`;
 }
-const APP_VERSION='3.2.1';
+const APP_VERSION='3.3.0';
 
 function normalizedHctPercent(marker){
   if(!marker)return null;
@@ -2443,9 +2527,7 @@ function psaNgMlValue(marker){
 function firstMarker(key){
   const arr=markerHistory(key);return arr.length?arr[0]:null;
 }
-function latestBp(){
-  const w=latestWellbeing();return w?.bp||'—';
-}
+function latestBp(){const wb=latestWithingsBp();if(wb)return `${Math.round(wb.sys)}/${Math.round(wb.dia)}`;const w=latestWellbeing();return w?.bp||'—';}
 function safetySnapshot(){
   const hct=latestMarker('hematocrit');
   const hb=latestMarker('hemoglobin');
@@ -2485,8 +2567,9 @@ function safetySnapshot(){
   if(ldl)items.push({key:'ldl',label:'LDL',value:`${ldl.marker.value} ${ldl.marker.unit||''}`,level:'',state:'Липидный профиль',date:ldl.lab.date});
   if(hdl)items.push({key:'hdl',label:'HDL',value:`${hdl.marker.value} ${hdl.marker.unit||''}`,level:'',state:'Липидный профиль',date:hdl.lab.date});
   if(hba1c)items.push({key:'hba1c',label:'HbA1c',value:`${hba1c.marker.value} ${hba1c.marker.unit||''}`,level:'',state:'Гликемический профиль',date:hba1c.lab.date});
-  items.push({key:'bp',label:'Давление',value:w?.bp||'—',level:'',state:w?.date?`Самочувствие · ${fmtDate(w.date)}`:'Нет данных',date:w?.date||''});
-  items.push({key:'weight',label:'Вес',value:w?.weight!=null?`${w.weight} кг`:'—',level:'',state:w?.date?`Самочувствие · ${fmtDate(w.date)}`:'Нет данных',date:w?.date||''});
+  const wbp=latestWithingsBp(),ww=latestWithingsMetric(1);
+  items.push({key:'bp',label:'Давление',value:wbp?`${Math.round(wbp.sys)}/${Math.round(wbp.dia)}`:(w?.bp||'—'),level:'',state:wbp?'Withings':(w?.date?`Самочувствие · ${fmtDate(w.date)}`:'Нет данных'),date:wbp?new Date(wbp.date*1000).toISOString().slice(0,10):(w?.date||'')});
+  items.push({key:'weight',label:'Вес',value:ww?`${wNum(ww.value,2)} кг`:(w?.weight!=null?`${w.weight} кг`:'—'),level:'',state:ww?'Withings':(w?.date?`Самочувствие · ${fmtDate(w.date)}`:'Нет данных'),date:ww?new Date(ww.group.date*1000).toISOString().slice(0,10):(w?.date||'')});
   return items;
 }
 function safetyOverall(){
@@ -2565,6 +2648,7 @@ function printDoctorReport(){
   setTimeout(()=>{try{win.focus()}catch{}},250);
 }
 function renderAll(){
+  ensureWithingsState();
   const aps=activeProtocols();
   $('dashKpis').innerHTML=[
     ['Активных протоколов',aps.length,aps.length?'Схемы действуют автоматически':'Добавьте первый протокол'],
@@ -2599,6 +2683,7 @@ function renderAll(){
 
   $('wellBody').innerHTML=[...state.wellbeing].sort((a,b)=>b.date.localeCompare(a.date)).map(w=>`<tr><td>${fmtDate(w.date)}</td><td>${w.energy??'—'}</td><td>${w.libido??'—'}</td><td>${w.sleep??'—'}</td><td>${w.mood??'—'}</td><td>${w.recovery??'—'}</td><td>${w.weight??'—'}</td><td>${w.bp||'—'}</td><td><div class="actions" style="margin:0"><button class="btn" onclick="openWellModal('${w.id}')">Изменить</button><button class="btn danger" onclick="del('wellbeing','${w.id}')">Удалить</button></div></td></tr>`).join('')||`<tr><td colspan="9"><div class="empty">Записей пока нет.</div></td></tr>`;
 
+  renderWithings();
   renderChartDashboard();
   renderLatestChanges();
   renderGoals();
@@ -3207,13 +3292,14 @@ function importData(e){
     state=x;save();alert('Импорт завершён')
   }catch{alert('Не удалось прочитать файл')}};r.readAsText(f);
 }
-function resetData(){if(confirm('Удалить все данные программы?')){state={meds:DEFAULT_MEDS.map(x=>({...x})),protocols:[],deviations:[],labs:[],wellbeing:[],aliasMap:{},customAnalytes:[],goals:[],labPlans:[],settings:{primaryGoal:'',appVersion:APP_VERSION}};save()}}
-window.addEventListener('resize',()=>{clearTimeout(window.__hrtChartResize);window.__hrtChartResize=setTimeout(()=>{if($('analytics')?.classList.contains('active'))renderChartDashboard()},120)});
+function resetData(){if(confirm('Удалить все данные программы?')){state={meds:DEFAULT_MEDS.map(x=>({...x})),protocols:[],deviations:[],labs:[],wellbeing:[],aliasMap:{},customAnalytes:[],goals:[],labPlans:[],withings:{measurements:[],activity:[],sleep:[],workouts:[],lastSyncAt:'',autoSync:true,syncDays:365},settings:{primaryGoal:'',appVersion:APP_VERSION}};save()}}
+window.addEventListener('resize',()=>{clearTimeout(window.__hrtChartResize);window.__hrtChartResize=setTimeout(()=>{if($('analytics')?.classList.contains('active'))renderChartDashboard();if($('withings')?.classList.contains('active'))renderWithings()},120)});
 
 document.getElementById('hrtGateSignIn')?.addEventListener('click',hrtSignIn);
 document.getElementById('hrtGatePassword')?.addEventListener('keydown',e=>{if(e.key==='Enter')hrtSignIn()});
-window.addEventListener('online',()=>{if(hrtCloudUser&&localStorage.getItem(HRT_CLOUD_DIRTY_KEY)==='1')saveHrtCloudState(false)});
+window.addEventListener('online',()=>{if(hrtCloudUser&&localStorage.getItem(HRT_CLOUD_DIRTY_KEY)==='1')saveHrtCloudState(false);setTimeout(autoSyncWithings,700)});
 setInterval(()=>{if(hrtCloudUser&&localStorage.getItem(HRT_CLOUD_DIRTY_KEY)==='1'&&!hrtCloudBusy)saveHrtCloudState(false)},30000);
+setInterval(()=>autoSyncWithings(),60*60*1000);
 initHrtAuth();
 renderAll();
 </script>
