@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.12.0</title>
+<title>VM Private Capital — Wealth Studio v7.12.1</title>
 <style>
 
 :root{
@@ -790,6 +790,28 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:650px){.app-version-badge{margin-left:5px}.crypto-wallet-fields{padding:12px}}
 
 
+/* v7.12.1 — manual portfolio order */
+.portfolio-head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.portfolio-order-list{display:grid;gap:8px}
+.portfolio-order-row{
+  display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;
+  padding:10px 11px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.022)
+}
+.portfolio-order-index{
+  width:30px;height:30px;border-radius:9px;display:grid;place-items:center;
+  border:1px solid rgba(212,170,90,.22);background:rgba(212,170,90,.055);color:#d8b66f;font-size:11px;font-weight:800
+}
+.portfolio-order-copy{min-width:0}.portfolio-order-copy b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.portfolio-order-copy span{display:block;margin-top:3px;color:var(--muted);font-size:10px}
+.portfolio-order-actions{display:flex;gap:5px}
+.portfolio-order-actions button{min-width:35px}
+@media(max-width:650px){
+  .portfolio-head-actions{width:100%}
+  .portfolio-head-actions .btn{flex:1}
+  .portfolio-order-row{grid-template-columns:30px minmax(0,1fr) auto;padding:9px}
+}
+
+
 /* v7.6.1 Portfolio View Fix */
 .cloud-card{border-color:rgba(95,190,150,.18)!important;background:linear-gradient(145deg,rgba(95,190,150,.055),rgba(255,255,255,.018))!important}
 .cloud-card-copy{min-width:0}.cloud-card-copy b,.cloud-card-copy div{overflow-wrap:anywhere}
@@ -1342,7 +1364,7 @@ body.auth-locked{overflow:hidden}
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.12.0</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.12.1</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -1360,7 +1382,7 @@ body.auth-locked{overflow:hidden}
   <main class="main">
     <header class="topbar">
       <div>
-        <div class="eyebrow">PERSONAL CAPITAL CONTROL <span class="app-version-badge">v7.12.0</span></div>
+        <div class="eyebrow">PERSONAL CAPITAL CONTROL <span class="app-version-badge">v7.12.1</span></div>
         <h1 id="viewTitle">Обзор капитала</h1>
         <div id="todayText" class="muted"></div><div class="topbar-subtitle">Планируйте капитал, сравнивайте сценарии и контролируйте будущие выплаты.</div>
       </div>
@@ -1483,14 +1505,16 @@ body.auth-locked{overflow:hidden}
           <div class="table-controls">
             <label class="sort-label">Сортировка
               <select id="dashboardSort">
+                <option value="manual" selected>Мой порядок</option>
                 <option value="name">Название</option>
-                <option value="value_desc" selected>Стоимость ↓</option>
+                <option value="value_desc">Стоимость ↓</option>
                 <option value="value_asc">Стоимость ↑</option>
                 <option value="ytd_desc">YTD % ↓</option>
                 <option value="ytd_asc">YTD % ↑</option>
                 <option value="share_desc">Доля ↓</option>
               </select>
             </label>
+            <button class="btn secondary compact" id="portfolioOrderBtn">↕ Порядок</button>
             <button class="btn secondary compact" id="addPortfolioBtn">＋ Портфель</button>
           </div>
         </div>
@@ -1505,7 +1529,7 @@ body.auth-locked{overflow:hidden}
 
     <section id="view-portfolios" class="view">
       <div class="panel">
-        <div class="panel-head"><div><div class="eyebrow">ASSETS</div><h2>Мои портфели</h2></div><button class="btn primary" id="addPortfolioBtn2">＋ Добавить</button></div>
+        <div class="panel-head"><div><div class="eyebrow">ASSETS</div><h2>Мои портфели</h2></div><div class="portfolio-head-actions"><button class="btn secondary" id="portfolioOrderBtn2">↕ Порядок</button><button class="btn primary" id="addPortfolioBtn2">＋ Добавить</button></div></div>
         <div id="portfolioCards" class="portfolio-cards"></div>
       </div>
     </section>
@@ -1772,7 +1796,7 @@ body.auth-locked{overflow:hidden}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 
-const APP_VERSION='v7.12.0';
+const APP_VERSION='v7.12.1';
 const SUPABASE_URL='https://hlrvwzqwxqmycuttvzbx.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_RBRKa6zqrw7-CW77RW__QQ_vrqebWCp';
 const STORAGE_KEY='capital_tracker_offline_v1';
@@ -1803,6 +1827,7 @@ const defaultState=()=>({
   btcWalletCurrentRate:0,
   btcWalletBlockchainBalance:0,
   btcWalletMigrationV712:false,
+  portfolioOrder:[],
   analyticsRange:'MAX',
   analyticsForecastYears:5
 },
@@ -1861,6 +1886,18 @@ function normalizeState(raw){
  };
 });
 
+ // v7.12.1: persist a user-defined portfolio order. Existing data keeps its current array order.
+ {
+   const validIds=new Set(s.portfolios.map(p=>p.id));
+   const seen=new Set();
+   const saved=Array.isArray(s.settings.portfolioOrder)?s.settings.portfolioOrder:[];
+   s.settings.portfolioOrder=saved.filter(id=>{
+     if(!validIds.has(id)||seen.has(id))return false;
+     seen.add(id);return true;
+   });
+   s.portfolios.forEach(p=>{if(!seen.has(p.id)){s.settings.portfolioOrder.push(p.id);seen.add(p.id)}});
+ }
+
  // v7.12.0: migrate the single v7.11.3 BTC wallet into its crypto portfolio once.
  if(!s.settings.btcWalletMigrationV712){
    const legacyAddress=String(s.settings.btcWalletAddress||'').trim();
@@ -1913,7 +1950,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.12.0';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.12.1';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -2718,8 +2755,78 @@ function cryptoTimeWeightedStats(pid){
   return{rows,periods,days:totalDays,totalReturn,annualized,volatility,maxDrawdown:maxDd,confidence};
 }
 
+
+function manualPortfolioOrderIds(){
+ const valid=new Set(state.portfolios.map(p=>p.id));
+ const seen=new Set();
+ const saved=Array.isArray(state.settings.portfolioOrder)?state.settings.portfolioOrder:[];
+ const out=[];
+ saved.forEach(id=>{if(valid.has(id)&&!seen.has(id)){out.push(id);seen.add(id)}});
+ state.portfolios.forEach(p=>{if(!seen.has(p.id)){out.push(p.id);seen.add(p.id)}});
+ return out;
+}
+function portfoliosInManualOrder(list){
+ const rank=new Map(manualPortfolioOrderIds().map((id,i)=>[id,i]));
+ return [...list].sort((a,b)=>(rank.get(a.id)??Number.MAX_SAFE_INTEGER)-(rank.get(b.id)??Number.MAX_SAFE_INTEGER));
+}
+function setVisiblePortfolioOrder(visibleIds){
+ const visibleSet=new Set(visibleIds);
+ const hidden=manualPortfolioOrderIds().filter(id=>!visibleSet.has(id));
+ state.settings.portfolioOrder=[...visibleIds,...hidden];
+}
+function portfolioOrderVisibleItems(){
+ const nordea=nordeaPortfolio(),cash=nordeaCashPortfolio();
+ return portfoliosInManualOrder(state.portfolios.filter(p=>!(cash&&p.id===cash.id))).map(p=>({
+   id:p.id,
+   name:(nordea&&cash&&p.id===nordea.id)?'Nordea':p.name,
+   type:p.type||'Портфель',
+   owner:p.owner==='oy'?'VMPC Oy':'Personal'
+ }));
+}
+function openPortfolioOrderModal(){
+ const items=portfolioOrderVisibleItems();
+ if(items.length<2)return toast('Для изменения порядка нужно минимум два портфеля');
+ let ids=items.map(x=>x.id);
+ const meta=new Map(items.map(x=>[x.id,x]));
+ const renderList=()=>{
+   const list=q('portfolioOrderList');if(!list)return;
+   list.innerHTML=ids.map((id,i)=>{
+     const x=meta.get(id);
+     return `<div class="portfolio-order-row">
+       <div class="portfolio-order-index">${i+1}</div>
+       <div class="portfolio-order-copy"><b>${esc(x?.name||'Портфель')}</b><span>${esc(x?.owner||'')} · ${esc(x?.type||'')}</span></div>
+       <div class="portfolio-order-actions">
+         <button class="btn secondary compact" data-order-up="${id}" ${i===0?'disabled':''} title="Выше">↑</button>
+         <button class="btn secondary compact" data-order-down="${id}" ${i===ids.length-1?'disabled':''} title="Ниже">↓</button>
+       </div>
+     </div>`;
+   }).join('');
+   list.querySelectorAll('[data-order-up]').forEach(b=>b.addEventListener('click',()=>{
+     const i=ids.indexOf(b.dataset.orderUp);if(i<=0)return;
+     [ids[i-1],ids[i]]=[ids[i],ids[i-1]];renderList();
+   }));
+   list.querySelectorAll('[data-order-down]').forEach(b=>b.addEventListener('click',()=>{
+     const i=ids.indexOf(b.dataset.orderDown);if(i<0||i>=ids.length-1)return;
+     [ids[i],ids[i+1]]=[ids[i+1],ids[i]];renderList();
+   }));
+ };
+ openModal('Порядок портфелей',`<div class="form-grid">
+   <div style="grid-column:1/-1">
+     <div class="muted small" style="margin-bottom:11px;line-height:1.45">Расставь портфели стрелками. Этот порядок будет использоваться в карточках и в таблице при сортировке «Мой порядок».</div>
+     <div id="portfolioOrderList" class="portfolio-order-list"></div>
+   </div>
+   <div class="modal-actions" style="grid-column:1/-1"><button class="btn primary" id="savePortfolioOrder">Сохранить порядок</button></div>
+ </div>`,'ORDER');
+ renderList();
+ q('savePortfolioOrder').addEventListener('click',()=>{
+   setVisiblePortfolioOrder(ids);
+   if(q('dashboardSort'))q('dashboardSort').value='manual';
+   closeModal();saveState();renderPortfolios();renderDashboard();toast('Порядок портфелей сохранён');
+ });
+}
+
 function sortedPortfolioRows(){
- const now=totalNow(),sort=q('dashboardSort')?.value||'value_desc';
+ const now=totalNow(),sort=q('dashboardSort')?.value||'manual';
  const nordea=nordeaPortfolio(),cash=nordeaCashPortfolio(),cy=new Date().getFullYear();
 
  const rows=[];
@@ -2748,7 +2855,10 @@ function sortedPortfolioRows(){
    rows.push({p,r,share:now?100*latest/now:0});
  });
 
- rows.sort((a,b)=>{
+ if(sort==='manual'){
+   const rank=new Map(manualPortfolioOrderIds().map((id,i)=>[id,i]));
+   rows.sort((a,b)=>(rank.get(a.p.id)??Number.MAX_SAFE_INTEGER)-(rank.get(b.p.id)??Number.MAX_SAFE_INTEGER));
+ }else rows.sort((a,b)=>{
   if(sort==='name')return a.p.name.localeCompare(b.p.name,'ru');
   if(sort==='value_asc')return a.r.end-b.r.end;if(sort==='value_desc')return b.r.end-a.r.end;
   if(sort==='ytd_asc')return (a.r.pct??-Infinity)-(b.r.pct??-Infinity);
@@ -3175,11 +3285,7 @@ function renderPortfolios(){
  const nordea=nordeaPortfolio(),cash=nordeaCashPortfolio(),cy=new Date().getFullYear();
 
  const visible=state.portfolios.filter(p=>!(cash&&p.id===cash.id));
- const rows=[...visible].sort((a,b)=>{
-   const va=(nordea&&cash&&a.id===nordea.id)?latestValue(nordea.id)+latestValue(cash.id):latestValue(a.id);
-   const vb=(nordea&&cash&&b.id===nordea.id)?latestValue(nordea.id)+latestValue(cash.id):latestValue(b.id);
-   return vb-va;
- });
+ const rows=portfoliosInManualOrder(visible);
 
  if(!rows.length){
    box.innerHTML='<div class="history-empty"><b>Портфелей пока нет.</b><span>Нажмите «＋ Добавить».</span></div>';
@@ -3262,7 +3368,6 @@ function renderPortfolios(){
      <div class="muted small" style="margin-top:5px">${ownerLabel} · ${roleLabel}</div>
      <div class="port-value">${money(value)}</div>
      ${breakdown}
-     ${isCrypto&&crypto.tx.length?`<div class="crypto-ledger-list">${crypto.tx.slice(-3).reverse().map(t=>`<div class="crypto-ledger-row"><b>${formatDate(t.date)}</b><span class="muted">${cryptoTypeLabel(t.type)}${t.source?' · '+esc(t.source):''}</span><span>+${Number(t.btc).toFixed(8)} BTC</span></div>`).join('')}</div>`:''}
      <div class="${returnClass}" style="margin-top:9px;font-size:12px">${returnText}</div>
      <div class="port-actions">
        <button class="btn secondary compact" data-editport-card="${p.id}">Редактировать</button>
@@ -4553,11 +4658,12 @@ function openPortfolioModal(id=null){
    }else{
      const iso=parseDate(q('pDate').value);if(!iso)return toast('Проверьте дату');
      const nid=uid();state.portfolios.push({id:nid,name,type,owner:q('pOwner').value,...extra});
+     state.settings.portfolioOrder=manualPortfolioOrderIds();
      const val=Number(q('pValue').value||0);if(val)state.snapshots.push({id:uid(),portfolioId:nid,date:iso,value:val,comment:'Начальная оценка'});
    }
    closeModal();saveState();markWithdrawalDirty();toast('Сохранено')
  });
- if(p)q('deletePortfolio').addEventListener('click',()=>{if(!confirm(`Удалить "${p.name}" и всю его историю?`))return;state.portfolios=state.portfolios.filter(x=>x.id!==p.id);state.portfolios.forEach(x=>{if(x.exitTargetPortfolioId===p.id)x.exitTargetPortfolioId=''});state.snapshots=state.snapshots.filter(x=>x.portfolioId!==p.id);state.flows=state.flows.filter(x=>x.portfolioId!==p.id);state.cryptoTransactions=state.cryptoTransactions.filter(x=>x.portfolioId!==p.id);closeModal();saveState();markWithdrawalDirty();toast('Актив удалён')})
+ if(p)q('deletePortfolio').addEventListener('click',()=>{if(!confirm(`Удалить "${p.name}" и всю его историю?`))return;state.portfolios=state.portfolios.filter(x=>x.id!==p.id);state.settings.portfolioOrder=(state.settings.portfolioOrder||[]).filter(id=>id!==p.id);state.portfolios.forEach(x=>{if(x.exitTargetPortfolioId===p.id)x.exitTargetPortfolioId=''});state.snapshots=state.snapshots.filter(x=>x.portfolioId!==p.id);state.flows=state.flows.filter(x=>x.portfolioId!==p.id);state.cryptoTransactions=state.cryptoTransactions.filter(x=>x.portfolioId!==p.id);closeModal();saveState();markWithdrawalDirty();toast('Актив удалён')})
 }
 function openSnapshotModal(id=null,pre=''){
  if(!state.portfolios.length)return toast('Сначала добавьте портфель');const x=id?state.snapshots.find(v=>v.id===id):null;
@@ -4662,7 +4768,7 @@ function pdfReport(){
 document.querySelectorAll('.nav-item').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
 function switchView(v){currentView=v;document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.view===v));document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));q('view-'+v).classList.add('active');const t={dashboard:'Планирование капитала',portfolios:'Портфель',history:'Источники и история',forecast:'Сценарии',withdrawals:'План вывода средств',reports:'Аналитика и отчёты',portfolioanalytics:'Портфели: история и прогноз',insights:'Дополнительная информация',settings:'Настройки'};q('viewTitle').textContent=t[v];if(v==='history')renderHistory();if(v==='withdrawals'){renderWithdrawalRules();if(!withdrawalResultsReady)markWithdrawalDirty();else{renderWithdrawalExitChart();const yrs=Math.max(1,Number(q('withdrawYears')?.value||30)),f=state.forecast,out=[['Консервативный',+f.conservative,0],['Базовый',+f.base,1],['Оптимистичный',+f.optimistic,2]].map(([name,r,ci])=>{const m=runWithdrawalModel(r,yrs);return{name,points:m.ptsTotal,ci}});drawSeries(q('withdrawalChart'),out,{xMode:'year'})}}if(v==='dashboard')renderCapitalChart();if(v==='forecast'){renderForecastChart();renderForecastOwnerChart()}if(v==='portfolioanalytics')renderPortfolioAnalytics();if(v==='insights')renderInsights()}
 q('closeModalBtn').addEventListener('click',closeModal);q('modalBackdrop').addEventListener('click',e=>{if(e.target===q('modalBackdrop'))closeModal()});
-q('quickAddBtn').addEventListener('click',()=>openSnapshotModal());q('addSnapshotBtn').addEventListener('click',()=>openSnapshotModal());q('addFlowBtn').addEventListener('click',()=>openFlowModal());q('addPortfolioBtn').addEventListener('click',()=>openPortfolioModal());q('addPortfolioBtn2').addEventListener('click',()=>openPortfolioModal());
+q('quickAddBtn').addEventListener('click',()=>openSnapshotModal());q('addSnapshotBtn').addEventListener('click',()=>openSnapshotModal());q('addFlowBtn').addEventListener('click',()=>openFlowModal());q('addPortfolioBtn').addEventListener('click',()=>openPortfolioModal());q('addPortfolioBtn2').addEventListener('click',()=>openPortfolioModal());q('portfolioOrderBtn').addEventListener('click',openPortfolioOrderModal);q('portfolioOrderBtn2').addEventListener('click',openPortfolioOrderModal);
 
 q('dashboardSort').addEventListener('change',renderDashboard);q('capitalChartMode').addEventListener('change',renderCapitalChart);q('historySearch').addEventListener('input',renderHistory);q('historyType').addEventListener('change',renderHistory);q('historySort').addEventListener('change',renderHistory);
 q('portfolioAnalyticsRange')?.querySelectorAll('[data-arange]').forEach(b=>b.addEventListener('click',()=>{
