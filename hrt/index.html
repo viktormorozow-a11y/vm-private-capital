@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HRT Health Studio v3.2.0 — Text Import + Robust Puhti</title>
+<title>HRT Health Studio v3.2.1 — Text Import + Robust Puhti</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -210,7 +210,7 @@ aside{display:flex;flex-direction:column}
 <div id="hrtAuthGate">
   <div class="hrt-auth-card">
     <div class="hrt-auth-brand">VM PRIVATE SUITE</div>
-    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.2.0</span></div>
+    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.2.1</span></div>
     <div class="hrt-auth-sub">Используйте тот же аккаунт, что и в Планировании капитала</div>
     <label>Email<input id="hrtGateEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
     <label>Пароль<input id="hrtGatePassword" type="password" autocomplete="current-password" placeholder="Введите пароль"></label>
@@ -222,10 +222,10 @@ aside{display:flex;flex-direction:column}
   </div>
 </div>
 <div id="hrtAppShell" class="auth-hidden">
-<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.2.0</div>
+<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.2.1</div>
 <div class="app">
 <aside>
-  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.2.0</small></div>
+  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.2.1</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Главная</button>
     <button class="nav" data-view="labs">Анализы</button>
@@ -415,6 +415,20 @@ aside{display:flex;flex-direction:column}
 
 <section id="settings" class="view">
   <div class="top"><div><h1>Настройки</h1><div class="sub">Резервная копия хранится в JSON. Основные данные сохраняются локально в браузере.</div></div></div>
+  <div class="panel" id="withingsPanel">
+    <div class="head">
+      <div>
+        <h2>Withings</h2>
+        <div class="sub">Подключение через официальный Withings OAuth. Пароль Withings и секрет API в браузере не хранятся.</div>
+      </div>
+      <span class="badge" id="withingsStatusBadge">Не проверено</span>
+    </div>
+    <div id="withingsStatusText" class="note">Нажмите «Проверить» или подключите свой аккаунт Withings.</div>
+    <div class="actions" style="justify-content:flex-start">
+      <button class="btn primary" id="withingsConnectBtn" type="button" onclick="connectWithings()">Подключить Withings</button>
+      <button class="btn" id="withingsCheckBtn" type="button" onclick="refreshWithingsStatus()">↻ Проверить</button>
+    </div>
+  </div>
   <div class="panel">
     <div class="head"><h2>Данные</h2></div>
     <div class="actions" style="justify-content:flex-start">
@@ -475,7 +489,7 @@ state.goals=state.goals||[];
 state.labPlans=state.labPlans||[];
 state.settings=state.settings||{};
 state.settings.primaryGoal=state.settings.primaryGoal||'';
-state.settings.appVersion='3.2.0';
+state.settings.appVersion='3.2.1';
 state.labs.forEach(l=>{l.doseContext=l.doseContext||{medId:'',lastDoseAt:'',relation:'unknown',adherence:'unknown'}});
 
 // Repair aliases created by older parser versions where MCH/MCHC could be mistaken for hemoglobin.
@@ -534,7 +548,7 @@ function migrateHrtState(x){
   x.meds=x.meds||[];x.protocols=x.protocols||[];x.deviations=x.deviations||[];x.labs=x.labs||[];
   x.wellbeing=x.wellbeing||[];x.aliasMap=x.aliasMap||{};x.customAnalytes=x.customAnalytes||[];
   x.goals=x.goals||[];x.labPlans=x.labPlans||[];x.settings=x.settings||{};
-  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.2.0';
+  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.2.1';
   x.labs.forEach(l=>{l.doseContext=l.doseContext||{medId:'',lastDoseAt:'',relation:'unknown',adherence:'unknown'}});
   for(const dm of DEFAULT_MEDS){
     if(!x.meds.some(m=>String(m.name||'').trim().toLowerCase()===dm.name.toLowerCase()))x.meds.push({...dm});
@@ -676,6 +690,115 @@ async function initHrtAuth(){
   });
 }
 
+
+let withingsPopup=null,withingsPollTimer=null;
+
+function setWithingsStatus(kind,title,detail=''){
+  const badge=$('withingsStatusBadge'),box=$('withingsStatusText'),btn=$('withingsConnectBtn');
+  if(badge){
+    badge.className='badge '+(kind==='ok'?'good':kind==='busy'?'gold':kind==='err'?'':'blue');
+    badge.textContent=title||'—';
+  }
+  if(box)box.textContent=detail||'';
+  if(btn)btn.textContent=kind==='ok'?'Переподключить Withings':'Подключить Withings';
+}
+
+async function currentHrtSession(){
+  if(!hrtSupabase)return null;
+  const {data:{session}}=await hrtSupabase.auth.getSession();
+  return session||null;
+}
+
+async function refreshWithingsStatus({silent=false}={}){
+  try{
+    const session=await currentHrtSession();
+    if(!session){
+      setWithingsStatus('err','Требуется вход','Сначала войдите в HRT Health Studio.');
+      return false;
+    }
+    if(!silent)setWithingsStatus('busy','Проверяю…','Проверяю подключение Withings.');
+    const r=await fetch(`${SUPABASE_URL}/functions/v1/withings-oauth?action=status`,{
+      method:'GET',
+      headers:{
+        'Authorization':`Bearer ${session.access_token}`,
+        'apikey':SUPABASE_PUBLISHABLE_KEY
+      }
+    });
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(j?.error||`HTTP ${r.status}`);
+    if(j.connected){
+      const updated=j.connection?.updated_at?new Date(j.connection.updated_at).toLocaleString('ru-RU'):'';
+      setWithingsStatus('ok','Подключено',updated?`Аккаунт Withings подключён. Последнее подтверждение: ${updated}.`:'Аккаунт Withings подключён.');
+      return true;
+    }
+    setWithingsStatus('','Не подключено','Аккаунт Withings пока не связан с HRT Health Studio.');
+    return false;
+  }catch(e){
+    console.error('Withings status error',e);
+    setWithingsStatus('err','Ошибка проверки',e?.message||'Не удалось проверить подключение Withings.');
+    return false;
+  }
+}
+
+async function connectWithings(){
+  const btn=$('withingsConnectBtn');
+  let popup=null;
+  try{
+    const session=await currentHrtSession();
+    if(!session)throw new Error('Сначала войдите в HRT Health Studio.');
+
+    popup=window.open('about:blank','withings_oauth','width=600,height=780,resizable=yes,scrollbars=yes');
+    if(!popup)throw new Error('Браузер заблокировал окно Withings. Разрешите всплывающие окна для этого сайта.');
+
+    if(btn){btn.disabled=true;btn.textContent='Открываю Withings…'}
+    setWithingsStatus('busy','Подключение…','Создаю защищённую ссылку авторизации Withings.');
+
+    const r=await fetch(`${SUPABASE_URL}/functions/v1/withings-oauth?action=start`,{
+      method:'GET',
+      headers:{
+        'Authorization':`Bearer ${session.access_token}`,
+        'apikey':SUPABASE_PUBLISHABLE_KEY
+      }
+    });
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||!j.authorization_url)throw new Error(j?.error||`Не удалось начать OAuth (HTTP ${r.status})`);
+
+    withingsPopup=popup;
+    popup.location.replace(j.authorization_url);
+    setWithingsStatus('busy','Ожидаю разрешение','Разрешите доступ в окне Withings. После подтверждения статус обновится автоматически.');
+
+    clearInterval(withingsPollTimer);
+    const started=Date.now();
+    withingsPollTimer=setInterval(async()=>{
+      const connected=await refreshWithingsStatus({silent:true});
+      if(connected){
+        clearInterval(withingsPollTimer);withingsPollTimer=null;
+        try{if(withingsPopup&&!withingsPopup.closed)withingsPopup.close()}catch{}
+        withingsPopup=null;
+        if(btn){btn.disabled=false;btn.textContent='Переподключить Withings'}
+        hrtCloudToast('Withings подключён');
+        return;
+      }
+      if(Date.now()-started>2*60*1000 || (withingsPopup&&withingsPopup.closed)){
+        clearInterval(withingsPollTimer);withingsPollTimer=null;
+        if(btn){btn.disabled=false;btn.textContent='Подключить Withings'}
+        if(!(await refreshWithingsStatus({silent:true})))setWithingsStatus('','Не подключено','Подключение не завершено. Можно попробовать ещё раз.');
+      }
+    },1600);
+  }catch(e){
+    console.error('Withings connect error',e);
+    try{if(popup&&!popup.closed)popup.close()}catch{}
+    setWithingsStatus('err','Не удалось подключить',e?.message||'Ошибка запуска Withings OAuth.');
+    if(btn){btn.disabled=false;btn.textContent='Подключить Withings'}
+  }
+}
+
+window.addEventListener('message',e=>{
+  if(e?.data?.type==='withings-connected'){
+    setTimeout(()=>refreshWithingsStatus(),350);
+  }
+});
+
 document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));b.classList.add('active');
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));$(b.dataset.view).classList.add('active');
@@ -683,6 +806,7 @@ document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{
   if(b.dataset.view==='clinical')renderClinicalAnalysis();
   if(b.dataset.view==='schedule')renderLabSchedule();
   if(b.dataset.view==='goals')renderGoals();
+  if(b.dataset.view==='settings')refreshWithingsStatus();
 });
 
 function openModal(html){$('modal').className='modal';$('modal').innerHTML=html;$('modalBg').classList.add('show')}
@@ -2297,7 +2421,7 @@ function renderLatestChanges(){
   }
   box.innerHTML=cards.length?`<div class="change-grid">${cards.join('')}</div>`:`<div class="empty">Пока недостаточно повторных анализов для сравнения.</div>`;
 }
-const APP_VERSION='3.2.0';
+const APP_VERSION='3.2.1';
 
 function normalizedHctPercent(marker){
   if(!marker)return null;
