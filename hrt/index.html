@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HRT Health Studio v3.1.4 — Robust Puhti + Design Fix</title>
+<title>HRT Health Studio v3.2.0 — Text Import + Robust Puhti</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -210,7 +210,7 @@ aside{display:flex;flex-direction:column}
 <div id="hrtAuthGate">
   <div class="hrt-auth-card">
     <div class="hrt-auth-brand">VM PRIVATE SUITE</div>
-    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.1.1</span></div>
+    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.2.0</span></div>
     <div class="hrt-auth-sub">Используйте тот же аккаунт, что и в Планировании капитала</div>
     <label>Email<input id="hrtGateEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
     <label>Пароль<input id="hrtGatePassword" type="password" autocomplete="current-password" placeholder="Введите пароль"></label>
@@ -222,10 +222,10 @@ aside{display:flex;flex-direction:column}
   </div>
 </div>
 <div id="hrtAppShell" class="auth-hidden">
-<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.1.4</div>
+<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.2.0</div>
 <div class="app">
 <aside>
-  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.1.3</small></div>
+  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.2.0</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Главная</button>
     <button class="nav" data-view="labs">Анализы</button>
@@ -290,11 +290,12 @@ aside{display:flex;flex-direction:column}
   <div class="top"><div><h1>Анализы</h1><div class="sub">Любой набор показателей, любые единицы и лабораторные референсы.</div></div>
     <div class="actions" style="margin-top:0">
       <label class="btn primary">⇧ Импорт PDF<input id="labPdfInput" type="file" accept="application/pdf,.pdf" style="display:none" onchange="importLabPdf(event)"></label>
+      <button class="btn" onclick="openTextLabImport()">⌨ Импорт из текста</button>
       <button class="btn" onclick="openLabModal()">＋ Вручную</button>
     </div>
   </div>
   <div class="panel">
-    <div class="note"><b style="color:#f4f5f7">Импорт PDF:</b> программа извлекает текст из лабораторного PDF, пытается определить дату, лабораторию, показатели, значения, единицы и референсы. Перед сохранением все распознанные данные обязательно показываются для проверки. Для сканированных PDF без текстового слоя автоматическое распознавание в этой версии может не сработать.</div>
+    <div class="note"><b style="color:#f4f5f7">Импорт:</b> PDF работает как раньше. Дополнительно можно вставить подготовленный текст анализа — например, текст, сформированный ChatGPT после чтения лабораторного отчёта. Программа распознает дату, лабораторию, показатели, значения, единицы и референсы, а затем обязательно покажет всё для проверки перед сохранением.</div>
   </div>
   <div class="panel"><div class="table-wrap"><table><thead><tr><th>Дата</th><th>Лаборатория</th><th>Показателей</th><th>Контекст ГЗТ</th><th></th></tr></thead><tbody id="labsBody"></tbody></table></div></div>
 </section>
@@ -474,7 +475,7 @@ state.goals=state.goals||[];
 state.labPlans=state.labPlans||[];
 state.settings=state.settings||{};
 state.settings.primaryGoal=state.settings.primaryGoal||'';
-state.settings.appVersion='3.1.4';
+state.settings.appVersion='3.2.0';
 state.labs.forEach(l=>{l.doseContext=l.doseContext||{medId:'',lastDoseAt:'',relation:'unknown',adherence:'unknown'}});
 
 // Repair aliases created by older parser versions where MCH/MCHC could be mistaken for hemoglobin.
@@ -533,7 +534,7 @@ function migrateHrtState(x){
   x.meds=x.meds||[];x.protocols=x.protocols||[];x.deviations=x.deviations||[];x.labs=x.labs||[];
   x.wellbeing=x.wellbeing||[];x.aliasMap=x.aliasMap||{};x.customAnalytes=x.customAnalytes||[];
   x.goals=x.goals||[];x.labPlans=x.labPlans||[];x.settings=x.settings||{};
-  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.1.4';
+  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.2.0';
   x.labs.forEach(l=>{l.doseContext=l.doseContext||{medId:'',lastDoseAt:'',relation:'unknown',adherence:'unknown'}});
   for(const dm of DEFAULT_MEDS){
     if(!x.meds.some(m=>String(m.name||'').trim().toLowerCase()===dm.name.toLowerCase()))x.meds.push({...dm});
@@ -1600,6 +1601,120 @@ async function extractPdfPages(file){
   }
   return {pageCount:pdf.numPages,pages};
 }
+
+function parseTextImportDate(text){
+  const t=String(text||'');
+  const m=t.match(/(?:^|\n)\s*(?:дата|date|päivä|pvm)\s*[:=]\s*(\d{1,2})[.\-/](\d{1,2})[.\-/](20\d{2})\b/i);
+  if(m)return `${m[3]}-${String(m[2]).padStart(2,'0')}-${String(m[1]).padStart(2,'0')}`;
+  const iso=t.match(/(?:^|\n)\s*(?:дата|date|päivä|pvm)\s*[:=]\s*(20\d{2})-(\d{1,2})-(\d{1,2})\b/i);
+  if(iso)return `${iso[1]}-${String(iso[2]).padStart(2,'0')}-${String(iso[3]).padStart(2,'0')}`;
+  return parseDateFromPdf(t);
+}
+function parseTextImportLab(text){
+  const t=String(text||'');
+  const m=t.match(/(?:^|\n)\s*(?:лаборатория|laboratorio|laboratory|lab)\s*[:=]\s*([^\n\r]+)/i);
+  return m?m[1].trim():guessLabFromPdf(t);
+}
+function textImportNumber(raw){
+  if(raw==null)return null;
+  const x=String(raw).trim().replace(/\s/g,'').replace(/[<>≤≥]/g,'').replace(',','.');
+  if(!x)return null;
+  const n=Number(x);return Number.isFinite(n)?n:null;
+}
+function textImportReference(a='',b=''){
+  const aa=String(a||'').trim(),bb=String(b||'').trim();
+  if(bb){return {min:textImportNumber(aa),max:textImportNumber(bb),refText:`${aa}–${bb}`}}
+  if(!aa)return {min:null,max:null,refText:''};
+  let m=aa.match(/^([<>≤≥])\s*(-?\d+(?:[.,]\d+)?)$/);
+  if(m){
+    const n=textImportNumber(m[2]);
+    return /^[<≤]$/.test(m[1])?{min:null,max:n,refText:aa}:{min:n,max:null,refText:aa};
+  }
+  m=aa.match(/^(-?\d+(?:[.,]\d+)?)\s*[-–—]\s*(-?\d+(?:[.,]\d+)?)$/);
+  if(m)return {min:textImportNumber(m[1]),max:textImportNumber(m[2]),refText:aa};
+  const n=textImportNumber(aa);
+  return {min:n,max:null,refText:aa};
+}
+function textImportCanonicalKey(name,explicit=''){
+  const key=String(explicit||'').trim();
+  if(key && analyteCatalog().some(x=>x.key===key))return key;
+  const n=String(name||'').toLowerCase().replace(/ё/g,'е');
+  const ru=[
+    [/свободн.*тестостер|тестостер.*свободн/,'free_testosterone'],
+    [/тестостерон/,'testosterone'],[/эстрадиол/,'estradiol'],[/пролактин/,'prolactin'],
+    [/гематокрит/,'hematocrit'],[/гемоглобин/,'hemoglobin'],[/лейкоцит/,'leukocytes'],
+    [/эритроцит/,'erythrocytes'],[/тромбоцит/,'platelets'],[/ферритин/,'ferritin'],
+    [/креатинин/,'creatinine'],[/свободн.*t4|т4.*свободн/,'free_t4'],[/витамин\s*d/,'vitamin_d'],
+    [/витамин\s*b12|b12/,'b12'],[/фолат/,'folate'],[/альбумин/,'albumin'],[/калий/,'potassium'],
+    [/натрий/,'sodium'],[/мочев.*кислот/,'urate'],[/магний/,'magnesium'],[/инсулин/,'insulin'],
+    [/кортизол/,'cortisol'],[/общ.*холестерин/,'total_cholesterol'],[/триглицерид/,'triglycerides'],
+    [/щелочн.*фосфат/,'alp'],[/ггт|гамма.*глутам/,'ggt'],[/высокочувств.*crp|вч.*crp/,'hs_crp']
+  ];
+  for(const [re,k] of ru)if(re.test(n))return k;
+  const auto=canonicalMarkerKey(name);
+  return auto&&String(auto).startsWith('raw:')?'':auto;
+}
+function parseTextImportMarkerLine(line){
+  let x=String(line||'').trim();
+  if(!x)return null;
+  x=x.replace(/^[-*•]+\s*/,'').replace(/^\d+[.)]\s*/,'').trim();
+  if(!x || /^```/.test(x) || /^[-|: ]{4,}$/.test(x))return null;
+  if(/^(дата|date|päivä|pvm|лаборатория|laboratorio|laboratory|lab)\s*[:=]/i.test(x))return null;
+  if(/^(показатель|анализ|test|name)\s*\|/i.test(x))return null;
+
+  // Надёжный формат ChatGPT: Название | Значение | Ед. | Мин. | Макс. | canonical_key (последнее поле необязательно)
+  const sep=x.includes('|')?'|':(x.split(';').length>=4?';':'');
+  if(sep){
+    const p=x.split(sep).map(v=>v.trim());
+    if(p.length>=3){
+      const name=p[0],rawValue=p[1],value=textImportNumber(rawValue),unit=p[2]||'';
+      if(!isPlausibleMarkerName(name)||value===null)return null;
+      let ref={min:null,max:null,refText:''};
+      if(p.length>=5)ref=textImportReference(p[3],p[4]);
+      else if(p.length===4)ref=textImportReference(p[3],'');
+      const qualifier=(String(rawValue).match(/^[<>≤≥]/)||[])[0]||'';
+      return {name,value,unit,min:ref.min,max:ref.max,refText:ref.refText,rawValue:String(rawValue).replace(',','.'),qualifier,canonicalKey:textImportCanonicalKey(name,p[5]||''),parser:'text'};
+    }
+  }
+
+  // Более свободный вариант: "Тестостерон: 25.5 nmol/l, референс 8.1–32.2" или "SHBG 47 nmol/l (18–54)".
+  const m=x.match(/^(.+?)\s*[:=]?\s+([<>≤≥]?\s*-?\d+(?:[.,]\d+)?)\s+([A-Za-zА-Яа-яЁёµμ%0-9.^/]+(?:\/[A-Za-zА-Яа-яЁё0-9.]+)?)(?:\s*[,;]?\s*(?:\(|\[)?\s*(?:(?:референс(?:ы)?|реф\.?|норма|viite(?:arvot?)?|ref(?:erence)?|range)\s*[:=]?\s*)?([<>≤≥]?\s*-?\d+(?:[.,]\d+)?)(?:\s*[-–—]\s*([<>≤≥]?\s*-?\d+(?:[.,]\d+)?))?\s*(?:\)|\])?)?$/i);
+  if(!m)return null;
+  const name=cleanLabName(m[1]),rawValue=String(m[2]).replace(/\s/g,''),value=textImportNumber(rawValue),unit=m[3]||'';
+  if(!isPlausibleMarkerName(name)||value===null)return null;
+  const ref=textImportReference(m[4]||'',m[5]||'');
+  const qualifier=(rawValue.match(/^[<>≤≥]/)||[])[0]||'';
+  return {name,value,unit,min:ref.min,max:ref.max,refText:ref.refText,rawValue:rawValue.replace(',','.'),qualifier,canonicalKey:textImportCanonicalKey(name),parser:'text'};
+}
+function parseLabTextImport(text){
+  const markers=[],seen=new Set();
+  for(const line of String(text||'').split(/\r?\n/)){
+    const m=parseTextImportMarkerLine(line);if(!m)continue;
+    const key=markerIdentity(m);if(seen.has(key))continue;seen.add(key);markers.push(m);
+  }
+  return {date:parseTextImportDate(text),lab:parseTextImportLab(text),markers};
+}
+function openTextLabImport(){
+  const example=`Дата: 06.03.2026\nЛаборатория: Puhti / Mehiläinen\n\nТестостерон | 25.5 | nmol/l | 8.1 | 32.2\nСвободный тестостерон | 345 | pmol/l | 220 | 800\nSHBG | 47 | nmol/l | 18 | 54\nЭстрадиол | 0.17 | nmol/l | | 0.16`;
+  openModal(`<h3>Импорт анализа из текста</h3>
+    <div class="note">Вставьте подготовленный текст анализа. Самый надёжный формат — одна строка на показатель: <b style="color:#f4f5f7">Название | Значение | Ед. | Мин. | Макс.</b> Поля Мин./Макс. можно оставлять пустыми. Поддерживаются также обычные строки вроде «Тестостерон: 25.5 nmol/l, референс 8.1–32.2».</div>
+    <textarea id="labTextImportArea" style="min-height:360px;margin-top:12px" placeholder="${example.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}"></textarea>
+    <details style="margin-top:10px"><summary class="note" style="cursor:pointer">Показать пример формата</summary><textarea readonly style="min-height:170px;margin-top:8px">${example}</textarea></details>
+    <div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="recognizeLabTextImport()">Распознать</button></div>`);
+  setTimeout(()=>$('labTextImportArea')?.focus(),0);
+}
+function recognizeLabTextImport(){
+  const text=$('labTextImportArea')?.value||'';
+  if(!text.trim())return alert('Вставьте текст анализа');
+  const parsed=parseLabTextImport(text);
+  if(!parsed.markers.length)return alert('Не удалось найти числовые показатели. Используйте формат: Название | Значение | Ед. | Мин. | Макс.');
+  openPdfReview({
+    sourceType:'text',sourceLabel:'Вставленный текст',fileName:'Вставленный текст',text,
+    date:parsed.date,lab:parsed.lab,markers:parsed.markers,pageCount:1,pageStats:[],expectedPuhtiCount:null,
+    pages:[{page:1,visualText:text,flowText:''}]
+  });
+}
+
 async function importLabPdf(event){
   const file=event.target.files?.[0]; event.target.value='';
   if(!file)return;
@@ -1937,6 +2052,8 @@ function forgetAlias(alias){
   delete state.aliasMap[alias];save();
 }
 function openPdfReview(data){
+  const sourceType=data.sourceType||'pdf';
+  const isText=sourceType==='text';
   const statHtml=(data.pageStats||[]).map(x=>{
     const cls=x.added?'good':(x.chars?'gold':'');
     return `<span class="badge ${cls}" title="Текст: ${x.chars} знаков · PDF-элементов: ${x.items} · visual: ${x.visual} · flow: ${x.flow}">стр. ${x.page}: ${x.added} показ.</span>`;
@@ -1948,30 +2065,42 @@ function openPdfReview(data){
     if(recognized<expected){importState=recognized<expected*.8?'bad':'warn';importMsg=`Puhti сообщает минимум ${expected} результатов с референсной оценкой, а распознано ${recognized}. Импорт неполный — проверьте страницы с 0 и строки ниже.`}
     else importMsg=`Puhti сообщает ${expected} результатов с референсной оценкой; распознано ${recognized}. Количество выглядит полным (возможны дополнительные показатели без референса).`;
   }
-  openModal(`<div class="pdf-review-title"><h3 style="margin:0">Проверка распознанного анализа</h3><span class="badge blue">Robust Puhti Parser v3</span></div>
+  const badge=isText?'Text Import v1':'Robust Puhti Parser v3';
+  const sourceLabel=isText?'Источник':'Исходный файл';
+  const sourceValue=(data.sourceLabel||data.fileName||(isText?'Вставленный текст':'')).replace(/"/g,'&quot;');
+  const summaryLine=isText
+    ?`Вставленный текст · распознано <b style="color:#f4f5f7">${recognized}</b> числовых показателей.`
+    :`PDF содержит <b style="color:#f4f5f7">${data.pageCount||1}</b> стр. · распознано <b style="color:#f4f5f7">${recognized}</b> числовых показателей.`;
+  const reviewNote=isText
+    ?'Программа не сохраняет анализ автоматически: проверьте дату, лабораторию, значения, единицы, референсы и сопоставление показателей.'
+    :'Если на странице есть текст, но показателей 0, откройте её ниже. Программа не сохраняет анализ автоматически: сначала проверьте распознанные строки.';
+  const markersTitle=isText?'Показатели из текста':'Показатели со всех страниц PDF';
+  const detailsTitle=isText?'Показать исходный текст':'Показать текст всех страниц';
+  openModal(`<div class="pdf-review-title"><h3 style="margin:0">Проверка распознанного анализа</h3><span class="badge blue">${badge}</span></div>
+    <input id="importSourceType" type="hidden" value="${sourceType}">
+    <input id="importSourceName" type="hidden" value="${sourceValue}">
     <div class="form-grid">
       <label>Дата<input id="pdfDate" type="date" value="${data.date||today()}"></label>
       <label>Время<input id="pdfTime" type="time"></label>
       <label>Лаборатория<input id="pdfLab" value="${(data.lab||'').replace(/"/g,'&quot;')}"></label>
-      <label>Исходный файл<input value="${data.fileName.replace(/"/g,'&quot;')}" disabled></label>
+      <label>${sourceLabel}<input value="${sourceValue}" disabled></label>
       ${doseContextFields('pdf',{date:data.date||today(),time:'',doseContext:{}})}
     </div>
     <div class="pdf-review-summary">
       <div class="pdf-review-status ${importState}">${safeHtml(importMsg)}</div>
-      <div class="note">PDF содержит <b style="color:#f4f5f7">${data.pageCount||1}</b> стр. · распознано <b style="color:#f4f5f7">${recognized}</b> числовых показателей.</div>
-      <div class="pdf-review-pagebadges">${statHtml}</div>
-      <div class="note">Если на странице есть текст, но показателей 0, откройте её ниже. Программа не сохраняет анализ автоматически: сначала проверьте распознанные строки.</div>
+      <div class="note">${summaryLine}</div>
+      ${isText?'':`<div class="pdf-review-pagebadges">${statHtml}</div>`}
+      <div class="note">${reviewNote}</div>
     </div>
-    <div class="head"><h2 style="font-size:15px">Показатели со всех страниц PDF</h2><button class="btn" onclick="addPdfMarkerRow()">＋ Показатель</button></div>
+    <div class="head"><h2 style="font-size:15px">${markersTitle}</h2><button class="btn" onclick="addPdfMarkerRow()">＋ Показатель</button></div>
     <div id="pdfMarkerRows"></div>
-    <details style="margin-top:12px"><summary class="note" style="cursor:pointer">Показать текст всех страниц</summary>
+    <details style="margin-top:12px"><summary class="note" style="cursor:pointer">${detailsTitle}</summary>
       <div style="margin-top:8px;display:grid;gap:12px">
         ${(data.pages||[]).map(p=>`<div class="panel" style="margin:0;padding:10px">
-          <div class="badge blue">Страница ${p.page}</div>
-          <div class="note" style="margin-top:7px">Визуальная раскладка</div>
+          ${isText?'':`<div class="badge blue">Страница ${p.page}</div>`}
+          <div class="note" style="margin-top:7px">${isText?'Исходный текст':'Визуальная раскладка'}</div>
           <textarea style="margin-top:5px;min-height:120px" readonly>${String(p.visualText||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')}</textarea>
-          <div class="note" style="margin-top:7px">Порядок текста PDF</div>
-          <textarea style="margin-top:5px;min-height:120px" readonly>${String(p.flowText||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')}</textarea>
+          ${isText?'':`<div class="note" style="margin-top:7px">Порядок текста PDF</div><textarea style="margin-top:5px;min-height:120px" readonly>${String(p.flowText||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')}</textarea>`}
         </div>`).join('')}
       </div>
     </details>
@@ -1981,7 +2110,8 @@ function openPdfReview(data){
 }
 function addPdfMarkerRow(m={}){
   const div=document.createElement('div');div.className='marker-row map-row';
-  div.innerHTML=`<label>Как написано в PDF<input class="pdf-name"></label>
+  const sourceType=$('importSourceType')?.value||'pdf';
+  div.innerHTML=`<label>${sourceType==='text'?'Как написано в тексте':'Как написано в PDF'}<input class="pdf-name"></label>
     <label>Значение<input class="pdf-value" type="number" step="any"></label>
     <label>Ед.<input class="pdf-unit"></label>
     <label>Мин.<input class="pdf-min" type="number" step="any"></label>
@@ -2017,7 +2147,9 @@ function savePdfLab(){
     };
   }).filter(m=>m.name&&m.value!==null&&isPlausibleMarkerName(m.name));
   if(!markers.length && !confirm('Показатели не заполнены. Всё равно сохранить анализ?'))return;
-  state.labs.push({id:uid(),date,time:$('pdfTime').value,lab:$('pdfLab').value.trim(),comment:'Импортировано из PDF',markers,protocolContext:protocolContext(date),doseContext:doseContextFromForm('pdf',date,$('pdfTime').value),source:'pdf',sourceFile:document.querySelector('#modal input[disabled]')?.value||''});
+  const sourceType=$('importSourceType')?.value||'pdf';
+  const sourceName=$('importSourceName')?.value||document.querySelector('#modal input[disabled]')?.value||'';
+  state.labs.push({id:uid(),date,time:$('pdfTime').value,lab:$('pdfLab').value.trim(),comment:sourceType==='text'?'Импортировано из текста':'Импортировано из PDF',markers,protocolContext:protocolContext(date),doseContext:doseContextFromForm('pdf',date,$('pdfTime').value),source:sourceType,sourceFile:sourceType==='pdf'?sourceName:''});
   closeModal();save();
 }
 
@@ -2165,7 +2297,7 @@ function renderLatestChanges(){
   }
   box.innerHTML=cards.length?`<div class="change-grid">${cards.join('')}</div>`:`<div class="empty">Пока недостаточно повторных анализов для сравнения.</div>`;
 }
-const APP_VERSION='3.1.3';
+const APP_VERSION='3.2.0';
 
 function normalizedHctPercent(marker){
   if(!marker)return null;
