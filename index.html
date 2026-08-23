@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.11.3 Mobile Fix</title>
+<title>VM Private Capital — Wealth Studio v7.12.0</title>
 <style>
 
 :root{
@@ -777,6 +777,19 @@ th,td{border-color:rgba(255,255,255,.055)}
 .crypto-modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:650px){.crypto-kpis,.crypto-modal-grid{grid-template-columns:1fr}.crypto-ledger-row{grid-template-columns:1fr}}
 
+/* v7.12.0 — per-portfolio Bitcoin wallets */
+.app-version-badge{display:inline-flex;align-items:center;margin-left:8px;padding:2px 7px;border-radius:999px;border:1px solid rgba(212,170,90,.28);background:rgba(212,170,90,.08);color:#d8b66f;font-size:9px;font-weight:750;letter-spacing:.07em;vertical-align:1px}
+.crypto-wallet-box{margin-top:12px;padding:10px 11px;border:1px solid rgba(212,170,90,.18);border-radius:11px;background:rgba(212,170,90,.035)}
+.crypto-wallet-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px}.crypto-wallet-head span{font-size:9px;letter-spacing:.08em;color:var(--muted);font-weight:750}.crypto-wallet-head b{font-size:10px;color:#d8b66f}
+.crypto-wallet-address{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:10px;line-height:1.45;color:#dfe8ef;overflow-wrap:anywhere;word-break:break-word}
+.crypto-wallet-empty{font-size:10px;line-height:1.45;color:var(--muted)}
+.crypto-wallet-box .btc-wallet-status{margin-top:8px;padding:7px 8px;font-size:9px;line-height:1.4}
+.crypto-wallet-fields{grid-column:1/-1;display:grid;grid-template-columns:1fr;gap:11px;padding:14px;border:1px solid rgba(112,224,194,.18);border-radius:12px;background:rgba(112,224,194,.035)}
+.crypto-wallet-fields.hidden{display:none}.crypto-wallet-fields small{color:#8697a5;line-height:1.45}.crypto-wallet-fields .wallet-checkbox{display:flex;flex-direction:row;align-items:center;gap:9px}.crypto-wallet-fields .wallet-checkbox input{width:auto}
+.crypto-wallet-last-sync{padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:rgba(0,0,0,.10);color:var(--muted);font-size:10px;line-height:1.4}
+@media(max-width:650px){.app-version-badge{margin-left:5px}.crypto-wallet-fields{padding:12px}}
+
+
 /* v7.6.1 Portfolio View Fix */
 .cloud-card{border-color:rgba(95,190,150,.18)!important;background:linear-gradient(145deg,rgba(95,190,150,.055),rgba(255,255,255,.018))!important}
 .cloud-card-copy{min-width:0}.cloud-card-copy b,.cloud-card-copy div{overflow-wrap:anywhere}
@@ -1086,6 +1099,12 @@ body.auth-locked{overflow:hidden}
    v7.11.3 — MOBILE FIX ONLY
    Desktop layout/calculations are unchanged.
    ========================================================= */
+
+/* =========================================================
+   v7.12.0 — PER-PORTFOLIO BTC WALLETS
+   Each crypto portfolio owns its public Bitcoin wallet settings.
+   The old global wallet panel is removed; v7.11.3 data migrates once.
+   ========================================================= */
 .mobile-suite-link{display:none}
 
 @media(max-width:1120px){
@@ -1323,7 +1342,7 @@ body.auth-locked{overflow:hidden}
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.11.3 Mobile Fix</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.12.0</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -1341,7 +1360,7 @@ body.auth-locked{overflow:hidden}
   <main class="main">
     <header class="topbar">
       <div>
-        <div class="eyebrow">PERSONAL CAPITAL CONTROL</div>
+        <div class="eyebrow">PERSONAL CAPITAL CONTROL <span class="app-version-badge">v7.12.0</span></div>
         <h1 id="viewTitle">Обзор капитала</h1>
         <div id="todayText" class="muted"></div><div class="topbar-subtitle">Планируйте капитал, сравнивайте сценарии и контролируйте будущие выплаты.</div>
       </div>
@@ -1485,38 +1504,6 @@ body.auth-locked{overflow:hidden}
     </section>
 
     <section id="view-portfolios" class="view">
-      <div class="panel btc-wallet-panel">
-        <div class="panel-head">
-          <div>
-            <div class="eyebrow">BITCOIN WALLET</div>
-            <h2>Майнинговый BTC-кошелёк</h2>
-            <div class="muted small">Укажи публичный Bitcoin-адрес. Wealth Studio сам читает блокчейн и обновляет баланс без Home Assistant и Mining Report.</div>
-          </div>
-        </div>
-
-        <div class="btc-wallet-grid">
-          <label>Bitcoin-адрес
-            <input id="btcWalletAddress" placeholder="bc1..." autocomplete="off">
-            <div class="btc-address-note">Нужен только публичный адрес. Приватный ключ / seed-фраза никогда не вводятся.</div>
-          </label>
-          <label>Криптоактив
-            <select id="btcWalletPortfolio"></select>
-          </label>
-        </div>
-
-        <div class="btc-wallet-actions" style="margin-top:12px">
-          <button class="btn primary" id="btcWalletSyncBtn">↻ Обновить BTC-кошелёк</button>
-          <button class="btn secondary" id="btcWalletCreateAssetBtn">＋ Создать Bitcoin Mining</button>
-          <label class="row" style="margin-left:auto">
-            <input id="btcWalletAutoSync" type="checkbox" style="width:auto">
-            Автообновление при открытии
-          </label>
-        </div>
-
-        <div id="btcWalletKpis" class="btc-wallet-kpis"></div>
-        <div id="btcWalletStatus" class="btc-wallet-status">Кошелёк ещё не обновлялся.</div>
-      </div>
-
       <div class="panel">
         <div class="panel-head"><div><div class="eyebrow">ASSETS</div><h2>Мои портфели</h2></div><button class="btn primary" id="addPortfolioBtn2">＋ Добавить</button></div>
         <div id="portfolioCards" class="portfolio-cards"></div>
@@ -1785,6 +1772,7 @@ body.auth-locked{overflow:hidden}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 
+const APP_VERSION='v7.12.0';
 const SUPABASE_URL='https://hlrvwzqwxqmycuttvzbx.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_RBRKa6zqrw7-CW77RW__QQ_vrqebWCp';
 const STORAGE_KEY='capital_tracker_offline_v1';
@@ -1814,6 +1802,7 @@ const defaultState=()=>({
   btcWalletLastSync:'',
   btcWalletCurrentRate:0,
   btcWalletBlockchainBalance:0,
+  btcWalletMigrationV712:false,
   analyticsRange:'MAX',
   analyticsForecastYears:5
 },
@@ -1863,9 +1852,31 @@ function normalizeState(raw){
    exitDate:p.exitDate||'',
    exitTaxable:p.exitTaxable!==false,
    returnAdjustment:flexNumber(p.returnAdjustment||0),
-   exitTargetPortfolioId:p.exitTargetPortfolioId||''
+   exitTargetPortfolioId:p.exitTargetPortfolioId||'',
+   btcWalletAddress:String(p.btcWalletAddress||''),
+   btcWalletAutoSync:p.btcWalletAutoSync!==false,
+   btcWalletLastSync:p.btcWalletLastSync||'',
+   btcWalletCurrentRate:Number(p.btcWalletCurrentRate||0),
+   btcWalletBlockchainBalance:Number(p.btcWalletBlockchainBalance||0)
  };
 });
+
+ // v7.12.0: migrate the single v7.11.3 BTC wallet into its crypto portfolio once.
+ if(!s.settings.btcWalletMigrationV712){
+   const legacyAddress=String(s.settings.btcWalletAddress||'').trim();
+   const legacyId=String(s.settings.btcWalletPortfolioId||'');
+   const legacyPortfolio=s.portfolios.find(p=>p.id===legacyId&&p.type==='Крипто')
+     ||s.portfolios.find(p=>p.type==='Крипто'&&p.name==='Bitcoin Mining')
+     ||s.portfolios.find(p=>p.type==='Крипто');
+   if(legacyAddress&&legacyPortfolio&&!legacyPortfolio.btcWalletAddress){
+     legacyPortfolio.btcWalletAddress=legacyAddress;
+     legacyPortfolio.btcWalletAutoSync=s.settings.btcWalletAutoSync!==false;
+     legacyPortfolio.btcWalletLastSync=s.settings.btcWalletLastSync||'';
+     legacyPortfolio.btcWalletCurrentRate=Number(s.settings.btcWalletCurrentRate||0);
+     legacyPortfolio.btcWalletBlockchainBalance=Number(s.settings.btcWalletBlockchainBalance||0);
+   }
+   s.settings.btcWalletMigrationV712=true;
+ }
  s.withdrawalRules=s.withdrawalRules.map(r=>({...r,source:r.source||'personal',amountMode:r.amountMode||'gross',frequency:r.frequency||'monthly'}));
  return s;
 }
@@ -1902,7 +1913,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.11.3 Mobile Fix';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.12.0';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -2912,29 +2923,18 @@ function nearestBtcPrice(prices,tsMs){
   const hit=!b?a:(Math.abs(a[0]-tsMs)<Math.abs(b[0]-tsMs)?a:b);
   return Number(hit?.[1]||0);
 }
-function createBitcoinMiningPortfolioDirect(){
-  let p=state.portfolios.find(x=>x.type==='Крипто'&&x.name==='Bitcoin Mining');
-  if(!p){
-    const id=uid();
-    state.portfolios.push({
-      id,name:'Bitcoin Mining',type:'Крипто',owner:'personal',calcRole:'excluded',
-      returnAdjustment:0,exitCost:0,exitMultiple:1,exitDate:'',exitTaxable:true,exitTargetPortfolioId:''
-    });
-    p=state.portfolios.find(x=>x.id===id);
-  }
-  state.settings.btcWalletPortfolioId=p.id;
-  persistState();
-  renderAll();
-  renderDirectBtcWalletSettings();
-  toast('Bitcoin Mining готов');
-  return p;
+function btcWalletPortfolio(pid){
+  return state.portfolios.find(x=>x.id===pid&&x.type==='Крипто')||null;
 }
-function directBtcWalletPortfolio(){
-  const id=state.settings?.btcWalletPortfolioId||'';
-  return state.portfolios.find(x=>x.id===id&&x.type==='Крипто')
-    ||state.portfolios.find(x=>x.type==='Крипто'&&x.name==='Bitcoin Mining')
-    ||state.portfolios.find(x=>x.type==='Крипто')
-    ||null;
+function btcWalletStatusEl(pid){
+  return [...document.querySelectorAll('[data-btc-wallet-status]')].find(el=>el.dataset.btcWalletStatus===pid)||null;
+}
+function btcWalletLastSyncText(p){
+  if(!p?.btcWalletAddress)return 'Bitcoin-кошелёк не привязан.';
+  if(!p?.btcWalletLastSync)return 'Кошелёк ещё не обновлялся.';
+  const d=new Date(p.btcWalletLastSync);
+  const when=Number.isNaN(d.getTime())?String(p.btcWalletLastSync):d.toLocaleString('ru-RU');
+  return `Последнее обновление: ${when} · ${Number(p.btcWalletBlockchainBalance||0).toFixed(8)} BTC`;
 }
 function walletTxToLedgerExistingKey(t){
   if(t?.txid)return `txid:${t.txid}:${t.type}`;
@@ -2942,11 +2942,13 @@ function walletTxToLedgerExistingKey(t){
 }
 async function syncDirectBtcWallet(options={}){
   const silent=!!options.silent;
-  const status=q('btcWalletStatus');
-  const address=String(q('btcWalletAddress')?.value||state.settings?.btcWalletAddress||'').trim();
+  const p=btcWalletPortfolio(options.portfolioId||'');
+  if(!p){if(!silent)toast('Криптопортфель не найден');return}
+  const status=btcWalletStatusEl(p.id);
+  const address=String(options.address??p.btcWalletAddress??'').trim();
   if(!address){
-    if(!silent)toast('Введи Bitcoin-адрес');
-    if(status){status.className='btc-wallet-status warn';status.textContent='Сначала введи публичный Bitcoin-адрес.'}
+    if(!silent)toast('Укажи Bitcoin-адрес в настройках этого портфеля');
+    if(status){status.className='btc-wallet-status warn';status.textContent='Сначала укажи публичный Bitcoin-адрес в «Редактировать».'}
     return;
   }
   if(!validateBtcWalletAddress(address)){
@@ -2955,19 +2957,17 @@ async function syncDirectBtcWallet(options={}){
     return;
   }
 
-  let p=directBtcWalletPortfolio();
-  if(!p)p=createBitcoinMiningPortfolioDirect();
-
-  state.settings.btcWalletAddress=address;
-  state.settings.btcWalletPortfolioId=p.id;
+  p.btcWalletAddress=address;
   if(status){status.className='btc-wallet-status';status.textContent='Читаю блокчейн Bitcoin…'}
 
   try{
-    const [summary,txs,currentRate]=await Promise.all([
+    const suppliedRate=Number(options.currentRate||0);
+    const [summary,txs,currentRateRaw]=await Promise.all([
       btcMempoolJson(`/address/${encodeURIComponent(address)}`),
       fetchAllBtcWalletTransactions(address),
-      currentBtcEurRate().catch(()=>0)
+      suppliedRate>0?Promise.resolve(suppliedRate):currentBtcEurRate().catch(()=>0)
     ]);
+    const currentRate=Number(currentRateRaw||0);
 
     const chain=summary?.chain_stats||{},mp=summary?.mempool_stats||{};
     const funded=Number(chain.funded_txo_sum||0)+Number(mp.funded_txo_sum||0);
@@ -2979,17 +2979,16 @@ async function syncDirectBtcWallet(options={}){
       const ts=Number(tx?.status?.block_time||0);
       const confirmed=!!tx?.status?.confirmed;
       return {
-        txid:String(tx?.txid||''),
-        timestamp:ts,
+        txid:String(tx?.txid||''),timestamp:ts,
         date:ts?new Date(ts*1000).toISOString().slice(0,10):todayISO(),
-        confirmed,
-        netBtc:satToBtcWs(am.netSat)
+        confirmed,netBtc:satToBtcWs(am.netSat)
       };
     }).filter(x=>Math.abs(x.netBtc)>0.0000000001);
 
-    // Исторические цены загружаются для каждого нового движения BTC.
-    // Входящие BTC = приход актива; исходящие корректно исключаются из доходности.
-    const existingKeys=new Set((state.cryptoTransactions||[]).map(walletTxToLedgerExistingKey));
+    // Duplicates are checked inside this portfolio only: another crypto portfolio may have its own wallet.
+    const existingKeys=new Set((state.cryptoTransactions||[])
+      .filter(t=>t.portfolioId===p.id)
+      .map(walletTxToLedgerExistingKey));
     const newLedgerTx=parsed.filter(x=>{
       const type=x.netBtc>0?'mining':'transfer_out';
       return !existingKeys.has(`txid:${x.txid}:${type}`);
@@ -3048,75 +3047,43 @@ async function syncDirectBtcWallet(options={}){
       }
     }
 
-    // Каждая синхронизация BTC-кошелька сохраняется отдельной внутридневной точкой.
-    // Ничего за текущий день не перезаписываем: полная история остаётся в «Источниках».
-    // Для дневной аналитики uniqueSnapshots() берёт только последнюю точку дня.
+    // Every wallet synchronization belongs to this portfolio only.
     if(currentRate>0){
       const value=blockchainBalance*currentRate;
-      const today=todayISO();
-      const capturedAt=new Date().toISOString();
+      const today=todayISO(),capturedAt=new Date().toISOString();
       const timeText=new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
       const comment=`Автооценка BTC wallet: ${blockchainBalance.toFixed(8)} BTC × ${currentRate.toFixed(2)} EUR · ${timeText}`;
       state.snapshots.push({id:uid(),portfolioId:p.id,date:today,value,comment,capturedAt,source:'btc_wallet'});
     }
 
-    state.settings.btcWalletAddress=address;
-    state.settings.btcWalletPortfolioId=p.id;
-    state.settings.btcWalletLastSync=new Date().toISOString();
-    state.settings.btcWalletCurrentRate=currentRate||0;
-    state.settings.btcWalletBlockchainBalance=blockchainBalance;
+    p.btcWalletAddress=address;
+    p.btcWalletLastSync=new Date().toISOString();
+    p.btcWalletCurrentRate=currentRate||Number(p.btcWalletCurrentRate||0);
+    p.btcWalletBlockchainBalance=blockchainBalance;
     persistState();
-
     renderAll();
-    renderDirectBtcWalletSettings();
 
-    const msg=`Готово. Баланс блокчейна: ${blockchainBalance.toFixed(8)} BTC`+
+    const msg=`Готово. Баланс: ${blockchainBalance.toFixed(8)} BTC`+
       (currentRate?` · BTC/EUR ${money(currentRate)} · стоимость ${money(blockchainBalance*currentRate)}`:'')+
       ` · новых входящих ${addedIn} · новых исходящих ${addedOut}`+
       (duplicates?` · уже учтено ${duplicates}`:'')+'.';
-    if(status){status.className='btc-wallet-status ok';status.textContent=msg}
-    if(!silent)toast(`BTC-кошелёк обновлён · +${addedIn} входящих`);
+    const refreshedStatus=btcWalletStatusEl(p.id);
+    if(refreshedStatus){refreshedStatus.className='btc-wallet-status ok';refreshedStatus.textContent=msg}
+    if(!silent)toast(`${p.name}: BTC-кошелёк обновлён`);
   }catch(e){
     console.error(e);
-    if(status){status.className='btc-wallet-status warn';status.textContent='Ошибка: '+e.message}
-    if(!silent)toast('Не удалось обновить BTC-кошелёк');
+    const refreshedStatus=btcWalletStatusEl(p.id)||status;
+    if(refreshedStatus){refreshedStatus.className='btc-wallet-status warn';refreshedStatus.textContent='Ошибка: '+e.message}
+    if(!silent)toast(`${p.name}: не удалось обновить BTC-кошелёк`);
   }
 }
-function renderDirectBtcWalletSettings(){
-  const address=state.settings?.btcWalletAddress||'';
-  if(q('btcWalletAddress'))q('btcWalletAddress').value=address;
-
-  const sel=q('btcWalletPortfolio');
-  if(sel){
-    const cryptos=state.portfolios.filter(p=>p.type==='Крипто');
-    sel.innerHTML=cryptos.length
-      ? cryptos.map(p=>`<option value="${p.id}" ${p.id===(state.settings.btcWalletPortfolioId||'')?'selected':''}>${esc(p.name)} · ${p.owner==='oy'?'VMPC Oy':'Personal'}</option>`).join('')
-      : '<option value="">Нет криптоактивов</option>';
-  }
-  if(q('btcWalletAutoSync'))q('btcWalletAutoSync').checked=state.settings?.btcWalletAutoSync!==false;
-
-  const k=q('btcWalletKpis');
-  if(k){
-    const p=directBtcWalletPortfolio();
-    const cs=p?cryptoStats(p.id):{btc:0,basis:0,investmentPnl:0,currentValue:0};
-    const chainBalance=Number(state.settings?.btcWalletBlockchainBalance||0);
-    const rate=Number(state.settings?.btcWalletCurrentRate||0);
-    const cp=p?cryptoAllTimePerf(p.id):null;
-    const mined=p?cryptoMiningSummary(p.id,'',todayISO()):{btc:0,eur:0};
-    k.innerHTML=`
-      <div class="btc-wallet-kpi"><span>Баланс блокчейна</span><b>${chainBalance.toFixed(8)} BTC</b></div>
-      <div class="btc-wallet-kpi"><span>Получено майнингом</span><b>${mined.btc.toFixed(8)} BTC</b></div>
-      <div class="btc-wallet-kpi"><span>BTC/EUR</span><b>${rate?money(rate):'—'}</b></div>
-      <div class="btc-wallet-kpi"><span>Рыночная стоимость</span><b>${rate?money(chainBalance*rate):money(cs.currentValue||0)}</b></div>
-      <div class="btc-wallet-kpi"><span>Доходность BTC (цена)</span><b class="${cp?.pct!==null&&cp?.pct<0?'bad':'good'}">${cp?.sufficient?fmtReturn(cp.pct):'—'}</b></div>`;
-  }
-
-  const status=q('btcWalletStatus');
-  if(status&&state.settings?.btcWalletLastSync){
-    const d=new Date(state.settings.btcWalletLastSync);
-    status.className='btc-wallet-status ok';
-    status.textContent='Последнее обновление: '+(Number.isNaN(d.getTime())?state.settings.btcWalletLastSync:d.toLocaleString('ru-RU'))+
-      ` · ${Number(state.settings.btcWalletBlockchainBalance||0).toFixed(8)} BTC`;
+async function syncConfiguredBtcWallets(options={}){
+  const wallets=state.portfolios.filter(p=>p.type==='Крипто'&&String(p.btcWalletAddress||'').trim()&&p.btcWalletAutoSync!==false);
+  if(!wallets.length)return;
+  const sharedRate=await currentBtcEurRate().catch(()=>0);
+  for(const p of wallets){
+    try{await syncDirectBtcWallet({portfolioId:p.id,silent:options.silent!==false,currentRate:sharedRate})}
+    catch(e){console.warn('BTC wallet auto-sync failed',p.name,e)}
   }
 }
 
@@ -3175,7 +3142,7 @@ function openCryptoTransactionModal(pid){
     const date=parseDate(q('cDate').value),btc=Number(q('cBtc').value),rate=Number(q('cRate').value||0),txid=q('cTxid').value.trim();
     if(!date)return toast('Проверьте дату');
     if(!Number.isFinite(btc)||btc<=0)return toast('Введите количество BTC');
-    if(txid && state.cryptoTransactions.some(t=>t.txid===txid))return toast('Такая транзакция уже есть');
+    if(txid && state.cryptoTransactions.some(t=>t.portfolioId===pid&&t.txid===txid))return toast('Такая транзакция уже есть в этом портфеле');
     state.cryptoTransactions.push({
       id:uid(),portfolioId:pid,date,type:q('cType').value,btc,eurRate:rate,
       eurValue:btc*rate,source:q('cSource').value.trim(),txid,comment:q('cComment').value.trim()
@@ -3227,6 +3194,9 @@ function renderPortfolios(){
    const role=portfolioRole(p);
    const isCrypto=(p.type==='Крипто');
    const crypto=isCrypto?cryptoStats(p.id):null;
+   const walletAddress=isCrypto?String(p.btcWalletAddress||'').trim():'';
+   const walletBalance=isCrypto&&walletAddress?Number(p.btcWalletBlockchainBalance||0):Number(crypto?.btc||0);
+   const walletRate=isCrypto?(Number(p.btcWalletCurrentRate||0)||Number(crypto?.currentRate||0)):0;
 
    let returnText='—',returnClass='muted';
    if(isNordea){
@@ -3260,11 +3230,17 @@ function renderPortfolios(){
      ? `<div class="muted small" style="margin-top:6px">Investments ${money(invValue)} · Cash ${money(cashValue)}</div>`
      : isCrypto
        ? `<div class="crypto-kpis">
-            <div class="crypto-kpi"><span>Количество</span><b>${crypto.btc.toFixed(8)} BTC</b></div>
-            <div class="crypto-kpi"><span>Текущий BTC/EUR</span><b>${crypto.currentRate?money(crypto.currentRate):'—'}</b></div>
+            <div class="crypto-kpi"><span>Количество</span><b>${walletBalance.toFixed(8)} BTC</b></div>
+            <div class="crypto-kpi"><span>Текущий BTC/EUR</span><b>${walletRate?money(walletRate):'—'}</b></div>
             <div class="crypto-kpi"><span>Приход от майнинга</span><b>${money(crypto.miningIncome)}</b></div>
             <div class="crypto-kpi"><span>Доходность BTC (цена)</span><b>${cryptoAllTimePerf(p.id)?.sufficient?fmtReturn(cryptoAllTimePerf(p.id).pct):'—'}</b></div>
             <div class="crypto-kpi"><span>Изменение стоимости кошелька</span><b>${cryptoAllTimeWalletGrowth(p.id)?.sufficient?fmtReturn(cryptoAllTimeWalletGrowth(p.id).pct):'—'}</b></div>
+          </div>
+          <div class="crypto-wallet-box">
+            <div class="crypto-wallet-head"><span>BITCOIN WALLET</span><b>${walletAddress?'Привязан':'Не привязан'}</b></div>
+            ${walletAddress
+              ? `<div class="crypto-wallet-address" title="${esc(walletAddress)}">${esc(walletAddress)}</div><div class="btc-wallet-status ${p.btcWalletLastSync?'ok':''}" data-btc-wallet-status="${p.id}">${esc(btcWalletLastSyncText(p))}</div>`
+              : `<div class="crypto-wallet-empty">Укажи публичный Bitcoin-адрес в «Редактировать». У каждого криптопортфеля может быть свой кошелёк.</div>`}
           </div>`
        : '';
 
@@ -3275,7 +3251,9 @@ function renderPortfolios(){
      : isCrypto
        ? `<button class="btn primary compact" data-crypto-tx="${p.id}">＋ BTC приход</button>
           <button class="btn secondary compact" data-crypto-price="${p.id}">Обновить цену</button>
-          <button class="btn secondary compact" data-btc-wallet-sync="${p.id}">↻ BTC-кошелёк</button>`
+          ${walletAddress
+            ? `<button class="btn secondary compact" data-btc-wallet-sync="${p.id}">↻ Обновить кошелёк</button>`
+            : `<button class="btn secondary compact" data-wallet-edit="${p.id}">＋ Кошелёк</button>`}`
        : `<button class="btn secondary compact" data-snap-pre="${p.id}">＋ Оценка</button>`;
 
    return `<div class="port-card ${isCrypto?'crypto-ledger-card':''}">
@@ -3297,11 +3275,9 @@ function renderPortfolios(){
  box.querySelectorAll('[data-crypto-tx]').forEach(b=>b.addEventListener('click',()=>openCryptoTransactionModal(b.dataset.cryptoTx)));
  box.querySelectorAll('[data-crypto-price]').forEach(b=>b.addEventListener('click',()=>openCryptoPriceModal(b.dataset.cryptoPrice)));
  box.querySelectorAll('[data-btc-wallet-sync]').forEach(b=>b.addEventListener('click',async()=>{
-   state.settings.btcWalletPortfolioId=b.dataset.btcWalletSync;
-   persistState({localOnly:true});
-   renderDirectBtcWalletSettings();
-   await syncDirectBtcWallet();
+   await syncDirectBtcWallet({portfolioId:b.dataset.btcWalletSync});
  }));
+ box.querySelectorAll('[data-wallet-edit]').forEach(b=>b.addEventListener('click',()=>openPortfolioModal(b.dataset.walletEdit)));
  box.querySelectorAll('[data-snap-pre]').forEach(b=>b.addEventListener('click',()=>openSnapshotModal(null,b.dataset.snapPre)));
  box.querySelectorAll('[data-flow-pre]').forEach(b=>b.addEventListener('click',()=>{
    openFlowModal(null,b.dataset.flowPre);
@@ -4133,7 +4109,7 @@ function renderInsights(){
 function renderAll(){syncAgeHorizon('withdrawYears','withdrawTargetAge','withdrawHorizonDate','years');q('todayText').innerHTML=`${new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} · <span class="age-tag">${ageTextByYear(new Date().getFullYear())}</span><div class="age-note">Возраст рассчитан по году рождения 1982. Без точной даты рождения возможна разница в 1 год до дня рождения.</div>`;q('currency').value=state.settings.currency||'EUR';q('fyStartDisplay').value=formatDate(state.settings.fyStart);
  const t=state.taxSettings;
  ['companyTaxRate','dividendThreshold','netAssetRate','shareMathValue','dividendTaxableBelow','dividendTaxableAbove','capitalTaxLow','capitalTaxHigh','capitalTaxThreshold'].forEach(id=>{if(q(id))q(id).value=t[id]});
- renderTaxPreview();renderDashboard();renderPortfolios();renderHistory();renderForecast();renderWithdrawalRules();renderInsights();renderDirectBtcWalletSettings();renderPortfolioAnalytics()}
+ renderTaxPreview();renderDashboard();renderPortfolios();renderHistory();renderForecast();renderWithdrawalRules();renderInsights();renderPortfolioAnalytics()}
 
 
 function analyticsEntities(){
@@ -4462,6 +4438,14 @@ function openPortfolioModal(id=null){
   </select><small>Для типа «Крипто» программа всегда использует «Вне расчёта»: Crypto отображается в капитале и аналитике, но не участвует в плане вывода денег и сценариях расходов.</small></label>
   ${p?'':`<label>Дата первой оценки${dateControl('pDate')}</label><label>Начальная стоимость<input id="pValue" type="number" step="0.01"></label>`}
 
+  <div id="cryptoWalletFields" class="crypto-wallet-fields ${p?.type==='Крипто'?'':'hidden'}">
+    <div class="exit-fields-title">Bitcoin-кошелёк этого портфеля</div>
+    <label>Публичный Bitcoin-адрес<input id="pBtcWalletAddress" value="${esc(p?.btcWalletAddress||'')}" placeholder="bc1..." autocomplete="off"><small>Вводится только публичный адрес. Приватный ключ и seed-фраза здесь никогда не нужны.</small></label>
+    <label class="wallet-checkbox"><input id="pBtcWalletAutoSync" type="checkbox" ${p?.btcWalletAutoSync!==false?'checked':''}> Автообновление кошелька при открытии сайта</label>
+    <small>Адрес необязателен. Каждый криптопортфель хранит собственный Bitcoin-адрес, баланс и время последнего обновления.</small>
+    ${p?.btcWalletAddress?`<div class="crypto-wallet-last-sync">${esc(btcWalletLastSyncText(p))}</div>`:''}
+  </div>
+
   <div id="investableAssetFields" class="investable-asset-fields ${role==='investable'?'':'hidden'}">
     <div class="exit-fields-title">Доходность этого портфеля</div>
     <label>Корректировка к сценарию, п.п.<input id="pReturnAdjustment" type="number" step="0.1" value="${Number(p?.returnAdjustment||0)}"></label>
@@ -4488,14 +4472,19 @@ function openPortfolioModal(id=null){
   <div class="modal-actions">${p?'<button class="btn danger" id="deletePortfolio">Удалить</button>':''}<button class="btn primary" id="savePortfolio">${p?'Сохранить':'Создать'}</button></div>
  </div>`,'ASSET');
 
- const roleSel=q('pCalcRole'),ownerSel=q('pOwner'),exitFields=q('exitAssetFields'),investFields=q('investableAssetFields');
+ const roleSel=q('pCalcRole'),ownerSel=q('pOwner'),typeSel=q('pType'),exitFields=q('exitAssetFields'),investFields=q('investableAssetFields'),cryptoWalletFields=q('cryptoWalletFields');
  const updateVisibility=()=>{
-   exitFields.classList.toggle('hidden',roleSel.value!=='exit');
-   investFields.classList.toggle('hidden',roleSel.value!=='investable');
+   const isCrypto=typeSel.value==='Крипто';
+   if(isCrypto)roleSel.value='excluded';
+   roleSel.disabled=isCrypto;
+   cryptoWalletFields.classList.toggle('hidden',!isCrypto);
+   exitFields.classList.toggle('hidden',isCrypto||roleSel.value!=='exit');
+   investFields.classList.toggle('hidden',isCrypto||roleSel.value!=='investable');
    refreshTargets();
  };
  roleSel.addEventListener('change',updateVisibility);
  ownerSel.addEventListener('change',refreshTargets);
+ typeSel.addEventListener('change',updateVisibility);
 
  const exitYears=q('pExitYears'),exitAge=q('pExitAge'),exitDatePreview=q('pExitDatePreview'),cost=q('pExitCost'),mult=q('pExitMultiple'),valuePreview=q('pExitValuePreview');
  const targetSel=q('pExitTarget'),adj=q('pReturnAdjustment'),adjPreview=q('pRateAdjustmentPreview');
@@ -4536,7 +4525,10 @@ function openPortfolioModal(id=null){
 
  q('savePortfolio').addEventListener('click',()=>{
    const name=q('pName').value.trim();if(!name)return toast('Введите название');
-   const role=q('pType').value==='Крипто'?'excluded':q('pCalcRole').value;
+   const type=q('pType').value;
+   const role=type==='Крипто'?'excluded':q('pCalcRole').value;
+   const walletAddress=type==='Крипто'?String(q('pBtcWalletAddress')?.value||'').trim():'';
+   if(walletAddress&&!validateBtcWalletAddress(walletAddress))return toast('Проверь Bitcoin-адрес');
    const exitDate=role==='exit'?targetDateFromAge(Number(q('pExitAge').value)):'';
    const exitCostParsed=role==='exit'?Math.max(0,flexNumber(q('pExitCost').value)):0;
    const exitMultipleParsed=role==='exit'?Math.max(0,flexNumber(q('pExitMultiple').value)):1;
@@ -4549,13 +4541,18 @@ function openPortfolioModal(id=null){
      exitMultiple:exitMultipleParsed,
      exitDate,
      exitTaxable:role==='exit'?q('pExitTaxable').checked:true,
-     exitTargetPortfolioId:role==='exit'?q('pExitTarget').value:''
+     exitTargetPortfolioId:role==='exit'?q('pExitTarget').value:'',
+     btcWalletAddress:walletAddress,
+     btcWalletAutoSync:type==='Крипто'?!!q('pBtcWalletAutoSync')?.checked:false,
+     btcWalletLastSync:type==='Крипто'&&walletAddress&&walletAddress===String(p?.btcWalletAddress||'').trim()?(p?.btcWalletLastSync||''):'',
+     btcWalletCurrentRate:type==='Крипто'&&walletAddress&&walletAddress===String(p?.btcWalletAddress||'').trim()?Number(p?.btcWalletCurrentRate||0):0,
+     btcWalletBlockchainBalance:type==='Крипто'&&walletAddress&&walletAddress===String(p?.btcWalletAddress||'').trim()?Number(p?.btcWalletBlockchainBalance||0):0
    };
    if(p){
-     Object.assign(p,{name,type:q('pType').value,owner:q('pOwner').value,...extra});
+     Object.assign(p,{name,type,owner:q('pOwner').value,...extra});
    }else{
      const iso=parseDate(q('pDate').value);if(!iso)return toast('Проверьте дату');
-     const nid=uid();state.portfolios.push({id:nid,name,type:q('pType').value,owner:q('pOwner').value,...extra});
+     const nid=uid();state.portfolios.push({id:nid,name,type,owner:q('pOwner').value,...extra});
      const val=Number(q('pValue').value||0);if(val)state.snapshots.push({id:uid(),portfolioId:nid,date:iso,value:val,comment:'Начальная оценка'});
    }
    closeModal();saveState();markWithdrawalDirty();toast('Сохранено')
@@ -4666,25 +4663,6 @@ document.querySelectorAll('.nav-item').forEach(b=>b.addEventListener('click',()=
 function switchView(v){currentView=v;document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.view===v));document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));q('view-'+v).classList.add('active');const t={dashboard:'Планирование капитала',portfolios:'Портфель',history:'Источники и история',forecast:'Сценарии',withdrawals:'План вывода средств',reports:'Аналитика и отчёты',portfolioanalytics:'Портфели: история и прогноз',insights:'Дополнительная информация',settings:'Настройки'};q('viewTitle').textContent=t[v];if(v==='history')renderHistory();if(v==='withdrawals'){renderWithdrawalRules();if(!withdrawalResultsReady)markWithdrawalDirty();else{renderWithdrawalExitChart();const yrs=Math.max(1,Number(q('withdrawYears')?.value||30)),f=state.forecast,out=[['Консервативный',+f.conservative,0],['Базовый',+f.base,1],['Оптимистичный',+f.optimistic,2]].map(([name,r,ci])=>{const m=runWithdrawalModel(r,yrs);return{name,points:m.ptsTotal,ci}});drawSeries(q('withdrawalChart'),out,{xMode:'year'})}}if(v==='dashboard')renderCapitalChart();if(v==='forecast'){renderForecastChart();renderForecastOwnerChart()}if(v==='portfolioanalytics')renderPortfolioAnalytics();if(v==='insights')renderInsights()}
 q('closeModalBtn').addEventListener('click',closeModal);q('modalBackdrop').addEventListener('click',e=>{if(e.target===q('modalBackdrop'))closeModal()});
 q('quickAddBtn').addEventListener('click',()=>openSnapshotModal());q('addSnapshotBtn').addEventListener('click',()=>openSnapshotModal());q('addFlowBtn').addEventListener('click',()=>openFlowModal());q('addPortfolioBtn').addEventListener('click',()=>openPortfolioModal());q('addPortfolioBtn2').addEventListener('click',()=>openPortfolioModal());
-if(q('btcWalletSyncBtn'))q('btcWalletSyncBtn').addEventListener('click',async()=>{
-  state.settings.btcWalletAddress=String(q('btcWalletAddress')?.value||'').trim();
-  state.settings.btcWalletPortfolioId=q('btcWalletPortfolio')?.value||state.settings.btcWalletPortfolioId||'';
-  state.settings.btcWalletAutoSync=!!q('btcWalletAutoSync')?.checked;
-  persistState({localOnly:true});
-  await syncDirectBtcWallet();
-});
-if(q('btcWalletCreateAssetBtn'))q('btcWalletCreateAssetBtn').addEventListener('click',()=>createBitcoinMiningPortfolioDirect());
-if(q('btcWalletAddress'))q('btcWalletAddress').addEventListener('change',()=>{
-  const a=String(q('btcWalletAddress').value||'').trim();
-  if(a&&!validateBtcWalletAddress(a))return toast('Проверь Bitcoin-адрес');
-  state.settings.btcWalletAddress=a;persistState();
-});
-if(q('btcWalletPortfolio'))q('btcWalletPortfolio').addEventListener('change',()=>{
-  state.settings.btcWalletPortfolioId=q('btcWalletPortfolio').value;persistState();
-});
-if(q('btcWalletAutoSync'))q('btcWalletAutoSync').addEventListener('change',()=>{
-  state.settings.btcWalletAutoSync=!!q('btcWalletAutoSync').checked;persistState();
-});
 
 q('dashboardSort').addEventListener('change',renderDashboard);q('capitalChartMode').addEventListener('change',renderCapitalChart);q('historySearch').addEventListener('input',renderHistory);q('historyType').addEventListener('change',renderHistory);q('historySort').addEventListener('change',renderHistory);
 q('portfolioAnalyticsRange')?.querySelectorAll('[data-arange]').forEach(b=>b.addEventListener('click',()=>{
@@ -4775,11 +4753,8 @@ window.addEventListener('resize',()=>{
 renderAll();
 initCloud();
 setTimeout(async()=>{
-  try{
-    if(state.settings?.btcWalletAutoSync!==false && state.settings?.btcWalletAddress){
-      await syncDirectBtcWallet({silent:true});
-    }
-  }catch(e){console.warn('BTC wallet auto-sync failed',e)}
+  try{await syncConfiguredBtcWallets({silent:true})}
+  catch(e){console.warn('BTC wallets auto-sync failed',e)}
 },2200);
 window.addEventListener('online',()=>{if(cloudUser&&localStorage.getItem(CLOUD_DIRTY_KEY)==='1')saveCloudState(false)});
 setInterval(()=>{if(cloudUser&&localStorage.getItem(CLOUD_DIRTY_KEY)==='1'&&!cloudBusy)saveCloudState(false)},30000);
