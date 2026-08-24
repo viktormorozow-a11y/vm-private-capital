@@ -1,1 +1,525 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VM Fitness Studio v1.0.1</title>
+<style>
+:root{
+  --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
+  --line:rgba(255,255,255,.09);--gold:#d6ad62;--good:#73d99a;--bad:#ff7e8a;--blue:#7fc8ff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#050b11,#08131d 45%,#060d14);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif}
+button,input,select,textarea{font:inherit}
+.app{display:grid;grid-template-columns:235px minmax(0,1fr);min-height:100vh}
+aside{border-right:1px solid var(--line);background:rgba(5,13,20,.94);padding:22px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+.brand{padding:8px 10px 22px}.brand b{color:var(--gold);letter-spacing:.12em}.brand small{display:block;color:var(--muted);margin-top:5px}
+nav{display:grid;gap:7px}.nav{border:1px solid transparent;background:transparent;color:#aeb9c4;text-align:left;padding:11px 12px;border-radius:12px;cursor:pointer}
+.nav.active{background:rgba(214,173,98,.12);border-color:rgba(214,173,98,.25);color:#f4ddb1}
+main{padding:24px;max-width:1500px;width:100%;margin:0 auto}
+.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px}.top h1{margin:0;font-size:28px}.sub{color:var(--muted);font-size:13px;margin-top:6px;line-height:1.45}
+.btn{border:1px solid var(--line);background:#142333;color:var(--text);padding:9px 12px;border-radius:10px;cursor:pointer;font-weight:650}.btn:hover{filter:brightness(1.08)}
+.btn.primary{background:linear-gradient(135deg,#e3bd73,#b88939);color:#111;border:0}.btn.good{background:rgba(115,217,154,.09);color:#bfe9ce;border-color:rgba(115,217,154,.22)}.btn.danger{color:#ff9aa4;background:rgba(255,126,138,.08);border-color:rgba(255,126,138,.2)}
+.grid{display:grid;gap:14px}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.card,.panel{border:1px solid var(--line);background:rgba(13,24,36,.88);border-radius:16px;box-shadow:0 16px 40px rgba(0,0,0,.14);min-width:0}.card{padding:16px}.panel{padding:18px;margin-bottom:14px}
+.klabel{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.kval{font-size:24px;font-weight:760;margin-top:7px}.ksub{font-size:11px;color:var(--muted);margin-top:5px}
+.head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px;flex-wrap:wrap}.head h2{font-size:18px;margin:0}
+.view{display:none}.view.active{display:block}.empty{padding:18px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:12px;line-height:1.5}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:10px 8px;border-bottom:1px solid var(--line);font-size:12px;text-align:left;white-space:nowrap}th{color:#8695a5;font-size:10px;text-transform:uppercase;letter-spacing:.07em}
+.badge{display:inline-flex;padding:4px 7px;border-radius:999px;border:1px solid var(--line);font-size:10px}.badge.good{color:var(--good);background:rgba(115,217,154,.07)}.badge.gold{color:#e2bd73;background:rgba(214,173,98,.07)}.badge.blue{color:var(--blue);background:rgba(127,200,255,.07)}.badge.bad{color:var(--bad);background:rgba(255,126,138,.07)}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.wide{grid-column:1/-1}
+label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textarea{width:100%;background:#09131d;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 10px;outline:none}textarea{min-height:80px;resize:vertical}
+.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;flex-wrap:wrap}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.64);display:none;place-items:center;padding:18px;z-index:50}.modal-bg.show{display:grid}.modal{width:min(820px,100%);max-height:92vh;overflow:auto;background:#0d1824;border:1px solid var(--line);border-radius:18px;padding:18px}.modal.wide-modal{width:min(1180px,calc(100vw - 24px))}
+.modal h3{margin:0 0 14px}.note{font-size:11px;color:var(--muted);line-height:1.5}
+.auth-gate{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:radial-gradient(circle at 50% 15%,rgba(214,173,98,.09),transparent 34%),linear-gradient(180deg,#050b11,#08131d 55%,#050b11);padding:22px}
+.auth-gate.hidden{display:none}.auth-card{width:min(430px,100%);border:1px solid var(--line);border-radius:18px;background:#0d1824;padding:26px;box-shadow:0 28px 90px rgba(0,0,0,.52)}.auth-brand{text-align:center;color:var(--gold);letter-spacing:.16em;font-size:11px;font-weight:800}.auth-title{text-align:center;font-size:25px;font-weight:800;margin:8px 0 4px}.auth-sub{text-align:center;color:var(--muted);font-size:11px;margin-bottom:16px}.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}.auth-tabs button{padding:9px;border-radius:10px;border:1px solid var(--line);background:#09131d;color:var(--muted);cursor:pointer}.auth-tabs button.active{color:#f4ddb1;border-color:rgba(214,173,98,.35);background:rgba(214,173,98,.08)}
+.auth-msg{min-height:18px;font-size:10px;color:var(--muted);margin-top:9px}.auth-msg.err{color:var(--bad)}.auth-msg.ok{color:var(--good)}
+.user-box{margin-top:auto;padding-top:14px;border-top:1px solid var(--line)}.user-mail{font-size:10px;color:var(--muted);overflow-wrap:anywhere}.suite-link{display:flex;align-items:center;justify-content:space-between;text-decoration:none;margin-top:9px;color:#d9e6ef;background:rgba(127,200,255,.055);border:1px solid rgba(127,200,255,.13);padding:10px 11px;border-radius:11px;font-size:11px;font-weight:700}
+.rec-card{border:1px solid rgba(214,173,98,.2);background:rgba(214,173,98,.045);border-radius:13px;padding:12px}.rec-title{font-size:11px;color:#e7c887;font-weight:760}.rec-main{font-size:18px;font-weight:780;margin-top:5px}.rec-why{font-size:10px;color:var(--muted);margin-top:5px;line-height:1.45}
+.exercise-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.exercise-card{border:1px solid var(--line);border-radius:13px;padding:13px;background:rgba(255,255,255,.018)}.exercise-card h3{margin:0;font-size:14px}.exercise-meta{font-size:10px;color:var(--muted);margin-top:5px}.exercise-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.routine-card{border:1px solid var(--line);border-radius:13px;padding:14px;background:rgba(255,255,255,.018)}.routine-card h3{margin:0}.routine-list{display:grid;gap:7px;margin-top:10px}.routine-row{display:flex;justify-content:space-between;gap:10px;padding:8px 9px;border:1px solid var(--line);border-radius:9px;color:#dbe5ec;font-size:11px}
+.workout-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}.workout-ex{border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.018);padding:14px;margin-bottom:12px}.workout-ex-title{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.workout-ex-title h3{margin:0;font-size:16px}.set-grid{display:grid;grid-template-columns:50px minmax(90px,1fr) minmax(80px,1fr) minmax(70px,1fr) auto;gap:7px;align-items:end;margin-top:8px}.set-grid .setno{align-self:center;text-align:center;color:var(--muted);font-size:11px}.set-grid button{align-self:end}
+.progress-canvas{position:relative;height:310px;border:1px solid var(--line);border-radius:13px;background:#08121b;padding:8px}.progress-canvas canvas{width:100%;height:100%}
+.metric-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.metric-mini{border:1px solid var(--line);border-radius:11px;padding:10px;background:rgba(255,255,255,.018)}.metric-mini .v{font-size:17px;font-weight:760;margin-top:4px}.metric-mini .l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.tip{position:absolute;z-index:20;display:none;pointer-events:none;padding:9px 10px;border-radius:10px;background:#101b27;border:1px solid var(--line);font-size:10px;line-height:1.45;box-shadow:0 12px 32px rgba(0,0,0,.35)}
+.help{display:inline-grid;place-items:center;width:17px;height:17px;border-radius:50%;border:1px solid rgba(127,200,255,.35);color:#9fd5ff;background:rgba(127,200,255,.07);font-size:11px;font-weight:800;cursor:help;position:relative;vertical-align:middle;margin-left:4px}
+.help:hover:after{content:attr(data-help);position:absolute;z-index:100;top:23px;left:50%;transform:translateX(-50%);width:min(330px,80vw);padding:9px 11px;background:#101b27;border:1px solid var(--line);border-radius:10px;color:#e7eef3;font-size:10px;line-height:1.5;font-weight:500}
+.hidden{display:none!important}.busy{opacity:.65;pointer-events:none}
+@media(max-width:1000px){.app{grid-template-columns:1fr}aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}nav{grid-template-columns:repeat(4,minmax(135px,1fr));overflow:auto}.user-box{margin-top:14px}.g4,.g3{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){main{padding:14px}.g4,.g3,.g2,.exercise-grid,.form-grid,.metric-row{grid-template-columns:1fr}.top{flex-direction:column}.set-grid{grid-template-columns:42px 1fr 1fr}.set-grid label:nth-of-type(3){grid-column:2/4}.set-grid button{grid-column:2/4}.modal-bg{padding:8px}.modal,.modal.wide-modal{width:100%;padding:13px}.wide{grid-column:auto}}
+</style>
+</head>
+<body>
+<div id="authGate" class="auth-gate">
+  <div class="auth-card">
+    <div class="auth-brand">VM PRIVATE SUITE</div>
+    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v1.0.1</span></div>
+    <div class="auth-sub">Личный тренировочный дневник. Данные каждого аккаунта полностью раздельны.</div>
+    <div class="auth-tabs">
+      <button id="tabLogin" class="active" type="button">Войти</button>
+      <button id="tabSignup" type="button">Создать аккаунт</button>
+    </div>
+    <div id="signupNameWrap" class="hidden"><label>Имя<input id="authName" autocomplete="name" placeholder="Например, Оксана"></label></div>
+    <label style="margin-top:9px">Email<input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
+    <label style="margin-top:9px">Пароль<input id="authPassword" type="password" autocomplete="current-password" placeholder="Введите пароль"></label>
+    <label id="authPassword2Wrap" class="hidden" style="margin-top:9px">Повторите пароль<input id="authPassword2" type="password" autocomplete="new-password"></label>
+    <div id="authMsg" class="auth-msg"></div>
+    <button id="authSubmit" class="btn primary" style="width:100%;margin-top:5px" type="button">Войти</button>
+    <div class="note" style="margin-top:12px;text-align:center">Новый аккаунт автоматически получает доступ только к Fitness Studio. HRT и финансовые данные других пользователей недоступны.</div>
+  </div>
+</div>
 
+<div class="app">
+<aside>
+  <div class="brand"><b>VM FITNESS STUDIO</b><small>Тренировки · Прогрессия · Рекорды</small><small style="color:#d6ad62;font-weight:750">Версия 1.0.0</small></div>
+  <nav>
+    <button class="nav active" data-view="dashboard">Сегодня</button>
+    <button class="nav" data-view="workout">Тренировка</button>
+    <button class="nav" data-view="exercises">Упражнения</button>
+    <button class="nav" data-view="routines">Программы</button>
+    <button class="nav" data-view="history">История</button>
+    <button class="nav" data-view="progress">Прогресс</button>
+    <button class="nav" data-view="bodyweight">Вес тела</button>
+    <button class="nav" data-view="settings">Настройки</button>
+  </nav>
+  <div class="user-box">
+    <div class="user-mail" id="userMail">—</div>
+    <button class="btn" style="width:100%;margin-top:8px" type="button" onclick="signOut()">Выйти</button>
+    <a class="suite-link hidden" id="fitnessWealthLink" href="../"><span>←</span><span>WEALTH STUDIO</span></a>
+    <a class="suite-link hidden" id="fitnessHrtLink" href="../hrt/"><span>♥</span><span>HRT HEALTH STUDIO</span></a>
+  </div>
+</aside>
+
+<main>
+<section id="dashboard" class="view active">
+  <div class="top">
+    <div><h1>Сегодня</h1><div class="sub">Начните тренировку — программа покажет рекомендуемый вес и цель по повторениям для каждого упражнения.</div></div>
+    <button class="btn primary" type="button" onclick="openStartWorkout()">Начать тренировку</button>
+  </div>
+  <div class="grid g4" id="dashKpis"></div>
+  <div class="grid g2">
+    <div class="panel"><div class="head"><h2>Следующая тренировка</h2></div><div id="nextWorkout"></div></div>
+    <div class="panel"><div class="head"><h2>Последняя тренировка</h2></div><div id="lastWorkout"></div></div>
+  </div>
+  <div class="panel"><div class="head"><h2>Последние личные рекорды <span class="help" data-help="Расчётная сила (e1RM) вычисляется по формуле Epley из веса и повторений. Это ориентир для сравнения собственного прогресса, а не фактический максимум.">?</span></h2></div><div id="recentPrs"></div></div>
+</section>
+
+<section id="workout" class="view">
+  <div class="top"><div><h1>Тренировка</h1><div class="sub">Записывайте подходы. После сохранения программа сразу пересчитывает следующую цель.</div></div><div class="actions" style="margin-top:0"><button class="btn" type="button" onclick="openStartWorkout()">Новая</button><button class="btn good" id="finishWorkoutBtn" type="button" onclick="finishActiveWorkout()">Завершить тренировку</button></div></div>
+  <div id="activeWorkout"></div>
+</section>
+
+<section id="exercises" class="view">
+  <div class="top"><div><h1>Упражнения</h1><div class="sub">Для каждого упражнения задаётся диапазон повторений и шаг увеличения веса.</div></div><div class="actions" style="margin-top:0"><button class="btn" type="button" onclick="addStarterExercises()">Добавить базовый набор</button><button class="btn primary" type="button" onclick="openExerciseModal()">＋ Упражнение</button></div></div>
+  <div class="panel"><div id="exerciseList"></div></div>
+</section>
+
+<section id="routines" class="view">
+  <div class="top"><div><h1>Программы тренировок</h1><div class="sub">Соберите, например, «Спина», «Грудь + плечи» или «Ноги». Порядок упражнений сохраняется.</div></div><button class="btn primary" type="button" onclick="openRoutineModal()">＋ Программа</button></div>
+  <div id="routineList"></div>
+</section>
+
+<section id="history" class="view">
+  <div class="top"><div><h1>История</h1><div class="sub">Все завершённые тренировки и выполненные подходы.</div></div></div>
+  <div class="panel"><div id="historyList"></div></div>
+</section>
+
+<section id="progress" class="view">
+  <div class="top"><div><h1>Прогресс</h1><div class="sub">Рабочий вес, лучший подход, расчётная сила и тренировочный объём.</div></div></div>
+  <div class="panel">
+    <div class="form-grid">
+      <label>Упражнение<select id="progressExercise" onchange="renderProgress()"></select></label>
+      <label>Показатель<select id="progressMetric" onchange="renderProgress()"><option value="e1rm">Расчётная сила (e1RM)</option><option value="weight">Максимальный рабочий вес</option><option value="volume">Объём тренировки</option><option value="reps">Лучшее число повторений</option></select></label>
+    </div>
+    <div id="progressStats" class="metric-row" style="margin-top:12px"></div>
+    <div class="progress-canvas" style="margin-top:12px"><canvas id="progressCanvas"></canvas><div id="progressTip" class="tip"></div></div>
+  </div>
+</section>
+
+<section id="bodyweight" class="view">
+  <div class="top"><div><h1>Вес тела</h1><div class="sub">Можно записывать вручную. Если этот аккаунт подключён к Withings, можно импортировать измерения одним нажатием.</div></div><div class="actions" style="margin-top:0"><button class="btn" type="button" onclick="syncBodyweightWithings()">↻ Withings</button><button class="btn primary" type="button" onclick="openBodyweightModal()">＋ Вес</button></div></div>
+  <div class="grid g2">
+    <div class="panel"><div class="head"><h2>Динамика</h2></div><div class="progress-canvas"><canvas id="bodyweightCanvas"></canvas><div id="bodyweightTip" class="tip"></div></div></div>
+    <div class="panel"><div class="head"><h2>Последние измерения</h2></div><div id="bodyweightList"></div></div>
+  </div>
+</section>
+
+<section id="settings" class="view">
+  <div class="top"><div><h1>Настройки</h1><div class="sub">Профиль относится только к текущему аккаунту.</div></div></div>
+  <div class="panel">
+    <div class="head"><h2>Профиль</h2></div>
+    <div class="form-grid">
+      <label>Отображаемое имя<input id="profileName"></label>
+      <label>Источник веса<select id="profileWeightSource"><option value="manual">Ручной ввод</option><option value="withings">Withings</option></select></label>
+    </div>
+    <div class="actions"><button class="btn primary" type="button" onclick="saveProfile()">Сохранить</button></div>
+  </div>
+  <div class="panel">
+    <div class="head"><h2>Приватность и доступ</h2></div>
+    <div id="moduleAccess" class="note"></div>
+  </div>
+</section>
+</main>
+</div>
+
+<div id="modalBg" class="modal-bg" onclick="if(event.target===this)closeModal()"><div id="modal" class="modal"></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL='https://hlrvwzqwxqmycuttvzbx.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_RBRKa6zqrw7-CW77RW__QQ_vrqebWCp';
+const db=(window.supabase&&window.supabase.createClient)?window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}):null;
+let currentUser=null,moduleAccess=null,profile=null;
+let exercises=[],routines=[],routineExercises=[],workouts=[],workoutExercises=[],sets=[],bodyweights=[];
+let activeWorkoutId=null;
+const $=id=>document.getElementById(id);
+const esc=x=>String(x??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const fmtDateTime=s=>s?new Date(s).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
+const fmtDate=s=>s?new Date(s).toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'}):'—';
+const n=(x,d=1)=>Number.isFinite(Number(x))?Number(x).toLocaleString('ru-RU',{maximumFractionDigits:d}):'—';
+const roundTo=(value,step)=>Math.max(0,Math.round(Number(value)/Number(step))*Number(step));
+const uid=()=>crypto.randomUUID();
+
+function setBusy(on){document.body.classList.toggle('busy',!!on)}
+function toast(msg){
+  const old=$('toast');if(old)old.remove();const el=document.createElement('div');el.id='toast';el.textContent=msg;
+  Object.assign(el.style,{position:'fixed',right:'16px',bottom:'16px',zIndex:99999,background:'#101b27',color:'#eef4f7',border:'1px solid rgba(255,255,255,.12)',borderRadius:'10px',padding:'10px 13px',fontSize:'11px',boxShadow:'0 12px 35px rgba(0,0,0,.35)'});
+  document.body.appendChild(el);setTimeout(()=>el.remove(),2500);
+}
+function openModal(html,wide=false){$('modal').className='modal'+(wide?' wide-modal':'');$('modal').innerHTML=html;$('modalBg').classList.add('show')}
+function closeModal(){$('modalBg').classList.remove('show')}
+
+let authMode='login';
+function setAuthMode(mode){
+  authMode=mode;$('tabLogin').classList.toggle('active',mode==='login');$('tabSignup').classList.toggle('active',mode==='signup');
+  $('signupNameWrap').classList.toggle('hidden',mode!=='signup');$('authPassword2Wrap').classList.toggle('hidden',mode!=='signup');
+  $('authSubmit').textContent=mode==='login'?'Войти':'Создать аккаунт';$('authPassword').autocomplete=mode==='login'?'current-password':'new-password';$('authMsg').textContent='';
+}
+$('tabLogin').onclick=()=>setAuthMode('login');$('tabSignup').onclick=()=>setAuthMode('signup');$('authSubmit').onclick=submitAuth;
+async function submitAuth(){
+  if(!db)return authMessage('Не загрузился Supabase. Проверьте интернет.','err');
+  const email=$('authEmail').value.trim(),password=$('authPassword').value;if(!email||!password)return authMessage('Введите email и пароль.','err');
+  if(authMode==='signup'){
+    if(password.length<6)return authMessage('Пароль должен содержать минимум 6 символов.','err');
+    if(password!==$('authPassword2').value)return authMessage('Пароли не совпадают.','err');
+    authMessage('Создаю аккаунт…');
+    const {data,error}=await db.auth.signUp({email,password,options:{data:{display_name:$('authName').value.trim()||''}}});
+    if(error)return authMessage(error.message,'err');
+    if(data.session){await enterApp(data.session)}else authMessage('Аккаунт создан. Если Supabase просит подтверждение email — подтвердите письмо, затем войдите.','ok');
+  }else{
+    authMessage('Выполняю вход…');
+    const {data,error}=await db.auth.signInWithPassword({email,password});if(error)return authMessage(error.message,'err');await enterApp(data.session);
+  }
+}
+function authMessage(t,k=''){$('authMsg').textContent=t;$('authMsg').className='auth-msg '+k}
+async function signOut(){await db.auth.signOut();location.reload()}
+async function enterApp(session){
+  currentUser=session?.user||null;if(!currentUser)return;
+  setBusy(true);
+  try{
+    const {data:access,error}=await db.from('user_module_access').select('fitness,hrt,wealth').eq('user_id',currentUser.id).maybeSingle();if(error)throw error;
+    moduleAccess=access;
+    if(!access?.fitness){authMessage('Для этого аккаунта Fitness Studio отключён.','err');await db.auth.signOut();return}
+    $('fitnessWealthLink')?.classList.toggle('hidden',!access.wealth);
+    $('fitnessHrtLink')?.classList.toggle('hidden',!access.hrt);
+    $('userMail').textContent=currentUser.email||'';
+    await ensureProfile();
+    await loadAll();
+    $('authGate').classList.add('hidden');
+    renderAll();
+  }catch(e){console.error(e);authMessage(e.message||'Ошибка загрузки Fitness Studio','err')}
+  finally{setBusy(false)}
+}
+async function ensureProfile(){
+  let {data,error}=await db.from('fitness_profiles').select('*').eq('user_id',currentUser.id).maybeSingle();if(error)throw error;
+  if(!data){
+    const display=currentUser.user_metadata?.display_name||'';
+    const r=await db.from('fitness_profiles').insert({user_id:currentUser.id,display_name:display}).select().single();if(r.error)throw r.error;data=r.data;
+  }
+  profile=data;
+}
+async function loadAll(){
+  const uid=currentUser.id;
+  const [ex,rt,re,wo,we,se,bw]=await Promise.all([
+    db.from('fitness_exercises').select('*').eq('user_id',uid).order('name'),
+    db.from('fitness_routines').select('*').eq('user_id',uid).order('name'),
+    db.from('fitness_routine_exercises').select('*').eq('user_id',uid).order('position'),
+    db.from('fitness_workouts').select('*').eq('user_id',uid).order('started_at',{ascending:false}).limit(150),
+    db.from('fitness_workout_exercises').select('*').eq('user_id',uid).order('position'),
+    db.from('fitness_sets').select('*').eq('user_id',uid).order('set_no'),
+    db.from('fitness_bodyweight').select('*').eq('user_id',uid).order('measured_at',{ascending:false}).limit(500)
+  ]);
+  for(const r of [ex,rt,re,wo,we,se,bw])if(r.error)throw r.error;
+  exercises=ex.data||[];routines=rt.data||[];routineExercises=re.data||[];workouts=wo.data||[];workoutExercises=we.data||[];sets=se.data||[];bodyweights=bw.data||[];
+  activeWorkoutId=workouts.find(w=>!w.ended_at)?.id||null;
+}
+function renderAll(){
+  renderDashboard();renderExercises();renderRoutines();renderActiveWorkout();renderHistory();renderProgressOptions();renderBodyweight();renderSettings();
+}
+document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));$(b.dataset.view).classList.add('active');
+  if(b.dataset.view==='progress')setTimeout(renderProgress,0);
+  if(b.dataset.view==='bodyweight')setTimeout(drawBodyweightChart,0);
+});
+function exerciseById(id){return exercises.find(x=>x.id===id)}
+function routineById(id){return routines.find(x=>x.id===id)}
+function workoutById(id){return workouts.find(x=>x.id===id)}
+function workoutExerciseRows(workoutId){return workoutExercises.filter(x=>x.workout_id===workoutId).sort((a,b)=>a.position-b.position)}
+function setsForWorkoutExercise(id){return sets.filter(x=>x.workout_exercise_id===id).sort((a,b)=>a.set_no-b.set_no)}
+function e1rm(weight,reps){weight=Number(weight);reps=Number(reps);return weight>0&&reps>0?weight*(1+reps/30):0}
+function workoutVolume(workoutId){
+  const ids=new Set(workoutExerciseRows(workoutId).map(x=>x.id));return sets.filter(s=>ids.has(s.workout_exercise_id)).reduce((a,s)=>a+Number(s.weight_kg||0)*Number(s.reps||0),0)
+}
+function completedWorkoutsForExercise(exerciseId,excludeWorkoutId=null){
+  const we=workoutExercises.filter(x=>x.exercise_id===exerciseId&&x.workout_id!==excludeWorkoutId);
+  return we.map(x=>({we:x,workout:workoutById(x.workout_id),sets:setsForWorkoutExercise(x.id)})).filter(x=>x.workout?.ended_at&&x.sets.length).sort((a,b)=>new Date(b.workout.started_at)-new Date(a.workout.started_at));
+}
+function recommendation(exerciseId,excludeWorkoutId=null){
+  const ex=exerciseById(exerciseId);if(!ex)return {weight:null,target:'—',why:'Упражнение не найдено'};
+  const hist=completedWorkoutsForExercise(exerciseId,excludeWorkoutId),last=hist[0];
+  if(!last)return {weight:null,target:`${ex.target_sets} × ${ex.rep_min}–${ex.rep_max}`,why:'Первой тренировки ещё не было. Выберите комфортный стартовый рабочий вес.'};
+  const ss=last.sets.filter(s=>Number(s.reps)>0),step=Number(ex.increment_kg||2.5);if(!ss.length)return {weight:null,target:`${ex.target_sets} × ${ex.rep_min}–${ex.rep_max}`,why:'В прошлой тренировке нет завершённых подходов.'};
+  const weights=ss.map(s=>Number(s.weight_kg||0));const base=Math.max(...weights);const same=ss.filter(s=>Math.abs(Number(s.weight_kg)-base)<0.001);
+  const targetSets=Number(ex.target_sets||3),lo=Number(ex.rep_min||8),hi=Number(ex.rep_max||12);
+  const reps=same.map(s=>Number(s.reps));const minRir=Math.min(...same.map(s=>s.rir===null||s.rir===undefined?99:Number(s.rir)));
+  if(ex.progression_mode==='weight'){
+    if(same.length>=targetSets&&same.every(s=>Number(s.reps)>=lo)){
+      return {weight:roundTo(base+step,step),target:`${targetSets} × ${lo}`,why:`Прошлый раз все рабочие подходы были не ниже ${lo} повторений — увеличиваем вес на ${n(step,2)} кг.`};
+    }
+    return {weight:base,target:`${targetSets} × ${lo}`,why:'Сначала закрепите целевое число повторений с текущим весом.'};
+  }
+  if(ex.progression_mode==='reps'){
+    const goals=reps.slice(0,targetSets).map(r=>Math.min(hi,r+1));while(goals.length<targetSets)goals.push(lo);
+    return {weight:base,target:goals.join(' / ')+' повт.',why:'Режим прогрессии повторениями: вес сохраняется, цель — добавить повторения.'};
+  }
+  if(same.length>=targetSets&&same.slice(0,targetSets).every(s=>Number(s.reps)>=hi)&&minRir>=1){
+    return {weight:roundTo(base+step,step),target:`${targetSets} × ${lo}`,why:`Достигнут верх диапазона ${hi} во всех подходах — следующий шаг +${n(step,2)} кг.`};
+  }
+  const under=reps.filter(r=>r<lo).length;
+  if(under>=2 || reps.some(r=>r<=Math.max(1,lo-2)) || minRir===0&&under>0){
+    const reduced=roundTo(base*0.95,step);
+    return {weight:Math.min(base,reduced),target:`${targetSets} × ${lo}`,why:`Несколько подходов оказались ниже нижней границы ${lo}. Рекомендовано небольшое снижение веса и повторное построение диапазона.`};
+  }
+  const goals=reps.slice(0,targetSets).map(r=>Math.min(hi,Math.max(lo,r+1)));while(goals.length<targetSets)goals.push(lo);
+  return {weight:base,target:goals.join(' / ')+' повт.',why:`Вес сохраняется. Добавляйте повторения, пока не достигнете ${hi} во всех ${targetSets} подходах.`};
+}
+function renderDashboard(){
+  const done=workouts.filter(w=>w.ended_at),now=Date.now(),last30=done.filter(w=>now-new Date(w.started_at)<30*864e5);
+  const volume=last30.reduce((a,w)=>a+workoutVolume(w.id),0);
+  const allSets=sets.filter(s=>Number(s.reps)>0&&Number(s.weight_kg)>0);const best=allSets.reduce((m,s)=>Math.max(m,e1rm(s.weight_kg,s.reps)),0);
+  $('dashKpis').innerHTML=[
+    ['Тренировок за 30 дней',last30.length,'Завершённых'],
+    ['Объём за 30 дней',n(volume/1000,1)+' т','Вес × повторения'],
+    ['Упражнений',exercises.filter(x=>!x.archived).length,'В вашем справочнике'],
+    ['Лучший e1RM',best?n(best,1)+' кг':'—','По всем упражнениям']
+  ].map(x=>`<div class="card"><div class="klabel">${x[0]}</div><div class="kval">${x[1]}</div><div class="ksub">${x[2]}</div></div>`).join('');
+  const active=activeWorkoutId&&workoutById(activeWorkoutId);
+  if(active)$('nextWorkout').innerHTML=`<div class="rec-card"><div class="rec-title">Тренировка уже начата</div><div class="rec-main">${esc(active.title)}</div><div class="rec-why">${fmtDateTime(active.started_at)}</div><button class="btn primary" style="margin-top:10px" onclick="goView('workout')">Продолжить</button></div>`;
+  else if(routines.filter(r=>!r.archived).length)$('nextWorkout').innerHTML=routines.filter(r=>!r.archived).slice(0,3).map(r=>`<div class="routine-row"><span><b>${esc(r.name)}</b><br><small style="color:var(--muted)">${routineExercises.filter(x=>x.routine_id===r.id).length} упражнений</small></span><button class="btn" onclick="startWorkout('${r.id}')">Начать</button></div>`).join('');
+  else $('nextWorkout').innerHTML='<div class="empty">Создайте программу тренировки или начните свободную тренировку.</div>';
+  const last=done[0];$('lastWorkout').innerHTML=last?`<b>${esc(last.title)}</b><div class="note" style="margin-top:6px">${fmtDateTime(last.started_at)} · ${workoutExerciseRows(last.id).length} упражнений · объём ${n(workoutVolume(last.id)/1000,1)} т</div>`:'<div class="empty">Завершённых тренировок пока нет.</div>';
+  renderRecentPrs();
+}
+function renderRecentPrs(){
+  const rows=[];
+  for(const ex of exercises){
+    const hs=completedWorkoutsForExercise(ex.id);let prev=0;
+    for(const h of [...hs].reverse()){
+      const best=Math.max(0,...h.sets.map(s=>e1rm(s.weight_kg,s.reps)));
+      if(best>prev+0.01)rows.push({date:h.workout.started_at,ex,best,delta:prev?best-prev:null});
+      prev=Math.max(prev,best);
+    }
+  }
+  rows.sort((a,b)=>new Date(b.date)-new Date(a.date));$('recentPrs').innerHTML=rows.slice(0,6).map(r=>`<div class="routine-row"><span><b>${esc(r.ex.name)}</b><br><small style="color:var(--muted)">${fmtDate(r.date)}</small></span><span><b>${n(r.best,1)} кг e1RM</b>${r.delta?`<br><small style="color:var(--good)">+${n(r.delta,1)} кг</small>`:''}</span></div>`).join('')||'<div class="empty">Рекорды появятся после первых тренировок.</div>';
+}
+function goView(id){document.querySelector(`.nav[data-view="${id}"]`)?.click()}
+
+function renderExercises(){
+  const live=exercises.filter(x=>!x.archived);
+  $('exerciseList').innerHTML=live.length?`<div class="exercise-grid">${live.map(ex=>{const rec=recommendation(ex.id);return `<div class="exercise-card"><h3>${esc(ex.name)}</h3><div class="exercise-meta">${esc(ex.muscle_group)}${ex.equipment?' · '+esc(ex.equipment):''} · ${ex.target_sets} × ${ex.rep_min}–${ex.rep_max} · шаг ${n(ex.increment_kg,2)} кг</div><div class="rec-card" style="margin-top:9px"><div class="rec-title">Следующий раз</div><div class="rec-main">${rec.weight===null?'Выберите вес':n(rec.weight,2)+' кг'} · ${esc(rec.target)}</div><div class="rec-why">${esc(rec.why)}</div></div><div class="exercise-actions"><button class="btn" onclick="openExerciseProgress('${ex.id}')">Прогресс</button><button class="btn" onclick="openExerciseModal('${ex.id}')">Изменить</button><button class="btn danger" onclick="archiveExercise('${ex.id}')">Архив</button></div></div>`}).join('')}</div>`:'<div class="empty">Упражнений пока нет. Добавьте своё или нажмите «Добавить базовый набор».</div>';
+}
+function openExerciseModal(id=''){
+  const ex=exerciseById(id)||{name:'',muscle_group:'Другое',equipment:'',target_sets:3,rep_min:8,rep_max:12,increment_kg:2.5,progression_mode:'double',notes:''};
+  const muscles=['Грудь','Спина','Плечи','Бицепс','Трицепс','Квадрицепс','Задняя поверхность бедра','Ягодицы','Икры','Кор','Другое'];
+  openModal(`<h3>${id?'Изменить':'Новое'} упражнение</h3><div class="form-grid">
+    <label class="wide">Название<input id="exName" value="${esc(ex.name)}"></label>
+    <label>Группа<select id="exMuscle">${muscles.map(x=>`<option ${x===ex.muscle_group?'selected':''}>${x}</option>`).join('')}</select></label>
+    <label>Оборудование<input id="exEquipment" value="${esc(ex.equipment||'')}" placeholder="Тренажёр, штанга, гантели…"></label>
+    <label>Рабочих подходов<input id="exSets" type="number" min="1" max="10" value="${ex.target_sets}"></label>
+    <label>Диапазон повторений<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px"><input id="exRepMin" type="number" min="1" value="${ex.rep_min}"><input id="exRepMax" type="number" min="1" value="${ex.rep_max}"></div></label>
+    <label>Шаг увеличения, кг<input id="exIncrement" type="number" min=".25" step=".25" value="${ex.increment_kg}"></label>
+    <label>Метод прогрессии<select id="exMode"><option value="double" ${ex.progression_mode==='double'?'selected':''}>Двойная: повторения → вес</option><option value="reps" ${ex.progression_mode==='reps'?'selected':''}>Только повторения</option><option value="weight" ${ex.progression_mode==='weight'?'selected':''}>Приоритет веса</option></select></label>
+    <label class="wide">Заметка<textarea id="exNotes">${esc(ex.notes||'')}</textarea></label>
+  </div><div class="note" style="margin-top:10px"><b>Двойная прогрессия:</b> сначала увеличиваем повторения внутри выбранного диапазона. Когда верхняя граница достигнута во всех рабочих подходах, увеличиваем вес на указанный шаг.</div>
+  <div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveExercise('${id}')">Сохранить</button></div>`);
+}
+async function saveExercise(id=''){
+  const data={user_id:currentUser.id,name:$('exName').value.trim(),muscle_group:$('exMuscle').value,equipment:$('exEquipment').value.trim(),target_sets:+$('exSets').value,rep_min:+$('exRepMin').value,rep_max:+$('exRepMax').value,increment_kg:+$('exIncrement').value,progression_mode:$('exMode').value,notes:$('exNotes').value.trim(),updated_at:new Date().toISOString()};
+  if(!data.name)return alert('Введите название.');if(data.rep_max<data.rep_min)return alert('Максимум повторений должен быть не меньше минимума.');
+  const r=id?await db.from('fitness_exercises').update(data).eq('id',id):await db.from('fitness_exercises').insert(data);if(r.error)return alert(r.error.message);closeModal();await loadAll();renderAll();toast('Упражнение сохранено');
+}
+async function archiveExercise(id){if(!confirm('Переместить упражнение в архив? История тренировок сохранится.'))return;const r=await db.from('fitness_exercises').update({archived:true,updated_at:new Date().toISOString()}).eq('id',id);if(r.error)return alert(r.error.message);await loadAll();renderAll()}
+async function addStarterExercises(){
+  if(!confirm('Добавить базовый набор упражнений? Уже существующие упражнения не будут дублироваться.'))return;
+  const base=[
+    ['Жим лёжа','Грудь','Штанга',3,6,10,2.5],['Жим ногами','Квадрицепс','Тренажёр',3,8,12,5],
+    ['Тяга верхнего блока','Спина','Тренажёр',3,8,12,2.5],['Горизонтальная тяга','Спина','Тренажёр',3,8,12,2.5],
+    ['Жим над головой','Плечи','Гантели / тренажёр',3,8,12,2],['Разведения в стороны','Плечи','Гантели / блок',3,10,15,1],
+    ['Сгибание ног','Задняя поверхность бедра','Тренажёр',3,8,12,2.5],['Разгибание ног','Квадрицепс','Тренажёр',3,10,15,2.5],
+    ['Сгибание рук','Бицепс','Гантели / блок',3,8,12,1],['Разгибание рук на блоке','Трицепс','Блок',3,8,12,1]
+  ];
+  const existing=new Set(exercises.map(x=>x.name.toLowerCase()));
+  const rows=base.filter(x=>!existing.has(x[0].toLowerCase())).map(x=>({user_id:currentUser.id,name:x[0],muscle_group:x[1],equipment:x[2],target_sets:x[3],rep_min:x[4],rep_max:x[5],increment_kg:x[6],progression_mode:'double'}));
+  if(!rows.length)return toast('Базовые упражнения уже добавлены');const r=await db.from('fitness_exercises').insert(rows);if(r.error)return alert(r.error.message);await loadAll();renderAll();toast('Базовый набор добавлен');
+}
+
+function renderRoutines(){
+  const live=routines.filter(x=>!x.archived);
+  $('routineList').innerHTML=live.length?`<div class="grid g2">${live.map(r=>{const items=routineExercises.filter(x=>x.routine_id===r.id).sort((a,b)=>a.position-b.position);return `<div class="routine-card"><div class="head"><div><h3>${esc(r.name)}</h3><div class="note">${esc(r.notes||'')}</div></div><button class="btn primary" onclick="startWorkout('${r.id}')">Начать</button></div><div class="routine-list">${items.map((x,i)=>`<div class="routine-row"><span>${i+1}. ${esc(exerciseById(x.exercise_id)?.name||'Удалённое упражнение')}</span><span>${exerciseById(x.exercise_id)?.target_sets||'—'} × ${exerciseById(x.exercise_id)?.rep_min||'—'}–${exerciseById(x.exercise_id)?.rep_max||'—'}</span></div>`).join('')||'<div class="empty">В программе нет упражнений.</div>'}</div><div class="exercise-actions"><button class="btn" onclick="openRoutineModal('${r.id}')">Изменить</button><button class="btn danger" onclick="archiveRoutine('${r.id}')">Архив</button></div></div>`}).join('')}</div>`:'<div class="panel"><div class="empty">Создайте первую программу и добавьте в неё упражнения.</div></div>';
+}
+function openRoutineModal(id=''){
+  const r=routineById(id)||{name:'',notes:''},selected=id?routineExercises.filter(x=>x.routine_id===id).sort((a,b)=>a.position-b.position).map(x=>x.exercise_id):[];
+  openModal(`<h3>${id?'Изменить':'Новая'} программа</h3><div class="form-grid"><label class="wide">Название<input id="rtName" value="${esc(r.name)}" placeholder="Например, Спина"></label><label class="wide">Заметка<textarea id="rtNotes">${esc(r.notes||'')}</textarea></label></div>
+  <div style="margin-top:12px;font-weight:750">Упражнения по порядку</div><div class="note">Поставьте номер порядка. Пустое поле — упражнение не входит в программу.</div>
+  <div class="table-wrap" style="margin-top:8px"><table><thead><tr><th>Упражнение</th><th>Порядок</th><th>Схема</th></tr></thead><tbody>${exercises.filter(x=>!x.archived).map(ex=>{const pos=selected.indexOf(ex.id);return `<tr><td>${esc(ex.name)}</td><td><input class="rtPos" data-id="${ex.id}" type="number" min="1" max="50" value="${pos>=0?pos+1:''}" style="width:80px"></td><td>${ex.target_sets} × ${ex.rep_min}–${ex.rep_max}</td></tr>`}).join('')}</tbody></table></div>
+  <div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveRoutine('${id}')">Сохранить</button></div>`,true);
+}
+async function saveRoutine(id=''){
+  const name=$('rtName').value.trim();if(!name)return alert('Введите название программы.');
+  const picked=[...document.querySelectorAll('.rtPos')].map(x=>({exercise_id:x.dataset.id,pos:Number(x.value)})).filter(x=>x.pos>0).sort((a,b)=>a.pos-b.pos);
+  let rid=id;
+  if(id){const r=await db.from('fitness_routines').update({name,notes:$('rtNotes').value.trim(),updated_at:new Date().toISOString()}).eq('id',id);if(r.error)return alert(r.error.message);await db.from('fitness_routine_exercises').delete().eq('routine_id',id)}
+  else{const r=await db.from('fitness_routines').insert({user_id:currentUser.id,name,notes:$('rtNotes').value.trim()}).select().single();if(r.error)return alert(r.error.message);rid=r.data.id}
+  if(picked.length){const r=await db.from('fitness_routine_exercises').insert(picked.map((x,i)=>({user_id:currentUser.id,routine_id:rid,exercise_id:x.exercise_id,position:i})));if(r.error)return alert(r.error.message)}
+  closeModal();await loadAll();renderAll();toast('Программа сохранена');
+}
+async function archiveRoutine(id){if(!confirm('Переместить программу в архив?'))return;await db.from('fitness_routines').update({archived:true,updated_at:new Date().toISOString()}).eq('id',id);await loadAll();renderAll()}
+
+function openStartWorkout(){
+  if(activeWorkoutId)return goView('workout');
+  const opts=routines.filter(x=>!x.archived).map(r=>`<option value="${r.id}">${esc(r.name)}</option>`).join('');
+  openModal(`<h3>Начать тренировку</h3><div class="form-grid"><label>Программа<select id="startRoutine"><option value="">Свободная тренировка</option>${opts}</select></label><label>Название<input id="startTitle" placeholder="Тренировка"></label></div><div class="note" style="margin-top:10px">Если выбрана программа, упражнения добавятся автоматически в сохранённом порядке. В свободную тренировку упражнения можно добавить вручную.</div><div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="startWorkoutFromModal()">Начать</button></div>`);
+  $('startRoutine').onchange=()=>{const r=routineById($('startRoutine').value);if(r&&!$('startTitle').value)$('startTitle').value=r.name};
+}
+async function startWorkoutFromModal(){await startWorkout($('startRoutine').value,$('startTitle').value.trim())}
+async function startWorkout(routineId='',customTitle=''){
+  if(activeWorkoutId){closeModal();goView('workout');return}
+  const r=routineById(routineId),title=customTitle||r?.name||'Тренировка';
+  const ins=await db.from('fitness_workouts').insert({user_id:currentUser.id,title,routine_id:routineId||null}).select().single();if(ins.error)return alert(ins.error.message);
+  const wid=ins.data.id;
+  if(routineId){
+    const items=routineExercises.filter(x=>x.routine_id===routineId).sort((a,b)=>a.position-b.position);
+    if(items.length){const rr=await db.from('fitness_workout_exercises').insert(items.map((x,i)=>({user_id:currentUser.id,workout_id:wid,exercise_id:x.exercise_id,position:i})));if(rr.error)return alert(rr.error.message)}
+  }
+  closeModal();await loadAll();renderAll();goView('workout');
+}
+function renderActiveWorkout(){
+  const box=$('activeWorkout'),btn=$('finishWorkoutBtn');if(!activeWorkoutId){btn.style.display='none';box.innerHTML='<div class="panel"><div class="empty">Активной тренировки нет. Нажмите «Новая», чтобы начать.</div></div>';return}
+  btn.style.display='inline-block';const w=workoutById(activeWorkoutId),rows=workoutExerciseRows(activeWorkoutId);
+  box.innerHTML=`<div class="panel"><div class="workout-head"><div><h2 style="margin:0">${esc(w.title)}</h2><div class="note">${fmtDateTime(w.started_at)}</div></div><button class="btn" onclick="openAddWorkoutExercise()">＋ Добавить упражнение</button></div></div>`+
+  (rows.length?rows.map(row=>renderWorkoutExercise(row)).join(''):'<div class="panel"><div class="empty">Добавьте первое упражнение.</div></div>');
+}
+function renderWorkoutExercise(row){
+  const ex=exerciseById(row.exercise_id);if(!ex)return '';const rec=recommendation(ex.id,activeWorkoutId),ss=setsForWorkoutExercise(row.id);const count=Math.max(ex.target_sets,ss.length+1);
+  const rows=[];for(let i=1;i<=count;i++){const st=ss.find(s=>s.set_no===i);rows.push(`<div class="set-grid"><div class="setno">#${i}</div><label>Вес, кг<input id="sw_${row.id}_${i}" type="number" step=".25" min="0" value="${st?.weight_kg??(rec.weight??'')}"></label><label>Повт.<input id="sr_${row.id}_${i}" type="number" min="0" max="200" value="${st?.reps??''}"></label><label>RIR <span class="help" data-help="RIR — сколько повторений, по вашей оценке, ещё осталось бы в запасе. 0 = до отказа, 1 = ещё одно повторение, 2 = ещё два. Поле можно оставить пустым.">?</span><input id="si_${row.id}_${i}" type="number" min="0" max="10" step=".5" value="${st?.rir??''}"></label><button class="btn ${st?'good':''}" onclick="saveSet('${row.id}',${i})">${st?'✓':'Сохранить'}</button></div>`) }
+  return `<div class="workout-ex"><div class="workout-ex-title"><div><h3>${esc(ex.name)}</h3><div class="exercise-meta">${ex.target_sets} × ${ex.rep_min}–${ex.rep_max} · шаг ${n(ex.increment_kg,2)} кг</div></div><button class="btn danger" onclick="removeWorkoutExercise('${row.id}')">Убрать</button></div><div class="rec-card" style="margin-top:10px"><div class="rec-title">Рекомендация сегодня</div><div class="rec-main">${rec.weight===null?'Выберите стартовый вес':n(rec.weight,2)+' кг'} · ${esc(rec.target)}</div><div class="rec-why">${esc(rec.why)}</div></div>${rows.join('')}</div>`;
+}
+function openAddWorkoutExercise(){
+  const used=new Set(workoutExerciseRows(activeWorkoutId).map(x=>x.exercise_id)),avail=exercises.filter(x=>!x.archived&&!used.has(x.id));
+  openModal(`<h3>Добавить упражнение</h3>${avail.length?`<label>Упражнение<select id="addWorkoutEx">${avail.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select></label>`:'<div class="empty">Все доступные упражнения уже добавлены.</div>'}<div class="actions"><button class="btn" onclick="closeModal()">Отмена</button>${avail.length?'<button class="btn primary" onclick="addWorkoutExercise()">Добавить</button>':''}</div>`);
+}
+async function addWorkoutExercise(){const exid=$('addWorkoutEx').value,pos=workoutExerciseRows(activeWorkoutId).length;const r=await db.from('fitness_workout_exercises').insert({user_id:currentUser.id,workout_id:activeWorkoutId,exercise_id:exid,position:pos});if(r.error)return alert(r.error.message);closeModal();await loadAll();renderAll()}
+async function saveSet(weid,no){
+  const weight=Number($(`sw_${weid}_${no}`).value),reps=Number($(`sr_${weid}_${no}`).value),rv=$(`si_${weid}_${no}`).value,rir=rv===''?null:Number(rv);
+  if(!Number.isFinite(weight)||weight<0||!Number.isFinite(reps)||reps<0)return alert('Проверьте вес и повторения.');
+  const data={user_id:currentUser.id,workout_exercise_id:weid,set_no:no,weight_kg:weight,reps,rir,completed_at:new Date().toISOString()};
+  const r=await db.from('fitness_sets').upsert(data,{onConflict:'workout_exercise_id,set_no'});if(r.error)return alert(r.error.message);await loadAll();renderAll();toast(`Подход ${no} сохранён`);
+}
+async function removeWorkoutExercise(id){if(setsForWorkoutExercise(id).length&&!confirm('У упражнения уже есть подходы. Удалить его из этой тренировки вместе с подходами?'))return;await db.from('fitness_workout_exercises').delete().eq('id',id);await loadAll();renderAll()}
+async function finishActiveWorkout(){
+  if(!activeWorkoutId)return;const rows=workoutExerciseRows(activeWorkoutId);if(!rows.length&&!confirm('В тренировке нет упражнений. Всё равно завершить?'))return;
+  const r=await db.from('fitness_workouts').update({ended_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',activeWorkoutId);if(r.error)return alert(r.error.message);await loadAll();renderAll();goView('dashboard');toast('Тренировка завершена');
+}
+
+function renderHistory(){
+  const done=workouts.filter(w=>w.ended_at);
+  $('historyList').innerHTML=done.length?done.map(w=>{const rows=workoutExerciseRows(w.id);return `<div class="routine-card" style="margin-bottom:9px"><div class="head"><div><h3>${esc(w.title)}</h3><div class="note">${fmtDateTime(w.started_at)} · объём ${n(workoutVolume(w.id)/1000,1)} т</div></div></div><div class="routine-list">${rows.map(row=>{const ex=exerciseById(row.exercise_id),ss=setsForWorkoutExercise(row.id);return `<div class="routine-row"><span><b>${esc(ex?.name||'Упражнение')}</b></span><span>${ss.map(s=>`${n(s.weight_kg,2)}×${s.reps}`).join(' · ')||'—'}</span></div>`}).join('')}</div></div>`}).join(''):'<div class="empty">История появится после завершения первой тренировки.</div>';
+}
+function renderProgressOptions(){
+  const sel=$('progressExercise'),cur=sel.value;sel.innerHTML=exercises.filter(x=>!x.archived||completedWorkoutsForExercise(x.id).length).map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('');if(cur&&exercises.some(x=>x.id===cur))sel.value=cur;
+}
+function exerciseProgressPoints(exid,metric){
+  return completedWorkoutsForExercise(exid).reverse().map(h=>{
+    const ss=h.sets.filter(s=>s.reps>0);if(!ss.length)return null;
+    let value=0;
+    if(metric==='e1rm')value=Math.max(...ss.map(s=>e1rm(s.weight_kg,s.reps)));
+    if(metric==='weight')value=Math.max(...ss.map(s=>Number(s.weight_kg)));
+    if(metric==='reps')value=Math.max(...ss.map(s=>Number(s.reps)));
+    if(metric==='volume')value=ss.reduce((a,s)=>a+Number(s.weight_kg)*Number(s.reps),0);
+    return {x:new Date(h.workout.started_at).getTime(),y:value,date:h.workout.started_at,sets:ss};
+  }).filter(Boolean);
+}
+function renderProgress(){
+  const exid=$('progressExercise')?.value;if(!exid)return;const metric=$('progressMetric').value,pts=exerciseProgressPoints(exid,metric),ex=exerciseById(exid),rec=recommendation(exid);
+  const best=pts.length?Math.max(...pts.map(p=>p.y)):0,last=pts.at(-1)?.y||0,first=pts[0]?.y||0,change=first?((last/first)-1)*100:0;
+  $('progressStats').innerHTML=[['Последнее',last?n(last,1):'—'],['Лучшее',best?n(best,1):'—'],['Изменение',pts.length>1?(change>=0?'+':'')+n(change,1)+' %':'—'],['Следующий вес',rec.weight!==null?n(rec.weight,2)+' кг':'—']].map(x=>`<div class="metric-mini"><div class="l">${x[0]}</div><div class="v">${x[1]}</div></div>`).join('');
+  drawLineChart($('progressCanvas'),pts,{unit:metric==='volume'?'кг':metric==='reps'?'повт.':'кг',tip:$('progressTip'),detail:p=>`${fmtDate(p.date)}<br><b>${n(p.y,1)}</b>`});
+}
+function openExerciseProgress(id){goView('progress');$('progressExercise').value=id;setTimeout(renderProgress,0)}
+function drawLineChart(canvas,pts,{unit='',tip=null,detail=null}={}){
+  if(!canvas)return;const rect=canvas.getBoundingClientRect(),w=Math.max(320,rect.width||700),h=Math.max(240,rect.height||294),dpr=window.devicePixelRatio||1;canvas.width=w*dpr;canvas.height=h*dpr;const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);c.fillStyle='#08121b';c.fillRect(0,0,w,h);
+  if(!pts.length){c.fillStyle='#8ea0b1';c.font='12px sans-serif';c.textAlign='center';c.fillText('Пока нет данных',w/2,h/2);return}
+  const pad={l:48,r:16,t:18,b:30},xs=pts.map(p=>p.x),ys=pts.map(p=>p.y);let xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys);if(xmin===xmax){xmin-=432e5;xmax+=432e5}if(ymin===ymax){ymin-=1;ymax+=1}const yr=ymax-ymin;ymin-=yr*.1;ymax+=yr*.1;
+  const mx=x=>pad.l+(x-xmin)/(xmax-xmin)*(w-pad.l-pad.r),my=y=>pad.t+(ymax-y)/(ymax-ymin)*(h-pad.t-pad.b);
+  c.strokeStyle='rgba(255,255,255,.08)';for(let i=0;i<=4;i++){const yy=pad.t+(h-pad.t-pad.b)*i/4;c.beginPath();c.moveTo(pad.l,yy);c.lineTo(w-pad.r,yy);c.stroke();c.fillStyle='#8ea0b1';c.font='10px sans-serif';c.textAlign='right';c.fillText(n(ymax-(ymax-ymin)*i/4,1),pad.l-5,yy+3)}
+  c.strokeStyle='#d6ad62';c.lineWidth=2.2;c.beginPath();pts.forEach((p,i)=>i?c.lineTo(mx(p.x),my(p.y)):c.moveTo(mx(p.x),my(p.y)));c.stroke();pts.forEach(p=>{c.fillStyle='#d6ad62';c.beginPath();c.arc(mx(p.x),my(p.y),3,0,Math.PI*2);c.fill()});
+  c.fillStyle='#8ea0b1';c.font='10px sans-serif';c.textAlign='left';c.fillText(fmtDate(new Date(xmin).toISOString()),pad.l,h-8);c.textAlign='right';c.fillText(fmtDate(new Date(xmax).toISOString()),w-pad.r,h-8);
+  canvas.__chart={pts,mx,my,pad,w,h};if(tip){const show=e=>{const r=canvas.getBoundingClientRect(),px=(e.touches?.[0]?.clientX??e.clientX)-r.left;let best=null,dist=Infinity;for(const p of pts){const d=Math.abs(mx(p.x)-px);if(d<dist){dist=d;best=p}}if(!best)return;tip.innerHTML=detail?detail(best):`${fmtDate(best.date)}<br><b>${n(best.y,1)} ${unit}</b>`;tip.style.display='block';tip.style.left=Math.min(w-tip.offsetWidth-8,Math.max(8,mx(best.x)+10))+'px';tip.style.top=Math.max(8,my(best.y)-tip.offsetHeight-10)+'px'};canvas.onmousemove=show;canvas.onclick=show;canvas.ontouchstart=show;canvas.onmouseleave=()=>tip.style.display='none'}
+}
+
+async function openBodyweightModal(){
+  openModal(`<h3>Добавить вес</h3><div class="form-grid"><label>Дата и время<input id="bwAt" type="datetime-local" value="${new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16)}"></label><label>Вес, кг<input id="bwValue" type="number" min="20" max="400" step=".01"></label></div><div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveBodyweight()">Сохранить</button></div>`);
+}
+async function saveBodyweight(){
+  const v=Number($('bwValue').value),at=$('bwAt').value;if(!(v>0)||!at)return alert('Введите дату и вес.');
+  const r=await db.from('fitness_bodyweight').insert({user_id:currentUser.id,measured_at:new Date(at).toISOString(),weight_kg:v,source:'manual'});if(r.error)return alert(r.error.message);closeModal();await loadAll();renderAll();toast('Вес сохранён');
+}
+async function syncBodyweightWithings(){
+  const {data:{session}}=await db.auth.getSession();if(!session)return alert('Нет активной сессии.');
+  setBusy(true);
+  try{
+    const res=await fetch(`${SUPABASE_URL}/functions/v1/withings-data?action=sync&days=1095`,{headers:{Authorization:`Bearer ${session.access_token}`,apikey:SUPABASE_PUBLISHABLE_KEY}});const j=await res.json();
+    if(!res.ok||!j.connected){if(j.error==='not_connected')return alert('Этот аккаунт пока не подключён к Withings. Подключение можно будет выполнить из HRT/Withings или отдельной кнопкой в следующей версии.');throw new Error(j.error||'Ошибка Withings')}
+    const rows=(j.measurements||[]).filter(g=>g.values?.['1']).map(g=>({user_id:currentUser.id,measured_at:new Date(Number(g.date)*1000).toISOString(),weight_kg:Number(g.values['1'].value),source:'withings',source_key:String(g.grpid||'')}));let added=0;
+    for(const row of rows){const r=await db.from('fitness_bodyweight').upsert(row,{onConflict:'user_id,measured_at,source',ignoreDuplicates:true});if(!r.error)added++}
+    await loadAll();renderAll();toast(`Withings: обработано ${rows.length} взвешиваний`);
+  }catch(e){alert(e.message||'Ошибка Withings')}finally{setBusy(false)}
+}
+function renderBodyweight(){
+  $('bodyweightList').innerHTML=bodyweights.length?`<div class="table-wrap"><table><thead><tr><th>Дата</th><th>Вес</th><th>Источник</th></tr></thead><tbody>${bodyweights.slice(0,50).map(x=>`<tr><td>${fmtDateTime(x.measured_at)}</td><td><b>${n(x.weight_kg,2)} кг</b></td><td>${x.source==='withings'?'<span class="badge blue">Withings</span>':'<span class="badge">Ручной</span>'}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Измерений веса пока нет.</div>';
+  setTimeout(drawBodyweightChart,0);
+}
+function drawBodyweightChart(){
+  const pts=[...bodyweights].reverse().map(x=>({x:new Date(x.measured_at).getTime(),y:Number(x.weight_kg),date:x.measured_at}));drawLineChart($('bodyweightCanvas'),pts,{unit:'кг',tip:$('bodyweightTip')});
+}
+async function saveProfile(){
+  const data={display_name:$('profileName').value.trim(),bodyweight_source:$('profileWeightSource').value,updated_at:new Date().toISOString()};const r=await db.from('fitness_profiles').update(data).eq('user_id',currentUser.id).select().single();if(r.error)return alert(r.error.message);profile=r.data;toast('Настройки сохранены')
+}
+function renderSettings(){
+  if(profile){$('profileName').value=profile.display_name||'';$('profileWeightSource').value=profile.bodyweight_source||'manual'}
+  $('moduleAccess').innerHTML=`<b>Fitness Studio:</b> ${moduleAccess?.fitness?'разрешён':'нет доступа'}<br><b>HRT Health Studio:</b> ${moduleAccess?.hrt?'разрешён':'нет доступа'}<br><b>Wealth Studio:</b> ${moduleAccess?.wealth?'разрешён':'нет доступа'}<br><br>Это не просто скрытие пунктов меню. Таблицы Fitness Studio защищены Row Level Security: текущий аккаунт может читать и изменять только строки со своим user_id.`;
+}
+
+async function init(){
+  if(!db){authMessage('Supabase не загрузился. Проверьте интернет.','err');return}
+  const {data:{session}}=await db.auth.getSession();if(session?.user)await enterApp(session);
+  db.auth.onAuthStateChange((_e,s)=>{if(!s)$('authGate').classList.remove('hidden')});
+}
+window.addEventListener('resize',()=>{if($('progress')?.classList.contains('active'))renderProgress();if($('bodyweight')?.classList.contains('active'))drawBodyweightChart()});
+init();
+</script>
+</body>
+</html>
