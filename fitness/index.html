@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Fitness Studio v1.9.0 — Withings Body Composition</title>
+<title>VM Fitness Studio v2.0.0 — Withings Body Composition</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -179,13 +179,32 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 .privacy-sensitive{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
 @media(max-width:800px){.cycle-kpis{grid-template-columns:1fr 1fr}.cycle-day{min-height:75px;padding:6px}.cycle-weekdays div{font-size:8px;padding:6px}}
 @media(max-width:520px){.cycle-kpis{grid-template-columns:1fr}.cycle-day{min-height:65px}.cmark.phase{display:none}}
+
+/* v2 comparative analytics */
+.cycle-kpis{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.cycle-day.expected-current{background:repeating-linear-gradient(135deg,rgba(255,126,138,.07),rgba(255,126,138,.07) 6px,rgba(255,126,138,.025) 6px,rgba(255,126,138,.025) 12px)}
+.cmark.expected{color:#ffbec4;border-color:rgba(255,126,138,.25);background:rgba(255,126,138,.05)}
+.cmark.next{color:#f1d49b;border-color:rgba(214,173,98,.28);background:rgba(214,173,98,.06)}
+.analytics-controls{display:grid;grid-template-columns:180px 1fr;gap:10px;align-items:end}
+.series-chips{display:flex;gap:6px;flex-wrap:wrap}
+.series-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 8px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.025);font-size:10px}
+.series-chip button{border:0;background:transparent;color:#ff9aa4;cursor:pointer;font-weight:900;padding:0 2px}
+.analytics-canvas{height:420px;position:relative;border:1px solid var(--line);border-radius:14px;background:#08121b;margin-top:12px;overflow:hidden}
+.analytics-canvas canvas{width:100%;height:100%;display:block}
+.analytics-legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.analytics-legend span{display:inline-flex;align-items:center;gap:6px;font-size:10px;color:#cbd8e2}
+.legend-dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+.analytics-help{font-size:10px;color:var(--muted);line-height:1.55;margin-top:8px}
+.quick-presets{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.compare-empty{display:grid;place-items:center;height:100%;color:var(--muted);font-size:12px;text-align:center;padding:20px}
+@media(max-width:700px){.analytics-controls{grid-template-columns:1fr}.analytics-canvas{height:330px}}
 </style>
 </head>
 <body>
 <div id="authGate" class="auth-gate">
   <div class="auth-card">
     <div class="auth-brand">VM PRIVATE SUITE</div>
-    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v1.9.0</span></div>
+    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v2.0.0</span></div>
     <div class="auth-sub">Личный тренировочный дневник. Данные каждого аккаунта полностью раздельны.</div>
     <div class="auth-tabs">
       <button id="tabLogin" class="active" type="button">Войти</button>
@@ -203,7 +222,7 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 
 <div class="app">
 <aside>
-  <div class="brand"><b>VM FITNESS STUDIO</b><small>Тренировки · Прогрессия · Рекорды</small><small style="color:#d6ad62;font-weight:750">Версия 1.9.0</small></div>
+  <div class="brand"><b>VM FITNESS STUDIO</b><small>Тренировки · Прогрессия · Рекорды</small><small style="color:#d6ad62;font-weight:750">Версия 2.0.0</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Сегодня</button>
     <button class="nav" data-view="workout">Тренировка</button>
@@ -211,6 +230,7 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
     <button class="nav" data-view="routines">Программы</button>
     <button class="nav" data-view="history">История</button>
     <button class="nav" data-view="progress">Прогресс</button>
+    <button class="nav" data-view="analytics">Аналитика</button>
     <button class="nav" data-view="bodyweight">Состав тела</button>
     <button class="nav hidden" id="cycleNav" data-view="cycle">Цикл и активность</button>
     <button class="nav" data-view="settings">Настройки</button>
@@ -304,6 +324,26 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
   </div>
 </section>
 
+<section id="analytics" class="view">
+  <div class="top"><div><h1>Сравнительная аналитика</h1><div class="sub">Накладывайте на один график силовые показатели, состав тела, цикл, месячные, самочувствие, секс, калории и пульс. Для показателей с разными единицами линии приводятся к шкале 0–100, а в подсказке всегда показывается исходное значение.</div></div><button class="btn primary" type="button" onclick="openCompareSeriesModal()">＋ Добавить показатель</button></div>
+  <div class="panel">
+    <div class="analytics-controls">
+      <label>Период<select id="compareRange" onchange="renderCompareAnalytics()"><option value="30">30 дней</option><option value="90">90 дней</option><option value="180" selected>180 дней</option><option value="365">1 год</option><option value="all">Всё время</option></select></label>
+      <div><div class="inline-note" style="margin-bottom:6px">Выбранные показатели · максимум 8</div><div id="compareSeriesChips" class="series-chips"></div></div>
+    </div>
+    <div class="quick-presets">
+      <button class="btn" type="button" onclick="setComparePreset('strength_cycle')">Сила + цикл</button>
+      <button class="btn" type="button" onclick="setComparePreset('cycle_intimacy')">Цикл + секс</button>
+      <button class="btn" type="button" onclick="setComparePreset('body_cycle')">Вес + цикл</button>
+      <button class="btn" type="button" onclick="clearCompareSeries()">Очистить</button>
+    </div>
+    <div class="analytics-canvas"><canvas id="compareCanvas"></canvas><div id="compareTip" class="tip"></div></div>
+    <div id="compareLegend" class="analytics-legend"></div>
+    <div class="analytics-help">Линии разных единиц нормализуются отдельно к диапазону 0–100, поэтому график показывает совпадение подъёмов/падений во времени. Месячные отображаются вертикальными полосами, секс и оральный секс — событиями. Наведите курсор на график, чтобы увидеть исходные значения.</div>
+  </div>
+</section>
+
+
 <section id="bodyweight" class="view">
   <div class="top"><div><h1>Состав тела</h1><div class="sub">Вес, мышечная масса, жировая масса и процент жира. Withings синхронизирует доступные показатели для текущего аккаунта.</div></div><div class="actions" style="margin-top:0"><button class="btn" type="button" onclick="syncFitnessWithings()">↻ Синхронизировать Withings</button><button class="btn primary" type="button" onclick="openBodyweightModal()">＋ Измерение</button></div></div>
   <div id="bodyCompKpis" class="metric-row" style="margin-bottom:14px"></div>
@@ -363,6 +403,7 @@ let exercises=[],routines=[],routineExercises=[],workouts=[],workoutExercises=[]
 let activeWorkoutId=null,exerciseLocationFilter='all',uiTrainingLocation='home',uiSplitGroup='back';
 let activeOwnerId=null,delegatedOwners=[],primaryManagerGranted=false,primaryManagerSensitiveGranted=false;
 let sensitiveAccessAvailable=false,cycleSettings=null,cycleDays=[],intimateActivities=[],cycleCalendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
+let compareSeries=[];
 const $=id=>document.getElementById(id);
 const esc=x=>String(x??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const fmtDateTime=s=>s?new Date(s).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
@@ -661,7 +702,7 @@ async function loadAll(){
   await loadSensitiveData();
 }
 function renderAll(){
-  renderDashboard();renderExercises();renderRoutines();renderActiveWorkout();renderHistory();renderProgressOptions();renderBodyweight();renderCycle();renderSettings();renderAccountSwitcher();renderCycleVisibility();
+  renderDashboard();renderExercises();renderRoutines();renderActiveWorkout();renderHistory();renderProgressOptions();renderBodyweight();renderCycle();renderSettings();renderAccountSwitcher();renderCycleVisibility();renderCompareAnalytics();
 }
 document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));b.classList.add('active');
@@ -669,6 +710,7 @@ document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{
   if(b.dataset.view==='progress')setTimeout(renderProgress,0);
   if(b.dataset.view==='bodyweight')setTimeout(drawBodyweightChart,0);
   if(b.dataset.view==='cycle')setTimeout(renderCycle,0);
+  if(b.dataset.view==='analytics')setTimeout(renderCompareAnalytics,0);
 });
 function exerciseById(id){return exercises.find(x=>x.id===id)}
 function routineById(id){return routines.find(x=>x.id===id)}
@@ -1879,6 +1921,21 @@ function predictedNextPeriod(){
   const starts=cycleStarts();if(!starts.length)return null;
   return dateKey(addDaysDate(localDateFromKey(starts[starts.length-1]),effectiveCycleLength()));
 }
+
+function latestCycleStart(){
+  const starts=cycleStarts();if(!starts.length)return null;
+  const today=dateKey(new Date());
+  return starts.filter(k=>k<=today).at(-1)||starts.at(-1);
+}
+function currentPeriodForecast(){
+  const start=latestCycleStart();if(!start)return null;
+  const end=dateKey(addDaysDate(localDateFromKey(start),effectivePeriodLength()-1));
+  return {start,end};
+}
+function nextPeriodWindow(){
+  const start=predictedNextPeriod();if(!start)return null;
+  return {start,end:dateKey(addDaysDate(localDateFromKey(start),effectivePeriodLength()-1))};
+}
 function intimateLabel(type){return type==='sex'?'Секс':type==='oral_sex'?'Оральный секс':'Другое'}
 function intimateOnDate(k){return intimateActivities.filter(x=>dateKey(x.occurred_at)===k)}
 function phaseStrengthData(){
@@ -1920,17 +1977,18 @@ function renderCycle(){
     box.innerHTML=`<div class="sensitive-lock"><b>Приватный раздел закрыт.</b><br>${isDelegatedMode()?'Владелец дал доступ к обычному Fitness, но отдельно не разрешил календарь цикла и интимную активность.':'Данные недоступны.'}</div>`;
     return;
   }
-  const todayInfo=cycleInfoForDate(new Date()),next=predictedNextPeriod(),obs=observedCycleAverage();
+  const todayInfo=cycleInfoForDate(new Date()),current=currentPeriodForecast(),next=nextPeriodWindow(),obs=observedCycleAverage();
   const last30=new Date();last30.setDate(last30.getDate()-30);
   const intimate30=intimateActivities.filter(x=>new Date(x.occurred_at)>=last30).length;
   box.innerHTML=`<div class="cycle-kpis">
     <div class="cycle-kpi"><div class="l">Сегодня</div><div class="v">${todayInfo?`День ${todayInfo.day}`:'—'}</div><div class="note">${todayInfo?todayInfo.phase:'Отметьте начало цикла'}</div></div>
-    <div class="cycle-kpi"><div class="l">Следующие месячные</div><div class="v">${next?fmtDate(next):'—'}</div><div class="note">Ориентировочный прогноз</div></div>
+    <div class="cycle-kpi"><div class="l">Текущие месячные</div><div class="v">${current?`${fmtDate(current.start)} → ${fmtDate(current.end)}`:'—'}</div><div class="note">${current?'Начало → прогноз окончания':'Отметьте первый день'}</div></div>
+    <div class="cycle-kpi"><div class="l">Следующий прогноз</div><div class="v">${next?`${fmtDate(next.start)} → ${fmtDate(next.end)}`:'—'}</div><div class="note">Прогноз начала и окончания</div></div>
     <div class="cycle-kpi"><div class="l">Средняя длина цикла</div><div class="v">${obs||effectiveCycleLength()} дн.</div><div class="note">${obs?'По записанным циклам':'По настройке'}</div></div>
     <div class="cycle-kpi"><div class="l">Интимная активность · 30 дней</div><div class="v">${intimate30}</div><div class="note">Только отмеченные записи</div></div>
   </div>
   <div class="panel">
-    <div class="cycle-toolbar"><div><h2>${cycleCalendarMonth.toLocaleDateString('ru-RU',{month:'long',year:'numeric'})}</h2><div class="note">Нажмите на день, чтобы отметить месячные, самочувствие или посмотреть записи.</div></div><div class="actions" style="margin-top:0"><button class="btn" onclick="shiftCycleMonth(-1)">←</button><button class="btn" onclick="cycleCalendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);renderCycle()">Сегодня</button><button class="btn" onclick="shiftCycleMonth(1)">→</button></div></div>
+    <div class="cycle-toolbar"><div><h2>${cycleCalendarMonth.toLocaleDateString('ru-RU',{month:'long',year:'numeric'})}</h2><div class="note">Красным — факт месячных, штриховкой — ожидаемое продолжение текущих, золотым — следующий прогноз. Нажмите на день для записи.</div></div><div class="actions" style="margin-top:0"><button class="btn" onclick="shiftCycleMonth(-1)">←</button><button class="btn" onclick="cycleCalendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);renderCycle()">Сегодня</button><button class="btn" onclick="shiftCycleMonth(1)">→</button></div></div>
     ${renderCycleCalendar()}
   </div>
   <div class="grid g2">
@@ -1941,32 +1999,44 @@ function renderCycle(){
     </div>
     <div class="panel"><div class="head"><h2>Интимная активность</h2><button class="btn" onclick="openIntimateModal()">＋ Запись</button></div><div id="intimateHistory">${renderIntimateHistory()}</div></div>
   </div>
-  <div class="panel"><div class="head"><h2>Сила и фазы цикла</h2></div>${renderCycleStrengthAnalysis()}</div>`;
+  <div class="panel"><div class="head"><h2>Сила и фазы цикла</h2><button class="btn" onclick="goView('analytics');setComparePreset('strength_cycle')">Открыть на общем графике</button></div>${renderCycleStrengthAnalysis()}</div>
+  <div class="panel"><div class="head"><div><h2>Цикл + тренировки + интимная активность</h2><div class="sub">Все эти данные можно накладывать на один график.</div></div><button class="btn primary" onclick="goView('analytics');setComparePreset('cycle_intimacy')">Открыть сравнительную аналитику</button></div></div>`;
 }
+
 function renderCycleCalendar(){
   const first=new Date(cycleCalendarMonth.getFullYear(),cycleCalendarMonth.getMonth(),1);
   const mondayOffset=(first.getDay()+6)%7;
   const start=addDaysDate(first,-mondayOffset);
-  const pred=predictedNextPeriod(),predLen=effectivePeriodLength();
+  const current=currentPeriodForecast(),next=nextPeriodWindow();
   const weekdays=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
   const cells=[];
   for(let i=0;i<42;i++){
     const d=addDaysDate(start,i),k=dateKey(d),entry=cycleEntryForDate(d),acts=intimateOnDate(k),ci=cycleInfoForDate(d);
     const inMonth=d.getMonth()===cycleCalendarMonth.getMonth();
-    const predictedPeriod=pred && k>=pred && k<dateKey(addDaysDate(localDateFromKey(pred),predLen));
-    const cls=['cycle-day',inMonth?'':'outside',k===dateKey(new Date())?'today':'',entry?.is_period?'period':'',predictedPeriod&&!entry?.is_period?'predicted':''].filter(Boolean).join(' ');
+    const expectedCurrent=!!current && k>=current.start && k<=current.end && !entry?.is_period;
+    const nextPredicted=!!next && k>=next.start && k<=next.end;
+    const cls=['cycle-day',inMonth?'':'outside',k===dateKey(new Date())?'today':'',entry?.is_period?'period':'',expectedCurrent?'expected-current':'',nextPredicted?'predicted':''].filter(Boolean).join(' ');
     const marks=[];
     if(entry?.is_period)marks.push(`<span class="cmark period">${entry.is_cycle_start?'Начало':'Месячные'}</span>`);
+    if(expectedCurrent){
+      if(k===current.end)marks.push('<span class="cmark expected">прогноз окончания</span>');
+      else marks.push('<span class="cmark expected">ожид. месячные</span>');
+    }
+    if(nextPredicted){
+      if(k===next.start)marks.push('<span class="cmark next">след. начало</span>');
+      else if(k===next.end)marks.push('<span class="cmark next">след. окончание</span>');
+      else marks.push('<span class="cmark next">прогноз</span>');
+    }
     const sexCount=acts.filter(x=>x.activity_type==='sex').length,oralCount=acts.filter(x=>x.activity_type==='oral_sex').length,otherCount=acts.filter(x=>x.activity_type==='other').length;
     if(sexCount)marks.push(`<span class="cmark sex">Секс${sexCount>1?' ×'+sexCount:''}</span>`);
     if(oralCount)marks.push(`<span class="cmark oral">Орал.${oralCount>1?' ×'+oralCount:''}</span>`);
     if(otherCount)marks.push(`<span class="cmark">Другое${otherCount>1?' ×'+otherCount:''}</span>`);
     if(!entry?.is_period&&ci)marks.push(`<span class="cmark phase">Д${ci.day}</span>`);
-    if(predictedPeriod&&!entry?.is_period)marks.push(`<span class="cmark phase">прогноз</span>`);
-    return `<div class="${cls}" onclick="openCycleDayModal('${k}')"><div class="dnum">${d.getDate()}</div><div class="markers">${marks.join('')}</div></div>`;
+    cells.push(`<div class="${cls}" onclick="openCycleDayModal('${k}')"><div class="dnum">${d.getDate()}</div><div class="markers">${marks.join('')}</div></div>`);
   }
   return `<div class="cycle-calendar"><div class="cycle-weekdays">${weekdays.map(x=>`<div>${x}</div>`).join('')}</div><div class="cycle-grid">${cells.join('')}</div></div>`;
 }
+
 function shiftCycleMonth(n){cycleCalendarMonth=new Date(cycleCalendarMonth.getFullYear(),cycleCalendarMonth.getMonth()+n,1);renderCycle()}
 function symptomLabel(v){return ({cramps:'Спазмы',headache:'Головная боль',fatigue:'Усталость',bloating:'Вздутие',mood:'Изменение настроения',sleep:'Проблемы со сном'})[v]||v}
 function openCycleDayModal(k=''){
@@ -2083,6 +2153,207 @@ function exerciseProgressPoints(exid,metric){
     return {x:new Date(h.workout.started_at).getTime(),y:value,date:h.workout.started_at,sets:ss};
   }).filter(Boolean);
 }
+
+function compareColor(i){
+  return ['#d6ad62','#7fc8ff','#73d99a','#e78fbe','#ff9aa4','#b7a7ff','#8fe0d0','#f2c36b'][i%8];
+}
+function compareRangeStart(){
+  const v=$('compareRange')?.value||'180';
+  if(v==='all')return null;
+  const d=new Date();d.setDate(d.getDate()-Number(v));return d.getTime();
+}
+function compareSeriesMeta(key){
+  const [kind,a,b]=String(key).split(':');
+  if(kind==='ex'){
+    const ex=exerciseById(a),labels={e1rm:'e1RM',weight:'рабочий вес',volume:'объём',reps:'повторения'};
+    return {label:`${ex?.name||'Упражнение'} · ${labels[b]||b}`,kind:'line',unit:b==='reps'?'повт.':'кг'};
+  }
+  if(kind==='body'){
+    const m={weight_kg:['Вес','кг'],muscle_mass_kg:['Мышечная масса','кг'],fat_mass_kg:['Жировая масса','кг'],fat_percent:['Жир','%']}[a]||[a,''];
+    return {label:m[0],kind:'line',unit:m[1]};
+  }
+  if(kind==='cycle'){
+    const m={
+      day:['День цикла','дн.','line'],
+      energy:['Энергия','/5','line'],
+      sleep:['Сон','/5','line'],
+      pain:['Боль','/10','line'],
+      period:['Месячные · факт','','band'],
+      period_forecast:['Месячные · прогноз','','bandForecast']
+    }[a]||[a,'','line'];
+    return {label:m[0],unit:m[1],kind:m[2]};
+  }
+  if(kind==='intimate'){
+    const m={sex:['Секс','событий'],oral_sex:['Оральный секс','событий'],other:['Другое','событий']}[a]||[a,''];
+    return {label:m[0],unit:m[1],kind:'event'};
+  }
+  if(kind==='workout'){
+    const m={volume:['Объём тренировки','кг'],calories:['Калории','kcal'],avg_hr:['Средний пульс','уд/мин']}[a]||[a,''];
+    return {label:m[0],unit:m[1],kind:'line'};
+  }
+  return {label:key,unit:'',kind:'line'};
+}
+function compareSeriesPoints(key){
+  const [kind,a,b]=String(key).split(':'),from=compareRangeStart(),keep=p=>!from||p.x>=from;
+  if(kind==='ex')return exerciseProgressPoints(a,b).map(p=>({...p,raw:p.y})).filter(keep);
+  if(kind==='body')return [...bodyweights].reverse().filter(x=>x[a]!=null&&Number.isFinite(Number(x[a]))).map(x=>({x:new Date(x.measured_at).getTime(),y:Number(x[a]),raw:Number(x[a]),date:x.measured_at})).filter(keep);
+  if(kind==='cycle'){
+    if(!sensitiveAccessAvailable)return [];
+    if(a==='period')return cycleDays.filter(x=>x.is_period).map(x=>({x:localDateFromKey(x.day_date).getTime(),y:1,raw:1,date:x.day_date})).filter(keep);
+    if(a==='period_forecast'){
+      const pts=[],len=effectivePeriodLength();
+      const cur=currentPeriodForecast();
+      if(cur)for(let k=0;k<len;k++){const x=addDaysDate(localDateFromKey(cur.start),k);if(!cycleEntryForDate(x)?.is_period)pts.push({x:x.getTime(),y:1,raw:1,date:dateKey(x)})}
+      const next=nextPeriodWindow();
+      if(next)for(let k=0;k<len;k++){const x=addDaysDate(localDateFromKey(next.start),k);pts.push({x:x.getTime(),y:1,raw:1,date:dateKey(x)})}
+      return pts.filter(keep);
+    }
+    if(a==='day'){
+      const starts=cycleStarts();if(!starts.length)return [];
+      const startDate=from?new Date(from):localDateFromKey(starts[0]),today=new Date(),pts=[];
+      for(let d=new Date(startDate);d<=today;d=addDaysDate(d,1)){const ci=cycleInfoForDate(d);if(ci)pts.push({x:d.getTime(),y:ci.day,raw:ci.day,date:dateKey(d)})}
+      return pts;
+    }
+    const field={energy:'energy',sleep:'sleep_quality',pain:'pain_level'}[a];
+    return cycleDays.filter(x=>x[field]!=null).map(x=>({x:localDateFromKey(x.day_date).getTime(),y:Number(x[field]),raw:Number(x[field]),date:x.day_date})).filter(keep);
+  }
+  if(kind==='intimate'){
+    if(!sensitiveAccessAvailable)return [];
+    const byDay=new Map();
+    intimateActivities.filter(x=>x.activity_type===a).forEach(x=>{const k=dateKey(x.occurred_at);byDay.set(k,(byDay.get(k)||0)+1)});
+    return [...byDay.entries()].map(([k,v])=>({x:localDateFromKey(k).getTime(),y:v,raw:v,date:k})).sort((p,q)=>p.x-q.x).filter(keep);
+  }
+  if(kind==='workout'){
+    if(a==='volume')return workouts.filter(w=>w.ended_at).map(w=>({x:new Date(w.started_at).getTime(),y:workoutVolume(w.id),raw:workoutVolume(w.id),date:w.started_at})).filter(keep).sort((p,q)=>p.x-q.x);
+    if(a==='calories'||a==='avg_hr')return fitnessActivities.filter(x=>x[a]!=null).map(x=>({x:new Date(x.started_at).getTime(),y:Number(x[a]),raw:Number(x[a]),date:x.started_at})).filter(keep).sort((p,q)=>p.x-q.x);
+  }
+  return [];
+}
+function compareAvailableSeries(){
+  const rows=[];
+  exercises.filter(x=>!x.archived||completedWorkoutsForExercise(x.id).length).forEach(ex=>{
+    rows.push({group:'Упражнения',key:`ex:${ex.id}:e1rm`,label:`${ex.name} · e1RM`});
+    rows.push({group:'Упражнения',key:`ex:${ex.id}:weight`,label:`${ex.name} · рабочий вес`});
+    rows.push({group:'Упражнения',key:`ex:${ex.id}:volume`,label:`${ex.name} · объём`});
+    rows.push({group:'Упражнения',key:`ex:${ex.id}:reps`,label:`${ex.name} · повторения`});
+  });
+  rows.push(
+    {group:'Состав тела',key:'body:weight_kg',label:'Вес'},
+    {group:'Состав тела',key:'body:muscle_mass_kg',label:'Мышечная масса'},
+    {group:'Состав тела',key:'body:fat_mass_kg',label:'Жировая масса'},
+    {group:'Состав тела',key:'body:fat_percent',label:'Жир, %'},
+    {group:'Тренировки',key:'workout:volume',label:'Объём тренировки'},
+    {group:'Тренировки',key:'workout:calories',label:'Калории'},
+    {group:'Тренировки',key:'workout:avg_hr',label:'Средний пульс'}
+  );
+  if(sensitiveAccessAvailable)rows.push(
+    {group:'Цикл',key:'cycle:day',label:'День цикла'},
+    {group:'Цикл',key:'cycle:period',label:'Месячные · факт'},
+    {group:'Цикл',key:'cycle:period_forecast',label:'Месячные · прогноз'},
+    {group:'Цикл',key:'cycle:energy',label:'Энергия'},
+    {group:'Цикл',key:'cycle:sleep',label:'Сон'},
+    {group:'Цикл',key:'cycle:pain',label:'Боль'},
+    {group:'Интимная активность',key:'intimate:sex',label:'Секс'},
+    {group:'Интимная активность',key:'intimate:oral_sex',label:'Оральный секс'},
+    {group:'Интимная активность',key:'intimate:other',label:'Другое'}
+  );
+  return rows;
+}
+function openCompareSeriesModal(){
+  const rows=compareAvailableSeries(),groups=[...new Set(rows.map(x=>x.group))];
+  openModal(`<h3>Добавить показатель на общий график</h3><div class="note" style="margin-bottom:10px">Можно выбрать до 8 рядов. Один и тот же показатель повторно не добавляется.</div>
+    <label>Показатель<select id="compareSeriesSelect">${groups.map(g=>`<optgroup label="${esc(g)}">${rows.filter(x=>x.group===g).map(x=>`<option value="${esc(x.key)}">${esc(x.label)}</option>`).join('')}</optgroup>`).join('')}</select></label>
+    <div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="addCompareSeries($('compareSeriesSelect').value);closeModal()">Добавить</button></div>`,true);
+}
+function addCompareSeries(key){
+  if(!key||compareSeries.includes(key))return renderCompareAnalytics();
+  if(compareSeries.length>=8)return alert('На одном графике можно одновременно показать максимум 8 показателей.');
+  compareSeries.push(key);renderCompareAnalytics();
+}
+function removeCompareSeries(key){compareSeries=compareSeries.filter(x=>x!==key);renderCompareAnalytics()}
+function clearCompareSeries(){compareSeries=[];renderCompareAnalytics()}
+function latestUsedExerciseId(){
+  const w=workouts.find(x=>x.ended_at)||workouts[0];if(!w)return exercises.find(x=>!x.archived)?.id||null;
+  return workoutExerciseRows(w.id)[0]?.exercise_id||exercises.find(x=>!x.archived)?.id||null;
+}
+function setComparePreset(type){
+  const ex=($('progressExercise')?.value)||latestUsedExerciseId();
+  if(type==='strength_cycle'){
+    compareSeries=[...(ex?[`ex:${ex}:e1rm`]:[]),...(sensitiveAccessAvailable?['cycle:day','cycle:period']:[])];
+  }else if(type==='cycle_intimacy'){
+    compareSeries=sensitiveAccessAvailable?['cycle:day','cycle:period','intimate:sex','intimate:oral_sex']:[];
+  }else if(type==='body_cycle'){
+    compareSeries=['body:weight_kg',...(sensitiveAccessAvailable?['cycle:day','cycle:period']:[])];
+  }
+  goView('analytics');setTimeout(renderCompareAnalytics,0);
+}
+function normalizeComparePoints(points){
+  if(!points.length)return [];
+  const ys=points.map(x=>Number(x.y)).filter(Number.isFinite),min=Math.min(...ys),max=Math.max(...ys);
+  return points.map(p=>({...p,norm:max===min?50:(Number(p.y)-min)/(max-min)*100}));
+}
+function renderCompareAnalytics(){
+  const canvas=$('compareCanvas'),chips=$('compareSeriesChips'),legend=$('compareLegend');
+  if(!canvas||!chips||!legend)return;
+  compareSeries=compareSeries.filter(k=>compareAvailableSeries().some(x=>x.key===k));
+  chips.innerHTML=compareSeries.length?compareSeries.map(k=>`<span class="series-chip">${esc(compareSeriesMeta(k).label)}<button onclick="removeCompareSeries('${k}')">×</button></span>`).join(''):'<span class="inline-note">Пока ничего не выбрано.</span>';
+  const series=compareSeries.map((key,i)=>{
+    const meta=compareSeriesMeta(key),pts=compareSeriesPoints(key);
+    return {key,color:compareColor(i),...meta,points:meta.kind==='line'?normalizeComparePoints(pts):pts};
+  });
+  legend.innerHTML=series.map(x=>`<span><i class="legend-dot" style="background:${x.color}"></i>${esc(x.label)}</span>`).join('');
+  drawCompareChart(canvas,series,$('compareTip'));
+}
+function drawCompareChart(canvas,series,tip){
+  const rect=canvas.getBoundingClientRect(),w=Math.max(360,rect.width||900),h=Math.max(300,rect.height||410),dpr=window.devicePixelRatio||1;
+  canvas.width=w*dpr;canvas.height=h*dpr;const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);c.fillStyle='#08121b';c.fillRect(0,0,w,h);
+  const all=series.flatMap(s=>s.points||[]);
+  if(!series.length||!all.length){c.fillStyle='#8ea0b1';c.font='12px sans-serif';c.textAlign='center';c.fillText('Добавьте показатели для сравнения',w/2,h/2);if(tip)tip.style.display='none';return}
+  const pad={l:48,r:18,t:22,b:34};let xmin=Math.min(...all.map(p=>p.x)),xmax=Math.max(...all.map(p=>p.x));if(xmin===xmax){xmin-=864e5;xmax+=864e5}
+  const mx=x=>pad.l+(x-xmin)/(xmax-xmin)*(w-pad.l-pad.r),my=y=>pad.t+(100-y)/100*(h-pad.t-pad.b);
+  c.lineWidth=1;c.strokeStyle='rgba(255,255,255,.07)';
+  for(let i=0;i<=4;i++){const y=i*25,yy=my(y);c.beginPath();c.moveTo(pad.l,yy);c.lineTo(w-pad.r,yy);c.stroke();c.fillStyle='#8ea0b1';c.font='10px sans-serif';c.textAlign='right';c.fillText(String(y),pad.l-6,yy+3)}
+  // bands first
+  series.filter(s=>s.kind==='band'||s.kind==='bandForecast').forEach(s=>{
+    c.save();c.globalAlpha=s.kind==='band'?0.16:0.08;c.fillStyle=s.color;
+    s.points.forEach(p=>{const x1=mx(p.x-432e5),x2=mx(p.x+432e5);c.fillRect(x1,pad.t,Math.max(2,x2-x1),h-pad.t-pad.b)});
+    if(s.kind==='bandForecast'){c.globalAlpha=.35;c.setLineDash([4,4]);c.strokeStyle=s.color;s.points.forEach(p=>{const x=mx(p.x);c.beginPath();c.moveTo(x,pad.t);c.lineTo(x,h-pad.b);c.stroke()})}
+    c.restore();
+  });
+  // lines
+  series.filter(s=>s.kind==='line'&&s.points.length).forEach(s=>{
+    c.strokeStyle=s.color;c.fillStyle=s.color;c.lineWidth=2.2;c.beginPath();
+    s.points.forEach((p,i)=>i?c.lineTo(mx(p.x),my(p.norm)):c.moveTo(mx(p.x),my(p.norm)));c.stroke();
+    s.points.forEach(p=>{c.beginPath();c.arc(mx(p.x),my(p.norm),2.8,0,Math.PI*2);c.fill()});
+  });
+  // events
+  let eventLane=0;
+  series.filter(s=>s.kind==='event').forEach(s=>{
+    const lane=95-eventLane*9;eventLane++;c.fillStyle=s.color;
+    s.points.forEach(p=>{const x=mx(p.x),y=my(lane);c.beginPath();c.arc(x,y,5,0,Math.PI*2);c.fill();c.strokeStyle='#08121b';c.lineWidth=1.5;c.stroke()});
+  });
+  c.fillStyle='#8ea0b1';c.font='10px sans-serif';c.textAlign='left';c.fillText(fmtDate(new Date(xmin).toISOString()),pad.l,h-9);c.textAlign='right';c.fillText(fmtDate(new Date(xmax).toISOString()),w-pad.r,h-9);
+  canvas.__compare={series,mx,my,pad,w,h};
+  if(tip){
+    const show=e=>{
+      const r=canvas.getBoundingClientRect(),px=(e.touches?.[0]?.clientX??e.clientX)-r.left;
+      const tx=xmin+(px-pad.l)/(w-pad.l-pad.r)*(xmax-xmin),windowMs=Math.max(864e5,(xmax-xmin)/40);
+      const nearby=[];
+      series.forEach(s=>{
+        let best=null,dist=Infinity;
+        for(const p of s.points){const d=Math.abs(p.x-tx);if(d<dist){dist=d;best=p}}
+        if(best&&dist<=windowMs)nearby.push({s,p:best,dist});
+      });
+      if(!nearby.length){tip.style.display='none';return}
+      nearby.sort((a,b)=>a.dist-b.dist);
+      const date=nearby[0].p.date||new Date(nearby[0].p.x).toISOString();
+      tip.innerHTML=`<b>${fmtDate(date)}</b><br>${nearby.slice(0,8).map(({s,p})=>`${esc(s.label)}: <b>${s.kind==='band'||s.kind==='bandForecast'?'да':n(p.raw??p.y,1)+' '+esc(s.unit||'')}</b>`).join('<br>')}`;
+      tip.style.display='block';tip.style.left=Math.min(w-tip.offsetWidth-8,Math.max(8,px+10))+'px';tip.style.top='12px';
+    };
+    canvas.onmousemove=show;canvas.onclick=show;canvas.ontouchstart=show;canvas.onmouseleave=()=>tip.style.display='none';
+  }
+}
+
 function renderProgress(){
   const exid=$('progressExercise')?.value;if(!exid)return;const metric=$('progressMetric').value,pts=exerciseProgressPoints(exid,metric),ex=exerciseById(exid),rec=recommendation(exid);
   const best=pts.length?Math.max(...pts.map(p=>p.y)):0,last=pts.at(-1)?.y||0,first=pts[0]?.y||0,change=first?((last/first)-1)*100:0;
@@ -2215,7 +2486,7 @@ async function init(){
   const {data:{session}}=await db.auth.getSession();if(session?.user)await enterApp(session);
   db.auth.onAuthStateChange((_e,s)=>{if(!s)$('authGate').classList.remove('hidden')});
 }
-window.addEventListener('resize',()=>{if($('progress')?.classList.contains('active'))renderProgress();if($('bodyweight')?.classList.contains('active'))drawBodyweightChart()});
+window.addEventListener('resize',()=>{if($('progress')?.classList.contains('active'))renderProgress();if($('bodyweight')?.classList.contains('active'))drawBodyweightChart();if($('analytics')?.classList.contains('active'))renderCompareAnalytics()});
 init();
 </script>
 </body>
