@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.12.1</title>
+<title>VM Private Capital — Wealth Studio v7.12.2</title>
 <style>
 
 :root{
@@ -790,7 +790,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:650px){.app-version-badge{margin-left:5px}.crypto-wallet-fields{padding:12px}}
 
 
-/* v7.12.1 — manual portfolio order */
+/* v7.12.2 — manual portfolio order */
 .portfolio-head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .portfolio-order-list{display:grid;gap:8px}
 .portfolio-order-row{
@@ -1343,9 +1343,14 @@ body.auth-locked{overflow:hidden}
       <div class="vm-wordmark">VM PRIVATE CAPITAL</div>
     </div>
 
-    <a class="mobile-suite-link" href="./hrt/" title="Открыть HRT Health Studio">
+    <a class="mobile-suite-link" id="suiteHrtMobile" href="./hrt/" title="Открыть HRT Health Studio">
       <span class="mobile-suite-heart">♥</span>
       <span><small>PRIVATE SUITE</small><b>HRT HEALTH STUDIO</b></span>
+      <strong>→</strong>
+    </a>
+    <a class="mobile-suite-link" id="suiteFitnessMobile" href="./fitness/" title="Открыть Fitness Studio">
+      <span class="mobile-suite-heart">↗</span>
+      <span><small>PRIVATE SUITE</small><b>FITNESS STUDIO</b></span>
       <strong>→</strong>
     </a>
 
@@ -1364,16 +1369,21 @@ body.auth-locked{overflow:hidden}
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.12.1</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.12.2</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
 
     <div class="suite-switch-card">
       <div class="eyebrow">PRIVATE SUITE</div>
-      <a class="suite-switch-link" href="./hrt/" title="Открыть HRT Health Studio">
+      <a class="suite-switch-link" id="suiteHrtDesktop" href="./hrt/" title="Открыть HRT Health Studio">
         <span class="suite-icon">♥</span>
         <span style="flex:1">HRT HEALTH STUDIO</span>
+        <span>→</span>
+      </a>
+      <a class="suite-switch-link" id="suiteFitnessDesktop" href="./fitness/" title="Открыть Fitness Studio">
+        <span class="suite-icon">↗</span>
+        <span style="flex:1">FITNESS STUDIO</span>
         <span>→</span>
       </a>
     </div>
@@ -1382,7 +1392,7 @@ body.auth-locked{overflow:hidden}
   <main class="main">
     <header class="topbar">
       <div>
-        <div class="eyebrow">PERSONAL CAPITAL CONTROL <span class="app-version-badge">v7.12.1</span></div>
+        <div class="eyebrow">PERSONAL CAPITAL CONTROL <span class="app-version-badge">v7.12.2</span></div>
         <h1 id="viewTitle">Обзор капитала</h1>
         <div id="todayText" class="muted"></div><div class="topbar-subtitle">Планируйте капитал, сравнивайте сценарии и контролируйте будущие выплаты.</div>
       </div>
@@ -1796,7 +1806,7 @@ body.auth-locked{overflow:hidden}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 
-const APP_VERSION='v7.12.1';
+const APP_VERSION='v7.12.2';
 const SUPABASE_URL='https://hlrvwzqwxqmycuttvzbx.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_RBRKa6zqrw7-CW77RW__QQ_vrqebWCp';
 const STORAGE_KEY='capital_tracker_offline_v1';
@@ -1836,7 +1846,7 @@ const defaultState=()=>({
 });
 let state=normalizeState(loadState()),currentView='dashboard',chartRange=365;
 let saveTimer=null,withdrawalResultsReady=false;
-let cloudSaveTimer=null,cloudUser=null,cloudLastSync=null,cloudBusy=false,suppressCloudSave=false;
+let cloudSaveTimer=null,cloudUser=null,cloudLastSync=null,cloudBusy=false,suppressCloudSave=false,cloudModuleAccess=null;
 const supabaseClient=(window.supabase&&window.supabase.createClient)
   ? window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}})
   : null;
@@ -1886,7 +1896,7 @@ function normalizeState(raw){
  };
 });
 
- // v7.12.1: persist a user-defined portfolio order. Existing data keeps its current array order.
+ // v7.12.2: persist a user-defined portfolio order. Existing data keeps its current array order.
  {
    const validIds=new Set(s.portfolios.map(p=>p.id));
    const seen=new Set();
@@ -1950,7 +1960,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.12.1';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.12.2';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -2020,12 +2030,48 @@ async function loadCloudState({force=false,showToast=true}={}){
    return false;
  }finally{cloudBusy=false}
 }
+
+function applyWealthSuiteAccess(access){
+ cloudModuleAccess=access||{fitness:false,hrt:false,wealth:false};
+ const visibility={
+   suiteHrtMobile:!!cloudModuleAccess.hrt,
+   suiteHrtDesktop:!!cloudModuleAccess.hrt,
+   suiteFitnessMobile:!!cloudModuleAccess.fitness,
+   suiteFitnessDesktop:!!cloudModuleAccess.fitness
+ };
+ for(const [id,show] of Object.entries(visibility)){
+   const el=q(id);if(el)el.style.display=show?'':'none';
+ }
+}
+async function getWealthModuleAccess(user){
+ if(!supabaseClient||!user)throw new Error('Не удалось проверить права доступа.');
+ const {data,error}=await supabaseClient.from('user_module_access')
+   .select('fitness,hrt,wealth')
+   .eq('user_id',user.id)
+   .maybeSingle();
+ if(error)throw error;
+ const access=data||{fitness:false,hrt:false,wealth:false};
+ applyWealthSuiteAccess(access);
+ return access;
+}
+async function requireWealthAccess(user){
+ const access=await getWealthModuleAccess(user);
+ if(access.wealth)return {access,redirected:false};
+ gateMessage('Для этого аккаунта Wealth Studio недоступен. Открываю разрешённый модуль…','ok');
+ if(access.fitness){location.replace('./fitness/');return {access,redirected:true}}
+ if(access.hrt){location.replace('./hrt/');return {access,redirected:true}}
+ throw new Error('Для этого аккаунта не разрешён ни один модуль VM Private Suite.');
+}
+
 async function handleCloudSession(session,{initial=false}={}){
  cloudUser=session?.user||null;
  if(!cloudUser){
+   cloudModuleAccess=null;applyWealthSuiteAccess(null);
    setCloudStatus('idle','Облако не подключено','Нажмите для входа · локальная копия сохранена');
-   return;
+   return {redirected:false};
  }
+ const accessCheck=await requireWealthAccess(cloudUser);
+ if(accessCheck.redirected)return accessCheck;
  cloudLastSync=localStorage.getItem('vm_cloud_last_sync')||null;
  setCloudStatus('busy','Подключаю облако…',cloudUser.email||'');
  if(initial){
@@ -2052,6 +2098,7 @@ async function handleCloudSession(session,{initial=false}={}){
  }else{
    setCloudStatus('ok','Облако подключено',`${cloudUser.email||''} · ${cloudTimeText()}`);
  }
+ return {access:cloudModuleAccess,redirected:false};
 }
 
 function gateMessage(text,kind=''){
@@ -2088,10 +2135,11 @@ async function gateSignIn(){
 
    // Не ждём события onAuthStateChange: сразу загружаем облачные данные
    // и открываем интерфейс. Это устраняет зависание на экране входа.
-   await Promise.race([
+   const sessionResult=await Promise.race([
      handleCloudSession(session,{initial:true}),
      new Promise((_,reject)=>setTimeout(()=>reject(new Error('Облачные данные не ответили за 12 секунд. Обновите страницу и попробуйте ещё раз.')),12000))
    ]);
+   if(sessionResult?.redirected)return;
    unlockApp();
    gateMessage('');
 
@@ -2113,7 +2161,8 @@ async function initCloud(){
  const {data:{session}}=await supabaseClient.auth.getSession();
  if(session?.user){
    try{
-     await handleCloudSession(session,{initial:true});
+     const sessionResult=await handleCloudSession(session,{initial:true});
+     if(sessionResult?.redirected)return;
      unlockApp();
    }catch(e){
      console.error('Initial cloud load error',e);
@@ -2121,7 +2170,7 @@ async function initCloud(){
      gateMessage(e?.message||'Не удалось загрузить данные из облака.','err');
    }
  }else{
-   cloudUser=null;
+   cloudUser=null;cloudModuleAccess=null;applyWealthSuiteAccess(null);
    setCloudStatus('idle','Облако не подключено','Требуется вход');
    lockApp();
  }
@@ -2132,15 +2181,18 @@ async function initCloud(){
          // Если прямой gateSignIn уже установил этого пользователя,
          // не запускаем повторную тяжёлую загрузку из облака.
          if(cloudUser?.id===session.user.id){
+           const accessCheck=await requireWealthAccess(session.user);
+           if(accessCheck.redirected)return;
            setCloudStatus('ok','Облако подключено',`${session.user.email||''} · ${cloudTimeText()}`);
            unlockApp();
            return;
          }
-         await handleCloudSession(session,{initial:true});
+         const sessionResult=await handleCloudSession(session,{initial:true});
+         if(sessionResult?.redirected)return;
          unlockApp();
          gateMessage('');
        }else{
-         cloudUser=null;
+         cloudUser=null;cloudModuleAccess=null;applyWealthSuiteAccess(null);
          lockApp();
          setCloudStatus('idle','Облако не подключено','Требуется вход');
        }
