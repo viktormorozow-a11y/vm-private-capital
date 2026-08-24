@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Fitness Studio v1.1.0 — Withings Body Composition</title>
+<title>VM Fitness Studio v1.7.0 — Withings Body Composition</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -49,13 +49,97 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 .hidden{display:none!important}.busy{opacity:.65;pointer-events:none}
 @media(max-width:1000px){.app{grid-template-columns:1fr}aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}nav{grid-template-columns:repeat(4,minmax(135px,1fr));overflow:auto}.user-box{margin-top:14px}.g4,.g3{grid-template-columns:1fr 1fr}}
 @media(max-width:700px){main{padding:14px}.g4,.g3,.g2,.exercise-grid,.form-grid,.metric-row{grid-template-columns:1fr}.top{flex-direction:column}.set-grid{grid-template-columns:42px 1fr 1fr}.set-grid label:nth-of-type(3){grid-column:2/4}.set-grid button{grid-column:2/4}.modal-bg{padding:8px}.modal,.modal.wide-modal{width:100%;padding:13px}.wide{grid-column:auto}}
+
+.location-tabs{display:flex;gap:7px;flex-wrap:wrap}
+.location-tab{border:1px solid var(--line);background:#0b1722;color:var(--muted);padding:8px 11px;border-radius:999px;cursor:pointer;font-size:11px;font-weight:700}
+.location-tab.active{color:#f4ddb1;border-color:rgba(214,173,98,.35);background:rgba(214,173,98,.09)}
+.location-badge{display:inline-flex;align-items:center;padding:3px 7px;border-radius:999px;font-size:9px;font-weight:800;letter-spacing:.03em;margin-left:6px}
+.location-badge.home{color:#9bd8ff;background:rgba(127,200,255,.09);border:1px solid rgba(127,200,255,.18)}
+.location-badge.gym{color:#eac77f;background:rgba(214,173,98,.09);border:1px solid rgba(214,173,98,.20)}
+.location-badge.both{color:#aee8c4;background:rgba(115,217,154,.08);border:1px solid rgba(115,217,154,.18)}
+.catalog-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0 14px}
+.catalog-summary>div{border:1px solid var(--line);border-radius:11px;padding:10px;background:rgba(255,255,255,.018)}
+.catalog-summary b{display:block;font-size:17px;margin-top:4px}.catalog-summary span{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+@media(max-width:700px){.catalog-summary{grid-template-columns:1fr 1fr 1fr}}
+
+.top-switch{display:flex;gap:8px;flex-wrap:wrap}
+.top-switch .btn{padding:9px 14px}
+.top-switch .btn.active{background:linear-gradient(180deg,#dcae5c,#b88734);color:#221608;border-color:#d7a04a;box-shadow:0 8px 24px rgba(214,173,98,.22)}
+.exercise-card{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:start;border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));border-radius:18px;padding:14px}
+.exercise-photo{height:160px;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:radial-gradient(circle at 30% 20%,rgba(214,173,98,.18),transparent 35%),linear-gradient(180deg,#0e1a27,#07111c);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.exercise-photo .icon{font-size:40px;filter:drop-shadow(0 10px 30px rgba(214,173,98,.25))}
+.exercise-photo .caption{position:absolute;left:10px;right:10px;bottom:10px;font-size:10px;line-height:1.35;color:#c7d6e4;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.08);padding:7px 8px;border-radius:10px;text-align:center}
+.exercise-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.exercise-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.exercise-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.chip{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.03em;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#cdd9e3}
+.exercise-copy{font-size:12px;color:#d9e5ef;line-height:1.55;margin-top:9px}
+.exercise-panels{display:grid;grid-template-columns:1.1fr 1fr;gap:10px;margin-top:12px}
+.mini-panel{border:1px solid var(--line);border-radius:14px;padding:10px;background:rgba(255,255,255,.02)}
+.mini-panel h4{margin:0 0 8px;font-size:12px}
+.history-mini{display:flex;flex-direction:column;gap:6px}
+.history-row{display:flex;justify-content:space-between;gap:12px;font-size:11px;padding:6px 0;border-top:1px dashed rgba(255,255,255,.08)}
+.history-row:first-child{border-top:0;padding-top:0}
+.exercise-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.exercise-actions .btn{padding:9px 12px}
+.progress-highlight{font-size:14px;font-weight:800;color:#f3e0b6}
+.inline-note{font-size:10px;color:var(--muted)}
+.routine-toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+@media(max-width:900px){.exercise-card{grid-template-columns:1fr}.exercise-photo{height:200px}.exercise-panels{grid-template-columns:1fr}}
+
+.technique-card{margin-top:11px;border:1px solid var(--line);border-radius:14px;padding:11px;background:rgba(255,255,255,.018)}
+.technique-card h4{margin:0 0 8px;font-size:12px}
+.tech-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tech-item{border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:8px;background:rgba(255,255,255,.015);font-size:11px;line-height:1.45;color:#d8e3ed}
+.tech-item b{display:block;color:#f1d39c;margin-bottom:3px}
+.tech-item.warn b{color:#ffb6b6}
+.location-quick{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.location-quick .btn{padding:7px 10px;font-size:10px}
+.location-quick .btn.active{border-color:rgba(115,217,154,.35);background:rgba(115,217,154,.08);color:#baf0ce}
+.history-card-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+@media(max-width:800px){.tech-grid{grid-template-columns:1fr}}
+
+.exercise-card{display:block}
+.exercise-photo{display:none!important}
+.tech-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.tech-item.full{grid-column:1/-1}
+.split-tabs{display:flex;gap:7px;flex-wrap:wrap}
+.split-tab{border:1px solid var(--line);background:#0b1722;color:var(--muted);padding:8px 11px;border-radius:999px;cursor:pointer;font-size:11px;font-weight:800}
+.split-tab.active{color:#f4ddb1;border-color:rgba(214,173,98,.35);background:rgba(214,173,98,.09)}
+.split-badge{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;font-size:9px;font-weight:800;letter-spacing:.04em;border:1px solid rgba(255,255,255,.08);margin-left:6px}
+.split-badge.back{color:#9ed4ff;background:rgba(89,167,255,.08);border-color:rgba(89,167,255,.18)}
+.split-badge.chest_shoulders{color:#f4c987;background:rgba(214,173,98,.09);border-color:rgba(214,173,98,.22)}
+.split-badge.legs{color:#b8efca;background:rgba(115,217,154,.08);border-color:rgba(115,217,154,.20)}
+.split-badge.custom{color:#c9d4de;background:rgba(255,255,255,.03)}
+.split-help{margin-top:10px;border:1px solid var(--line);border-radius:14px;padding:11px;background:rgba(255,255,255,.018);font-size:11px;line-height:1.55;color:#cad8e4}
+.split-help b{color:#f1d39c}
+.routine-toolbar.stack{align-items:flex-start;flex-direction:column}
+@media(max-width:800px){.tech-grid{grid-template-columns:1fr}.tech-item.full{grid-column:auto}}
+
+.posture-banner{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 8px;padding:10px 12px;border:1px solid rgba(214,173,98,.25);border-radius:12px;background:rgba(214,173,98,.07)}
+.posture-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800}
+.posture-value{font-size:15px;font-weight:900;color:#f4d8a3}
+
+.equipment-strip{margin:12px 0 14px;border:1px solid var(--line);border-radius:14px;padding:11px;background:rgba(255,255,255,.018)}
+.equipment-strip .title{font-size:12px;font-weight:850;margin-bottom:8px}
+.equipment-chips{display:flex;gap:6px;flex-wrap:wrap}
+.equipment-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(115,217,154,.18);background:rgba(115,217,154,.06);color:#c8f1d6;border-radius:999px;padding:6px 9px;font-size:10px;font-weight:750}
+.equipment-chip.cardio{border-color:rgba(127,200,255,.18);background:rgba(127,200,255,.06);color:#bfe4ff}
+.inventory-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.inventory-card{border:1px solid var(--line);border-radius:12px;padding:10px;background:rgba(255,255,255,.016)}
+.inventory-card .name{font-weight:850;font-size:12px}
+.inventory-card .meta{font-size:10px;color:var(--muted);margin-top:4px}
+.inventory-card .actions{margin-top:8px}
+.preset-card{border:1px solid rgba(214,173,98,.18);border-radius:14px;padding:11px;background:rgba(214,173,98,.045);margin:10px 0}
+.preset-card b{color:#f2d49d}
+@media(max-width:760px){.inventory-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div id="authGate" class="auth-gate">
   <div class="auth-card">
     <div class="auth-brand">VM PRIVATE SUITE</div>
-    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v1.1.0</span></div>
+    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v1.7.0</span></div>
     <div class="auth-sub">Личный тренировочный дневник. Данные каждого аккаунта полностью раздельны.</div>
     <div class="auth-tabs">
       <button id="tabLogin" class="active" type="button">Войти</button>
@@ -112,13 +196,45 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 </section>
 
 <section id="exercises" class="view">
-  <div class="top"><div><h1>Упражнения</h1><div class="sub">Для каждого упражнения задаётся диапазон повторений и шаг увеличения веса.</div></div><div class="actions" style="margin-top:0"><button class="btn" type="button" onclick="addStarterExercises()">Добавить базовый набор</button><button class="btn primary" type="button" onclick="openExerciseModal()">＋ Упражнение</button></div></div>
-  <div class="panel"><div id="exerciseList"></div></div>
+  <div class="top"><div><h1>Упражнения</h1><div class="sub">Карточки упражнений показывают основные мышцы, инвентарь, подробную пошаговую технику, последние рабочие веса, историю прогресса и рекомендацию на следующий раз.</div></div><div class="actions" style="margin-top:0"><button class="btn" type="button" onclick="addStarterExercises()">Добавить расширенный каталог</button><button class="btn primary" type="button" onclick="openExerciseModal()">＋ Упражнение</button></div></div>
+  <div class="panel">
+    <div class="routine-toolbar">
+      <div class="top-switch">
+        <button class="btn active" type="button" data-toploc="home" onclick="setTrainingLocation('home')">Дом</button>
+        <button class="btn" type="button" data-toploc="gym" onclick="setTrainingLocation('gym')">Зал</button>
+      </div>
+      <div class="inline-note">Ниже показываются упражнения для выбранного места. Упражнения «Везде» доступны в обоих режимах.</div>
+    </div>
+    <div id="homeEquipmentSummary"></div>
+    <div id="exerciseList"></div>
+  </div>
 </section>
 
 <section id="routines" class="view">
-  <div class="top"><div><h1>Программы тренировок</h1><div class="sub">Соберите, например, «Спина», «Грудь + плечи» или «Ноги». Порядок упражнений сохраняется.</div></div><button class="btn primary" type="button" onclick="openRoutineModal()">＋ Программа</button></div>
-  <div id="routineList"></div>
+  <div class="top"><div><h1>Сплит-тренировки</h1><div class="sub">Основная логика программы: отдельный день спины, отдельный день ног и отдельный день груди + плеч. Домашние и заловые варианты хранятся отдельно.</div></div><div class="actions" style="margin-top:0"><button class="btn" type="button" onclick="createHomeSplitTemplates()">Создать домашние сплиты</button><button class="btn primary" type="button" onclick="openRoutineModal()">＋ Программа</button></div></div>
+  <div class="panel">
+    <div class="routine-toolbar stack">
+      <div>
+        <div class="inline-note" style="margin-bottom:6px">Место тренировки</div>
+        <div class="top-switch">
+          <button class="btn active" type="button" data-toploc="home" onclick="setTrainingLocation('home')">Дом</button>
+          <button class="btn" type="button" data-toploc="gym" onclick="setTrainingLocation('gym')">Зал</button>
+        </div>
+      </div>
+      <div>
+        <div class="inline-note" style="margin-bottom:6px">День сплита</div>
+        <div class="split-tabs">
+          <button class="split-tab active" data-split="back" onclick="setSplitGroup('back')">Спина</button>
+          <button class="split-tab" data-split="chest_shoulders" onclick="setSplitGroup('chest_shoulders')">Грудь + плечи</button>
+          <button class="split-tab" data-split="legs" onclick="setSplitGroup('legs')">Ноги</button>
+          <button class="split-tab" data-split="custom" onclick="setSplitGroup('custom')">Другое</button>
+        </div>
+      </div>
+    </div>
+    <div class="split-help"><b>Как будет работать сплит:</b> «Спина» включает упражнения на спину и бицепс; «Грудь + плечи» — грудь, плечи и трицепс; «Ноги» — квадрицепс, заднюю поверхность бедра, ягодицы и икры. Внутри каждой группы можно создать отдельный домашний и заловый вариант.</div>
+    <div id="homeRoutineEquipmentHint"></div>
+    <div id="routineList" style="margin-top:12px"></div>
+  </div>
 </section>
 
 <section id="history" class="view">
@@ -162,6 +278,10 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
     <div class="actions"><button class="btn primary" type="button" onclick="saveProfile()">Сохранить</button></div>
   </div>
   <div class="panel">
+    <div class="head"><div><h2>Оборудование домашнего зала</h2><div class="sub">Этот список используется, чтобы домашние упражнения и сплит-программы соответствовали реальному оборудованию.</div></div><div class="actions" style="margin-top:0"><button class="btn" type="button" onclick="seedKnownHomeGym()">Заполнить наш домашний зал</button><button class="btn primary" type="button" onclick="openEquipmentModal()">＋ Оборудование</button></div></div>
+    <div id="equipmentInventory"></div>
+  </div>
+  <div class="panel">
     <div class="head"><h2>Приватность и доступ</h2></div>
     <div id="moduleAccess" class="note"></div>
   </div>
@@ -177,8 +297,8 @@ const SUPABASE_URL='https://hlrvwzqwxqmycuttvzbx.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_RBRKa6zqrw7-CW77RW__QQ_vrqebWCp';
 const db=(window.supabase&&window.supabase.createClient)?window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}):null;
 let currentUser=null,moduleAccess=null,profile=null;
-let exercises=[],routines=[],routineExercises=[],workouts=[],workoutExercises=[],sets=[],bodyweights=[],fitnessActivities=[];
-let activeWorkoutId=null;
+let exercises=[],routines=[],routineExercises=[],workouts=[],workoutExercises=[],sets=[],bodyweights=[],fitnessActivities=[],equipment=[];
+let activeWorkoutId=null,exerciseLocationFilter='all',uiTrainingLocation='home',uiSplitGroup='back';
 const $=id=>document.getElementById(id);
 const esc=x=>String(x??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const fmtDateTime=s=>s?new Date(s).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
@@ -247,7 +367,7 @@ async function ensureProfile(){
 }
 async function loadAll(){
   const uid=currentUser.id;
-  const [ex,rt,re,wo,we,se,bw,fa]=await Promise.all([
+  const [ex,rt,re,wo,we,se,bw,fa,eq]=await Promise.all([
     db.from('fitness_exercises').select('*').eq('user_id',uid).order('name'),
     db.from('fitness_routines').select('*').eq('user_id',uid).order('name'),
     db.from('fitness_routine_exercises').select('*').eq('user_id',uid).order('position'),
@@ -255,10 +375,11 @@ async function loadAll(){
     db.from('fitness_workout_exercises').select('*').eq('user_id',uid).order('position'),
     db.from('fitness_sets').select('*').eq('user_id',uid).order('set_no'),
     db.from('fitness_bodyweight').select('*').eq('user_id',uid).order('measured_at',{ascending:false}).limit(500),
-    db.from('fitness_activity').select('*').eq('user_id',uid).order('started_at',{ascending:false}).limit(500)
+    db.from('fitness_activity').select('*').eq('user_id',uid).order('started_at',{ascending:false}).limit(500),
+    db.from('fitness_equipment').select('*').eq('user_id',uid).eq('active',true).order('category').order('name')
   ]);
-  for(const r of [ex,rt,re,wo,we,se,bw,fa])if(r.error)throw r.error;
-  exercises=ex.data||[];routines=rt.data||[];routineExercises=re.data||[];workouts=wo.data||[];workoutExercises=we.data||[];sets=se.data||[];bodyweights=bw.data||[];fitnessActivities=fa.data||[];
+  for(const r of [ex,rt,re,wo,we,se,bw,fa,eq])if(r.error)throw r.error;
+  exercises=ex.data||[];routines=rt.data||[];routineExercises=re.data||[];workouts=wo.data||[];workoutExercises=we.data||[];sets=se.data||[];bodyweights=bw.data||[];fitnessActivities=fa.data||[];equipment=eq.data||[];
   activeWorkoutId=workouts.find(w=>!w.ended_at)?.id||null;
 }
 function renderAll(){
@@ -371,7 +492,7 @@ function renderDashboard(){
   ].map(x=>`<div class="card"><div class="klabel">${x[0]}</div><div class="kval">${x[1]}</div><div class="ksub">${x[2]}</div></div>`).join('');
   const active=activeWorkoutId&&workoutById(activeWorkoutId);
   if(active)$('nextWorkout').innerHTML=`<div class="rec-card"><div class="rec-title">Тренировка уже начата</div><div class="rec-main">${esc(active.title)}</div><div class="rec-why">${fmtDateTime(active.started_at)}</div><button class="btn primary" style="margin-top:10px" onclick="goView('workout')">Продолжить</button></div>`;
-  else if(routines.filter(r=>!r.archived).length)$('nextWorkout').innerHTML=routines.filter(r=>!r.archived).slice(0,3).map(r=>`<div class="routine-row"><span><b>${esc(r.name)}</b><br><small style="color:var(--muted)">${routineExercises.filter(x=>x.routine_id===r.id).length} упражнений</small></span><button class="btn" onclick="startWorkout('${r.id}')">Начать</button></div>`).join('');
+  else if(routines.filter(r=>!r.archived).length)$('nextWorkout').innerHTML=routines.filter(r=>!r.archived).slice(0,3).map(r=>`<div class="routine-row"><span><b>${esc(r.name)}</b> ${locationBadge(r.training_location||'both')}<br><small style="color:var(--muted)">${routineExercises.filter(x=>x.routine_id===r.id).length} упражнений</small></span><button class="btn" onclick="startWorkout('${r.id}')">Начать</button></div>`).join('');
   else $('nextWorkout').innerHTML='<div class="empty">Создайте программу тренировки или начните свободную тренировку.</div>';
   const last=done[0],lastActivity=last?activityForWorkout(last.id):null,lastMetrics=activityMetricText(lastActivity);$('lastWorkout').innerHTML=last?`<b>${esc(last.title)}</b><div class="note" style="margin-top:6px">${fmtDateTime(last.started_at)} · ${workoutExerciseRows(last.id).length} упражнений · объём ${n(workoutVolume(last.id)/1000,1)} т${lastMetrics?`<br><span style="color:var(--blue)">${esc(lastMetrics)}</span>`:''}</div>`:'<div class="empty">Завершённых тренировок пока нет.</div>';
   renderRecentPrs();
@@ -390,62 +511,926 @@ function renderRecentPrs(){
 }
 function goView(id){document.querySelector(`.nav[data-view="${id}"]`)?.click()}
 
-function renderExercises(){
-  const live=exercises.filter(x=>!x.archived);
-  $('exerciseList').innerHTML=live.length?`<div class="exercise-grid">${live.map(ex=>{const rec=recommendation(ex.id);return `<div class="exercise-card"><h3>${esc(ex.name)}</h3><div class="exercise-meta">${esc(ex.muscle_group)}${ex.equipment?' · '+esc(ex.equipment):''} · ${ex.target_sets} × ${ex.rep_min}–${ex.rep_max} · шаг ${n(ex.increment_kg,2)} кг</div><div class="rec-card" style="margin-top:9px"><div class="rec-title">Следующий раз</div><div class="rec-main">${rec.weight===null?'Выберите вес':n(rec.weight,2)+' кг'} · ${esc(rec.target)}</div><div class="rec-why">${esc(rec.why)}</div></div><div class="exercise-actions"><button class="btn" onclick="openExerciseProgress('${ex.id}')">Прогресс</button><button class="btn" onclick="openExerciseModal('${ex.id}')">Изменить</button><button class="btn danger" onclick="archiveExercise('${ex.id}')">Архив</button></div></div>`}).join('')}</div>`:'<div class="empty">Упражнений пока нет. Добавьте своё или нажмите «Добавить базовый набор».</div>';
+
+
+
+function splitLabel(v){
+  return v==='back'?'Спина':v==='chest_shoulders'?'Грудь + плечи':v==='legs'?'Ноги':'Другое';
 }
+function splitBadge(v){
+  const x=v||'custom';
+  return `<span class="split-badge ${x}">${splitLabel(x)}</span>`;
+}
+function exerciseFitsSplit(ex,split){
+  if(!ex||split==='custom')return true;
+  const g=(ex.muscle_group||'').toLowerCase();
+  if(split==='back')return g.includes('спин')||g.includes('бицеп');
+  if(split==='chest_shoulders')return g.includes('груд')||g.includes('плеч')||g.includes('трицеп');
+  if(split==='legs')return g.includes('квадриц')||g.includes('задняя поверхность')||g.includes('ягод')||g.includes('икры');
+  return true;
+}
+function inferredSplitForExercise(ex){
+  if(exerciseFitsSplit(ex,'back')&&!exerciseFitsSplit(ex,'chest_shoulders')&&!exerciseFitsSplit(ex,'legs'))return 'back';
+  if(exerciseFitsSplit(ex,'chest_shoulders')&&!exerciseFitsSplit(ex,'back')&&!exerciseFitsSplit(ex,'legs'))return 'chest_shoulders';
+  if(exerciseFitsSplit(ex,'legs')&&!exerciseFitsSplit(ex,'back')&&!exerciseFitsSplit(ex,'chest_shoulders'))return 'legs';
+  return 'custom';
+}
+function setSplitGroup(v){
+  uiSplitGroup=v||'back';
+  document.querySelectorAll('[data-split]').forEach(b=>b.classList.toggle('active',b.dataset.split===uiSplitGroup));
+  renderRoutines();
+}
+function trainingLocationTitle(v){return v==='gym'?'Тренажёрный зал':'Домашний зал'}
+function shortLocationTitle(v){return v==='gym'?'Зал':'Дом'}
+function locationLabel(v){return v==='home'?'Дом':v==='gym'?'Тренажёрный зал':'Везде'}
+function locationBadge(v){
+  const x=v||'both';
+  return `<span class="location-badge ${x}">${locationLabel(x)}</span>`;
+}
+function matchesLocation(itemLoc,filter){
+  if(filter==='all')return true;
+  if(filter==='both')return itemLoc==='both';
+  return itemLoc===filter||itemLoc==='both';
+}
+function setExerciseLocationFilter(v){
+  exerciseLocationFilter=v||'all';
+  document.querySelectorAll('[data-exloc]').forEach(b=>b.classList.toggle('active',b.dataset.exloc===exerciseLocationFilter));
+  renderExercises();
+}
+function setTrainingLocation(v){
+  uiTrainingLocation=v||'home';
+  document.querySelectorAll('[data-toploc]').forEach(b=>b.classList.toggle('active',b.dataset.toploc===uiTrainingLocation));
+  document.querySelectorAll('[data-split]').forEach(b=>b.classList.toggle('active',b.dataset.split===uiSplitGroup));
+  renderRoutines();
+  renderExercises();
+}
+function exerciseImageHint(ex){
+  return ex.training_location==='gym' ? 'Иллюстрация тренажёра будет добавлена' : 'Иллюстрация упражнения будет добавлена';
+}
+function exerciseEmoji(ex){
+  const n=(ex.name||'').toLowerCase(), g=(ex.muscle_group||'').toLowerCase();
+  if(g.includes('груд')) return '🏋️';
+  if(g.includes('спин')) return '🦾';
+  if(g.includes('плеч')) return '💪';
+  if(g.includes('бицеп')) return '💪';
+  if(g.includes('трицеп')) return '🏹';
+  if(g.includes('квадриц')) return '🦵';
+  if(g.includes('ягод')) return '🍑';
+  if(g.includes('икры')) return '🦶';
+  if(g.includes('кор')) return '🧱';
+  if(n.includes('планка')) return '🧱';
+  return '🏋️‍♂️';
+}
+function exercisePrimaryMuscles(ex){
+  const n=(ex.name||'').toLowerCase(), g=(ex.muscle_group||'').toLowerCase();
+  if(n.includes('жим') && g.includes('груд')) return 'Грудь / передняя дельта / трицепс';
+  if(n.includes('pec deck') || n.includes('сведение')) return 'Грудь / передняя дельта';
+  if(n.includes('подтяг')) return 'Широчайшие / бицепс / ромбовидные';
+  if(n.includes('тяга') && g.includes('спин')) return 'Широчайшие / ромбовидные / задняя дельта / бицепс';
+  if(g.includes('плеч')) return 'Средняя дельта / передняя дельта / задняя дельта';
+  if(g.includes('бицеп')) return 'Бицепс / плечелучевая / предплечье';
+  if(g.includes('трицеп')) return 'Трицепс / локтевые стабилизаторы';
+  if(g.includes('квадриц')) return 'Квадрицепс / ягодицы / приводящие';
+  if(g.includes('задняя поверхность')) return 'Бицепс бедра / ягодицы / поясница';
+  if(g.includes('ягод')) return 'Ягодицы / задняя поверхность бедра';
+  if(g.includes('икры')) return 'Икроножная / камбаловидная';
+  if(g.includes('кор')) return 'Пресс / косые / глубокие мышцы кора';
+  return ex.muscle_group || 'Общая группа';
+}
+function exerciseDescription(ex){
+  const n=(ex.name||'').toLowerCase(),g=(ex.muscle_group||'').toLowerCase();
+  if(n.includes('жим')&&g.includes('груд'))return 'Базовое жимовое движение для развития грудных мышц. Дополнительно нагружает переднюю дельту и трицепс; хорошо подходит для отслеживания силового прогресса.';
+  if(n.includes('сведение')||n.includes('pec deck')||n.includes('развод'))return 'Изолирующее движение для грудных мышц. Главная задача — свести плечевые кости перед корпусом, сохраняя постоянное напряжение в груди.';
+  if(n.includes('подтяг'))return 'Вертикальная тяга с весом тела. Развивает широчайшие, верх спины и бицепс; прогресс можно вести повторениями, а затем дополнительным весом.';
+  if(n.includes('верхнего блока'))return 'Вертикальная тяга для широчайших и верхней части спины. Позволяет точно дозировать нагрузку и удобно прогрессировать по весу.';
+  if(n.includes('тяга')&&g.includes('спин'))return 'Горизонтальная или наклонная тяга для толщины спины. Основная работа приходится на широчайшие, ромбовидные, трапецию и заднюю дельту.';
+  if(g.includes('плеч'))return 'Упражнение для развития дельтовидных мышц. В зависимости от варианта акцент смещается на переднюю, среднюю или заднюю дельту.';
+  if(g.includes('бицеп'))return 'Сгибание в локтевом суставе для развития бицепса и мышц предплечья. Важнее контроль и стабильный локоть, чем максимальный вес.';
+  if(g.includes('трицеп'))return 'Упражнение для разгибателей локтя. Основная цель — нагрузить трицепс без лишнего движения плеча и корпуса.';
+  if(g.includes('квадриц'))return 'Упражнение для передней поверхности бедра с участием ягодиц. Подходит для набора мышечной массы и развития силы ног.';
+  if(g.includes('задняя поверхность'))return 'Движение для задней поверхности бедра, ягодиц и разгибателей спины. Требует контроля таза и нейтрального положения позвоночника.';
+  if(g.includes('ягод'))return 'Упражнение с акцентом на ягодичные мышцы. Эффективность зависит от полного разгибания таза без переразгибания поясницы.';
+  if(g.includes('икры'))return 'Упражнение для икроножной и камбаловидной мышц. Максимальную пользу даёт полная амплитуда и короткая пауза в растянутом положении.';
+  if(g.includes('кор'))return 'Упражнение для мышц кора: пресса, косых и глубоких стабилизаторов. Цель — удерживать или контролировать положение таза и позвоночника.';
+  return 'Силовое упражнение для развития целевой мышечной группы. Выполняй движение контролируемо и увеличивай нагрузку только при сохранении техники.';
+}
+function exerciseTechniqueDetails(ex){
+
+  const n=(ex.name||'').toLowerCase(), g=(ex.muscle_group||'').toLowerCase();
+  const t=(setup,move,cues,avoid)=>({setup,move,cues,avoid});
+
+if(n.includes('kettlebell swing')){
+    return t(
+      `СТОЯ. Стопы чуть шире плеч, носки немного наружу. Колени слегка согнуты. Спина ровная, живот напряжён. Гиря перед тобой.`,
+      `Потяни гирю назад между ног, одновременно отводя таз назад. Затем резко разогни таз вперёд и выпрямись. Гиря сама поднимется примерно до уровня груди. Руки лишь удерживают гирю — не поднимай её плечами.`,
+      `В верхней точке тело прямое: ягодицы и пресс напряжены, колени и таз разогнуты. Когда гиря начинает падать, снова отведи таз назад и пропусти её между ног.`,
+      `Не превращай упражнение в приседание, не поднимай гирю руками, не округляй поясницу и не отклоняй корпус назад в верхней точке.`
+    );
+  }
+  if(n.includes('pallof')){
+    return t(
+      `СТОЯ БОКОМ К БЛОКУ. Стопы на ширине плеч, колени слегка согнуты. Рукоять держи двумя руками у груди. Плечи и таз смотрят прямо вперёд.`,
+      `Напряги живот и медленно выпрями руки прямо перед собой. Блок будет пытаться повернуть тебя в его сторону — не позволяй корпусу вращаться. Затем верни руки к груди.`,
+      `Сохраняй одинаковое положение стоп, таза и плеч. Чем дальше руки от груди, тем сильнее нагрузка на кор. Сделай короткую паузу с прямыми руками.`,
+      `Не поворачивай плечи к блоку, не наклоняйся в сторону, не двигай таз и не используй вес, который тебя разворачивает.`
+    );
+  }
+
+
+  if((n.includes('жим штанги')||n.includes('жим гантелей'))&&n.includes('лёжа')){
+    const incline=n.includes('наклон');
+    return t(
+      `${incline?'Установи спинку примерно на 20–35°. ':' '}Лопатки сведи и слегка опусти, грудь приподнята, стопы устойчиво на полу. Кисти держи над локтями.`,
+      `Опускай вес подконтрольно к средней/верхней части груди. Локти веди примерно под углом 45–70° к корпусу. Выжимай вверх, не теряя положения лопаток.`,
+      `Вдох на опускании, выдох ближе к верхней части подъёма. Темп: примерно 2–3 секунды вниз, короткая пауза и уверенный подъём.`,
+      `Не отбивай вес от груди, не поднимай плечи к ушам, не разводи локти строго в стороны и не теряй опору стоп.`
+    );
+  }
+  if(n.includes('жим в тренажёре')){
+    return t(
+      `Отрегулируй сиденье так, чтобы рукояти были примерно на уровне середины груди. Плотно прижми спину и лопатки к опоре.`,
+      `Выжимай рукояти вперёд, оставляя небольшой запас в локтях. Возвращай вес до комфортного растяжения груди без удара стека.`,
+      `Держи грудную клетку раскрытой и не позволяй плечам уходить вперёд в конце повторения.`,
+      `Не отрывай спину от спинки, не сокращай амплитуду ради большего веса и не бросай стек.`
+    );
+  }
+  if(n.includes('pec deck')||n.includes('сведение рук')||n.includes('разводка')){
+    return t(
+      `Выставь положение так, чтобы плечи не были чрезмерно отведены назад. Локти слегка согнуты и сохраняют этот угол весь подход.`,
+      `Своди руки дугой перед собой, думая о движении плечевых костей, а не кистей. Медленно вернись до растяжения грудных.`,
+      `Сделай короткое контролируемое сокращение в точке сведения и не теряй натяжение в обратной фазе.`,
+      `Не своди плечи вперёд, не распрямляй и не сгибай локти во время повторения, не используй инерцию.`
+    );
+  }
+  if(n.includes('отжимания')){
+    return t(
+      `Ладони под плечами или немного шире, корпус от головы до пяток образует прямую линию. Пресс и ягодицы напряжены.`,
+      `Опускай грудь между ладонями, сохраняя контроль лопаток. Оттолкнись от пола до почти полного разгибания рук.`,
+      `Локти направляй назад и в стороны примерно на 30–60°. Сохраняй одинаковую глубину повторений.`,
+      `Не провисай в пояснице, не выдвигай голову вперёд и не сокращай амплитуду при утомлении.`
+    );
+  }
+  if(n.includes('подтяг')){
+    return t(
+      `Возьмись за перекладину выбранным хватом. Начни из контролируемого виса, рёбра собраны, ноги не раскачиваются.`,
+      `Сначала опусти лопатки, затем тяни локти вниз к корпусу. Поднимай грудь к перекладине и плавно опускайся почти до полного разгибания рук.`,
+      `Думай не о подтягивании подбородка, а о движении локтей вниз. Сохраняй одинаковую амплитуду.`,
+      `Не раскачивайся, не делай резкий рывок тазом и не сокращай нижнюю часть амплитуды.`
+    );
+  }
+  if(n.includes('верхнего блока')){
+    return t(
+      `Зафиксируй бёдра под валиками, корпус слегка отклони назад. Грудь приподнята, плечи опущены.`,
+      `Потяни рукоять к верхней части груди, ведя локти вниз. Затем полностью контролируй возврат вверх до растяжения широчайших.`,
+      `Сохраняй положение корпуса почти неизменным. Представляй, что локти тянутся к карманам.`,
+      `Не тяни рукоять за голову, не раскачивай корпус и не превращай движение в сгибание рук.`
+    );
+  }
+  if((n.includes('тяга')&&g.includes('спин'))||n.includes('т-грифа')||n.includes('горизонтальная тяга')){
+    return t(
+      `Создай устойчивую опору. Если тяга в наклоне — отведи таз назад и удерживай нейтральную спину. Если сидя — грудь раскрыта, плечи опущены.`,
+      `Тяни рукоять или снаряд к нижним рёбрам/поясу. В конце сведи лопатки без чрезмерного прогиба, затем медленно выпрями руки.`,
+      `Локти веди назад по естественной траектории. Контролируй растяжение спины в начале каждого повторения.`,
+      `Не дёргай вес поясницей, не поднимай плечи к ушам и не сокращай амплитуду ради большего веса.`
+    );
+  }
+  if(n.includes('пуловер')){
+    return t(
+      `Зафиксируй корпус и рёбра, руки слегка согнуты. Плечи не поднимай к ушам.`,
+      `Веди руки по дуге из положения над/за головой вниз к бёдрам или обратно, концентрируясь на широчайших.`,
+      `Сохраняй почти постоянный угол в локте и не компенсируй движение поясницей.`,
+      `Не превращай движение в трицепсовое разгибание и не уходи в болезненную амплитуду плеча.`
+    );
+  }
+  if((n.includes('жим')&&g.includes('плеч'))||n.includes('арнольда')){
+    return t(
+      `Сядь или встань устойчиво, пресс напряжён, рёбра не выпячиваются. Локти находятся под кистями.`,
+      `Выжимай вес вверх по комфортной траектории, заканчивая над плечевым поясом. Возвращай вес до уровня, где плечо остаётся стабильным.`,
+      `Сохраняй нейтральный корпус и контролируй нижнюю фазу. Движение должно идти из плеч, а не из поясницы.`,
+      `Не переразгибай поясницу, не сталкивай гантели сверху и не опускай вес резко.`
+    );
+  }
+  if(n.includes('в стороны')||n.includes('lateral')||n.includes('подъём руки в сторону')){
+    return t(
+      `Стой устойчиво, локти слегка согнуты. Плечи опущены, гантели или рукоять находятся рядом с бёдрами.`,
+      `Поднимай руки в стороны примерно до уровня плеч, ведя локоть чуть выше кисти. Опускай медленно.`,
+      `Работай средней дельтой; небольшой наклон корпуса допустим, если он стабилен весь подход.`,
+      `Не раскачивай гантели, не поднимай плечи к ушам и не бросай вес вниз.`
+    );
+  }
+  if(n.includes('обратный pec')||n.includes('разведение гантелей в наклоне')||n.includes('face pull')){
+    return t(
+      `Зафиксируй корпус и опусти плечи. Локти держи на удобной высоте, чтобы движение ощущалось в задней дельте и верхе спины.`,
+      `Разводи руки назад, сохраняя мягкий локоть. В Face Pull тяни канат к лицу и слегка разворачивай кисти наружу.`,
+      `Сделай короткую паузу в сокращённом положении и медленно верни вес.`,
+      `Не запрокидывай корпус, не пожимай плечами и не используй слишком большой вес.`
+    );
+  }
+  if(g.includes('бицеп')||n.includes('сгибание рук')){
+    return t(
+      `Зафиксируй плечи и локти. Корпус устойчив, запястья остаются нейтральными или слегка супинируются по варианту упражнения.`,
+      `Согни локоть до сильного сокращения бицепса, затем медленно опусти вес почти до полного разгибания.`,
+      `Держи локоть примерно в одной точке и контролируй негативную фазу 2–3 секунды.`,
+      `Не раскачивай корпус, не выводи локоть далеко вперёд и не сгибай кисть ради подъёма веса.`
+    );
+  }
+  if(g.includes('трицеп')||n.includes('французский')||n.includes('разгибание рук')){
+    return t(
+      `Зафиксируй плечо и корпус. Локти направлены по естественной траектории и не расходятся без необходимости.`,
+      `Разгибай локоть до сокращения трицепса, затем контролируемо верни вес в исходное положение.`,
+      `Сохраняй напряжение в трицепсе и не позволяй плечу выполнять основную работу.`,
+      `Не раскачивай корпус, не разводи локти слишком широко и не бросай вес в растянутую позицию.`
+    );
+  }
+  if(n.includes('присед')||n.includes('гакк')){
+    return t(
+      `Стопы поставь устойчиво на комфортной ширине, носки слегка наружу. Перед повторением создай давление в корпусе и удерживай нейтральную спину.`,
+      `Одновременно сгибай колени и таз, опускаясь настолько глубоко, насколько сохраняется контроль. Поднимайся, давя всей стопой в опору.`,
+      `Колени веди по направлению носков. Вес распределяй между пяткой, основанием большого пальца и внешним краем стопы.`,
+      `Не заваливай колени внутрь, не отрывай пятки и не теряй жёсткость корпуса в нижней точке.`
+    );
+  }
+  if(n.includes('жим ногами')){
+    return t(
+      `Плотно прижми таз и спину к платформе. Стопы поставь так, чтобы колени двигались свободно и без дискомфорта.`,
+      `Опускай платформу до глубины, где таз не начинает подкручиваться. Выжимай платформу всей стопой, не блокируя колени резко.`,
+      `Контролируй отрицательную фазу и сохраняй одинаковую глубину каждого повторения.`,
+      `Не отрывай таз от спинки, не своди колени внутрь и не выпрямляй их ударом.`
+    );
+  }
+  if(n.includes('выпад')||n.includes('болгар')||n.includes('зашаг')){
+    return t(
+      `Выбери устойчивую длину шага. Передняя стопа полностью на опоре, таз направлен вперёд, корпус стабилен.`,
+      `Опускайся за счёт сгибания передней ноги, затем поднимайся через всю стопу. В зашагиваниях не отталкивайся чрезмерно задней ногой.`,
+      `Колено передней ноги движется по линии носка. Контролируй таз и не спеши в нижней точке.`,
+      `Не заваливай колено внутрь, не теряй равновесие и не сокращай амплитуду ради веса.`
+    );
+  }
+  if(n.includes('разгибание ног')){
+    return t(
+      `Совмести ось коленного сустава с осью тренажёра, валик размести над нижней частью голени. Спина прижата.`,
+      `Разогни колени до сильного сокращения квадрицепса и медленно верни вес вниз.`,
+      `Сделай короткую паузу сверху и не отрывай таз от сиденья.`,
+      `Не бросай стек, не разгибай колени рывком и не используй чрезмерно тяжёлый вес.`
+    );
+  }
+  if(n.includes('румын')||n.includes('становая')||n.includes('трап-грифа')){
+    return t(
+      `Стопы устойчиво, корпус собран, лопатки и широчайшие напряжены. Снаряд держи близко к телу.`,
+      `Отводи таз назад, позволяя коленям слегка согнуться. Опускай вес до выраженного растяжения задней поверхности бедра, затем разогни таз.`,
+      `Сохраняй нейтральную спину и давление всей стопой. В верхней точке просто выпрямись — не отклоняйся назад.`,
+      `Не округляй поясницу, не уводи штангу далеко от ног и не превращай движение в присед.`
+    );
+  }
+  if(n.includes('сгибание ног')){
+    return t(
+      `Настрой тренажёр так, чтобы коленный сустав совпадал с осью вращения. Зафиксируй таз и корпус.`,
+      `Согни колени максимально подконтрольно, затем медленно выпрями их, сохраняя напряжение.`,
+      `Сделай короткую паузу в сокращении и не отрывай таз от опоры.`,
+      `Не дёргай вес, не прогибай поясницу и не бросай стек в нижней точке.`
+    );
+  }
+  if(n.includes('hip thrust')||n.includes('ягодичный мост')||n.includes('мост')){
+    return t(
+      `Опора должна приходиться под нижнюю часть лопаток. Стопы поставь так, чтобы в верхней точке голени были близки к вертикали.`,
+      `Подними таз, сжимая ягодицы, до нейтрального положения корпуса. Подбородок слегка направлен к груди.`,
+      `Сделай паузу 1 секунду сверху и контролируемо опусти таз.`,
+      `Не переразгибай поясницу, не толкай вес носками и не теряй положение рёбер.`
+    );
+  }
+  if(n.includes('отведение')||n.includes('приведение')){
+    return t(
+      `Зафиксируй таз и корпус. Выбери амплитуду, в которой таз не вращается вслед за ногами.`,
+      `Плавно разведи/сведи ноги или отведи ногу назад по заданной траектории, затем медленно вернись.`,
+      `Работай целевой мышцей и удерживай корпус неподвижным.`,
+      `Не раскачивай туловище, не бросай стек и не сокращай амплитуду ради большего веса.`
+    );
+  }
+  if(g.includes('икры')||n.includes('носки')){
+    return t(
+      `Размести опору под передней частью стопы, пятка свободно движется вниз. Колени сохраняют положение выбранного варианта.`,
+      `Опустись до комфортного растяжения икр, затем поднимись максимально высоко на носки.`,
+      `Пауза 1 секунду внизу и сверху делает повторение значительно эффективнее.`,
+      `Не пружинь ахиллом, не выполняй короткие быстрые повторения и не заваливай стопу наружу.`
+    );
+  }
+  if(n.includes('планка')){
+    return t(
+      `Локти или ладони под плечами. Таз, грудная клетка и голова образуют одну линию.`,
+      `Удерживай положение, одновременно напрягая пресс, ягодицы и широчайшие. Дыши спокойно.`,
+      `Представляй, что слегка подтягиваешь таз к рёбрам, не округляя спину чрезмерно.`,
+      `Не провисай в пояснице, не поднимай таз слишком высоко и не задерживай дыхание.`
+    );
+  }
+  if(n.includes('скручив')){
+    return t(
+      `Ляг или встань у блока так, чтобы таз оставался стабильным. Начни с нейтрального положения позвоночника.`,
+      `Сократи расстояние между рёбрами и тазом за счёт мышц живота, затем медленно вернись.`,
+      `Двигай позвоночник сегмент за сегментом и не тяни себя руками.`,
+      `Не дёргай шею, не выполняй движение только тазобедренными сгибателями и не работай инерцией.`
+    );
+  }
+  if(n.includes('подъём ног')||n.includes('подъём коленей')){
+    return t(
+      `Зафиксируй корпус и начни с нейтрального таза. В висе сначала стабилизируй плечи.`,
+      `Подними колени или ноги, в конце слегка подкрутив таз вверх. Опускай медленно, не раскачиваясь.`,
+      `Сосредоточься на движении таза к рёбрам, а не просто на подъёме ног.`,
+      `Не раскачивайся, не прогибай поясницу внизу и не выполняй движение рывком.`
+    );
+  }
+  if(n.includes('колесо')||n.includes('pallof')||n.includes('ротация корпуса')){
+    return t(
+      `Создай сильное напряжение кора до начала движения. Таз и рёбра держи собранными.`,
+      `Выполняй движение только в амплитуде, где можешь контролировать позвоночник и таз.`,
+      `Выдыхай в самой сложной части повторения и сохраняй напряжение живота.`,
+      `Не допускай переразгибания поясницы и не ускоряй движение за счёт инерции.`
+    );
+  }
+  if(n.includes('фермер')||n.includes('сани')||n.includes('kettlebell')||n.includes('swing')){
+    return t(
+      `Создай устойчивую позицию корпуса и крепко удерживай инвентарь. Плечи опущены, взгляд вперёд.`,
+      `Двигайся или выполняй разгибание таза мощно, но контролируемо, сохраняя положение корпуса.`,
+      `Поддерживай ровный ритм и качество техники на всей дистанции/серии.`,
+      `Не сутулься, не теряй контроль таза и не продолжай подход после заметного разрушения техники.`
+    );
+  }
+  return t(
+    `Займи устойчивое исходное положение и настрой оборудование под свои пропорции. До первого повторения зафиксируй корпус.`,
+    `Выполняй движение в полной контролируемой амплитуде, направляя усилие в целевую мышечную группу.`,
+    `Опускай вес медленнее, чем поднимаешь. Увеличивай нагрузку только когда все повторения выглядят одинаково.`,
+    `Не используй рывок, болезненную амплитуду и вес, который заставляет резко менять технику.`
+  );
+}
+function exerciseTechnique(ex){
+  const d=exerciseTechniqueDetails(ex);
+  return `${d.setup} ${d.move}`;
+}
+
+
+function exercisePosture(ex){
+  const n=(ex.name||'').toLowerCase();
+  if(n.includes('pallof')) return 'СТОЯ БОКОМ К БЛОКУ / РЕЗИНКЕ';
+  if(n.includes('kettlebell swing')) return 'СТОЯ';
+  if(n.includes('жим ногами')) return 'СИДЯ В ТРЕНАЖЁРЕ';
+  if(n.includes('сгибание ног сидя')||n.includes('разгибание ног')||n.includes('жим плечами в тренажёре')||n.includes('жим гантелей сидя')||n.includes('жим арнольда')||n.includes('подъём на носки сидя')||n.includes('пуловер в тренажёре')) return 'СИДЯ';
+  if(n.includes('лёжа')||n.includes('сгибание ног лёжа')||n.includes('подъём ног лёжа')) return 'ЛЁЖА';
+  if(n.includes('подтяг')||n.includes('подъём коленей в висе')) return 'ВИС НА ПЕРЕКЛАДИНЕ';
+  if(n.includes('планка')) return 'УПОР НА ПОЛУ';
+  if(n.includes('болгар')) return 'СТОЯ, ЗАДНЯЯ НОГА НА СКАМЬЕ';
+  if(n.includes('тяга гантели одной рукой')) return 'В НАКЛОНЕ С ОПОРОЙ НА СКАМЬЮ';
+  if(n.includes('тяга штанги в наклоне')||n.includes('разведение гантелей в наклоне')) return 'СТОЯ В НАКЛОНЕ';
+  if(n.includes('гиперэкстенз')) return 'ЛЁЖА ЛИЦОМ ВНИЗ НА ГИПЕРЭКСТЕНЗИИ';
+  if(n.includes('hip thrust')) return 'ВЕРХ СПИНЫ НА СКАМЬЕ, ТАЗ НА ВЕСУ';
+  if(n.includes('ягодичный мост')) return 'ЛЁЖА НА СПИНЕ';
+  if(n.includes('жим в тренажёре')||n.includes('pec deck')||n.includes('обратный pec')) return 'СИДЯ В ТРЕНАЖЁРЕ';
+  if(n.includes('тяга верхнего блока')||n.includes('горизонтальная тяга')) return 'СИДЯ';
+  if(n.includes('гакк')) return 'СТОЯ В ГАКК-ТРЕНАЖЁРЕ';
+  if(n.includes('сани')) return 'СТОЯ С НАКЛОНОМ ВПЕРЁД';
+  if(n.includes('скручивания')) return n.includes('блок')?'СТОЯ ИЛИ НА КОЛЕНЯХ У БЛОКА':'ЛЁЖА НА СПИНЕ';
+  return 'СТОЯ';
+}
+function exerciseNeeded(ex){
+  const eq=(ex.equipment||'').trim();
+  const n=(ex.name||'').toLowerCase();
+  let extra='';
+  if(n.includes('жим')&&n.includes('лёжа'))extra=' Нужна устойчивая скамья; для штанги — стойки и страховочные упоры.';
+  else if(n.includes('подтяг'))extra=' Нужна устойчиво закреплённая перекладина.';
+  else if(n.includes('верхнего блока')||n.includes('кроссовер')||n.includes('блок'))extra=' Перед подходом проверь фиксацию рукояти, троса и выбранного веса.';
+  else if(n.includes('присед')&&n.includes('штанг'))extra=' Желательны силовая рама/стойки и страховочные упоры.';
+  else if(n.includes('жим ногами')||n.includes('гакк'))extra=' Настрой сиденье/платформу до начала рабочего подхода.';
+  else if(n.includes('румын')||n.includes('станов'))extra=' Нужна свободная зона перед собой и нескользкая опора.';
+  return `${eq?`Оборудование: ${eq}.`:'Специальное оборудование не требуется.'}${extra}`;
+}
+function exerciseSetupBeforeStart(ex){
+  const n=(ex.name||'').toLowerCase();
+  if(n.includes('kettlebell swing')){
+    return 'Поставь гирю на пол примерно в 30–50 см перед собой. Встань чуть шире плеч, носки немного наружу. Согни колени совсем немного, отведи таз назад и наклони корпус вперёд с прямой спиной. Возьми гирю двумя руками.';
+  }
+  if(n.includes('pallof')){
+    return 'Закрепи рукоять блока или резинку примерно на уровне середины груди. Встань БОКОМ к точке крепления. Стопы на ширине плеч, колени слегка согнуты. Возьми рукоять двумя руками и прижми её к груди.';
+  }
+  if(n.includes('жим гантелей лёжа')){
+    return 'Поставь скамью горизонтально. Сядь на край, гантели поставь на бёдра. Подними их к груди с помощью ног и ляг на спину. Стопы полностью на полу, ягодицы и верх спины на скамье.';
+  }
+  if(n.includes('жим штанги лёжа')){
+    return 'Ляг на горизонтальную скамью так, чтобы глаза были примерно под грифом. Стопы полностью на полу. Сведи и слегка опусти лопатки. Возьмись за гриф чуть шире плеч.';
+  }
+  if(n.includes('жим гантелей сидя')||n.includes('жим арнольда')){
+    return 'Поставь спинку скамьи примерно на 75–85°. Сядь глубоко, прижми верх спины к спинке, стопы полностью на полу. Подними гантели к уровню плеч.';
+  }
+  if(n.includes('подъём гантелей в стороны')){
+    return 'Встань прямо, стопы примерно на ширине таза. Гантели держи по бокам. Локти слегка согнуты, плечи опущены, живот напряжён.';
+  }
+  if(n.includes('подтяг')){
+    return 'Встань под перекладиной, возьмись выбранным хватом и повисни на прямых руках. Ноги можно слегка согнуть и скрестить. Плечи не поднимай к ушам.';
+  }
+  if(n.includes('тяга верхнего блока')){
+    return 'Сядь лицом к тренажёру. Зафиксируй бёдра под валиками. Возьмись за рукоять, выпрями руки вверх и слегка отклони корпус назад примерно на 10–15°.';
+  }
+  if(n.includes('тяга гантели одной рукой')){
+    return 'Поставь одно колено и одноимённую ладонь на скамью. Вторая стопа устойчиво на полу. Корпус почти параллелен полу, спина ровная. Свободной рукой держи гантель вниз.';
+  }
+  if(n.includes('тяга штанги в наклоне')){
+    return 'Встань, стопы на ширине таза. Держи штангу перед бёдрами. Слегка согни колени, отведи таз назад и наклони корпус примерно на 30–60°, сохраняя прямую спину.';
+  }
+  if(n.includes('приседания со штангой')){
+    return 'Поставь гриф на стойках примерно на уровне верхней части груди. Подойди под гриф, положи его на верх трапеций/задние дельты. Сними штангу, сделай 1–2 шага назад. Стопы примерно на ширине плеч, носки слегка наружу.';
+  }
+  if(n.includes('гоблет')){
+    return 'Встань прямо, стопы чуть шире таза или на ширине плеч. Держи гантель или гирю двумя руками у груди. Носки слегка наружу.';
+  }
+  if(n.includes('болгар')){
+    return 'Встань спиной к скамье примерно на расстоянии одного длинного шага. Поставь подъём задней стопы на скамью. Передняя стопа полностью на полу.';
+  }
+  if(n.includes('жим ногами')){
+    return 'Сядь в тренажёр, плотно прижми таз и спину к спинке. Поставь стопы на платформу примерно на ширине плеч. Колени направлены туда же, куда носки.';
+  }
+  if(n.includes('румын')){
+    return 'Встань прямо, стопы на ширине таза. Держи штангу или гантели перед бёдрами. Колени слегка согнуты. Живот напряжён, спина нейтральная.';
+  }
+  if(n.includes('сгибание рук с гантелями')||n.includes('молотковые')){
+    return 'Встань прямо, стопы на ширине таза. Гантели по бокам, локти рядом с корпусом, плечи опущены. Корпус не отклоняй назад.';
+  }
+  if(n.includes('планка')){
+    return 'Ляг лицом вниз. Поставь локти точно под плечами. Подними корпус на предплечьях и носках так, чтобы голова, грудь, таз и пятки находились примерно на одной линии.';
+  }
+  if(n.includes('pec deck')){
+    return 'Сядь в тренажёр, прижми спину к спинке. Отрегулируй высоту сиденья так, чтобы локти/рукояти были примерно на уровне середины груди.';
+  }
+  if(n.includes('тренажёр')||n.includes('машин')||n.includes('leg ')||n.includes('блок')){
+    return 'Сначала выставь сиденье, спинку, валики и ограничители под свой рост. Рабочий сустав должен быть примерно напротив оси тренажёра. Сядь или встань так, чтобы не приходилось тянуться к рукоятям.';
+  }
+  if(n.includes('лёжа')){
+    return 'Ляг на скамью или пол в соответствии с упражнением. Заранее поставь стопы и лопатки в устойчивое положение, затем бери рабочий вес.';
+  }
+  if(n.includes('сидя')){
+    return 'Сядь устойчиво, стопы полностью на полу. Таз и спина должны оставаться в одном положении весь подход.';
+  }
+  return 'Встань устойчиво, стопы примерно на ширине таза или плеч. Освободи пространство вокруг себя. Перед рабочим весом сделай 1–3 разминочных подхода.';
+}
+function exerciseBreathingTempo(ex){
+  const n=(ex.name||'').toLowerCase();
+  if(n.includes('kettlebell swing')){
+    return 'Вдохни, когда гиря проходит назад между ног. Резко выдохни в момент разгибания таза. Подъём получается взрывным, но возврат гири назад контролируй.';
+  }
+  if(n.includes('pallof')){
+    return 'Спокойно вдохни, когда рукоять у груди. Выдыхай во время выпрямления рук. Задержись на 1 секунду с прямыми руками, затем медленно верни их к груди.';
+  }
+  if(n.includes('присед')||n.includes('станов')||n.includes('румын')||n.includes('тяга трап')){
+    return 'Перед повторением вдохни и создай давление в животе и боках корпуса. На тяжёлом повторении удерживай это давление до прохождения самой трудной части, затем выдохни. Опускание примерно 2–3 секунды; подъём — уверенно без рывка.';
+  }
+  if(n.includes('планка')){
+    return 'Не задерживай дыхание. Делай спокойные короткие вдохи и выдохи, продолжая удерживать напряжение пресса и ягодиц.';
+  }
+  return 'Вдох выполняй на опускании или возврате веса, выдох — во время усилия. Опускай вес примерно 2–3 секунды, меняй направление без отскока и поднимай подконтрольно.';
+}
+function renderTechniqueDetails(ex){
+  const d=exerciseTechniqueDetails(ex);
+  return `<div class="technique-card"><h4>Техника выполнения — пошагово</h4><div class="posture-banner"><span class="posture-label">Положение тела</span><span class="posture-value">${esc(exercisePosture(ex))}</span></div><div class="tech-grid">
+    <div class="tech-item full"><b>1. Что понадобится</b>${esc(exerciseNeeded(ex))}</div>
+    <div class="tech-item full"><b>2. Подготовка оборудования и места</b>${esc(exerciseSetupBeforeStart(ex))}</div>
+    <div class="tech-item"><b>3. Исходная поза</b>${esc(d.setup)}</div>
+    <div class="tech-item"><b>4. Как выполнять повторение</b>${esc(d.move)}</div>
+    <div class="tech-item"><b>5. Дыхание и темп</b>${esc(exerciseBreathingTempo(ex))}</div>
+    <div class="tech-item"><b>6. На что обращать внимание</b>${esc(d.cues)}</div>
+    <div class="tech-item warn full"><b>7. Частые ошибки</b>${esc(d.avoid)}</div>
+  </div>${ex.notes?`<div class="exercise-copy" style="margin-top:8px"><b>Твои заметки:</b> ${esc(ex.notes)}</div>`:''}</div>`;
+}
+function exercisePhotoHtml(ex){
+  if(ex.image_url){
+    return `<div class="exercise-photo"><img src="${esc(ex.image_url)}" alt="${esc(ex.name)}"></div>`;
+  }
+  return `<div class="exercise-photo"><div class="icon">${exerciseEmoji(ex)}</div><div class="caption">${esc(exerciseImageHint(ex))}</div></div>`;
+}
+function latestCompletedSessionForExercise(exerciseId){
+  const items=completedWorkoutsForExercise(exerciseId);
+  if(!items.length) return null;
+  const w=items[items.length-1];
+  const row=workoutExerciseRows(w.id).find(x=>x.exercise_id===exerciseId);
+  const ss=row?setsForWorkoutExercise(row.id):[];
+  if(!ss.length) return {workout:w,topWeight:null,topReps:null};
+  const top=[...ss].sort((a,b)=> (Number(b.weight_kg)||0)-(Number(a.weight_kg)||0) || (Number(b.reps)||0)-(Number(a.reps)||0))[0];
+  return {workout:w,topWeight:top.weight_kg,topReps:top.reps,sets:ss};
+}
+function exerciseRecentHistory(exerciseId,limit=3){
+  const items=completedWorkoutsForExercise(exerciseId).slice(-limit).reverse();
+  return items.map(w=>{
+    const row=workoutExerciseRows(w.id).find(x=>x.exercise_id===exerciseId);
+    const ss=row?setsForWorkoutExercise(row.id):[];
+    if(!ss.length) return {date:w.started_at,label:'Нет подходов'};
+    const top=[...ss].sort((a,b)=> (Number(b.weight_kg)||0)-(Number(a.weight_kg)||0) || (Number(b.reps)||0)-(Number(a.reps)||0))[0];
+    return {date:w.started_at,label:`${n(top.weight_kg,2)} кг × ${top.reps}`};
+  });
+}
+async function addExerciseToWorkout(workoutId, exerciseId){
+  const pos=workoutExerciseRows(workoutId).length+1;
+  const res=await db.from('fitness_workout_exercises').insert({user_id:currentUser.id,workout_id:workoutId,exercise_id:exerciseId,position:pos});
+  if(res.error) throw res.error;
+}
+async function quickStartExercise(exerciseId){
+  const ex=exerciseById(exerciseId);
+  if(!ex) return;
+  try{
+    setBusy(true);
+    if(activeWorkoutId){
+      const existing=workoutExerciseRows(activeWorkoutId).find(x=>x.exercise_id===exerciseId);
+      if(!existing) await addExerciseToWorkout(activeWorkoutId, exerciseId);
+      await loadAll(); renderAll(); goView('workout'); toast(`Добавлено: ${ex.name}`);
+      return;
+    }
+    const loc = ex.training_location && ex.training_location!=='both' ? ex.training_location : uiTrainingLocation;
+    await startWorkout('', `${shortLocationTitle(loc)} · ${ex.name}`, loc, inferredSplitForExercise(ex));
+    if(activeWorkoutId){
+      const existing=workoutExerciseRows(activeWorkoutId).find(x=>x.exercise_id===exerciseId);
+      if(!existing) await addExerciseToWorkout(activeWorkoutId, exerciseId);
+    }
+    await loadAll(); renderAll(); goView('workout'); toast(`Старт: ${ex.name}`);
+  }catch(err){
+    console.error(err); alert(err.message||'Не удалось начать упражнение');
+  }finally{
+    setBusy(false);
+  }
+}
+
+async function toggleExerciseLocation(id,target){
+  const ex=exerciseById(id);if(!ex)return;
+  const cur=ex.training_location||'both';
+  const hasHome=cur==='home'||cur==='both',hasGym=cur==='gym'||cur==='both';
+  let next=cur;
+  if(target==='home'){
+    if(hasHome&&hasGym)next='gym';
+    else if(hasHome&&!hasGym)return alert('Это единственное место упражнения. Чтобы убрать его полностью, нажми «Удалить».');
+    else next='both';
+  }else{
+    if(hasHome&&hasGym)next='home';
+    else if(hasGym&&!hasHome)return alert('Это единственное место упражнения. Чтобы убрать его полностью, нажми «Удалить».');
+    else next='both';
+  }
+  const r=await db.from('fitness_exercises').update({training_location:next,updated_at:new Date().toISOString()}).eq('id',id);
+  if(r.error)return alert(r.error.message);
+  await loadAll();renderAll();toast(`Место обновлено: ${locationLabel(next)}`);
+}
+async function deleteExercise(id){
+  const ex=exerciseById(id);if(!ex)return;
+  const used=workoutExercises.filter(x=>x.exercise_id===id).length;
+  if(used){
+    if(!confirm(`Упражнение «${ex.name}» уже использовалось в ${used} тренировочных записях.\n\nОно будет удалено из текущего каталога и программ, но старая история и подходы сохранятся. Продолжить?`))return;
+    const rr=await db.from('fitness_routine_exercises').delete().eq('exercise_id',id).eq('user_id',currentUser.id);
+    if(rr.error)return alert(rr.error.message);
+    const r=await db.from('fitness_exercises').update({archived:true,updated_at:new Date().toISOString()}).eq('id',id);
+    if(r.error)return alert(r.error.message);
+    await loadAll();renderAll();toast('Упражнение удалено из каталога; история сохранена');
+    return;
+  }
+  if(!confirm(`Удалить упражнение «${ex.name}» полностью?\n\nОно ещё не использовалось в истории, поэтому будет удалено окончательно.`))return;
+  const r=await db.from('fitness_exercises').delete().eq('id',id);
+  if(r.error)return alert(r.error.message);
+  await loadAll();renderAll();toast('Упражнение удалено');
+}
+
+function homeEquipment(){
+  return equipment.filter(x=>x.active!==false&&(x.location||'home')==='home');
+}
+function renderHomeEquipmentSummary(){
+  const box=$('homeEquipmentSummary');if(!box)return;
+  if(uiTrainingLocation!=='home'){box.innerHTML='';return}
+  const rows=homeEquipment();
+  if(!rows.length){
+    box.innerHTML=`<div class="equipment-strip"><div class="title">Домашний зал</div><div class="inline-note">Оборудование ещё не заполнено. Его можно добавить в Настройках.</div></div>`;
+    return;
+  }
+  box.innerHTML=`<div class="equipment-strip"><div class="title">Домашний зал — доступное оборудование</div><div class="equipment-chips">${rows.map(x=>`<span class="equipment-chip ${x.category==='cardio'?'cardio':''}">${x.category==='cardio'?'Кардио · ':''}${esc(x.name)}</span>`).join('')}</div></div>`;
+}
+function renderHomeRoutineEquipmentHint(){
+  const box=$('homeRoutineEquipmentHint');if(!box)return;
+  if(uiTrainingLocation!=='home'){box.innerHTML='';return}
+  const treadmill=homeEquipment().some(x=>(x.name||'').toLowerCase().includes('беговая дорожка'));
+  box.innerHTML=`<div class="preset-card"><b>Домашний зал:</b> программы ниже используют только упражнения, которые реально можно выполнить на твоём домашнем оборудовании.${treadmill?' Беговую дорожку можно использовать 5–10 минут для разминки перед силовой частью; она не считается рабочим силовым подходом.':''}</div>`;
+}
+function renderEquipmentInventory(){
+  const box=$('equipmentInventory');if(!box)return;
+  const rows=homeEquipment();
+  box.innerHTML=rows.length?`<div class="inventory-grid">${rows.map(x=>`<div class="inventory-card"><div class="name">${esc(x.name)}</div><div class="meta">${x.category==='cardio'?'Кардио':'Силовое оборудование'}${x.notes?' · '+esc(x.notes):''}</div><div class="actions"><button class="btn" type="button" onclick="openEquipmentModal('${x.id}')">Изменить</button><button class="btn danger" type="button" onclick="deleteEquipment('${x.id}')">Удалить</button></div></div>`).join('')}</div>`:'<div class="empty">Список оборудования пока пуст.</div>';
+}
+function openEquipmentModal(id=''){
+  const x=equipment.find(e=>e.id===id)||{name:'',category:'strength',location:'home',notes:''};
+  openModal(`<h3>${id?'Изменить':'Добавить'} оборудование</h3><div class="form-grid"><label class="wide">Название<input id="eqName" value="${esc(x.name||'')}" placeholder="Например, верхний блок"></label><label>Тип<select id="eqCategory"><option value="strength" ${x.category!=='cardio'?'selected':''}>Силовое</option><option value="cardio" ${x.category==='cardio'?'selected':''}>Кардио</option></select></label><label class="wide">Заметка<textarea id="eqNotes">${esc(x.notes||'')}</textarea></label></div><div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveEquipment('${id}')">Сохранить</button></div>`);
+}
+async function saveEquipment(id=''){
+  const name=$('eqName').value.trim();if(!name)return alert('Введите название оборудования.');
+  const data={user_id:currentUser.id,name,category:$('eqCategory').value,location:'home',notes:$('eqNotes').value.trim(),active:true,updated_at:new Date().toISOString()};
+  const r=id?await db.from('fitness_equipment').update(data).eq('id',id):await db.from('fitness_equipment').insert(data);
+  if(r.error)return alert(r.error.message);
+  closeModal();await loadAll();renderAll();toast('Оборудование сохранено');
+}
+async function deleteEquipment(id){
+  const x=equipment.find(e=>e.id===id);if(!x)return;
+  if(!confirm(`Убрать «${x.name}» из списка домашнего оборудования? Упражнения и история тренировок не удаляются.`))return;
+  const r=await db.from('fitness_equipment').update({active:false,updated_at:new Date().toISOString()}).eq('id',id);
+  if(r.error)return alert(r.error.message);
+  await loadAll();renderAll();toast('Оборудование убрано');
+}
+async function seedKnownHomeGym(){
+  const rows=[
+    ['Гиперэкстензия','strength','Тренажёр для гиперэкстензии'],
+    ['Верхний блок','strength','Вертикальные тяги и разгибания рук'],
+    ['Горизонтальный блок','strength','Горизонтальные тяги / нижний трос'],
+    ['Скамья для пресса','core','Упражнения на пресс'],
+    ['Гантели разных весов','strength','Рабочие гантели разных весов'],
+    ['Скамья для жима лёжа','strength','Горизонтальный жим лёжа'],
+    ['EZ-гриф','strength','Сгибания и французский жим'],
+    ['Прямой гриф / штанга','strength','Становая тяга, румынская тяга, приседания, жимы'],
+    ['Резинки','strength','Разные сопротивления'],
+    ['Тренажёр для жима ногами','strength','Leg press'],
+    ['Стойка для штанги','strength','Для приседаний и работы со штангой'],
+    ['Беговая дорожка','cardio','Разминка и кардио']
+  ];
+  setBusy(true);
+  try{
+    for(const [name,category,notes] of rows){
+      const r=await db.from('fitness_equipment').upsert({user_id:currentUser.id,name,category,location:'home',notes,active:true,updated_at:new Date().toISOString()},{onConflict:'user_id,name,location'});
+      if(r.error)throw r.error;
+    }
+    await loadAll();renderAll();toast('Домашний зал заполнен');
+  }catch(e){alert(e.message||'Не удалось заполнить оборудование')}finally{setBusy(false)}
+}
+async function createHomeSplitTemplates(){
+  const templates=[
+    {name:'Дом — Спина',split:'back',notes:'Домашний сплит: верхний и горизонтальный блок, гантели, гиперэкстензия, EZ-гриф.',ex:['Тяга верхнего блока широким хватом','Горизонтальная тяга блока','Тяга гантели одной рукой','Гиперэкстензия','Сгибание рук с EZ-грифом','Молотковые сгибания']},
+    {name:'Дом — Грудь + плечи',split:'chest_shoulders',notes:'Домашний сплит: горизонтальный жим, гантели, плечи и трицепс на блоке/EZ-грифе.',ex:['Жим штанги лёжа','Жим гантелей лёжа','Жим над головой','Подъём гантелей в стороны','Разгибание рук на блоке','Французский жим EZ-грифа лёжа']},
+    {name:'Дом — Ноги',split:'legs',notes:'Домашний сплит: стойка со штангой, жим ногами, гантели и упражнения на заднюю поверхность бедра.',ex:['Приседания со штангой','Жим ногами','Румынская тяга со штангой','Болгарские выпады','Подъём на носки стоя с гантелями']}
+  ];
+  if(!confirm('Создать три готовые домашние сплит-программы: Спина, Грудь + плечи и Ноги? Уже существующие программы с такими названиями не будут дублироваться.'))return;
+  setBusy(true);
+  try{
+    for(const t of templates){
+      if(routines.some(r=>!r.archived&&r.name===t.name&&r.training_location==='home'))continue;
+      const ins=await db.from('fitness_routines').insert({user_id:currentUser.id,name:t.name,training_location:'home',split_group:t.split,notes:t.notes}).select().single();
+      if(ins.error)throw ins.error;
+      const chosen=t.ex.map(name=>exercises.find(e=>!e.archived&&e.name===name&&matchesLocation(e.training_location||'both','home'))).filter(Boolean);
+      if(chosen.length){
+        const rr=await db.from('fitness_routine_exercises').insert(chosen.map((e,i)=>({user_id:currentUser.id,routine_id:ins.data.id,exercise_id:e.id,position:i+1})));
+        if(rr.error)throw rr.error;
+      }
+    }
+    uiTrainingLocation='home';await loadAll();renderAll();toast('Домашние сплиты созданы');
+  }catch(e){console.error(e);alert(e.message||'Не удалось создать домашние сплиты')}finally{setBusy(false)}
+}
+function renderExercises(){
+  renderHomeEquipmentSummary();
+  document.querySelectorAll('[data-toploc]').forEach(b=>b.classList.toggle('active',b.dataset.toploc===uiTrainingLocation));
+  const allLive=exercises.filter(x=>!x.archived);
+  const live=allLive.filter(x=>matchesLocation(x.training_location||'both',uiTrainingLocation));
+  const totalSessions = exId => completedWorkoutsForExercise(exId).length;
+  $('exerciseList').innerHTML = live.length
+    ? `<div class="exercise-grid">${live.map(ex=>{
+        const rec=recommendation(ex.id);
+        const hist=exerciseRecentHistory(ex.id,3);
+        const last=latestCompletedSessionForExercise(ex.id);
+        const loc=ex.training_location||'both';
+        const homeOn=loc==='home'||loc==='both',gymOn=loc==='gym'||loc==='both';
+        return `<div class="exercise-card">
+          
+          <div class="exercise-body">
+            <div class="exercise-head">
+              <div>
+                <h3 style="margin:0">${esc(ex.name)} ${locationBadge(loc)}</h3>
+                <div class="exercise-tags">
+                  <span class="chip">${esc(ex.muscle_group||'Без группы')}</span>
+                  <span class="chip">${esc(ex.equipment||'Без оборудования')}</span>
+                  <span class="chip">${esc(exercisePrimaryMuscles(ex))}</span>
+                  <span class="chip">${esc(exercisePosture(ex))}</span>
+                </div>
+              </div>
+            </div>
+            <div class="exercise-copy"><b>Что это упражнение даёт:</b> ${esc(exerciseDescription(ex))}</div>
+            ${renderTechniqueDetails(ex)}
+            <div class="location-quick">
+              <span class="inline-note" style="align-self:center;margin-right:2px">Где доступно:</span>
+              <button class="btn ${homeOn?'active':''}" type="button" onclick="toggleExerciseLocation('${ex.id}','home')">Дом ${homeOn?'✓':'+'}</button>
+              <button class="btn ${gymOn?'active':''}" type="button" onclick="toggleExerciseLocation('${ex.id}','gym')">Зал ${gymOn?'✓':'+'}</button>
+            </div>
+            <div class="exercise-panels">
+              <div class="mini-panel">
+                <h4>История прогресса</h4>
+                ${hist.length ? `<div class="history-mini">${hist.map(h=>`<div class="history-row"><span>${fmtDate(h.date)}</span><b>${esc(h.label)}</b></div>`).join('')}</div>` : `<div class="empty" style="padding:0">Пока нет завершённых тренировок по этому упражнению.</div>`}
+                <div class="inline-note" style="margin-top:8px">Всего завершённых сессий: ${totalSessions(ex.id)}</div>
+              </div>
+              <div class="mini-panel">
+                <h4>Следующий раз</h4>
+                <div class="progress-highlight">${rec.weight===null?'Выбери стартовый вес':`${n(rec.weight,2)} кг × ${esc(rec.target)}`}</div>
+                <div class="exercise-copy" style="margin-top:6px">${esc(rec.why)}</div>
+                <div class="inline-note" style="margin-top:8px">Последний рабочий результат: ${last&&last.topWeight!=null?`${n(last.topWeight,2)} кг × ${last.topReps}`:'ещё нет данных'}</div>
+              </div>
+            </div>
+            <div class="exercise-actions">
+              <button class="btn primary" type="button" onclick="quickStartExercise('${ex.id}')">Начать</button>
+              <button class="btn" type="button" onclick="openExerciseModal('${ex.id}')">Редактировать</button>
+              <button class="btn danger" type="button" onclick="deleteExercise('${ex.id}')">Удалить</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}</div>`
+    : '<div class="empty">Для выбранного места пока нет упражнений.</div>';
+}
+
 function openExerciseModal(id=''){
-  const ex=exerciseById(id)||{name:'',muscle_group:'Другое',equipment:'',target_sets:3,rep_min:8,rep_max:12,increment_kg:2.5,progression_mode:'double',notes:''};
+  const ex=exerciseById(id)||{name:'',muscle_group:'Другое',equipment:'',training_location:'both',target_sets:3,rep_min:8,rep_max:12,increment_kg:2.5,progression_mode:'double',notes:''};
   const muscles=['Грудь','Спина','Плечи','Бицепс','Трицепс','Квадрицепс','Задняя поверхность бедра','Ягодицы','Икры','Кор','Другое'];
   openModal(`<h3>${id?'Изменить':'Новое'} упражнение</h3><div class="form-grid">
     <label class="wide">Название<input id="exName" value="${esc(ex.name)}"></label>
     <label>Группа<select id="exMuscle">${muscles.map(x=>`<option ${x===ex.muscle_group?'selected':''}>${x}</option>`).join('')}</select></label>
     <label>Оборудование<input id="exEquipment" value="${esc(ex.equipment||'')}" placeholder="Тренажёр, штанга, гантели…"></label>
+    <label>Где выполняется<select id="exLocation"><option value="home" ${ex.training_location==='home'?'selected':''}>Домашний зал</option><option value="gym" ${ex.training_location==='gym'?'selected':''}>Тренажёрный зал</option><option value="both" ${(ex.training_location||'both')==='both'?'selected':''}>Везде</option></select></label>
     <label>Рабочих подходов<input id="exSets" type="number" min="1" max="10" value="${ex.target_sets}"></label>
     <label>Диапазон повторений<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px"><input id="exRepMin" type="number" min="1" value="${ex.rep_min}"><input id="exRepMax" type="number" min="1" value="${ex.rep_max}"></div></label>
     <label>Шаг увеличения, кг<input id="exIncrement" type="number" min=".25" step=".25" value="${ex.increment_kg}"></label>
     <label>Метод прогрессии<select id="exMode"><option value="double" ${ex.progression_mode==='double'?'selected':''}>Двойная: повторения → вес</option><option value="reps" ${ex.progression_mode==='reps'?'selected':''}>Только повторения</option><option value="weight" ${ex.progression_mode==='weight'?'selected':''}>Приоритет веса</option></select></label>
     <label class="wide">Заметка<textarea id="exNotes">${esc(ex.notes||'')}</textarea></label>
-  </div><div class="note" style="margin-top:10px"><b>Двойная прогрессия:</b> сначала увеличиваем повторения внутри выбранного диапазона. Когда верхняя граница достигнута во всех рабочих подходах, увеличиваем вес на указанный шаг.</div>
+  </div><div class="note" style="margin-top:10px"><b>Двойная прогрессия:</b> сначала увеличиваем повторения внутри выбранного диапазона. Когда верхняя граница достигнута во всех рабочих подходах, увеличиваем вес на указанный шаг.<br><br><b>Место тренировки:</b> его также можно быстро менять прямо на карточке упражнения кнопками «Дом» и «Зал».</div>
   <div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveExercise('${id}')">Сохранить</button></div>`);
 }
 async function saveExercise(id=''){
-  const data={user_id:currentUser.id,name:$('exName').value.trim(),muscle_group:$('exMuscle').value,equipment:$('exEquipment').value.trim(),target_sets:+$('exSets').value,rep_min:+$('exRepMin').value,rep_max:+$('exRepMax').value,increment_kg:+$('exIncrement').value,progression_mode:$('exMode').value,notes:$('exNotes').value.trim(),updated_at:new Date().toISOString()};
+  const data={user_id:currentUser.id,name:$('exName').value.trim(),muscle_group:$('exMuscle').value,equipment:$('exEquipment').value.trim(),training_location:$('exLocation').value,target_sets:+$('exSets').value,rep_min:+$('exRepMin').value,rep_max:+$('exRepMax').value,increment_kg:+$('exIncrement').value,progression_mode:$('exMode').value,notes:$('exNotes').value.trim(),updated_at:new Date().toISOString()};
   if(!data.name)return alert('Введите название.');if(data.rep_max<data.rep_min)return alert('Максимум повторений должен быть не меньше минимума.');
   const r=id?await db.from('fitness_exercises').update(data).eq('id',id):await db.from('fitness_exercises').insert(data);if(r.error)return alert(r.error.message);closeModal();await loadAll();renderAll();toast('Упражнение сохранено');
 }
 async function archiveExercise(id){if(!confirm('Переместить упражнение в архив? История тренировок сохранится.'))return;const r=await db.from('fitness_exercises').update({archived:true,updated_at:new Date().toISOString()}).eq('id',id);if(r.error)return alert(r.error.message);await loadAll();renderAll()}
 async function addStarterExercises(){
-  if(!confirm('Добавить базовый набор упражнений? Уже существующие упражнения не будут дублироваться.'))return;
+  if(!confirm('Добавить расширенный каталог упражнений? Уже существующие упражнения по названию не будут дублироваться.'))return;
+  // name, muscle_group, equipment, location, sets, repMin, repMax, increment
   const base=[
-    ['Жим лёжа','Грудь','Штанга',3,6,10,2.5],['Жим ногами','Квадрицепс','Тренажёр',3,8,12,5],
-    ['Тяга верхнего блока','Спина','Тренажёр',3,8,12,2.5],['Горизонтальная тяга','Спина','Тренажёр',3,8,12,2.5],
-    ['Жим над головой','Плечи','Гантели / тренажёр',3,8,12,2],['Разведения в стороны','Плечи','Гантели / блок',3,10,15,1],
-    ['Сгибание ног','Задняя поверхность бедра','Тренажёр',3,8,12,2.5],['Разгибание ног','Квадрицепс','Тренажёр',3,10,15,2.5],
-    ['Сгибание рук','Бицепс','Гантели / блок',3,8,12,1],['Разгибание рук на блоке','Трицепс','Блок',3,8,12,1]
+    // ГРУДЬ
+    ['Жим штанги лёжа','Грудь','Штанга','both',3,6,10,2.5],
+    ['Жим штанги на наклонной скамье','Грудь','Штанга / наклонная скамья','gym',3,6,10,2.5],
+    ['Жим гантелей лёжа','Грудь','Гантели / скамья','both',3,8,12,2],
+    ['Жим гантелей на наклонной скамье','Грудь','Гантели / наклонная скамья','gym',3,8,12,2],
+    ['Разводка гантелей лёжа','Грудь','Гантели / скамья','both',3,10,15,1],
+    ['Отжимания','Грудь','Вес тела','both',3,8,20,0.5],
+    ['Отжимания на брусьях с акцентом на грудь','Грудь','Брусья','gym',3,6,12,2.5],
+    ['Жим в тренажёре на грудь','Грудь','Chest press','gym',3,8,12,2.5],
+    ['Жим в тренажёре под наклоном','Грудь','Incline chest press','gym',3,8,12,2.5],
+    ['Сведение рук в Pec Deck','Грудь','Pec Deck','gym',3,10,15,2.5],
+    ['Сведение рук в кроссовере сверху вниз','Грудь','Кроссовер','gym',3,10,15,2.5],
+    ['Сведение рук в кроссовере снизу вверх','Грудь','Кроссовер','gym',3,10,15,2.5],
+
+    // СПИНА
+    ['Подтягивания прямым хватом','Спина','Турник','gym',3,5,12,2.5],
+    ['Подтягивания нейтральным хватом','Спина','Турник','gym',3,5,12,2.5],
+    ['Тяга штанги в наклоне','Спина','Штанга','both',3,6,10,2.5],
+    ['Тяга гантели одной рукой','Спина','Гантель / скамья','both',3,8,12,2],
+    ['Пуловер с гантелью','Спина','Гантель / скамья','both',3,10,15,1],
+    ['Тяга резинки к поясу','Спина','Резинка','home',3,10,20,1],
+    ['Тяга верхнего блока широким хватом','Спина','Верхний блок','both',3,8,12,2.5],
+    ['Тяга верхнего блока нейтральным хватом','Спина','Верхний блок','both',3,8,12,2.5],
+    ['Горизонтальная тяга блока','Спина','Горизонтальный блок','both',3,8,12,2.5],
+    ['Тяга Т-грифа','Спина','Т-гриф','gym',3,6,10,2.5],
+    ['Тяга в тренажёре с упором грудью','Спина','Row machine','gym',3,8,12,2.5],
+    ['Пуловер в тренажёре','Спина','Pullover machine','gym',3,10,15,2.5],
+    ['Пуловер на верхнем блоке прямыми руками','Спина','Верхний блок','both',3,10,15,2.5],
+    ['Гиперэкстензия','Спина','Гиперэкстензия','both',3,10,15,2.5],
+
+    // ПЛЕЧИ
+    ['Жим гантелей сидя','Плечи','Гантели / скамья','both',3,8,12,2],
+    ['Жим штанги стоя','Плечи','Штанга','both',3,6,10,2.5],
+    ['Подъём гантелей в стороны','Плечи','Гантели','both',3,10,20,1],
+    ['Подъём гантелей перед собой','Плечи','Гантели','both',3,10,15,1],
+    ['Разведение гантелей в наклоне','Плечи','Гантели','both',3,10,20,1],
+    ['Жим Арнольда','Плечи','Гантели','both',3,8,12,2],
+    ['Жим плечами в тренажёре','Плечи','Shoulder press','gym',3,8,12,2.5],
+    ['Подъём рук в стороны в тренажёре','Плечи','Lateral raise machine','gym',3,10,15,2.5],
+    ['Обратный Pec Deck','Плечи','Reverse Pec Deck','gym',3,10,15,2.5],
+    ['Face Pull','Плечи','Верхний блок / резинка','both',3,10,20,2.5],
+    ['Подъём руки в сторону на нижнем блоке','Плечи','Кроссовер','gym',3,10,15,1.25],
+
+    // БИЦЕПС
+    ['Сгибание рук с гантелями стоя','Бицепс','Гантели','both',3,8,12,1],
+    ['Молотковые сгибания','Бицепс','Гантели','both',3,8,12,1],
+    ['Сгибание одной руки на скамье Скотта с гантелью','Бицепс','Гантель / скамья Скотта','gym',3,8,12,1],
+    ['Сгибание рук со штангой','Бицепс','Штанга','both',3,6,12,1.25],
+    ['Сгибание рук с EZ-грифом','Бицепс','EZ-гриф','both',3,8,12,1.25],
+    ['Сгибание рук на нижнем блоке','Бицепс','Горизонтальный / нижний блок','both',3,8,12,1.25],
+    ['Сгибание рук в тренажёре Скотта','Бицепс','Preacher curl machine','gym',3,8,12,2.5],
+    ['Сгибание рук на блоках из-за корпуса','Бицепс','Кроссовер','gym',3,10,15,1.25],
+
+    // ТРИЦЕПС
+    ['Французский жим гантели сидя','Трицепс','Гантель','both',3,8,12,1],
+    ['Французский жим EZ-грифа лёжа','Трицепс','EZ-гриф / скамья','both',3,8,12,1.25],
+    ['Узкий жим штанги лёжа','Трицепс','Штанга','both',3,6,10,2.5],
+    ['Отжимания узким хватом','Трицепс','Вес тела','both',3,8,20,0.5],
+    ['Разгибание рук на верхнем блоке с канатом','Трицепс','Канат / блок','gym',3,8,15,1.25],
+    ['Разгибание рук на верхнем блоке с прямой рукоятью','Трицепс','Верхний блок','both',3,8,15,1.25],
+    ['Разгибание руки из-за головы на блоке','Трицепс','Кроссовер','gym',3,10,15,1.25],
+    ['Отжимания в тренажёре на брусьях','Трицепс','Dip machine','gym',3,8,12,2.5],
+
+    // КВАДРИЦЕПС / НОГИ
+    ['Приседания со штангой','Квадрицепс','Штанга / стойка','both',3,5,10,2.5],
+    ['Фронтальные приседания','Квадрицепс','Штанга / стойка','both',3,5,10,2.5],
+    ['Гоблет-присед','Квадрицепс','Гантель / гиря','both',3,8,15,2],
+    ['Болгарские выпады','Квадрицепс','Гантели / скамья','both',3,8,12,2],
+    ['Выпады назад с гантелями','Квадрицепс','Гантели','both',3,8,12,2],
+    ['Зашагивания на тумбу','Квадрицепс','Гантели / тумба','gym',3,8,15,2],
+    ['Приседания с резинкой','Квадрицепс','Резинка','home',3,12,20,1],
+    ['Жим ногами','Квадрицепс','Leg press','gym',3,8,15,5],
+    ['Гакк-присед','Квадрицепс','Hack squat','gym',3,8,12,5],
+    ['Приседания в Смите','Квадрицепс','Smith machine','gym',3,8,12,2.5],
+    ['Разгибание ног','Квадрицепс','Leg extension','gym',3,10,15,2.5],
+    ['Выпады в Смите','Квадрицепс','Smith machine','gym',3,8,12,2.5],
+
+    // ЗАДНЯЯ ПОВЕРХНОСТЬ БЕДРА / ЯГОДИЦЫ
+    ['Румынская тяга со штангой','Задняя поверхность бедра','Штанга','both',3,6,12,2.5],
+    ['Румынская тяга с гантелями','Задняя поверхность бедра','Гантели','both',3,8,12,2],
+    ['Ягодичный мост со штангой','Ягодицы','Штанга / скамья','both',3,8,15,2.5],
+    ['Ягодичный мост с гантелью','Ягодицы','Гантель','home',3,10,20,2],
+    ['Сгибание ног с фитболом','Задняя поверхность бедра','Фитбол','gym',3,10,20,1],
+    ['Сгибание ног лёжа','Задняя поверхность бедра','Leg curl','gym',3,8,15,2.5],
+    ['Сгибание ног сидя','Задняя поверхность бедра','Seated leg curl','gym',3,8,15,2.5],
+    ['Hip Thrust в тренажёре','Ягодицы','Hip thrust machine','gym',3,8,15,5],
+    ['Отведение ноги назад в кроссовере','Ягодицы','Кроссовер','gym',3,10,20,1.25],
+    ['Отведение ног в тренажёре','Ягодицы','Abductor machine','gym',3,12,20,2.5],
+    ['Приведение ног в тренажёре','Ягодицы','Adductor machine','gym',3,12,20,2.5],
+
+    // ИКРЫ
+    ['Подъём на носки стоя с гантелями','Икры','Гантели','both',4,10,20,2],
+    ['Подъём на носок одной ногой','Икры','Вес тела / гантель','home',4,12,25,1],
+    ['Подъём на носки стоя в тренажёре','Икры','Calf raise machine','gym',4,10,20,5],
+    ['Подъём на носки сидя','Икры','Seated calf raise','gym',4,10,20,5],
+    ['Икры в жиме ногами','Икры','Leg press','both',4,12,20,5],
+
+    // КОР
+    ['Планка','Кор','Вес тела','both',3,20,60,5],
+    ['Боковая планка','Кор','Вес тела','both',3,20,60,5],
+    ['Скручивания','Кор','Вес тела','both',3,12,25,1],
+    ['Подъём ног лёжа','Кор','Вес тела','both',3,10,20,1],
+    ['Подъём коленей в висе','Кор','Турник','both',3,8,20,1],
+    ['Колесо для пресса','Кор','Ab wheel','gym',3,6,15,1],
+    ['Pallof Press','Кор','Блок / резинка','both',3,10,15,1.25],
+    ['Скручивания на верхнем блоке','Кор','Канат / верхний блок','both',3,10,20,2.5],
+    ['Ротация корпуса в кроссовере','Кор','Кроссовер','gym',3,10,15,1.25],
+
+    // ОБЩАЯ СИЛА / ФУНКЦИОНАЛ
+    ['Становая тяга классическая','Задняя поверхность бедра','Штанга','both',3,4,8,2.5],
+    ['Тяга трап-грифа','Задняя поверхность бедра','Trap bar','gym',3,5,10,5],
+    ['Фермерская прогулка','Кор','Гантели / гири','both',3,20,60,2],
+    ['Kettlebell Swing','Ягодицы','Гиря','gym',3,10,20,2],
+    ['Тяга саней','Квадрицепс','Сани','gym',4,15,40,5],
+    ['Толкание саней','Квадрицепс','Сани','gym',4,15,40,5]
   ];
-  const existing=new Set(exercises.map(x=>x.name.toLowerCase()));
-  const rows=base.filter(x=>!existing.has(x[0].toLowerCase())).map(x=>({user_id:currentUser.id,name:x[0],muscle_group:x[1],equipment:x[2],target_sets:x[3],rep_min:x[4],rep_max:x[5],increment_kg:x[6],progression_mode:'double'}));
-  if(!rows.length)return toast('Базовые упражнения уже добавлены');const r=await db.from('fitness_exercises').insert(rows);if(r.error)return alert(r.error.message);await loadAll();renderAll();toast('Базовый набор добавлен');
+  const existing=new Set(exercises.map(x=>x.name.trim().toLowerCase()));
+  const rows=base.filter(x=>!existing.has(x[0].toLowerCase())).map(x=>({
+    user_id:currentUser.id,name:x[0],muscle_group:x[1],equipment:x[2],training_location:x[3],
+    target_sets:x[4],rep_min:x[5],rep_max:x[6],increment_kg:x[7],progression_mode:'double'
+  }));
+  if(!rows.length)return toast('Расширенный каталог уже добавлен');
+  const r=await db.from('fitness_exercises').insert(rows);
+  if(r.error)return alert(r.error.message);
+  await loadAll();renderAll();toast(`Добавлено упражнений: ${rows.length}`);
+}
+function renderRoutines(){
+  renderHomeRoutineEquipmentHint();
+  document.querySelectorAll('[data-toploc]').forEach(b=>b.classList.toggle('active',b.dataset.toploc===uiTrainingLocation));
+  document.querySelectorAll('[data-split]').forEach(b=>b.classList.toggle('active',b.dataset.split===uiSplitGroup));
+  const live=routines.filter(x=>!x.archived && matchesLocation(x.training_location||'both', uiTrainingLocation) && (x.split_group||'custom')===uiSplitGroup);
+  $('routineList').innerHTML=live.length?`<div class="routine-grid">${live.map(r=>`<div class="routine-card">
+    <div class="head"><div><h3>${esc(r.name)} ${splitBadge(r.split_group||'custom')} ${locationBadge(r.training_location||'both')}</h3><div class="note">${esc(r.notes||'')}</div></div><div class="actions" style="margin-top:0"><button class="btn" onclick="openRoutineModal('${r.id}')">Редактировать</button><button class="btn primary" onclick="startWorkout('${r.id}')">Начать</button></div></div>
+    <div class="routine-list">${routineExercises.filter(x=>x.routine_id===r.id).sort((a,b)=>a.position-b.position).map(x=>{const ex=exerciseById(x.exercise_id);return `<div class="routine-row"><span>${x.position}. ${esc(ex?.name||'Упражнение')}</span><span class="note">${ex?`${ex.target_sets} × ${ex.rep_min}–${ex.rep_max}`:''}</span></div>`}).join('')}</div>
+  </div>`).join('')}</div>`:`<div class="empty">Пока нет программы «${splitLabel(uiSplitGroup)}» для ${uiTrainingLocation==='home'?'домашнего':'обычного'} зала. Нажми «＋ Программа», чтобы создать её.</div>`;
 }
 
-function renderRoutines(){
-  const live=routines.filter(x=>!x.archived);
-  $('routineList').innerHTML=live.length?`<div class="grid g2">${live.map(r=>{const items=routineExercises.filter(x=>x.routine_id===r.id).sort((a,b)=>a.position-b.position);return `<div class="routine-card"><div class="head"><div><h3>${esc(r.name)}</h3><div class="note">${esc(r.notes||'')}</div></div><button class="btn primary" onclick="startWorkout('${r.id}')">Начать</button></div><div class="routine-list">${items.map((x,i)=>`<div class="routine-row"><span>${i+1}. ${esc(exerciseById(x.exercise_id)?.name||'Удалённое упражнение')}</span><span>${exerciseById(x.exercise_id)?.target_sets||'—'} × ${exerciseById(x.exercise_id)?.rep_min||'—'}–${exerciseById(x.exercise_id)?.rep_max||'—'}</span></div>`).join('')||'<div class="empty">В программе нет упражнений.</div>'}</div><div class="exercise-actions"><button class="btn" onclick="openRoutineModal('${r.id}')">Изменить</button><button class="btn danger" onclick="archiveRoutine('${r.id}')">Архив</button></div></div>`}).join('')}</div>`:'<div class="panel"><div class="empty">Создайте первую программу и добавьте в неё упражнения.</div></div>';
-}
 function openRoutineModal(id=''){
-  const r=routineById(id)||{name:'',notes:''},selected=id?routineExercises.filter(x=>x.routine_id===id).sort((a,b)=>a.position-b.position).map(x=>x.exercise_id):[];
-  openModal(`<h3>${id?'Изменить':'Новая'} программа</h3><div class="form-grid"><label class="wide">Название<input id="rtName" value="${esc(r.name)}" placeholder="Например, Спина"></label><label class="wide">Заметка<textarea id="rtNotes">${esc(r.notes||'')}</textarea></label></div>
-  <div style="margin-top:12px;font-weight:750">Упражнения по порядку</div><div class="note">Поставьте номер порядка. Пустое поле — упражнение не входит в программу.</div>
-  <div class="table-wrap" style="margin-top:8px"><table><thead><tr><th>Упражнение</th><th>Порядок</th><th>Схема</th></tr></thead><tbody>${exercises.filter(x=>!x.archived).map(ex=>{const pos=selected.indexOf(ex.id);return `<tr><td>${esc(ex.name)}</td><td><input class="rtPos" data-id="${ex.id}" type="number" min="1" max="50" value="${pos>=0?pos+1:''}" style="width:80px"></td><td>${ex.target_sets} × ${ex.rep_min}–${ex.rep_max}</td></tr>`}).join('')}</tbody></table></div>
+  const r=routineById(id)||{name:'',notes:'',training_location:uiTrainingLocation||'home',split_group:uiSplitGroup||'back'},selected=id?routineExercises.filter(x=>x.routine_id===id).sort((a,b)=>a.position-b.position).map(x=>x.exercise_id):[];
+  openModal(`<h3>${id?'Изменить':'Новая'} сплит-программа</h3><div class="form-grid">
+    <label>Название<input id="rtName" value="${esc(r.name)}" placeholder="${splitLabel(r.split_group||'back')}"></label>
+    <label>День сплита<select id="rtSplit" onchange="refreshRoutineExerciseChoices('${id}')">
+      <option value="back" ${(r.split_group||'back')==='back'?'selected':''}>Спина</option>
+      <option value="chest_shoulders" ${r.split_group==='chest_shoulders'?'selected':''}>Грудь + плечи</option>
+      <option value="legs" ${r.split_group==='legs'?'selected':''}>Ноги</option>
+      <option value="custom" ${r.split_group==='custom'?'selected':''}>Другое</option>
+    </select></label>
+    <label>Место тренировки<select id="rtLocation" onchange="refreshRoutineExerciseChoices('${id}')"><option value="home" ${r.training_location==='home'?'selected':''}>Домашний зал</option><option value="gym" ${r.training_location==='gym'?'selected':''}>Тренажёрный зал</option><option value="both" ${(r.training_location||'both')==='both'?'selected':''}>Везде</option></select></label>
+    <label class="wide">Заметка<textarea id="rtNotes">${esc(r.notes||'')}</textarea></label>
+  </div>
+  <div style="margin-top:12px;font-weight:750">Упражнения по порядку</div><div class="note">Для стандартного сплита программа показывает только логичные группы мышц: Спина + бицепс; Грудь + плечи + трицепс; Ноги + ягодицы + икры. Поставь номер порядка. Пустое поле — упражнение не входит в программу.</div>
+  <div id="routineExerciseChoices" class="table-wrap" style="margin-top:8px"></div>
   <div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveRoutine('${id}')">Сохранить</button></div>`,true);
+  refreshRoutineExerciseChoices('${id}');
 }
+
+function refreshRoutineExerciseChoices(id=''){
+  const loc=$('rtLocation')?.value||'both',split=$('rtSplit')?.value||'custom';
+  const selected=id?routineExercises.filter(x=>x.routine_id===id).sort((a,b)=>a.position-b.position).map(x=>x.exercise_id):[];
+  let list=exercises.filter(x=>!x.archived&&matchesLocation(x.training_location||'both',loc));
+  if(split!=='custom')list=list.filter(x=>exerciseFitsSplit(x,split));
+  const box=$('routineExerciseChoices');if(!box)return;
+  box.innerHTML=list.length?`<table><thead><tr><th>Упражнение</th><th>Группа</th><th>Место</th><th>Порядок</th><th>Схема</th></tr></thead><tbody>${list.map(ex=>{const pos=selected.indexOf(ex.id);return `<tr><td>${esc(ex.name)}</td><td>${esc(ex.muscle_group||'—')}</td><td>${locationBadge(ex.training_location||'both')}</td><td><input class="rtPos" data-id="${ex.id}" type="number" min="1" max="50" value="${pos>=0?pos+1:''}" style="width:80px"></td><td>${ex.target_sets} × ${ex.rep_min}–${ex.rep_max}</td></tr>`}).join('')}</tbody></table>`:'<div class="empty">Для этого сплита и выбранного места упражнений пока нет.</div>';
+}
+
 async function saveRoutine(id=''){
-  const name=$('rtName').value.trim();if(!name)return alert('Введите название программы.');
+  const name=$('rtName').value.trim(),training_location=$('rtLocation').value,split_group=$('rtSplit').value;if(!name)return alert('Введите название программы.');
   const picked=[...document.querySelectorAll('.rtPos')].map(x=>({exercise_id:x.dataset.id,pos:Number(x.value)})).filter(x=>x.pos>0).sort((a,b)=>a.pos-b.pos);
   let rid=id;
-  if(id){const r=await db.from('fitness_routines').update({name,notes:$('rtNotes').value.trim(),updated_at:new Date().toISOString()}).eq('id',id);if(r.error)return alert(r.error.message);await db.from('fitness_routine_exercises').delete().eq('routine_id',id)}
-  else{const r=await db.from('fitness_routines').insert({user_id:currentUser.id,name,notes:$('rtNotes').value.trim()}).select().single();if(r.error)return alert(r.error.message);rid=r.data.id}
+  if(id){const r=await db.from('fitness_routines').update({name,training_location,split_group,notes:$('rtNotes').value.trim(),updated_at:new Date().toISOString()}).eq('id',id);if(r.error)return alert(r.error.message);await db.from('fitness_routine_exercises').delete().eq('routine_id',id)}
+  else{const r=await db.from('fitness_routines').insert({user_id:currentUser.id,name,training_location,split_group,notes:$('rtNotes').value.trim()}).select().single();if(r.error)return alert(r.error.message);rid=r.data.id}
   if(picked.length){const r=await db.from('fitness_routine_exercises').insert(picked.map((x,i)=>({user_id:currentUser.id,routine_id:rid,exercise_id:x.exercise_id,position:i})));if(r.error)return alert(r.error.message)}
   closeModal();await loadAll();renderAll();toast('Программа сохранена');
 }
@@ -453,15 +1438,31 @@ async function archiveRoutine(id){if(!confirm('Переместить прогр
 
 function openStartWorkout(){
   if(activeWorkoutId)return goView('workout');
-  const opts=routines.filter(x=>!x.archived).map(r=>`<option value="${r.id}">${esc(r.name)}</option>`).join('');
-  openModal(`<h3>Начать тренировку</h3><div class="form-grid"><label>Программа<select id="startRoutine"><option value="">Свободная тренировка</option>${opts}</select></label><label>Название<input id="startTitle" placeholder="Тренировка"></label></div><div class="note" style="margin-top:10px">Если выбрана программа, упражнения добавятся автоматически в сохранённом порядке. В свободную тренировку упражнения можно добавить вручную.</div><div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="startWorkoutFromModal()">Начать</button></div>`);
-  $('startRoutine').onchange=()=>{const r=routineById($('startRoutine').value);if(r&&!$('startTitle').value)$('startTitle').value=r.name};
+  openModal(`<h3>Начать сплит-тренировку</h3><div class="form-grid">
+    <label>Где тренируемся<select id="startLocation" onchange="refreshStartRoutineOptions()"><option value="home" ${uiTrainingLocation==='home'?'selected':''}>Домашний зал</option><option value="gym" ${uiTrainingLocation==='gym'?'selected':''}>Тренажёрный зал</option></select></label>
+    <label>День сплита<select id="startSplit" onchange="refreshStartRoutineOptions()"><option value="back" ${uiSplitGroup==='back'?'selected':''}>Спина</option><option value="chest_shoulders" ${uiSplitGroup==='chest_shoulders'?'selected':''}>Грудь + плечи</option><option value="legs" ${uiSplitGroup==='legs'?'selected':''}>Ноги</option><option value="custom" ${uiSplitGroup==='custom'?'selected':''}>Другое</option></select></label>
+    <label>Программа<select id="startRoutine" onchange="syncStartWorkoutTitle()"></select></label>
+    <label class="wide">Название<input id="startTitle" placeholder="Тренировка"></label>
+  </div><div class="note" style="margin-top:10px">Сначала выбирается место, затем день сплита. После этого показываются только подходящие программы. Упражнения «Везде» остаются доступными и дома, и в зале.</div><div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="startWorkoutFromModal()">Начать</button></div>`);
+  refreshStartRoutineOptions();
 }
-async function startWorkoutFromModal(){await startWorkout($('startRoutine').value,$('startTitle').value.trim())}
-async function startWorkout(routineId='',customTitle=''){
+function refreshStartRoutineOptions(){
+  const loc=$('startLocation')?.value||'home',split=$('startSplit')?.value||'back';
+  const list=routines.filter(x=>!x.archived&&matchesLocation(x.training_location||'both',loc)&&(x.split_group||'custom')===split);
+  $('startRoutine').innerHTML=`<option value="">Свободная тренировка: ${splitLabel(split)}</option>${list.map(r=>`<option value="${r.id}">${esc(r.name)}</option>`).join('')}`;
+  syncStartWorkoutTitle();
+}
+function syncStartWorkoutTitle(){
+  const r=routineById($('startRoutine')?.value);
+  const split=$('startSplit')?.value||'custom';
+  $('startTitle').value=r?r.name:splitLabel(split);
+}
+async function startWorkoutFromModal(){await startWorkout($('startRoutine').value,$('startTitle').value.trim(),$('startLocation').value,$('startSplit').value)}
+
+async function startWorkout(routineId='',customTitle='',trainingLocation='',splitGroup=''){
   if(activeWorkoutId){closeModal();goView('workout');return}
-  const r=routineById(routineId),title=customTitle||r?.name||'Тренировка';
-  const ins=await db.from('fitness_workouts').insert({user_id:currentUser.id,title,routine_id:routineId||null}).select().single();if(ins.error)return alert(ins.error.message);
+  const r=routineById(routineId),title=customTitle||r?.name||'Тренировка',training_location=trainingLocation||r?.training_location||'both',split_group=splitGroup||r?.split_group||'custom';
+  const ins=await db.from('fitness_workouts').insert({user_id:currentUser.id,title,routine_id:routineId||null,training_location,split_group}).select().single();if(ins.error)return alert(ins.error.message);
   const wid=ins.data.id;
   if(routineId){
     const items=routineExercises.filter(x=>x.routine_id===routineId).sort((a,b)=>a.position-b.position);
@@ -473,7 +1474,7 @@ function renderActiveWorkout(){
   const box=$('activeWorkout'),btn=$('finishWorkoutBtn');if(!activeWorkoutId){btn.style.display='none';box.innerHTML='<div class="panel"><div class="empty">Активной тренировки нет. Нажмите «Новая», чтобы начать.</div></div>';return}
   btn.style.display='inline-block';const w=workoutById(activeWorkoutId),rows=workoutExerciseRows(activeWorkoutId);
   const wa=activityForWorkout(w.id);
-  box.innerHTML=`<div class="panel"><div class="workout-head"><div><h2 style="margin:0">${esc(w.title)}</h2><div class="note">${fmtDateTime(w.started_at)}${wa&&activityMetricText(wa)?` · <b>${esc(activityMetricText(wa))}</b>`:''}</div></div><div class="actions" style="margin-top:0"><button class="btn" onclick="syncFitnessWithings()">↻ Withings</button><button class="btn" onclick="openAddWorkoutExercise()">＋ Добавить упражнение</button></div></div></div>`+
+  box.innerHTML=`<div class="panel"><div class="workout-head"><div><h2 style="margin:0">${esc(w.title)} ${splitBadge(w.split_group||'custom')} ${locationBadge(w.training_location||'both')}</h2><div class="note">${fmtDateTime(w.started_at)}${wa&&activityMetricText(wa)?` · <b>${esc(activityMetricText(wa))}</b>`:''}</div></div><div class="actions" style="margin-top:0"><button class="btn" onclick="syncFitnessWithings()">↻ Withings</button><button class="btn" onclick="openAddWorkoutExercise()">＋ Добавить упражнение</button><button class="btn danger" onclick="deleteWorkout('${w.id}')">Удалить тренировку</button></div></div></div>`+
   (rows.length?rows.map(row=>renderWorkoutExercise(row)).join(''):'<div class="panel"><div class="empty">Добавьте первое упражнение.</div></div>');
 }
 function renderWorkoutExercise(row){
@@ -482,7 +1483,7 @@ function renderWorkoutExercise(row){
   return `<div class="workout-ex"><div class="workout-ex-title"><div><h3>${esc(ex.name)}</h3><div class="exercise-meta">${ex.target_sets} × ${ex.rep_min}–${ex.rep_max} · шаг ${n(ex.increment_kg,2)} кг</div></div><button class="btn danger" onclick="removeWorkoutExercise('${row.id}')">Убрать</button></div><div class="rec-card" style="margin-top:10px"><div class="rec-title">Рекомендация сегодня</div><div class="rec-main">${rec.weight===null?'Выберите стартовый вес':n(rec.weight,2)+' кг'} · ${esc(rec.target)}</div><div class="rec-why">${esc(rec.why)}</div></div>${rows.join('')}</div>`;
 }
 function openAddWorkoutExercise(){
-  const used=new Set(workoutExerciseRows(activeWorkoutId).map(x=>x.exercise_id)),avail=exercises.filter(x=>!x.archived&&!used.has(x.id));
+  const used=new Set(workoutExerciseRows(activeWorkoutId).map(x=>x.exercise_id)),w=workoutById(activeWorkoutId),loc=w?.training_location||'both',split=w?.split_group||'custom',avail=exercises.filter(x=>!x.archived&&!used.has(x.id)&&matchesLocation(x.training_location||'both',loc)&&(split==='custom'||exerciseFitsSplit(x,split)));
   openModal(`<h3>Добавить упражнение</h3>${avail.length?`<label>Упражнение<select id="addWorkoutEx">${avail.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select></label>`:'<div class="empty">Все доступные упражнения уже добавлены.</div>'}<div class="actions"><button class="btn" onclick="closeModal()">Отмена</button>${avail.length?'<button class="btn primary" onclick="addWorkoutExercise()">Добавить</button>':''}</div>`);
 }
 async function addWorkoutExercise(){const exid=$('addWorkoutEx').value,pos=workoutExerciseRows(activeWorkoutId).length;const r=await db.from('fitness_workout_exercises').insert({user_id:currentUser.id,workout_id:activeWorkoutId,exercise_id:exid,position:pos});if(r.error)return alert(r.error.message);closeModal();await loadAll();renderAll()}
@@ -493,6 +1494,20 @@ async function saveSet(weid,no){
   const r=await db.from('fitness_sets').upsert(data,{onConflict:'workout_exercise_id,set_no'});if(r.error)return alert(r.error.message);await loadAll();renderAll();toast(`Подход ${no} сохранён`);
 }
 async function removeWorkoutExercise(id){if(setsForWorkoutExercise(id).length&&!confirm('У упражнения уже есть подходы. Удалить его из этой тренировки вместе с подходами?'))return;await db.from('fitness_workout_exercises').delete().eq('id',id);await loadAll();renderAll()}
+
+async function deleteWorkout(id){
+  const w=workoutById(id);if(!w)return;
+  const rowCount=workoutExerciseRows(id).length;
+  const setCount=workoutExerciseRows(id).reduce((sum,row)=>sum+setsForWorkoutExercise(row.id).length,0);
+  const msg=`Удалить тренировку «${w.title}»?\n\nБудут удалены ${rowCount} упражнений внутри этой тренировки и ${setCount} сохранённых подходов. Это действие нельзя отменить.\n\nДанные Withings не удаляются — они просто перестанут быть связаны с этой тренировкой.`;
+  if(!confirm(msg))return;
+  const wasActive=activeWorkoutId===id;
+  const r=await db.from('fitness_workouts').delete().eq('id',id);
+  if(r.error)return alert(r.error.message);
+  await loadAll();renderAll();
+  if(wasActive)goView('dashboard');
+  toast('Тренировка удалена');
+}
 async function finishActiveWorkout(){
   if(!activeWorkoutId)return;const rows=workoutExerciseRows(activeWorkoutId);if(!rows.length&&!confirm('В тренировке нет упражнений. Всё равно завершить?'))return;
   const r=await db.from('fitness_workouts').update({ended_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',activeWorkoutId);if(r.error)return alert(r.error.message);await loadAll();renderAll();goView('dashboard');toast('Тренировка завершена');
@@ -502,10 +1517,11 @@ function renderHistory(){
   const done=workouts.filter(w=>w.ended_at);
   $('historyList').innerHTML=done.length?done.map(w=>{
     const rows=workoutExerciseRows(w.id),a=activityForWorkout(w.id),metrics=activityMetricText(a);
-    return `<div class="routine-card" style="margin-bottom:9px"><div class="head"><div><h3>${esc(w.title)}</h3><div class="note">${fmtDateTime(w.started_at)} · объём ${n(workoutVolume(w.id)/1000,1)} т${metrics?` · <b>${esc(metrics)}</b>`:''}</div></div>${a?'<span class="badge blue">Withings</span>':''}</div><div class="routine-list">${rows.map(row=>{const ex=exerciseById(row.exercise_id),ss=setsForWorkoutExercise(row.id);return `<div class="routine-row"><span><b>${esc(ex?.name||'Упражнение')}</b></span><span>${ss.map(s=>`${n(s.weight_kg,2)}×${s.reps}`).join(' · ')||'—'}</span></div>`}).join('')}</div></div>`
+    return `<div class="routine-card" style="margin-bottom:9px"><div class="head"><div><h3>${esc(w.title)} ${splitBadge(w.split_group||'custom')} ${locationBadge(w.training_location||'both')}</h3><div class="note">${fmtDateTime(w.started_at)} · объём ${n(workoutVolume(w.id)/1000,1)} т${metrics?` · <b>${esc(metrics)}</b>`:''}</div></div><div class="history-card-actions">${a?'<span class="badge blue">Withings</span>':''}<button class="btn danger" type="button" onclick="deleteWorkout('${w.id}')">Удалить тренировку</button></div></div><div class="routine-list">${rows.map(row=>{const ex=exerciseById(row.exercise_id),ss=setsForWorkoutExercise(row.id);return `<div class="routine-row"><span><b>${esc(ex?.name||'Удалённое упражнение')}</b></span><span>${ss.map(s=>`${n(s.weight_kg,2)}×${s.reps}`).join(' · ')||'—'}</span></div>`}).join('')}</div></div>`
   }).join(''):'<div class="empty">История появится после завершения первой тренировки.</div>';
   renderWithingsActivityList();
 }
+
 function renderWithingsActivityList(){
   const box=$('withingsActivityList');if(!box)return;
   if(!fitnessActivities.length){box.innerHTML='<div class="empty">Данные тренировок Withings пока не импортированы.</div>';return}
@@ -649,6 +1665,7 @@ async function saveProfile(){
   const data={display_name:$('profileName').value.trim(),bodyweight_source:$('profileWeightSource').value,updated_at:new Date().toISOString()};const r=await db.from('fitness_profiles').update(data).eq('user_id',currentUser.id).select().single();if(r.error)return alert(r.error.message);profile=r.data;toast('Настройки сохранены')
 }
 function renderSettings(){
+  renderEquipmentInventory();
   if(profile){$('profileName').value=profile.display_name||'';$('profileWeightSource').value=profile.bodyweight_source||'manual'}
   $('moduleAccess').innerHTML=`<b>Fitness Studio:</b> ${moduleAccess?.fitness?'разрешён':'нет доступа'}<br><b>HRT Health Studio:</b> ${moduleAccess?.hrt?'разрешён':'нет доступа'}<br><b>Wealth Studio:</b> ${moduleAccess?.wealth?'разрешён':'нет доступа'}<br><br>Это не просто скрытие пунктов меню. Таблицы Fitness Studio защищены Row Level Security: текущий аккаунт может читать и изменять только строки со своим user_id.`;
 }
