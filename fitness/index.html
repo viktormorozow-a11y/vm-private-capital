@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Fitness Studio v2.5.5 — Withings Body Composition</title>
+<title>VM Fitness Studio v2.5.6 — Withings Body Composition</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -113,6 +113,13 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 .split-badge.custom{color:#c9d4de;background:rgba(255,255,255,.03)}
 .split-help{margin-top:10px;border:1px solid var(--line);border-radius:14px;padding:11px;background:rgba(255,255,255,.018);font-size:11px;line-height:1.55;color:#cad8e4}
 .split-help b{color:#f1d39c}
+.dashboard-next-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dashboard-next-col{border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.018);padding:12px}
+.dashboard-next-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+.dashboard-next-head h3{margin:0;font-size:14px}
+.dashboard-next-empty{padding:13px 10px;border:1px dashed var(--line);border-radius:11px;color:var(--muted);font-size:11px;line-height:1.45}
+.dashboard-next-col .routine-row:last-child{margin-bottom:0}
+
 .routine-toolbar.stack{align-items:flex-start;flex-direction:column}
 @media(max-width:800px){.tech-grid{grid-template-columns:1fr}.tech-item.full{grid-column:auto}}
 
@@ -377,6 +384,7 @@ html,body{max-width:100%;overflow-x:hidden}.app,aside,main,nav,.view{min-width:0
  .set-grid .btn{grid-column:3;height:46px;align-self:end;width:100%}.sets-hint{margin-left:0}
  .workout-ex-title{gap:8px}.workout-ex-title>.btn{width:auto}.rec-main{font-size:17px}
  .sets-toolbar{align-items:flex-start}.bulk-actions{width:100%}.bulk-actions .btn{width:100%}.workout-visual{min-height:148px}.workout-visual .content{padding:15px}.workout-visual h3{font-size:19px}
+ .dashboard-next-grid{grid-template-columns:1fr}
  .finish-summary{grid-template-columns:1fr 1fr}.finish-summary .metric-mini:last-child{grid-column:1/-1}
  .progress-canvas,.analytics-canvas{min-width:0;width:100%;max-width:100%}
  table{min-width:max-content}.table-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -386,7 +394,7 @@ html,body{max-width:100%;overflow-x:hidden}.app,aside,main,nav,.view{min-width:0
  .action-row{grid-template-columns:minmax(0,1fr) 24px}.action-row .btn{font-size:14px}.ctx-help{flex-shrink:0}
 }
 
-/* v2.5.5 history + progress QA fixes */
+/* v2.5.6 history + progress QA fixes */
 .history-executed{display:grid;gap:7px;margin-top:10px}
 .history-ex-row{display:grid;grid-template-columns:minmax(220px,1fr) minmax(260px,auto) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:rgba(255,255,255,.018)}
 .history-ex-row .set-summary{font-size:11px;color:#dce6ee;text-align:right;line-height:1.45}
@@ -413,7 +421,7 @@ html,body{max-width:100%;overflow-x:hidden}.app,aside,main,nav,.view{min-width:0
 <div id="authGate" class="auth-gate">
   <div class="auth-card">
     <div class="auth-brand">VM PRIVATE SUITE</div>
-    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v2.5.5</span></div>
+    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v2.5.6</span></div>
     <div class="auth-sub">Личный тренировочный дневник. Данные каждого аккаунта полностью раздельны.</div>
     <div class="auth-tabs">
       <button id="tabLogin" class="active" type="button">Войти</button>
@@ -431,7 +439,7 @@ html,body{max-width:100%;overflow-x:hidden}.app,aside,main,nav,.view{min-width:0
 
 <div class="app">
 <aside>
-  <div class="brand"><b>VM FITNESS STUDIO</b><small>Тренировки · Прогрессия · Рекорды</small><small style="color:#d6ad62;font-weight:750">Версия 2.5.5</small></div>
+  <div class="brand"><b>VM FITNESS STUDIO</b><small>Тренировки · Прогрессия · Рекорды</small><small style="color:#d6ad62;font-weight:750">Версия 2.5.6</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Сегодня</button>
     <button class="nav" data-view="workout">Тренировка</button>
@@ -1301,8 +1309,22 @@ function renderDashboard(){
   ].map(x=>`<div class="card"><div class="klabel">${x[0]}</div><div class="kval">${x[1]}</div><div class="ksub">${x[2]}</div></div>`).join('');
   const active=activeWorkoutId&&workoutById(activeWorkoutId);
   if(active)$('nextWorkout').innerHTML=`<div class="rec-card"><div class="rec-title">Тренировка уже начата</div><div class="rec-main">${esc(active.title)}</div><div class="rec-why">${fmtDateTime(active.started_at)}</div><button class="btn primary" style="margin-top:10px" onclick="goView('workout')">Продолжить</button></div>`;
-  else if(routines.filter(r=>!r.archived).length)$('nextWorkout').innerHTML=routines.filter(r=>!r.archived).slice(0,3).map(r=>`<div class="routine-row"><span><b>${esc(r.name)}</b> ${locationBadge(r.training_location||'both')}<br><small style="color:var(--muted)">${routineExercises.filter(x=>x.routine_id===r.id).length} упражнений</small></span><button class="btn" onclick="startWorkout('${r.id}')">Начать</button></div>`).join('');
-  else $('nextWorkout').innerHTML='<div class="empty">Создайте программу тренировки или начните свободную тренировку.</div>';
+  else{
+    const live=routines.filter(r=>!r.archived);
+    const renderNextLocation=(location)=>{
+      const label=location==='home'?'Дом':'Зал';
+      const list=live.filter(r=>matchesLocation(r.training_location||'both',location)).sort((a,b)=>{
+        const order={back:1,chest_shoulders:2,legs:3,custom:4};
+        return (order[a.split_group||'custom']||9)-(order[b.split_group||'custom']||9)||String(a.name).localeCompare(String(b.name),'ru');
+      });
+      const body=list.length?list.slice(0,4).map(r=>{
+        const count=routineExercises.filter(x=>x.routine_id===r.id).length;
+        return `<div class="routine-row"><span><b>${esc(r.name)}</b> ${locationBadge(r.training_location||'both')}<br><small style="color:var(--muted)">${count} упражнений${count===0?' · требуется восстановление':''}</small></span>${count?`<button class="btn" onclick="startWorkout('${r.id}')">Начать</button>`:`<button class="btn" onclick="${location==='home'?'createHomeSplitTemplates()':'createGymSplitTemplates()'}">Восстановить</button>`}</div>`;
+      }).join(''):`<div class="dashboard-next-empty">Для ${location==='home'?'дома':'зала'} программ пока нет.<div class="actions" style="margin-top:9px"><button class="btn primary" type="button" onclick="${location==='home'?'createHomeSplitTemplates()':'createGymSplitTemplates()'}">Создать / восстановить ${label}</button></div></div>`;
+      return `<div class="dashboard-next-col"><div class="dashboard-next-head"><h3>${label}</h3>${locationBadge(location)}</div>${body}</div>`;
+    };
+    $('nextWorkout').innerHTML=`<div class="dashboard-next-grid">${renderNextLocation('home')}${renderNextLocation('gym')}</div>`;
+  }
   const last=done[0],lastActivity=last?activityForWorkout(last.id):null,lastMetrics=activityMetricText(lastActivity);$('lastWorkout').innerHTML=last?`<b>${esc(last.title)}</b><div class="note" style="margin-top:6px">${fmtDateTime(last.started_at)} · ${workoutExerciseRows(last.id).length} упражнений · объём ${n(workoutVolume(last.id)/1000,1)} т${lastMetrics?`<br><span style="color:var(--blue)">${esc(lastMetrics)}</span>`:''}</div>`:'<div class="empty">Завершённых тренировок пока нет.</div>';
   renderRecentPrs();
 }
