@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Fitness Studio v2.1.0 — Withings Body Composition</title>
+<title>VM Fitness Studio v2.2.0 — Withings Body Composition</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -238,13 +238,25 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
   .ctx-help[data-help]:hover:after{display:none}
   .ctx-help{cursor:pointer}
 }
+
+.period-start-card{
+  border:1px solid rgba(255,126,138,.24);
+  background:linear-gradient(135deg,rgba(255,126,138,.08),rgba(214,173,98,.035));
+  border-radius:16px;padding:15px;margin-bottom:14px;
+}
+.period-start-grid{display:grid;grid-template-columns:minmax(220px,360px) auto auto 1fr;gap:10px;align-items:end}
+.period-start-card h2{margin:0 0 5px;font-size:17px}
+.period-start-card .current-start{font-size:11px;color:var(--muted);line-height:1.45}
+.period-start-card .current-start b{color:#ffb7bd}
+@media(max-width:900px){.period-start-grid{grid-template-columns:1fr 1fr}.period-start-grid .start-note{grid-column:1/-1}}
+@media(max-width:560px){.period-start-grid{grid-template-columns:1fr}.period-start-grid .start-note{grid-column:auto}}
 </style>
 </head>
 <body>
 <div id="authGate" class="auth-gate">
   <div class="auth-card">
     <div class="auth-brand">VM PRIVATE SUITE</div>
-    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v2.1.0</span></div>
+    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v2.2.0</span></div>
     <div class="auth-sub">Личный тренировочный дневник. Данные каждого аккаунта полностью раздельны.</div>
     <div class="auth-tabs">
       <button id="tabLogin" class="active" type="button">Войти</button>
@@ -262,7 +274,7 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 
 <div class="app">
 <aside>
-  <div class="brand"><b>VM FITNESS STUDIO</b><small>Тренировки · Прогрессия · Рекорды</small><small style="color:#d6ad62;font-weight:750">Версия 2.1.0</small></div>
+  <div class="brand"><b>VM FITNESS STUDIO</b><small>Тренировки · Прогрессия · Рекорды</small><small style="color:#d6ad62;font-weight:750">Версия 2.2.0</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Сегодня</button>
     <button class="nav" data-view="workout">Тренировка</button>
@@ -395,7 +407,7 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 <section id="cycle" class="view">
   <div class="top">
     <div><h1>Цикл и активность</h1><div class="sub">Менструальный календарь, самочувствие, ориентировочные фазы цикла и приватная история интимной активности. Прогноз фаз является приблизительным и не предназначен для контрацепции.</div></div>
-    <div class="actions" style="margin-top:0"><button class="btn" type="button" onclick="openIntimateModal()">＋ Интимная активность</button><button class="btn primary" type="button" onclick="openCycleDayModal()">＋ День цикла</button></div>
+    <div class="actions" style="margin-top:0"><button class="btn" type="button" onclick="openIntimateModal()">＋ Интимная активность</button><button class="btn" type="button" onclick="openCycleDayModal()">＋ Самочувствие / день</button><button class="btn primary" type="button" onclick="markPeriodStartedToday()">Начались месячные сегодня</button></div>
   </div>
   <div id="cycleContent"></div>
 </section>
@@ -513,6 +525,11 @@ const CONTEXT_HELP={
 
   // Cycle / sensitive
   'День цикла':'Считается от первого отмеченного дня месячных. День 1 — первый день нового цикла.',
+  'Дата начала месячных':'Укажите первый день текущих месячных. Эта дата становится днём 1 нового цикла и используется для всех прогнозов.',
+  'Сохранить начало':'Сохраняет выбранную дату как первый день текущих месячных и день 1 нового цикла. Если текущая дата начала была ошибочной, она будет заменена.',
+  'Начались сегодня':'Быстрая кнопка: сегодняшняя дата сразу становится первым днём месячных и днём 1 нового цикла.',
+  'Начались месячные сегодня':'Сразу записывает сегодняшнюю дату как первый день месячных и день 1 нового цикла.',
+  'Самочувствие / день':'Открывает запись конкретного дня: месячные, интенсивность, энергия, сон, боль, симптомы и заметка.',
   'Менструация':'Отметьте, были ли в этот день месячные.',
   'Это первый день нового цикла':'Включайте только на первом дне очередных месячных. Эта дата используется как точка отсчёта для прогноза.',
   'Интенсивность':'Субъективная интенсивность менструальных выделений: лёгкая, средняя или сильная.',
@@ -2170,6 +2187,76 @@ function renderCycleStrengthAnalysis(){
   if(!data.some(x=>x.count))return '<div class="empty">Когда появятся тренировки и хотя бы один отмеченный цикл, здесь появится сравнение силового индекса по фазам.</div>';
   return `<div class="grid g4">${data.map(x=>`<div class="phase-card"><div class="phase-name">${x.phase}</div><div class="phase-score">${x.score!=null?n(x.score,0)+' %':'—'}</div><div class="note">${x.count?x.count+' тренировок':'Нет данных'}</div></div>`).join('')}</div><div class="note" style="margin-top:9px">Индекс сравнивает рабочую силу каждого упражнения с её собственным максимумом. Это показывает корреляцию, но не доказывает, что изменение силы вызвано именно фазой цикла.</div>`;
 }
+
+function renderPeriodStartCard(){
+  const latest=latestCycleStart();
+  const value=latest||dateKey(new Date());
+  return `<div class="period-start-card">
+    <h2>Когда начались месячные?</h2>
+    <div class="period-start-grid">
+      <label>Дата начала месячных<input id="periodStartDate" type="date" value="${value}"></label>
+      <button class="btn primary" type="button" onclick="savePeriodStartFromField()">Сохранить начало</button>
+      <button class="btn" type="button" onclick="markPeriodStartedToday()">Начались сегодня</button>
+      <div class="start-note">
+        <div class="current-start">${latest?`Сейчас начало текущего цикла записано как <b>${fmtDate(latest)}</b>.`:'Начало текущего цикла ещё не указано.'}<br>Выбранная дата станет <b>днём 1 нового цикла</b>. Прогноз окончания и следующего цикла пересчитается автоматически.</div>
+      </div>
+    </div>
+  </div>`;
+}
+async function markPeriodStartedToday(){
+  const input=$('periodStartDate');if(input)input.value=dateKey(new Date());
+  await savePeriodStartFromField();
+}
+async function savePeriodStartFromField(){
+  if(!sensitiveAccessAvailable)return alert('Нет доступа к приватному разделу.');
+  const input=$('periodStartDate'),newDate=input?.value;
+  if(!newDate)return alert('Укажите дату начала месячных.');
+  if(localDateFromKey(newDate)>addDaysDate(new Date(),1))return alert('Дата начала месячных не может быть в будущем.');
+
+  const oldStart=latestCycleStart();
+  if(oldStart===newDate){
+    const existing=cycleDays.find(x=>x.day_date===newDate)||{};
+    const r=await db.from('fitness_cycle_days').upsert({
+      user_id:dataUserId(),day_date:newDate,is_period:true,is_cycle_start:true,
+      flow:existing.flow||null,energy:existing.energy??null,sleep_quality:existing.sleep_quality??null,
+      pain_level:existing.pain_level??null,symptoms:existing.symptoms||[],notes:existing.notes||null,
+      updated_at:new Date().toISOString()
+    },{onConflict:'user_id,day_date'});
+    if(r.error)return alert(r.error.message);
+    await loadSensitiveData();renderAll();toast('Начало месячных сохранено');
+    return;
+  }
+
+  // The top field represents the CURRENT cycle start. If there is a recent
+  // latest start, changing the field means correcting that date rather than
+  // accidentally creating two starts for the same cycle.
+  if(oldStart){
+    const diff=Math.abs(daysBetween(oldStart,newDate));
+    if(diff<=14){
+      if(!confirm(`Изменить начало текущего цикла с ${fmtDate(oldStart)} на ${fmtDate(newDate)}?`))return;
+      const oldRow=cycleDays.find(x=>x.day_date===oldStart);
+      if(oldRow){
+        const rr=await db.from('fitness_cycle_days').update({is_cycle_start:false,updated_at:new Date().toISOString()}).eq('id',oldRow.id);
+        if(rr.error)return alert(rr.error.message);
+      }
+    }else{
+      if(!confirm(`Записать ${fmtDate(newDate)} как начало нового цикла?`))return;
+    }
+  }
+
+  const existing=cycleDays.find(x=>x.day_date===newDate)||{};
+  const r=await db.from('fitness_cycle_days').upsert({
+    user_id:dataUserId(),day_date:newDate,is_period:true,is_cycle_start:true,
+    flow:existing.flow||null,energy:existing.energy??null,sleep_quality:existing.sleep_quality??null,
+    pain_level:existing.pain_level??null,symptoms:existing.symptoms||[],notes:existing.notes||null,
+    updated_at:new Date().toISOString()
+  },{onConflict:'user_id,day_date'});
+  if(r.error)return alert(r.error.message);
+
+  cycleCalendarMonth=new Date(localDateFromKey(newDate).getFullYear(),localDateFromKey(newDate).getMonth(),1);
+  await loadSensitiveData();renderAll();toast(`Начало цикла: ${fmtDate(newDate)}`);
+}
+
 function renderCycle(){
   const box=$('cycleContent');if(!box)return;
   if(!shouldShowCycleModule()){box.innerHTML='';return}
@@ -2187,6 +2274,7 @@ function renderCycle(){
     <div class="cycle-kpi"><div class="l">Средняя длина цикла</div><div class="v">${obs||effectiveCycleLength()} дн.</div><div class="note">${obs?'По записанным циклам':'По настройке'}</div></div>
     <div class="cycle-kpi"><div class="l">Интимная активность · 30 дней</div><div class="v">${intimate30}</div><div class="note">Только отмеченные записи</div></div>
   </div>
+  ${renderPeriodStartCard()}
   <div class="panel">
     <div class="cycle-toolbar"><div><h2>${cycleCalendarMonth.toLocaleDateString('ru-RU',{month:'long',year:'numeric'})}</h2><div class="note">Красным — факт месячных, штриховкой — ожидаемое продолжение текущих, золотым — следующий прогноз. Нажмите на день для записи.</div></div><div class="actions" style="margin-top:0"><button class="btn" onclick="shiftCycleMonth(-1)">←</button><button class="btn" onclick="cycleCalendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);renderCycle()">Сегодня</button><button class="btn" onclick="shiftCycleMonth(1)">→</button></div></div>
     ${renderCycleCalendar()}
@@ -2248,7 +2336,7 @@ function openCycleDayModal(k=''){
     <div class="form-grid">
       <label>Дата<input id="cyDate" type="date" value="${key}"></label>
       <label>Менструация<select id="cyPeriod"><option value="0" ${!x.is_period?'selected':''}>Нет</option><option value="1" ${x.is_period?'selected':''}>Да</option></select></label>
-      <label>Это первый день нового цикла<select id="cyStart"><option value="0" ${!x.is_cycle_start?'selected':''}>Нет</option><option value="1" ${x.is_cycle_start?'selected':''}>Да</option></select></label>
+      ${x.is_cycle_start?`<div class="wide note" style="padding:9px 10px;border:1px solid rgba(255,126,138,.18);border-radius:10px;background:rgba(255,126,138,.05)">Этот день сейчас является <b>днём 1 цикла</b>. Чтобы изменить начало месячных, используйте отдельное поле «Дата начала месячных» над календарём.</div>`:''}
       <label>Интенсивность<select id="cyFlow"><option value="">—</option><option value="light" ${x.flow==='light'?'selected':''}>Лёгкая</option><option value="medium" ${x.flow==='medium'?'selected':''}>Средняя</option><option value="heavy" ${x.flow==='heavy'?'selected':''}>Сильная</option></select></label>
       <label>Энергия 1–5<input id="cyEnergy" type="number" min="1" max="5" value="${x.energy??''}" placeholder="—"></label>
       <label>Качество сна 1–5<input id="cySleep" type="number" min="1" max="5" value="${x.sleep_quality??''}" placeholder="—"></label>
@@ -2261,7 +2349,8 @@ function openCycleDayModal(k=''){
 async function saveCycleDay(id=''){
   const day_date=$('cyDate').value;if(!day_date)return alert('Выберите дату.');
   const val=id=>{const v=$(id).value;return v===''?null:Number(v)};
-  const data={user_id:dataUserId(),day_date,is_period:$('cyPeriod').value==='1',is_cycle_start:$('cyStart').value==='1',flow:$('cyFlow').value||null,energy:val('cyEnergy'),sleep_quality:val('cySleep'),pain_level:val('cyPain'),symptoms:[...document.querySelectorAll('.cySym:checked')].map(x=>x.value),notes:$('cyNotes').value.trim()||null,updated_at:new Date().toISOString()};
+  const existing=cycleDays.find(x=>x.day_date===day_date)||{};
+  const data={user_id:dataUserId(),day_date,is_period:$('cyPeriod').value==='1',is_cycle_start:!!existing.is_cycle_start,flow:$('cyFlow').value||null,energy:val('cyEnergy'),sleep_quality:val('cySleep'),pain_level:val('cyPain'),symptoms:[...document.querySelectorAll('.cySym:checked')].map(x=>x.value),notes:$('cyNotes').value.trim()||null,updated_at:new Date().toISOString()};
   if(data.is_cycle_start)data.is_period=true;
   const r=await db.from('fitness_cycle_days').upsert(data,{onConflict:'user_id,day_date'});
   if(r.error)return alert(r.error.message);
