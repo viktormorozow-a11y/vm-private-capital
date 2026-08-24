@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Fitness Studio v2.5.6 — Withings Body Composition</title>
+<title>VM Fitness Studio v2.5.7 — Withings Body Composition</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -394,7 +394,7 @@ html,body{max-width:100%;overflow-x:hidden}.app,aside,main,nav,.view{min-width:0
  .action-row{grid-template-columns:minmax(0,1fr) 24px}.action-row .btn{font-size:14px}.ctx-help{flex-shrink:0}
 }
 
-/* v2.5.6 history + progress QA fixes */
+/* v2.5.7 history + progress QA fixes */
 .history-executed{display:grid;gap:7px;margin-top:10px}
 .history-ex-row{display:grid;grid-template-columns:minmax(220px,1fr) minmax(260px,auto) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:rgba(255,255,255,.018)}
 .history-ex-row .set-summary{font-size:11px;color:#dce6ee;text-align:right;line-height:1.45}
@@ -415,13 +415,30 @@ html,body{max-width:100%;overflow-x:hidden}.app,aside,main,nav,.view{min-width:0
  .set-editor-row label:nth-of-type(3){grid-column:2/3}
  .set-editor-row .btn{grid-column:1/-1;width:100%}
 }
+
+/* v2.5.7 routine plan editor */
+.routine-editor-section{margin-top:14px}
+.routine-editor-title{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.routine-editor-title b{font-size:13px;color:#f3ddb0}
+.routine-editor-list{display:grid;gap:8px}
+.routine-plan-row{display:grid;grid-template-columns:minmax(220px,1.6fr) 86px minmax(255px,1fr) auto;gap:10px;align-items:end;border:1px solid var(--line);border-radius:13px;padding:11px;background:rgba(255,255,255,.018)}
+.routine-plan-ex b{display:block;font-size:12px;color:#eef4f7}.routine-plan-ex small{display:block;color:var(--muted);font-size:9px;margin-top:4px;line-height:1.4}
+.routine-scheme-edit{display:grid;grid-template-columns:72px 22px 72px 18px 72px;gap:5px;align-items:end}
+.routine-scheme-edit label{gap:4px}.routine-scheme-edit input{text-align:center;padding:8px 6px;font-weight:750}
+.routine-scheme-symbol{align-self:end;height:38px;display:grid;place-items:center;color:var(--muted);font-weight:800}
+.routine-add-list{display:grid;gap:6px;margin-top:8px;max-height:300px;overflow:auto;border:1px solid var(--line);border-radius:12px;padding:8px}
+.routine-add-row{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid rgba(255,255,255,.06);padding:7px 4px}.routine-add-row:last-child{border-bottom:0}
+.routine-add-row .meta{min-width:0}.routine-add-row b{display:block;font-size:11px}.routine-add-row small{display:block;color:var(--muted);font-size:9px;margin-top:3px}
+.routine-editor-note{border:1px solid rgba(214,173,98,.18);background:rgba(214,173,98,.04);border-radius:11px;padding:9px 10px;font-size:10px;color:#cdd8e2;line-height:1.5;margin-top:8px}
+@media(max-width:900px){.routine-plan-row{grid-template-columns:1fr 82px}.routine-scheme-edit{grid-column:1/-1}.routine-plan-row>.btn{grid-column:1/-1;width:100%}}
+@media(max-width:560px){.routine-plan-row{grid-template-columns:1fr}.routine-plan-row>label{grid-column:auto}.routine-scheme-edit{grid-column:auto;grid-template-columns:1fr 18px 1fr 14px 1fr}.routine-plan-row>.btn{grid-column:auto}.routine-add-row{align-items:flex-start}.routine-add-row .btn{flex:0 0 auto}}
 </style>
 </head>
 <body>
 <div id="authGate" class="auth-gate">
   <div class="auth-card">
     <div class="auth-brand">VM PRIVATE SUITE</div>
-    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v2.5.6</span></div>
+    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v2.5.7</span></div>
     <div class="auth-sub">Личный тренировочный дневник. Данные каждого аккаунта полностью раздельны.</div>
     <div class="auth-tabs">
       <button id="tabLogin" class="active" type="button">Войти</button>
@@ -439,7 +456,7 @@ html,body{max-width:100%;overflow-x:hidden}.app,aside,main,nav,.view{min-width:0
 
 <div class="app">
 <aside>
-  <div class="brand"><b>VM FITNESS STUDIO</b><small>Тренировки · Прогрессия · Рекорды</small><small style="color:#d6ad62;font-weight:750">Версия 2.5.6</small></div>
+  <div class="brand"><b>VM FITNESS STUDIO</b><small>Тренировки · Прогрессия · Рекорды</small><small style="color:#d6ad62;font-weight:750">Версия 2.5.7</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Сегодня</button>
     <button class="nav" data-view="workout">Тренировка</button>
@@ -658,6 +675,7 @@ const SUPABASE_PUBLISHABLE_KEY='sb_publishable_RBRKa6zqrw7-CW77RW__QQ_vrqebWCp';
 const db=(window.supabase&&window.supabase.createClient)?window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}):null;
 let currentUser=null,moduleAccess=null,profile=null;
 let exercises=[],routines=[],routineExercises=[],workouts=[],workoutExercises=[],sets=[],bodyweights=[],fitnessActivities=[],equipment=[];
+let routineEditorState=[],routineEditorRoutineId='';
 let activeWorkoutId=null,exerciseLocationFilter='all',uiTrainingLocation='home',uiSplitGroup='back';
 let fitnessWithingsConnected=null,fitnessWithingsBusy=false,fitnessWithingsPopup=null,fitnessWithingsPollTimer=null;
 let activeOwnerId=null,delegatedOwners=[],primaryManagerGranted=false,primaryManagerSensitiveGranted=false;
@@ -1268,32 +1286,25 @@ function completedWorkoutsForExercise(exerciseId,excludeWorkoutId=null){
   const we=workoutExercises.filter(x=>x.exercise_id===exerciseId&&x.workout_id!==excludeWorkoutId);
   return we.map(x=>({we:x,workout:workoutById(x.workout_id),sets:setsForWorkoutExercise(x.id)})).filter(x=>x.workout?.ended_at&&x.sets.some(s=>Number(s.reps)>0)).sort((a,b)=>new Date(b.workout.started_at)-new Date(a.workout.started_at));
 }
-function recommendation(exerciseId,excludeWorkoutId=null){
+function recommendation(exerciseId,excludeWorkoutId=null,schemeOverride=null){
   const ex=exerciseById(exerciseId);if(!ex)return {weight:null,target:'—',why:'Упражнение не найдено'};
+  const targetSets=Number(schemeOverride?.target_sets??ex.target_sets??3),lo=Number(schemeOverride?.rep_min??ex.rep_min??8),hi=Number(schemeOverride?.rep_max??ex.rep_max??12);
   const hist=completedWorkoutsForExercise(exerciseId,excludeWorkoutId),last=hist[0];
-  if(!last)return {weight:null,target:`${ex.target_sets} × ${ex.rep_min}–${ex.rep_max}`,why:'Первой тренировки ещё не было. Выберите комфортный стартовый рабочий вес.'};
-  const ss=last.sets.filter(s=>Number(s.reps)>0),step=Number(ex.increment_kg||2.5);if(!ss.length)return {weight:null,target:`${ex.target_sets} × ${ex.rep_min}–${ex.rep_max}`,why:'В прошлой тренировке нет завершённых подходов.'};
+  if(!last)return {weight:null,target:`${targetSets} × ${lo}–${hi}`,why:'Первой тренировки ещё не было. Выберите комфортный стартовый рабочий вес.'};
+  const ss=last.sets.filter(s=>Number(s.reps)>0),step=Number(ex.increment_kg||2.5);if(!ss.length)return {weight:null,target:`${targetSets} × ${lo}–${hi}`,why:'В прошлой тренировке нет завершённых подходов.'};
   const weights=ss.map(s=>Number(s.weight_kg||0));const base=Math.max(...weights);const same=ss.filter(s=>Math.abs(Number(s.weight_kg)-base)<0.001);
-  const targetSets=Number(ex.target_sets||3),lo=Number(ex.rep_min||8),hi=Number(ex.rep_max||12);
   const reps=same.map(s=>Number(s.reps));const minRir=Math.min(...same.map(s=>s.rir===null||s.rir===undefined?99:Number(s.rir)));
   if(ex.progression_mode==='weight'){
-    if(same.length>=targetSets&&same.every(s=>Number(s.reps)>=lo)){
-      return {weight:roundTo(base+step,step),target:`${targetSets} × ${lo}`,why:`Прошлый раз все рабочие подходы были не ниже ${lo} повторений — увеличиваем вес на ${n(step,2)} кг.`};
-    }
+    if(same.length>=targetSets&&same.every(s=>Number(s.reps)>=lo))return {weight:roundTo(base+step,step),target:`${targetSets} × ${lo}`,why:`Прошлый раз все рабочие подходы были не ниже ${lo} повторений — увеличиваем вес на ${n(step,2)} кг.`};
     return {weight:base,target:`${targetSets} × ${lo}`,why:'Сначала закрепите целевое число повторений с текущим весом.'};
   }
   if(ex.progression_mode==='reps'){
     const goals=reps.slice(0,targetSets).map(r=>Math.min(hi,r+1));while(goals.length<targetSets)goals.push(lo);
     return {weight:base,target:goals.join(' / ')+' повт.',why:'Режим прогрессии повторениями: вес сохраняется, цель — добавить повторения.'};
   }
-  if(same.length>=targetSets&&same.slice(0,targetSets).every(s=>Number(s.reps)>=hi)&&minRir>=1){
-    return {weight:roundTo(base+step,step),target:`${targetSets} × ${lo}`,why:`Достигнут верх диапазона ${hi} во всех подходах — следующий шаг +${n(step,2)} кг.`};
-  }
+  if(same.length>=targetSets&&same.slice(0,targetSets).every(s=>Number(s.reps)>=hi)&&minRir>=1)return {weight:roundTo(base+step,step),target:`${targetSets} × ${lo}`,why:`Достигнут верх диапазона ${hi} во всех подходах — следующий шаг +${n(step,2)} кг.`};
   const under=reps.filter(r=>r<lo).length;
-  if(under>=2 || reps.some(r=>r<=Math.max(1,lo-2)) || minRir===0&&under>0){
-    const reduced=roundTo(base*0.95,step);
-    return {weight:Math.min(base,reduced),target:`${targetSets} × ${lo}`,why:`Несколько подходов оказались ниже нижней границы ${lo}. Рекомендовано небольшое снижение веса и повторное построение диапазона.`};
-  }
+  if(under>=2 || reps.some(r=>r<=Math.max(1,lo-2)) || minRir===0&&under>0){const reduced=roundTo(base*0.95,step);return {weight:Math.min(base,reduced),target:`${targetSets} × ${lo}`,why:`Несколько подходов оказались ниже нижней границы ${lo}. Рекомендовано небольшое снижение веса и повторное построение диапазона.`};}
   const goals=reps.slice(0,targetSets).map(r=>Math.min(hi,Math.max(lo,r+1)));while(goals.length<targetSets)goals.push(lo);
   return {weight:base,target:goals.join(' / ')+' повт.',why:`Вес сохраняется. Добавляйте повторения, пока не достигнете ${hi} во всех ${targetSets} подходах.`};
 }
@@ -2508,6 +2519,46 @@ async function addStarterExercises(){
   renderAll();
   toast(rows.length?`Добавлено упражнений в «${label}»: ${rows.length}`:`Каталог для «${label}» уже добавлен`);
 }
+
+function routineExerciseScheme(item,ex){
+  const target_sets=Number(item?.target_sets??ex?.target_sets??3);
+  const rep_min=Number(item?.rep_min??ex?.rep_min??8);
+  const rep_max=Number(item?.rep_max??ex?.rep_max??12);
+  return {
+    target_sets:Number.isFinite(target_sets)&&target_sets>0?target_sets:3,
+    rep_min:Number.isFinite(rep_min)&&rep_min>0?rep_min:8,
+    rep_max:Number.isFinite(rep_max)&&rep_max>0?rep_max:12
+  };
+}
+function workoutExerciseScheme(row,ex){return routineExerciseScheme(row,ex)}
+function syncRoutineEditorStateFromDom(){
+  const rows=[...document.querySelectorAll('.routine-plan-row[data-exid]')];
+  if(!rows.length)return;
+  rows.forEach(row=>{
+    const item=routineEditorState.find(x=>x.exercise_id===row.dataset.exid);if(!item)return;
+    item.position=Number(row.querySelector('.rtOrder')?.value);
+    item.target_sets=Number(row.querySelector('.rtSets')?.value);
+    item.rep_min=Number(row.querySelector('.rtRepMin')?.value);
+    item.rep_max=Number(row.querySelector('.rtRepMax')?.value);
+  });
+}
+function normalizeRoutineEditorOrder(){
+  routineEditorState.sort((a,b)=>(Number(a.position)||999)-(Number(b.position)||999));
+  routineEditorState.forEach((x,i)=>x.position=i+1);
+}
+function addRoutineEditorExercise(exerciseId){
+  syncRoutineEditorStateFromDom();
+  if(routineEditorState.some(x=>x.exercise_id===exerciseId))return;
+  const ex=exerciseById(exerciseId);if(!ex)return;
+  routineEditorState.push({exercise_id:exerciseId,position:routineEditorState.length+1,target_sets:Number(ex.target_sets||3),rep_min:Number(ex.rep_min||8),rep_max:Number(ex.rep_max||12)});
+  refreshRoutineExerciseChoices(routineEditorRoutineId,false);
+}
+function removeRoutineEditorExercise(exerciseId){
+  syncRoutineEditorStateFromDom();
+  routineEditorState=routineEditorState.filter(x=>x.exercise_id!==exerciseId);
+  normalizeRoutineEditorOrder();
+  refreshRoutineExerciseChoices(routineEditorRoutineId,false);
+}
 function renderRoutines(){
   renderHomeRoutineEquipmentHint();
   document.querySelectorAll('[data-toploc]').forEach(b=>b.classList.toggle('active',b.dataset.toploc===uiTrainingLocation));
@@ -2526,80 +2577,104 @@ function renderRoutines(){
     const repairFn=(r.training_location==='gym'?'createGymSplitTemplates()':'createHomeSplitTemplates()');
     return `<div class="routine-card">
       <div class="head"><div><h3>${esc(r.name)} ${splitBadge(r.split_group||'custom')} ${locationBadge(r.training_location||'both')}</h3><div class="note">${esc(r.notes||'')}</div><div class="routine-health">${empty?'<span class="warn">0 упражнений — требуется восстановление</span>':`<span class="badge good">${items.length} упражнений</span>`}</div></div><div class="actions" style="margin-top:0"><button class="btn" onclick="openRoutineModal('${r.id}')">Редактировать</button>${empty&&isDefault?`<button class="btn" onclick="${repairFn}">Восстановить</button>`:''}<button class="btn primary" ${empty?'disabled title="Сначала добавьте упражнения"':''} onclick="startWorkout('${r.id}')">Начать</button></div></div>
-      <div class="routine-list">${items.map(x=>{const ex=exerciseById(x.exercise_id);return `<div class="routine-row"><span>${x.position}. ${esc(ex?.name||'Упражнение')}</span><span class="note">${ex?`${ex.target_sets} × ${ex.rep_min}–${ex.rep_max}`:''}</span></div>`}).join('')}</div>
+      <div class="routine-list">${items.map((x,idx)=>{const ex=exerciseById(x.exercise_id),sc=routineExerciseScheme(x,ex);return `<div class="routine-row"><span>${idx+1}. ${esc(ex?.name||'Упражнение')}</span><span class="note">${ex?`${sc.target_sets} × ${sc.rep_min}–${sc.rep_max}`:''}</span></div>`}).join('')}</div>
     </div>`;
   }).join('')}</div>`;
 }
 
 function openRoutineModal(id=''){
-  const r=routineById(id)||{name:'',notes:'',training_location:uiTrainingLocation||'home',split_group:uiSplitGroup||'back'},selected=id?routineExercises.filter(x=>x.routine_id===id).sort((a,b)=>a.position-b.position).map(x=>x.exercise_id):[];
+  const r=routineById(id)||{name:'',notes:'',training_location:uiTrainingLocation||'home',split_group:uiSplitGroup||'back'};
+  routineEditorRoutineId=id;
+  const existing=id?routineExercises.filter(x=>x.routine_id===id).sort((a,b)=>a.position-b.position):[];
+  routineEditorState=existing.map((item,i)=>{
+    const ex=exerciseById(item.exercise_id),sc=routineExerciseScheme(item,ex);
+    return {exercise_id:item.exercise_id,position:i+1,target_sets:sc.target_sets,rep_min:sc.rep_min,rep_max:sc.rep_max};
+  });
   openModal(`<h3>${id?'Изменить':'Новая'} сплит-программа</h3><div class="form-grid">
     <label>Название<input id="rtName" value="${esc(r.name)}" placeholder="${splitLabel(r.split_group||'back')}"></label>
-    <label>День сплита<select id="rtSplit" onchange="refreshRoutineExerciseChoices('${id}')">
+    <label>День сплита<select id="rtSplit" onchange="refreshRoutineExerciseChoices('${id}',true)">
       <option value="back" ${(r.split_group||'back')==='back'?'selected':''}>Спина</option>
       <option value="chest_shoulders" ${r.split_group==='chest_shoulders'?'selected':''}>Грудь + плечи</option>
       <option value="legs" ${r.split_group==='legs'?'selected':''}>Ноги</option>
       <option value="custom" ${r.split_group==='custom'?'selected':''}>Другое</option>
     </select></label>
-    <label>Место тренировки<select id="rtLocation" onchange="refreshRoutineExerciseChoices('${id}')"><option value="home" ${r.training_location==='home'?'selected':''}>Домашний зал</option><option value="gym" ${r.training_location==='gym'?'selected':''}>Тренажёрный зал</option><option value="both" ${(r.training_location||'both')==='both'?'selected':''}>Везде</option></select></label>
+    <label>Место тренировки<select id="rtLocation" onchange="refreshRoutineExerciseChoices('${id}',true)"><option value="home" ${r.training_location==='home'?'selected':''}>Домашний зал</option><option value="gym" ${r.training_location==='gym'?'selected':''}>Тренажёрный зал</option><option value="both" ${(r.training_location||'both')==='both'?'selected':''}>Везде</option></select></label>
     <label class="wide">Заметка<textarea id="rtNotes">${esc(r.notes||'')}</textarea></label>
   </div>
-  <div style="margin-top:12px;font-weight:750">Упражнения по порядку</div><div class="note">Для стандартного сплита программа показывает только логичные группы мышц: Спина + бицепс; Грудь + плечи + трицепс; Ноги + ягодицы + икры. Поставь номер порядка. Пустое поле — упражнение не входит в программу.</div>
-  <div id="routineExerciseChoices" class="table-wrap" style="margin-top:8px"></div>
-  <div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveRoutine('${id}')">Сохранить</button></div>`,true);
-  refreshRoutineExerciseChoices(id);
+  <div class="routine-editor-note"><b>Теперь схема задаётся отдельно для этой программы.</b> Изменение, например, с 3 × 8–12 на 4 × 6–8 не меняет само упражнение в каталоге и не затрагивает другие сплиты. Кнопка «Удалить из плана» удаляет упражнение только из этой программы после нажатия «Сохранить».</div>
+  <div id="routineExerciseChoices" style="margin-top:10px"></div>
+  <div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveRoutine('${id}')">Сохранить программу</button></div>`,true);
+  refreshRoutineExerciseChoices(id,false);
 }
 
-function refreshRoutineExerciseChoices(id=''){
+function refreshRoutineExerciseChoices(id='',syncFirst=true){
+  if(syncFirst)syncRoutineEditorStateFromDom();
   const loc=$('rtLocation')?.value||'both',split=$('rtSplit')?.value||'custom';
-  const selected=id?routineExercises.filter(x=>x.routine_id===id).sort((a,b)=>a.position-b.position).map(x=>x.exercise_id):[];
   let list=exercises.filter(x=>!x.archived&&matchesLocation(x.training_location||'both',loc));
   if(split!=='custom')list=list.filter(x=>exerciseFitsSplit(x,split));
   const box=$('routineExerciseChoices');if(!box)return;
-  box.innerHTML=list.length?`<table><thead><tr><th>Упражнение</th><th>Группа</th><th>Место</th><th>Порядок</th><th>Схема</th></tr></thead><tbody>${list.map(ex=>{const pos=selected.indexOf(ex.id);return `<tr><td>${esc(ex.name)}</td><td>${esc(ex.muscle_group||'—')}</td><td>${locationBadge(ex.training_location||'both')}</td><td><input class="rtPos" data-id="${ex.id}" type="number" min="1" max="50" value="${pos>=0?pos+1:''}" style="width:80px"></td><td>${ex.target_sets} × ${ex.rep_min}–${ex.rep_max}</td></tr>`}).join('')}</tbody></table>`:'<div class="empty">Для этого сплита и выбранного места упражнений пока нет.</div>';
+  normalizeRoutineEditorOrder();
+  const selectedHtml=routineEditorState.length?routineEditorState.map((item,idx)=>{
+    const ex=exerciseById(item.exercise_id);if(!ex)return '';
+    const compatible=list.some(x=>x.id===ex.id);
+    return `<div class="routine-plan-row" data-exid="${ex.id}">
+      <div class="routine-plan-ex"><b>${idx+1}. ${esc(ex.name)}</b><small>${esc(ex.muscle_group||'—')} · ${locationLabel(ex.training_location||'both')}${compatible?'':' · вне текущего фильтра'}</small></div>
+      <label>Порядок<input class="rtOrder" type="number" min="1" max="50" value="${item.position}" inputmode="numeric"></label>
+      <div class="routine-scheme-edit">
+        <label>Подходы<input class="rtSets" type="number" min="1" max="20" value="${item.target_sets}" inputmode="numeric"></label>
+        <div class="routine-scheme-symbol">×</div>
+        <label>Повт. от<input class="rtRepMin" type="number" min="1" max="100" value="${item.rep_min}" inputmode="numeric"></label>
+        <div class="routine-scheme-symbol">–</div>
+        <label>до<input class="rtRepMax" type="number" min="1" max="100" value="${item.rep_max}" inputmode="numeric"></label>
+      </div>
+      <button class="btn danger" type="button" onclick="removeRoutineEditorExercise('${ex.id}')">Удалить из плана</button>
+    </div>`;
+  }).join(''):'<div class="empty">В программу пока не добавлено ни одного упражнения.</div>';
+  const selectedIds=new Set(routineEditorState.map(x=>x.exercise_id));
+  const available=list.filter(ex=>!selectedIds.has(ex.id));
+  const availableHtml=available.length?`<div class="routine-add-list">${available.map(ex=>`<div class="routine-add-row"><div class="meta"><b>${esc(ex.name)}</b><small>${esc(ex.muscle_group||'—')} · ${locationLabel(ex.training_location||'both')} · базовая схема ${ex.target_sets} × ${ex.rep_min}–${ex.rep_max}</small></div><button class="btn" type="button" onclick="addRoutineEditorExercise('${ex.id}')">＋ Добавить</button></div>`).join('')}</div>`:'<div class="empty">Других подходящих упражнений для выбранного места и группы мышц нет.</div>';
+  box.innerHTML=`<div class="routine-editor-section"><div class="routine-editor-title"><b>Упражнения в программе</b><span class="badge good">${routineEditorState.length} шт.</span></div><div class="routine-editor-list">${selectedHtml}</div></div><div class="routine-editor-section"><div class="routine-editor-title"><b>Добавить упражнение</b><span class="note">Показываются упражнения, подходящие выбранному месту и дню сплита</span></div>${availableHtml}</div>`;
 }
 
 async function saveRoutine(id=''){
+  syncRoutineEditorStateFromDom();
   const name=$('rtName').value.trim(),training_location=$('rtLocation').value,split_group=$('rtSplit').value;
   if(!name)return alert('Введите название программы.');
-  const picked=[...document.querySelectorAll('.rtPos')]
-    .map(x=>({exercise_id:x.dataset.id,pos:Number(x.value)}))
-    .filter(x=>x.pos>0)
-    .sort((a,b)=>a.pos-b.pos);
-
+  for(const item of routineEditorState){
+    const ex=exerciseById(item.exercise_id);
+    const setsN=Number(item.target_sets),lo=Number(item.rep_min),hi=Number(item.rep_max),pos=Number(item.position);
+    if(!Number.isFinite(pos)||pos<1)return alert(`Проверьте порядок упражнения «${ex?.name||'Упражнение'}».`);
+    if(!Number.isFinite(setsN)||setsN<1||setsN>20)return alert(`«${ex?.name||'Упражнение'}»: количество подходов должно быть от 1 до 20.`);
+    if(!Number.isFinite(lo)||!Number.isFinite(hi)||lo<1||hi<1||lo>100||hi>100||lo>hi)return alert(`«${ex?.name||'Упражнение'}»: проверьте диапазон повторений.`);
+  }
+  routineEditorState.sort((a,b)=>a.position-b.position);
+  const picked=routineEditorState.map((x,i)=>({exercise_id:x.exercise_id,position:i+1,target_sets:Number(x.target_sets),rep_min:Number(x.rep_min),rep_max:Number(x.rep_max)}));
   const previous=id?routineExercises.filter(x=>x.routine_id===id).sort((a,b)=>a.position-b.position):[];
   if(id&&previous.length&&picked.length===0){
-    if(!confirm(`В программе сейчас ${previous.length} упражнений, а в форме не выбрано ни одного.\n\nУдалить из программы все упражнения?`))return;
-  }
+    if(!confirm(`В программе сейчас ${previous.length} упражнений, а после изменений не останется ни одного.
 
+Удалить из программы все упражнения?`))return;
+  }
   let rid=id;
   setBusy(true);
   try{
     if(id){
       const r=await queryWithRetry(()=>db.from('fitness_routines').update({name,training_location,split_group,notes:$('rtNotes').value.trim(),updated_at:new Date().toISOString()}).eq('id',id),3);
       if(r.error)throw r.error;
-
-      const del=await queryWithRetry(()=>db.from('fitness_routine_exercises').delete().eq('routine_id',id),3);
-      if(del.error)throw del.error;
-
+      const del=await queryWithRetry(()=>db.from('fitness_routine_exercises').delete().eq('routine_id',id),3);if(del.error)throw del.error;
       if(picked.length){
-        const ins=await queryWithRetry(()=>db.from('fitness_routine_exercises').insert(picked.map((x,i)=>({user_id:dataUserId(),routine_id:rid,exercise_id:x.exercise_id,position:i}))),3);
+        const ins=await queryWithRetry(()=>db.from('fitness_routine_exercises').insert(picked.map(x=>({user_id:dataUserId(),routine_id:rid,exercise_id:x.exercise_id,position:x.position,target_sets:x.target_sets,rep_min:x.rep_min,rep_max:x.rep_max}))),3);
         if(ins.error){
-          // Best-effort rollback: restore previous composition if new insert failed.
           if(previous.length){
-            try{await queryWithRetry(()=>db.from('fitness_routine_exercises').insert(previous.map(x=>({user_id:dataUserId(),routine_id:id,exercise_id:x.exercise_id,position:x.position}))),2)}catch(rollbackError){console.error('Routine rollback failed',rollbackError)}
+            try{await queryWithRetry(()=>db.from('fitness_routine_exercises').insert(previous.map(x=>({user_id:dataUserId(),routine_id:id,exercise_id:x.exercise_id,position:x.position,target_sets:x.target_sets??null,rep_min:x.rep_min??null,rep_max:x.rep_max??null}))),2)}catch(rollbackError){console.error('Routine rollback failed',rollbackError)}
           }
           throw ins.error;
         }
       }
     }else{
-      const r=await queryWithRetry(()=>db.from('fitness_routines').insert({user_id:dataUserId(),name,training_location,split_group,notes:$('rtNotes').value.trim()}).select().single(),3);
-      if(r.error)throw r.error;
+      const r=await queryWithRetry(()=>db.from('fitness_routines').insert({user_id:dataUserId(),name,training_location,split_group,notes:$('rtNotes').value.trim()}).select().single(),3);if(r.error)throw r.error;
       rid=r.data.id;
-      if(picked.length){
-        const ins=await queryWithRetry(()=>db.from('fitness_routine_exercises').insert(picked.map((x,i)=>({user_id:dataUserId(),routine_id:rid,exercise_id:x.exercise_id,position:i}))),3);
-        if(ins.error)throw ins.error;
-      }
+      if(picked.length){const ins=await queryWithRetry(()=>db.from('fitness_routine_exercises').insert(picked.map(x=>({user_id:dataUserId(),routine_id:rid,exercise_id:x.exercise_id,position:x.position,target_sets:x.target_sets,rep_min:x.rep_min,rep_max:x.rep_max}))),3);if(ins.error)throw ins.error}
     }
     closeModal();
     try{await loadAll();renderAll()}catch(refreshError){console.warn('Refresh after routine save failed',refreshError)}
@@ -2672,7 +2747,7 @@ async function startWorkout(routineId='',customTitle='',trainingLocation='',spli
     if(routineId){
       const items=routineItems;
       if(items.length){
-        const rr=await queryWithRetry(()=>db.from('fitness_workout_exercises').insert(items.map((x,i)=>({user_id:dataUserId(),workout_id:wid,exercise_id:x.exercise_id,position:i}))),3);
+        const rr=await queryWithRetry(()=>db.from('fitness_workout_exercises').insert(items.map((x,i)=>({user_id:dataUserId(),workout_id:wid,exercise_id:x.exercise_id,position:i+1,target_sets:x.target_sets??null,rep_min:x.rep_min??null,rep_max:x.rep_max??null}))),3);
         if(rr.error)throw rr.error;
       }
     }
@@ -2718,26 +2793,25 @@ function openWorkoutExerciseTechnique(exerciseId){
 
 function renderWorkoutExercise(row){
   const ex=exerciseById(row.exercise_id);if(!ex)return '';
-  const rec=recommendation(ex.id,activeWorkoutId),ss=setsForWorkoutExercise(row.id);const count=Math.max(Number(ex.target_sets||3),ss.length+1);
+  const scheme=workoutExerciseScheme(row,ex),rec=recommendation(ex.id,activeWorkoutId,scheme),ss=setsForWorkoutExercise(row.id);const count=Math.max(Number(scheme.target_sets||3),ss.length+1);
   const rows=[];
   for(let i=1;i<=count;i++){
-    const st=ss.find(s=>s.set_no===i);
-    const prev=[...ss].filter(s=>s.set_no<i).sort((a,b)=>b.set_no-a.set_no)[0];
+    const st=ss.find(s=>s.set_no===i),prev=[...ss].filter(s=>s.set_no<i).sort((a,b)=>b.set_no-a.set_no)[0];
     const defaultWeight=st?.weight_kg??prev?.weight_kg??(rec.weight??'');
     rows.push(`<div class="set-grid">
       <div class="setno">#${i}</div>
       <label><span class="field-title">Вес, кг</span><input id="sw_${row.id}_${i}" aria-label="Вес, кг — подход ${i}" inputmode="decimal" type="number" step=".25" min="0" value="${defaultWeight}" onkeydown="handleSetKey(event,'${row.id}',${i})"></label>
-      <label><span class="field-title">Повт.</span><input id="sr_${row.id}_${i}" aria-label="Повторения — подход ${i}" inputmode="numeric" type="number" min="1" max="${Math.max(60,Number(ex.rep_max||20)*3)}" value="${st?.reps??''}" placeholder="${ex.rep_min}–${ex.rep_max}" onkeydown="handleSetKey(event,'${row.id}',${i})"></label>
+      <label><span class="field-title">Повт.</span><input id="sr_${row.id}_${i}" aria-label="Повторения — подход ${i}" inputmode="numeric" type="number" min="1" max="${Math.max(60,Number(scheme.rep_max||20)*3)}" value="${st?.reps??''}" placeholder="${scheme.rep_min}–${scheme.rep_max}" onkeydown="handleSetKey(event,'${row.id}',${i})"></label>
       <label><span class="field-title">RIR</span><input id="si_${row.id}_${i}" aria-label="RIR — подход ${i}" inputmode="decimal" type="number" min="0" max="10" step=".5" value="${st?.rir??''}" placeholder="—" onkeydown="handleSetKey(event,'${row.id}',${i})"></label>
       <button class="btn ${st?'good':''}" onclick="saveSet('${row.id}',${i})">${st?'✓ Сохранено':'Сохранить'}</button>
     </div>`);
   }
-  return `<div class="workout-ex"><div class="workout-ex-title"><div><div class="exercise-tech-title"><h3 style="margin:0">${esc(ex.name)}</h3><button class="exercise-tech-help" type="button" title="Как правильно выполнять это упражнение" onclick="openWorkoutExerciseTechnique('${ex.id}')">?</button></div><div class="exercise-meta">${ex.target_sets} × ${ex.rep_min}–${ex.rep_max} · шаг ${n(ex.increment_kg,2)} кг</div></div><button class="btn danger" onclick="removeWorkoutExercise('${row.id}')">Убрать</button></div><div class="rec-card" style="margin-top:10px"><div class="rec-title">Рекомендация сегодня</div><div class="rec-main">${rec.weight===null?'Выберите стартовый вес':n(rec.weight,2)+' кг'} · ${esc(rec.target)}</div><div class="rec-why">${esc(rec.why)}</div></div><div class="sets-block"><div class="sets-toolbar"><div class="sets-hint">Введите фактический результат подхода. RIR можно оставить пустым. После заполнения всех строк можно сохранить всё упражнение сразу одной кнопкой.</div><div class="bulk-actions"><button class="btn primary" type="button" onclick="saveWholeExercise('${row.id}')">Сохранить всё упражнение</button><span class="ctx-help" data-help="Сохраняет все заполненные подходы этого упражнения сразу. Подходит, когда вы сначала заполнили весь блок, а потом хотите отправить всё одним действием.">?</span></div></div>${rows.join('')}</div></div>`;
+  return `<div class="workout-ex"><div class="workout-ex-title"><div><div class="exercise-tech-title"><h3 style="margin:0">${esc(ex.name)}</h3><button class="exercise-tech-help" type="button" title="Как правильно выполнять это упражнение" onclick="openWorkoutExerciseTechnique('${ex.id}')">?</button></div><div class="exercise-meta">${scheme.target_sets} × ${scheme.rep_min}–${scheme.rep_max} · шаг ${n(ex.increment_kg,2)} кг${row.target_sets!=null||row.rep_min!=null||row.rep_max!=null?' · схема из программы':''}</div></div><button class="btn danger" onclick="removeWorkoutExercise('${row.id}')">Убрать</button></div><div class="rec-card" style="margin-top:10px"><div class="rec-title">Рекомендация сегодня</div><div class="rec-main">${rec.weight===null?'Выберите стартовый вес':n(rec.weight,2)+' кг'} · ${esc(rec.target)}</div><div class="rec-why">${esc(rec.why)}</div></div><div class="sets-block"><div class="sets-toolbar"><div class="sets-hint">Введите фактический результат подхода. RIR можно оставить пустым. После заполнения всех строк можно сохранить всё упражнение сразу одной кнопкой.</div><div class="bulk-actions"><button class="btn primary" type="button" onclick="saveWholeExercise('${row.id}')">Сохранить всё упражнение</button><span class="ctx-help" data-help="Сохраняет все заполненные подходы этого упражнения сразу. Подходит, когда вы сначала заполнили весь блок, а потом хотите отправить всё одним действием.">?</span></div></div>${rows.join('')}</div></div>`;
 }
 function handleSetKey(event,weid,no){if(event.key==='Enter'){event.preventDefault();saveSet(weid,no)}}
 function workoutDraftCount(rowId){
-  const row=workoutExercises.find(x=>x.id===rowId),ex=row?exerciseById(row.exercise_id):null,ss=setsForWorkoutExercise(rowId);
-  return Math.max(Number(ex?.target_sets||3),ss.length+1);
+  const row=workoutExercises.find(x=>x.id===rowId),ex=row?exerciseById(row.exercise_id):null,ss=setsForWorkoutExercise(rowId),scheme=workoutExerciseScheme(row,ex);
+  return Math.max(Number(scheme.target_sets||3),ss.length+1);
 }
 function validateSetDraft(ex,weid,no,{allowEmpty=false}={}){
   const wEl=$(`sw_${weid}_${no}`),rEl=$(`sr_${weid}_${no}`),iEl=$(`si_${weid}_${no}`);
@@ -2749,7 +2823,8 @@ function validateSetDraft(ex,weid,no,{allowEmpty=false}={}){
   const weight=Number(weightRaw),reps=Number(repsRaw),rir=rirRaw===''?null:Number(rirRaw);
   if(!Number.isFinite(weight)||weight<0||!Number.isFinite(reps)||reps<=0)return {ok:false,msg:`Подход #${no}: проверьте вес и повторения. Повторений должно быть не меньше 1.`,focus:wEl};
   if(rir!==null&&(!Number.isFinite(rir)||rir<0||rir>10))return {ok:false,msg:`Подход #${no}: RIR должен быть от 0 до 10 или поле можно оставить пустым.`,focus:iEl};
-  const normalMax=Math.max(30,Number(ex?.rep_max||15)*2);
+  const wrow=workoutExercises.find(x=>x.id===weid),scheme=workoutExerciseScheme(wrow,ex);
+  const normalMax=Math.max(30,Number(scheme.rep_max||15)*2);
   return {ok:true,empty:false,value:{user_id:dataUserId(),workout_exercise_id:weid,set_no:no,weight_kg:weight,reps,rir,completed_at:new Date().toISOString()},normalMax};
 }
 async function saveWholeExercise(weid){
@@ -2765,7 +2840,7 @@ async function saveWholeExercise(weid){
   }
   if(!drafts.length)return alert('Заполните хотя бы один подход, чтобы сохранить всё упражнение целиком.');
   if(suspicious.length){
-    const range=`${ex.rep_min}–${ex.rep_max}`;
+    const scheme=workoutExerciseScheme(row,ex),range=`${scheme.rep_min}–${scheme.rep_max}`;
     if(!confirm(`Для упражнения «${ex.name}» рабочий диапазон обычно ${range}.
 
 Подозрительно большие значения:
