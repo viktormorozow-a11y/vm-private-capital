@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Fitness Studio v2.0.0 — Withings Body Composition</title>
+<title>VM Fitness Studio v2.0.1 — Withings Body Composition</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -204,7 +204,7 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 <div id="authGate" class="auth-gate">
   <div class="auth-card">
     <div class="auth-brand">VM PRIVATE SUITE</div>
-    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v2.0.0</span></div>
+    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v2.0.1</span></div>
     <div class="auth-sub">Личный тренировочный дневник. Данные каждого аккаунта полностью раздельны.</div>
     <div class="auth-tabs">
       <button id="tabLogin" class="active" type="button">Войти</button>
@@ -222,7 +222,7 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 
 <div class="app">
 <aside>
-  <div class="brand"><b>VM FITNESS STUDIO</b><small>Тренировки · Прогрессия · Рекорды</small><small style="color:#d6ad62;font-weight:750">Версия 2.0.0</small></div>
+  <div class="brand"><b>VM FITNESS STUDIO</b><small>Тренировки · Прогрессия · Рекорды</small><small style="color:#d6ad62;font-weight:750">Версия 2.0.1</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Сегодня</button>
     <button class="nav" data-view="workout">Тренировка</button>
@@ -325,21 +325,16 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 </section>
 
 <section id="analytics" class="view">
-  <div class="top"><div><h1>Сравнительная аналитика</h1><div class="sub">Накладывайте на один график силовые показатели, состав тела, цикл, месячные, самочувствие, секс, калории и пульс. Для показателей с разными единицами линии приводятся к шкале 0–100, а в подсказке всегда показывается исходное значение.</div></div><button class="btn primary" type="button" onclick="openCompareSeriesModal()">＋ Добавить показатель</button></div>
+  <div class="top"><div><h1>Сравнительная аналитика</h1><div id="analyticsSub" class="sub">Накладывайте на один график силовые показатели, состав тела и данные тренировок. Для показателей с разными единицами линии приводятся к шкале 0–100, а в подсказке всегда показывается исходное значение.</div></div><button class="btn primary" type="button" onclick="openCompareSeriesModal()">＋ Добавить показатель</button></div>
   <div class="panel">
     <div class="analytics-controls">
       <label>Период<select id="compareRange" onchange="renderCompareAnalytics()"><option value="30">30 дней</option><option value="90">90 дней</option><option value="180" selected>180 дней</option><option value="365">1 год</option><option value="all">Всё время</option></select></label>
       <div><div class="inline-note" style="margin-bottom:6px">Выбранные показатели · максимум 8</div><div id="compareSeriesChips" class="series-chips"></div></div>
     </div>
-    <div class="quick-presets">
-      <button class="btn" type="button" onclick="setComparePreset('strength_cycle')">Сила + цикл</button>
-      <button class="btn" type="button" onclick="setComparePreset('cycle_intimacy')">Цикл + секс</button>
-      <button class="btn" type="button" onclick="setComparePreset('body_cycle')">Вес + цикл</button>
-      <button class="btn" type="button" onclick="clearCompareSeries()">Очистить</button>
-    </div>
+    <div id="comparePresets" class="quick-presets"></div>
     <div class="analytics-canvas"><canvas id="compareCanvas"></canvas><div id="compareTip" class="tip"></div></div>
     <div id="compareLegend" class="analytics-legend"></div>
-    <div class="analytics-help">Линии разных единиц нормализуются отдельно к диапазону 0–100, поэтому график показывает совпадение подъёмов/падений во времени. Месячные отображаются вертикальными полосами, секс и оральный секс — событиями. Наведите курсор на график, чтобы увидеть исходные значения.</div>
+    <div id="analyticsHelp" class="analytics-help">Линии разных единиц нормализуются отдельно к диапазону 0–100, поэтому график показывает совпадение подъёмов/падений во времени. Наведите курсор на график, чтобы увидеть исходные значения.</div>
   </div>
 </section>
 
@@ -2154,6 +2149,10 @@ function exerciseProgressPoints(exid,metric){
   }).filter(Boolean);
 }
 
+
+function canUseSensitiveAnalytics(){
+  return shouldShowCycleModule() && sensitiveAccessAvailable;
+}
 function compareColor(i){
   return ['#d6ad62','#7fc8ff','#73d99a','#e78fbe','#ff9aa4','#b7a7ff','#8fe0d0','#f2c36b'][i%8];
 }
@@ -2198,7 +2197,7 @@ function compareSeriesPoints(key){
   if(kind==='ex')return exerciseProgressPoints(a,b).map(p=>({...p,raw:p.y})).filter(keep);
   if(kind==='body')return [...bodyweights].reverse().filter(x=>x[a]!=null&&Number.isFinite(Number(x[a]))).map(x=>({x:new Date(x.measured_at).getTime(),y:Number(x[a]),raw:Number(x[a]),date:x.measured_at})).filter(keep);
   if(kind==='cycle'){
-    if(!sensitiveAccessAvailable)return [];
+    if(!canUseSensitiveAnalytics())return [];
     if(a==='period')return cycleDays.filter(x=>x.is_period).map(x=>({x:localDateFromKey(x.day_date).getTime(),y:1,raw:1,date:x.day_date})).filter(keep);
     if(a==='period_forecast'){
       const pts=[],len=effectivePeriodLength();
@@ -2218,7 +2217,7 @@ function compareSeriesPoints(key){
     return cycleDays.filter(x=>x[field]!=null).map(x=>({x:localDateFromKey(x.day_date).getTime(),y:Number(x[field]),raw:Number(x[field]),date:x.day_date})).filter(keep);
   }
   if(kind==='intimate'){
-    if(!sensitiveAccessAvailable)return [];
+    if(!canUseSensitiveAnalytics())return [];
     const byDay=new Map();
     intimateActivities.filter(x=>x.activity_type===a).forEach(x=>{const k=dateKey(x.occurred_at);byDay.set(k,(byDay.get(k)||0)+1)});
     return [...byDay.entries()].map(([k,v])=>({x:localDateFromKey(k).getTime(),y:v,raw:v,date:k})).sort((p,q)=>p.x-q.x).filter(keep);
@@ -2246,7 +2245,7 @@ function compareAvailableSeries(){
     {group:'Тренировки',key:'workout:calories',label:'Калории'},
     {group:'Тренировки',key:'workout:avg_hr',label:'Средний пульс'}
   );
-  if(sensitiveAccessAvailable)rows.push(
+  if(canUseSensitiveAnalytics())rows.push(
     {group:'Цикл',key:'cycle:day',label:'День цикла'},
     {group:'Цикл',key:'cycle:period',label:'Месячные · факт'},
     {group:'Цикл',key:'cycle:period_forecast',label:'Месячные · прогноз'},
@@ -2278,12 +2277,20 @@ function latestUsedExerciseId(){
 }
 function setComparePreset(type){
   const ex=($('progressExercise')?.value)||latestUsedExerciseId();
-  if(type==='strength_cycle'){
-    compareSeries=[...(ex?[`ex:${ex}:e1rm`]:[]),...(sensitiveAccessAvailable?['cycle:day','cycle:period']:[])];
-  }else if(type==='cycle_intimacy'){
-    compareSeries=sensitiveAccessAvailable?['cycle:day','cycle:period','intimate:sex','intimate:oral_sex']:[];
-  }else if(type==='body_cycle'){
-    compareSeries=['body:weight_kg',...(sensitiveAccessAvailable?['cycle:day','cycle:period']:[])];
+  if(type==='strength'){
+    compareSeries=ex?[`ex:${ex}:e1rm`,'workout:volume']:[ 'workout:volume' ];
+  }else if(type==='body_strength'){
+    compareSeries=['body:weight_kg',...(ex?[`ex:${ex}:e1rm`]:[])];
+  }else if(type==='training'){
+    compareSeries=['workout:volume','workout:calories','workout:avg_hr'];
+  }else if(type==='strength_cycle' && canUseSensitiveAnalytics()){
+    compareSeries=[...(ex?[`ex:${ex}:e1rm`]:[]),'cycle:day','cycle:period'];
+  }else if(type==='cycle_intimacy' && canUseSensitiveAnalytics()){
+    compareSeries=['cycle:day','cycle:period','intimate:sex','intimate:oral_sex'];
+  }else if(type==='body_cycle' && canUseSensitiveAnalytics()){
+    compareSeries=['body:weight_kg','cycle:day','cycle:period'];
+  }else if(type.includes('cycle')){
+    return alert('Цикл и интимная активность недоступны в текущем профиле.');
   }
   goView('analytics');setTimeout(renderCompareAnalytics,0);
 }
@@ -2295,6 +2302,32 @@ function normalizeComparePoints(points){
 function renderCompareAnalytics(){
   const canvas=$('compareCanvas'),chips=$('compareSeriesChips'),legend=$('compareLegend');
   if(!canvas||!chips||!legend)return;
+
+  const sensitive=canUseSensitiveAnalytics();
+  const sub=$('analyticsSub'),help=$('analyticsHelp'),presets=$('comparePresets');
+  if(sub)sub.textContent=sensitive
+    ? 'Накладывайте на один график силовые показатели, состав тела, цикл, месячные, самочувствие, интимную активность, калории и пульс. Для показателей с разными единицами линии приводятся к шкале 0–100.'
+    : 'Накладывайте на один график силовые показатели, состав тела, объём тренировок, калории и пульс. Для показателей с разными единицами линии приводятся к шкале 0–100.';
+  if(help)help.textContent=sensitive
+    ? 'Линии разных единиц нормализуются отдельно к диапазону 0–100. Месячные отображаются полосами, интимная активность — событиями. Наведите курсор, чтобы увидеть исходные значения.'
+    : 'Линии разных единиц нормализуются отдельно к диапазону 0–100, поэтому график показывает совпадение подъёмов и падений во времени. Наведите курсор, чтобы увидеть исходные значения.';
+  if(presets)presets.innerHTML=sensitive
+    ? `<button class="btn" type="button" onclick="setComparePreset('strength_cycle')">Сила + цикл</button>
+       <button class="btn" type="button" onclick="setComparePreset('cycle_intimacy')">Цикл + секс</button>
+       <button class="btn" type="button" onclick="setComparePreset('body_cycle')">Вес + цикл</button>
+       <button class="btn" type="button" onclick="setComparePreset('training')">Тренировка + пульс</button>
+       <button class="btn" type="button" onclick="clearCompareSeries()">Очистить</button>`
+    : `<button class="btn" type="button" onclick="setComparePreset('strength')">Сила + объём</button>
+       <button class="btn" type="button" onclick="setComparePreset('body_strength')">Вес + сила</button>
+       <button class="btn" type="button" onclick="setComparePreset('training')">Тренировка + пульс</button>
+       <button class="btn" type="button" onclick="clearCompareSeries()">Очистить</button>`;
+
+  // Remove sensitive series automatically when switching back to a profile
+  // that is not allowed to expose them.
+  if(!sensitive){
+    compareSeries=compareSeries.filter(k=>!k.startsWith('cycle:')&&!k.startsWith('intimate:'));
+  }
+
   compareSeries=compareSeries.filter(k=>compareAvailableSeries().some(x=>x.key===k));
   chips.innerHTML=compareSeries.length?compareSeries.map(k=>`<span class="series-chip">${esc(compareSeriesMeta(k).label)}<button onclick="removeCompareSeries('${k}')">×</button></span>`).join(''):'<span class="inline-note">Пока ничего не выбрано.</span>';
   const series=compareSeries.map((key,i)=>{
