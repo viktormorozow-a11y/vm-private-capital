@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Fitness Studio v1.8.0 — Withings Body Composition</title>
+<title>VM Fitness Studio v1.9.0 — Withings Body Composition</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -149,13 +149,43 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 .access-control .scope{display:grid;gap:5px;margin-top:10px;font-size:11px;color:#cdd8e2}
 .access-control .scope span:before{content:'✓';color:var(--good);font-weight:900;margin-right:7px}
 .access-control .scope span.locked:before{content:'•';color:var(--muted)}
+
+.cycle-calendar{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:rgba(255,255,255,.012)}
+.cycle-weekdays,.cycle-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.cycle-weekdays div{padding:8px;text-align:center;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--line)}
+.cycle-day{min-height:96px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px;cursor:pointer;position:relative;background:rgba(255,255,255,.005)}
+.cycle-day:nth-child(7n){border-right:0}
+.cycle-day.outside{opacity:.35}
+.cycle-day.today{box-shadow:inset 0 0 0 1px rgba(214,173,98,.5)}
+.cycle-day.period{background:rgba(255,126,138,.08)}
+.cycle-day.predicted{background:rgba(214,173,98,.045)}
+.cycle-day .dnum{font-size:11px;font-weight:850}
+.cycle-day .markers{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px}
+.cmark{font-size:8px;font-weight:850;border-radius:999px;padding:3px 5px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
+.cmark.period{color:#ffadb5;border-color:rgba(255,126,138,.25);background:rgba(255,126,138,.08)}
+.cmark.sex{color:#f2c6dd;border-color:rgba(232,143,190,.22);background:rgba(232,143,190,.06)}
+.cmark.oral{color:#b9d9ff;border-color:rgba(127,200,255,.2);background:rgba(127,200,255,.06)}
+.cmark.phase{color:#ead099;border-color:rgba(214,173,98,.18)}
+.cycle-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.cycle-toolbar h2{margin:0;font-size:18px}
+.cycle-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.cycle-kpi{border:1px solid var(--line);border-radius:12px;padding:10px;background:rgba(255,255,255,.018)}
+.cycle-kpi .l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.cycle-kpi .v{font-size:17px;font-weight:800;margin-top:5px}
+.phase-card{border:1px solid var(--line);border-radius:12px;padding:10px;background:rgba(255,255,255,.016)}
+.phase-card .phase-name{font-size:11px;font-weight:850}
+.phase-card .phase-score{font-size:18px;font-weight:850;margin-top:5px}
+.sensitive-lock{border:1px dashed rgba(255,255,255,.15);border-radius:14px;padding:18px;color:var(--muted);line-height:1.55}
+.privacy-sensitive{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
+@media(max-width:800px){.cycle-kpis{grid-template-columns:1fr 1fr}.cycle-day{min-height:75px;padding:6px}.cycle-weekdays div{font-size:8px;padding:6px}}
+@media(max-width:520px){.cycle-kpis{grid-template-columns:1fr}.cycle-day{min-height:65px}.cmark.phase{display:none}}
 </style>
 </head>
 <body>
 <div id="authGate" class="auth-gate">
   <div class="auth-card">
     <div class="auth-brand">VM PRIVATE SUITE</div>
-    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v1.8.0</span></div>
+    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v1.9.0</span></div>
     <div class="auth-sub">Личный тренировочный дневник. Данные каждого аккаунта полностью раздельны.</div>
     <div class="auth-tabs">
       <button id="tabLogin" class="active" type="button">Войти</button>
@@ -173,7 +203,7 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 
 <div class="app">
 <aside>
-  <div class="brand"><b>VM FITNESS STUDIO</b><small>Тренировки · Прогрессия · Рекорды</small><small style="color:#d6ad62;font-weight:750">Версия 1.8.0</small></div>
+  <div class="brand"><b>VM FITNESS STUDIO</b><small>Тренировки · Прогрессия · Рекорды</small><small style="color:#d6ad62;font-weight:750">Версия 1.9.0</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Сегодня</button>
     <button class="nav" data-view="workout">Тренировка</button>
@@ -182,6 +212,7 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
     <button class="nav" data-view="history">История</button>
     <button class="nav" data-view="progress">Прогресс</button>
     <button class="nav" data-view="bodyweight">Состав тела</button>
+    <button class="nav hidden" id="cycleNav" data-view="cycle">Цикл и активность</button>
     <button class="nav" data-view="settings">Настройки</button>
   </nav>
   <div class="user-box">
@@ -285,6 +316,15 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
   </div>
 </section>
 
+
+<section id="cycle" class="view">
+  <div class="top">
+    <div><h1>Цикл и активность</h1><div class="sub">Менструальный календарь, самочувствие, ориентировочные фазы цикла и приватная история интимной активности. Прогноз фаз является приблизительным и не предназначен для контрацепции.</div></div>
+    <div class="actions" style="margin-top:0"><button class="btn" type="button" onclick="openIntimateModal()">＋ Интимная активность</button><button class="btn primary" type="button" onclick="openCycleDayModal()">＋ День цикла</button></div>
+  </div>
+  <div id="cycleContent"></div>
+</section>
+
 <section id="settings" class="view">
   <div class="top"><div><h1>Настройки</h1><div class="sub">Профиль относится только к текущему аккаунту.</div></div></div>
   <div class="panel">
@@ -321,7 +361,8 @@ const db=(window.supabase&&window.supabase.createClient)?window.supabase.createC
 let currentUser=null,moduleAccess=null,profile=null;
 let exercises=[],routines=[],routineExercises=[],workouts=[],workoutExercises=[],sets=[],bodyweights=[],fitnessActivities=[],equipment=[];
 let activeWorkoutId=null,exerciseLocationFilter='all',uiTrainingLocation='home',uiSplitGroup='back';
-let activeOwnerId=null,delegatedOwners=[],primaryManagerGranted=false;
+let activeOwnerId=null,delegatedOwners=[],primaryManagerGranted=false,primaryManagerSensitiveGranted=false;
+let sensitiveAccessAvailable=false,cycleSettings=null,cycleDays=[],intimateActivities=[],cycleCalendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
 const $=id=>document.getElementById(id);
 const esc=x=>String(x??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const fmtDateTime=s=>s?new Date(s).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
@@ -379,9 +420,11 @@ async function loadDelegatedAccess(){
 
   const {data:status,error:statusError}=await db.rpc('fitness_primary_manager_access_status');
   if(!statusError)primaryManagerGranted=!!status;
+  const {data:sensitiveStatus,error:sensitiveStatusError}=await db.rpc('fitness_primary_manager_sensitive_access_status');
+  if(!sensitiveStatusError)primaryManagerSensitiveGranted=!!sensitiveStatus;
 
   const {data:grants,error}=await db.from('fitness_access_grants')
-    .select('owner_user_id,delegate_user_id,permission,active')
+    .select('owner_user_id,delegate_user_id,permission,active,share_sensitive')
     .eq('delegate_user_id',currentUser.id)
     .eq('active',true);
   if(error)throw error;
@@ -393,7 +436,10 @@ async function loadDelegatedAccess(){
       .in('user_id',ownerIds);
     if(pe)throw pe;
     const names=new Map((profiles||[]).map(p=>[p.user_id,p.display_name||'Профиль']));
-    delegatedOwners=ownerIds.map(id=>({id,name:names.get(id)||'Профиль'}));
+    delegatedOwners=ownerIds.map(id=>{
+      const g=(grants||[]).find(x=>x.owner_user_id===id);
+      return {id,name:names.get(id)||'Профиль',shareSensitive:!!g?.share_sensitive};
+    });
   }
 
   if(activeOwnerId && !delegatedOwners.some(x=>x.id===activeOwnerId)){
@@ -431,7 +477,7 @@ function renderAccountSwitcher(){
   if(isDelegatedMode()){
     const name=activeOwnerName();
     banner.classList.remove('hidden');
-    banner.innerHTML=`<div><b>Вы управляете Fitness: ${esc(name)}</b><div class="note" style="margin-top:3px">Все изменения упражнений, программ, тренировок, подходов, веса и настроек сохраняются в её профиле.</div></div><button class="btn" type="button" onclick="switchFitnessOwner('')">Вернуться в мой Fitness</button>`;
+    banner.innerHTML=`<div><b>Вы управляете Fitness: ${esc(name)}</b><div class="note" style="margin-top:3px">Все изменения обычных данных Fitness сохраняются в её профиле.${activeOwnerRecord()?.shareSensitive?' Владелец также отдельно разрешил цикл и интимную активность.':' Цикл и интимная активность остаются закрытыми, пока владелец отдельно не разрешит их.'}</div></div><button class="btn" type="button" onclick="switchFitnessOwner('')">Вернуться в мой Fitness</button>`;
   }else{
     banner.classList.add('hidden');
     banner.innerHTML='';
@@ -442,6 +488,7 @@ async function switchFitnessOwner(ownerId=''){
   setBusy(true);
   try{
     activeOwnerId=ownerId||null;
+    await loadDelegatedAccess();
     await loadActiveProfile();
     await loadAll();
     renderAll();
@@ -471,20 +518,59 @@ async function setPrimaryManagerAccess(enable){
   }catch(e){console.error(e);alert(e.message||'Не удалось изменить доступ.')}
   finally{setBusy(false)}
 }
+
+async function setPrimaryManagerSensitiveAccess(enable){
+  if(isDelegatedMode())return alert('Изменять приватность может только владелец своего аккаунта.');
+  if(enable && !primaryManagerGranted)return alert('Сначала включите полный доступ к Fitness.');
+  const text=enable
+    ? 'Разрешить Виктору видеть и изменять календарь цикла, самочувствие и интимную активность? Это отдельное разрешение на чувствительные данные.'
+    : 'Закрыть Виктору доступ к календарю цикла и интимной активности? Обычный полный доступ к Fitness останется.';
+  if(!confirm(text))return;
+  setBusy(true);
+  try{
+    const {data,error}=await db.rpc('fitness_set_primary_manager_sensitive_access',{enable_access:!!enable});
+    if(error)throw error;
+    primaryManagerSensitiveGranted=!!data;
+    await loadDelegatedAccess();
+    await loadSensitiveData();
+    renderAll();
+    toast(enable?'Доступ к приватным данным включён':'Приватные данные снова видны только владельцу');
+  }catch(e){console.error(e);alert(e.message||'Не удалось изменить приватность.')}
+  finally{setBusy(false)}
+}
+function shouldShowCycleModule(){
+  const ownPrimary=!isDelegatedMode()&&(currentUser?.email||'').toLowerCase()==='viktor.morozow@gmail.com';
+  return !ownPrimary;
+}
+function renderCycleVisibility(){
+  const nav=$('cycleNav');if(!nav)return;
+  const show=shouldShowCycleModule();
+  nav.classList.toggle('hidden',!show);
+  if(!show && $('cycle')?.classList.contains('active')){
+    document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));
+    $('dashboard').classList.add('active');
+    document.querySelector('[data-view="dashboard"]')?.classList.add('active');
+  }
+}
+
 function renderDelegateAccess(){
   const box=$('fitnessDelegateAccess');if(!box)return;
   if(isDelegatedMode()){
-    box.innerHTML=`<div class="access-control"><div class="status on">Режим управления профилем ${esc(activeOwnerName())}</div><div class="note">Вы получили полный доступ к данным Fitness от владельца. Только владелец может управлять разрешением.</div></div>`;
+    const owner=activeOwnerRecord();
+    box.innerHTML=`<div class="access-control"><div class="status on">Режим управления профилем ${esc(activeOwnerName())}</div><div class="note">Вы получили полный доступ к обычным данным Fitness от владельца.</div>
+      <div class="privacy-sensitive"><b>Цикл и интимная активность:</b> ${owner?.shareSensitive?'<span style="color:var(--good)">владелец отдельно разрешил доступ</span>':'<span style="color:var(--muted)">закрыты владельцем</span>'}</div>
+    </div>`;
     return;
   }
   const isPrimary=(currentUser?.email||'').toLowerCase()==='viktor.morozow@gmail.com';
   if(isPrimary){
-    box.innerHTML=`<div class="access-control"><div class="status on">Вы — основной управляющий</div><div class="note">Если другой пользователь Fitness даст вам полный доступ, его профиль появится в переключателе слева.</div>${delegatedOwners.length?`<div class="scope">${delegatedOwners.map(x=>`<span>Доступ к Fitness: ${esc(x.name)}</span>`).join('')}</div>`:''}</div>`;
+    box.innerHTML=`<div class="access-control"><div class="status on">Вы — основной управляющий</div><div class="note">Если другой пользователь Fitness даст вам полный доступ, его профиль появится в переключателе слева.</div>${delegatedOwners.length?`<div class="scope">${delegatedOwners.map(x=>`<span>Fitness: ${esc(x.name)}${x.shareSensitive?' · цикл и приватные данные разрешены':''}</span>`).join('')}</div>`:''}</div>`;
     return;
   }
   box.innerHTML=`<div class="access-control">
     <div class="status ${primaryManagerGranted?'on':'off'}">${primaryManagerGranted?'Полный доступ Виктору включён':'Доступ Виктору не предоставлен'}</div>
-    <div class="note">${primaryManagerGranted?'Виктор может открыть ваш Fitness из своего аккаунта и полностью управлять данными Fitness.':'По умолчанию ваши данные видны только вам.'}</div>
+    <div class="note">${primaryManagerGranted?'Виктор может открыть ваш Fitness из своего аккаунта и управлять обычными данными Fitness.':'По умолчанию ваши данные видны только вам.'}</div>
     <div class="scope">
       <span>Упражнения, программы и сплиты</span>
       <span>Тренировки, подходы и история</span>
@@ -498,6 +584,13 @@ function renderDelegateAccess(){
         ? '<button class="btn danger" type="button" onclick="setPrimaryManagerAccess(false)">Отозвать доступ у Виктора</button>'
         : '<button class="btn primary" type="button" onclick="setPrimaryManagerAccess(true)">Дать Виктору полный доступ</button>'}
     </div>
+    ${primaryManagerGranted?`<div class="privacy-sensitive">
+      <div class="status ${primaryManagerSensitiveGranted?'on':'off'}">${primaryManagerSensitiveGranted?'Цикл и интимная активность доступны Виктору':'Цикл и интимная активность скрыты от Виктора'}</div>
+      <div class="note">Это отдельное разрешение на чувствительные данные. Обычный полный доступ Fitness не открывает этот раздел автоматически.</div>
+      <div class="actions">${primaryManagerSensitiveGranted
+        ? '<button class="btn danger" type="button" onclick="setPrimaryManagerSensitiveAccess(false)">Закрыть приватные данные</button>'
+        : '<button class="btn" type="button" onclick="setPrimaryManagerSensitiveAccess(true)">Разрешить цикл и интимную активность</button>'}</div>
+    </div>`:''}
   </div>`;
 }
 
@@ -529,6 +622,26 @@ async function ensureProfile(){
   }
   profile=data;
 }
+
+async function loadSensitiveData(){
+  const target=dataUserId();
+  cycleSettings=null;cycleDays=[];intimateActivities=[];sensitiveAccessAvailable=false;
+  if(!target||!shouldShowCycleModule())return;
+  const {data:can,error:ce}=await db.rpc('fitness_sensitive_access',{target_user_id:target});
+  if(ce){console.warn('Sensitive access check',ce);return}
+  sensitiveAccessAvailable=!!can;
+  if(!sensitiveAccessAvailable)return;
+
+  const [cs,cd,ia]=await Promise.all([
+    db.from('fitness_cycle_settings').select('*').eq('user_id',target).maybeSingle(),
+    db.from('fitness_cycle_days').select('*').eq('user_id',target).order('day_date',{ascending:false}).limit(730),
+    db.from('fitness_intimate_activity').select('*').eq('user_id',target).order('occurred_at',{ascending:false}).limit(500)
+  ]);
+  for(const r of [cs,cd,ia])if(r.error)throw r.error;
+  cycleSettings=cs.data||null;
+  cycleDays=cd.data||[];
+  intimateActivities=ia.data||[];
+}
 async function loadAll(){
   const uid=dataUserId();
   const [ex,rt,re,wo,we,se,bw,fa,eq]=await Promise.all([
@@ -545,15 +658,17 @@ async function loadAll(){
   for(const r of [ex,rt,re,wo,we,se,bw,fa,eq])if(r.error)throw r.error;
   exercises=ex.data||[];routines=rt.data||[];routineExercises=re.data||[];workouts=wo.data||[];workoutExercises=we.data||[];sets=se.data||[];bodyweights=bw.data||[];fitnessActivities=fa.data||[];equipment=eq.data||[];
   activeWorkoutId=workouts.find(w=>!w.ended_at)?.id||null;
+  await loadSensitiveData();
 }
 function renderAll(){
-  renderDashboard();renderExercises();renderRoutines();renderActiveWorkout();renderHistory();renderProgressOptions();renderBodyweight();renderSettings();renderAccountSwitcher();
+  renderDashboard();renderExercises();renderRoutines();renderActiveWorkout();renderHistory();renderProgressOptions();renderBodyweight();renderCycle();renderSettings();renderAccountSwitcher();renderCycleVisibility();
 }
 document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));b.classList.add('active');
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));$(b.dataset.view).classList.add('active');
   if(b.dataset.view==='progress')setTimeout(renderProgress,0);
   if(b.dataset.view==='bodyweight')setTimeout(drawBodyweightChart,0);
+  if(b.dataset.view==='cycle')setTimeout(renderCycle,0);
 });
 function exerciseById(id){return exercises.find(x=>x.id===id)}
 function routineById(id){return routines.find(x=>x.id===id)}
@@ -1726,11 +1841,221 @@ async function finishActiveWorkout(){
   const r=await db.from('fitness_workouts').update({ended_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',activeWorkoutId);if(r.error)return alert(r.error.message);await loadAll();renderAll();goView('dashboard');toast('Тренировка завершена');
 }
 
+
+function dateKey(d){
+  const x=d instanceof Date?d:new Date(d);
+  const y=x.getFullYear(),m=String(x.getMonth()+1).padStart(2,'0'),day=String(x.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function localDateFromKey(k){const [y,m,d]=String(k).split('-').map(Number);return new Date(y,m-1,d,12,0,0)}
+function addDaysDate(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x}
+function daysBetween(a,b){return Math.round((localDateFromKey(dateKey(b))-localDateFromKey(dateKey(a)))/86400000)}
+function cycleStarts(){
+  return cycleDays.filter(x=>x.is_cycle_start).map(x=>x.day_date).sort();
+}
+function observedCycleAverage(){
+  const starts=cycleStarts();if(starts.length<2)return null;
+  const diffs=[];for(let i=1;i<starts.length;i++){const d=daysBetween(starts[i-1],starts[i]);if(d>=15&&d<=60)diffs.push(d)}
+  return diffs.length?Math.round(diffs.reduce((a,b)=>a+b,0)/diffs.length):null;
+}
+function effectiveCycleLength(){return observedCycleAverage()||Number(cycleSettings?.average_cycle_days)||28}
+function effectivePeriodLength(){return Number(cycleSettings?.average_period_days)||5}
+function cycleEntryForDate(d){const k=dateKey(d);return cycleDays.find(x=>x.day_date===k)||null}
+function cycleInfoForDate(d){
+  if(!sensitiveAccessAvailable)return null;
+  const targetKey=dateKey(d),starts=cycleStarts().filter(k=>k<=targetKey);
+  if(!starts.length)return null;
+  const start=starts[starts.length-1],day=daysBetween(start,targetKey)+1;
+  if(day<1)return null;
+  const len=effectiveCycleLength(),periodLen=effectivePeriodLength(),ov=Math.max(periodLen+2,len-14);
+  const recorded=cycleEntryForDate(d);
+  let phase='Лютеиновая';
+  if(recorded?.is_period||day<=periodLen)phase='Менструация';
+  else if(day<ov-1)phase='Фолликулярная';
+  else if(day<=ov+1)phase='Овуляторное окно';
+  return {start,day,phase,cycleLength:len,ovulationDay:ov,recorded};
+}
+function predictedNextPeriod(){
+  const starts=cycleStarts();if(!starts.length)return null;
+  return dateKey(addDaysDate(localDateFromKey(starts[starts.length-1]),effectiveCycleLength()));
+}
+function intimateLabel(type){return type==='sex'?'Секс':type==='oral_sex'?'Оральный секс':'Другое'}
+function intimateOnDate(k){return intimateActivities.filter(x=>dateKey(x.occurred_at)===k)}
+function phaseStrengthData(){
+  if(!sensitiveAccessAvailable)return [];
+  const maxByEx=new Map();
+  for(const we of workoutExercises){
+    const ss=setsForWorkoutExercise(we.id);
+    const mx=Math.max(0,...ss.map(x=>e1rm(x.weight_kg,x.reps)));
+    if(mx>0)maxByEx.set(we.exercise_id,Math.max(maxByEx.get(we.exercise_id)||0,mx));
+  }
+  const groups=new Map();
+  for(const w of workouts.filter(x=>x.ended_at)){
+    const ci=cycleInfoForDate(w.started_at);if(!ci)continue;
+    const scores=[];
+    for(const we of workoutExerciseRows(w.id)){
+      const max=maxByEx.get(we.exercise_id)||0;if(!max)continue;
+      const best=Math.max(0,...setsForWorkoutExercise(we.id).map(x=>e1rm(x.weight_kg,x.reps)));
+      if(best>0)scores.push(best/max*100);
+    }
+    if(!scores.length)continue;
+    const score=scores.reduce((a,b)=>a+b,0)/scores.length;
+    if(!groups.has(ci.phase))groups.set(ci.phase,[]);
+    groups.get(ci.phase).push(score);
+  }
+  return ['Менструация','Фолликулярная','Овуляторное окно','Лютеиновая'].map(phase=>{
+    const a=groups.get(phase)||[];
+    return {phase,count:a.length,score:a.length?a.reduce((x,y)=>x+y,0)/a.length:null};
+  });
+}
+function renderCycleStrengthAnalysis(){
+  const data=phaseStrengthData();
+  if(!data.some(x=>x.count))return '<div class="empty">Когда появятся тренировки и хотя бы один отмеченный цикл, здесь появится сравнение силового индекса по фазам.</div>';
+  return `<div class="grid g4">${data.map(x=>`<div class="phase-card"><div class="phase-name">${x.phase}</div><div class="phase-score">${x.score!=null?n(x.score,0)+' %':'—'}</div><div class="note">${x.count?x.count+' тренировок':'Нет данных'}</div></div>`).join('')}</div><div class="note" style="margin-top:9px">Индекс сравнивает рабочую силу каждого упражнения с её собственным максимумом. Это показывает корреляцию, но не доказывает, что изменение силы вызвано именно фазой цикла.</div>`;
+}
+function renderCycle(){
+  const box=$('cycleContent');if(!box)return;
+  if(!shouldShowCycleModule()){box.innerHTML='';return}
+  if(!sensitiveAccessAvailable){
+    box.innerHTML=`<div class="sensitive-lock"><b>Приватный раздел закрыт.</b><br>${isDelegatedMode()?'Владелец дал доступ к обычному Fitness, но отдельно не разрешил календарь цикла и интимную активность.':'Данные недоступны.'}</div>`;
+    return;
+  }
+  const todayInfo=cycleInfoForDate(new Date()),next=predictedNextPeriod(),obs=observedCycleAverage();
+  const last30=new Date();last30.setDate(last30.getDate()-30);
+  const intimate30=intimateActivities.filter(x=>new Date(x.occurred_at)>=last30).length;
+  box.innerHTML=`<div class="cycle-kpis">
+    <div class="cycle-kpi"><div class="l">Сегодня</div><div class="v">${todayInfo?`День ${todayInfo.day}`:'—'}</div><div class="note">${todayInfo?todayInfo.phase:'Отметьте начало цикла'}</div></div>
+    <div class="cycle-kpi"><div class="l">Следующие месячные</div><div class="v">${next?fmtDate(next):'—'}</div><div class="note">Ориентировочный прогноз</div></div>
+    <div class="cycle-kpi"><div class="l">Средняя длина цикла</div><div class="v">${obs||effectiveCycleLength()} дн.</div><div class="note">${obs?'По записанным циклам':'По настройке'}</div></div>
+    <div class="cycle-kpi"><div class="l">Интимная активность · 30 дней</div><div class="v">${intimate30}</div><div class="note">Только отмеченные записи</div></div>
+  </div>
+  <div class="panel">
+    <div class="cycle-toolbar"><div><h2>${cycleCalendarMonth.toLocaleDateString('ru-RU',{month:'long',year:'numeric'})}</h2><div class="note">Нажмите на день, чтобы отметить месячные, самочувствие или посмотреть записи.</div></div><div class="actions" style="margin-top:0"><button class="btn" onclick="shiftCycleMonth(-1)">←</button><button class="btn" onclick="cycleCalendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);renderCycle()">Сегодня</button><button class="btn" onclick="shiftCycleMonth(1)">→</button></div></div>
+    ${renderCycleCalendar()}
+  </div>
+  <div class="grid g2">
+    <div class="panel"><div class="head"><h2>Настройки прогноза</h2></div>
+      <div class="form-grid"><label>Обычная длина цикла, дней<input id="cycleLen" type="number" min="15" max="60" value="${cycleSettings?.average_cycle_days||28}"></label><label>Обычная длительность месячных, дней<input id="periodLen" type="number" min="1" max="14" value="${cycleSettings?.average_period_days||5}"></label></div>
+      <div class="actions"><button class="btn primary" onclick="saveCycleSettings()">Сохранить</button></div>
+      <div class="note">Если записано несколько начал цикла, прогноз использует фактическую среднюю длину. Фазы и овуляторное окно рассчитываются приблизительно и не должны использоваться как метод контрацепции.</div>
+    </div>
+    <div class="panel"><div class="head"><h2>Интимная активность</h2><button class="btn" onclick="openIntimateModal()">＋ Запись</button></div><div id="intimateHistory">${renderIntimateHistory()}</div></div>
+  </div>
+  <div class="panel"><div class="head"><h2>Сила и фазы цикла</h2></div>${renderCycleStrengthAnalysis()}</div>`;
+}
+function renderCycleCalendar(){
+  const first=new Date(cycleCalendarMonth.getFullYear(),cycleCalendarMonth.getMonth(),1);
+  const mondayOffset=(first.getDay()+6)%7;
+  const start=addDaysDate(first,-mondayOffset);
+  const pred=predictedNextPeriod(),predLen=effectivePeriodLength();
+  const weekdays=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+  const cells=[];
+  for(let i=0;i<42;i++){
+    const d=addDaysDate(start,i),k=dateKey(d),entry=cycleEntryForDate(d),acts=intimateOnDate(k),ci=cycleInfoForDate(d);
+    const inMonth=d.getMonth()===cycleCalendarMonth.getMonth();
+    const predictedPeriod=pred && k>=pred && k<dateKey(addDaysDate(localDateFromKey(pred),predLen));
+    const cls=['cycle-day',inMonth?'':'outside',k===dateKey(new Date())?'today':'',entry?.is_period?'period':'',predictedPeriod&&!entry?.is_period?'predicted':''].filter(Boolean).join(' ');
+    const marks=[];
+    if(entry?.is_period)marks.push(`<span class="cmark period">${entry.is_cycle_start?'Начало':'Месячные'}</span>`);
+    const sexCount=acts.filter(x=>x.activity_type==='sex').length,oralCount=acts.filter(x=>x.activity_type==='oral_sex').length,otherCount=acts.filter(x=>x.activity_type==='other').length;
+    if(sexCount)marks.push(`<span class="cmark sex">Секс${sexCount>1?' ×'+sexCount:''}</span>`);
+    if(oralCount)marks.push(`<span class="cmark oral">Орал.${oralCount>1?' ×'+oralCount:''}</span>`);
+    if(otherCount)marks.push(`<span class="cmark">Другое${otherCount>1?' ×'+otherCount:''}</span>`);
+    if(!entry?.is_period&&ci)marks.push(`<span class="cmark phase">Д${ci.day}</span>`);
+    if(predictedPeriod&&!entry?.is_period)marks.push(`<span class="cmark phase">прогноз</span>`);
+    return `<div class="${cls}" onclick="openCycleDayModal('${k}')"><div class="dnum">${d.getDate()}</div><div class="markers">${marks.join('')}</div></div>`;
+  }
+  return `<div class="cycle-calendar"><div class="cycle-weekdays">${weekdays.map(x=>`<div>${x}</div>`).join('')}</div><div class="cycle-grid">${cells.join('')}</div></div>`;
+}
+function shiftCycleMonth(n){cycleCalendarMonth=new Date(cycleCalendarMonth.getFullYear(),cycleCalendarMonth.getMonth()+n,1);renderCycle()}
+function symptomLabel(v){return ({cramps:'Спазмы',headache:'Головная боль',fatigue:'Усталость',bloating:'Вздутие',mood:'Изменение настроения',sleep:'Проблемы со сном'})[v]||v}
+function openCycleDayModal(k=''){
+  if(!sensitiveAccessAvailable)return alert('Нет доступа к приватному разделу.');
+  const key=k||dateKey(new Date()),x=cycleDays.find(d=>d.day_date===key)||{};
+  const symptoms=new Set(x.symptoms||[]);
+  const opts=['cramps','headache','fatigue','bloating','mood','sleep'];
+  openModal(`<h3>${fmtDate(key)} · цикл и самочувствие</h3>
+    <div class="form-grid">
+      <label>Дата<input id="cyDate" type="date" value="${key}"></label>
+      <label>Менструация<select id="cyPeriod"><option value="0" ${!x.is_period?'selected':''}>Нет</option><option value="1" ${x.is_period?'selected':''}>Да</option></select></label>
+      <label>Это первый день нового цикла<select id="cyStart"><option value="0" ${!x.is_cycle_start?'selected':''}>Нет</option><option value="1" ${x.is_cycle_start?'selected':''}>Да</option></select></label>
+      <label>Интенсивность<select id="cyFlow"><option value="">—</option><option value="light" ${x.flow==='light'?'selected':''}>Лёгкая</option><option value="medium" ${x.flow==='medium'?'selected':''}>Средняя</option><option value="heavy" ${x.flow==='heavy'?'selected':''}>Сильная</option></select></label>
+      <label>Энергия 1–5<input id="cyEnergy" type="number" min="1" max="5" value="${x.energy??''}" placeholder="—"></label>
+      <label>Качество сна 1–5<input id="cySleep" type="number" min="1" max="5" value="${x.sleep_quality??''}" placeholder="—"></label>
+      <label>Боль 0–10<input id="cyPain" type="number" min="0" max="10" value="${x.pain_level??''}" placeholder="—"></label>
+      <label class="wide">Симптомы<div style="display:flex;gap:8px;flex-wrap:wrap">${opts.map(v=>`<label style="display:flex;grid-template-columns:auto 1fr;align-items:center;gap:5px"><input class="cySym" type="checkbox" value="${v}" ${symptoms.has(v)?'checked':''} style="width:auto">${symptomLabel(v)}</label>`).join('')}</div></label>
+      <label class="wide">Заметка<textarea id="cyNotes">${esc(x.notes||'')}</textarea></label>
+    </div>
+    <div class="actions">${x.id?`<button class="btn danger" onclick="deleteCycleDay('${x.id}')">Удалить запись</button>`:''}<button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveCycleDay('${x.id||''}')">Сохранить</button></div>`);
+}
+async function saveCycleDay(id=''){
+  const day_date=$('cyDate').value;if(!day_date)return alert('Выберите дату.');
+  const val=id=>{const v=$(id).value;return v===''?null:Number(v)};
+  const data={user_id:dataUserId(),day_date,is_period:$('cyPeriod').value==='1',is_cycle_start:$('cyStart').value==='1',flow:$('cyFlow').value||null,energy:val('cyEnergy'),sleep_quality:val('cySleep'),pain_level:val('cyPain'),symptoms:[...document.querySelectorAll('.cySym:checked')].map(x=>x.value),notes:$('cyNotes').value.trim()||null,updated_at:new Date().toISOString()};
+  if(data.is_cycle_start)data.is_period=true;
+  const r=await db.from('fitness_cycle_days').upsert(data,{onConflict:'user_id,day_date'});
+  if(r.error)return alert(r.error.message);
+  closeModal();await loadSensitiveData();renderAll();toast('День цикла сохранён');
+}
+async function deleteCycleDay(id){
+  if(!confirm('Удалить эту запись календаря?'))return;
+  const r=await db.from('fitness_cycle_days').delete().eq('id',id);
+  if(r.error)return alert(r.error.message);
+  closeModal();await loadSensitiveData();renderAll();toast('Запись удалена');
+}
+async function saveCycleSettings(){
+  const average_cycle_days=Number($('cycleLen').value),average_period_days=Number($('periodLen').value);
+  if(average_cycle_days<15||average_cycle_days>60||average_period_days<1||average_period_days>14)return alert('Проверьте значения.');
+  const r=await db.from('fitness_cycle_settings').upsert({user_id:dataUserId(),average_cycle_days,average_period_days,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+  if(r.error)return alert(r.error.message);
+  await loadSensitiveData();renderAll();toast('Настройки цикла сохранены');
+}
+function openIntimateModal(id=''){
+  if(!sensitiveAccessAvailable)return alert('Нет доступа к приватному разделу.');
+  const x=intimateActivities.find(a=>a.id===id)||{};
+  const dt=x.occurred_at?new Date(new Date(x.occurred_at).getTime()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16):new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16);
+  openModal(`<h3>${id?'Изменить':'Добавить'} интимную активность</h3><div class="form-grid">
+    <label>Дата и время<input id="iaAt" type="datetime-local" value="${dt}"></label>
+    <label>Тип<select id="iaType"><option value="sex" ${x.activity_type==='sex'?'selected':''}>Секс</option><option value="oral_sex" ${x.activity_type==='oral_sex'?'selected':''}>Оральный секс</option><option value="other" ${x.activity_type==='other'?'selected':''}>Другое</option></select></label>
+    <label class="wide">Заметка, необязательно<textarea id="iaNotes">${esc(x.notes||'')}</textarea></label>
+  </div><div class="actions">${id?`<button class="btn danger" onclick="deleteIntimateActivity('${id}')">Удалить</button>`:''}<button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveIntimateActivity('${id}')">Сохранить</button></div>`);
+}
+async function saveIntimateActivity(id=''){
+  const at=$('iaAt').value;if(!at)return alert('Укажите дату и время.');
+  const data={user_id:dataUserId(),occurred_at:new Date(at).toISOString(),activity_type:$('iaType').value,notes:$('iaNotes').value.trim()||null,updated_at:new Date().toISOString()};
+  const r=id?await db.from('fitness_intimate_activity').update(data).eq('id',id):await db.from('fitness_intimate_activity').insert(data);
+  if(r.error)return alert(r.error.message);
+  closeModal();await loadSensitiveData();renderAll();toast('Активность сохранена');
+}
+async function deleteIntimateActivity(id){
+  if(!confirm('Удалить эту запись?'))return;
+  const r=await db.from('fitness_intimate_activity').delete().eq('id',id);
+  if(r.error)return alert(r.error.message);
+  closeModal();await loadSensitiveData();renderAll();toast('Запись удалена');
+}
+function renderIntimateHistory(){
+  if(!intimateActivities.length)return '<div class="empty">Записей пока нет.</div>';
+  const sorted=intimateActivities.slice(0,20);
+  const diffs=[];for(let i=1;i<sorted.length;i++){const d=Math.abs(new Date(sorted[i-1].occurred_at)-new Date(sorted[i].occurred_at))/86400000;if(d<=90)diffs.push(d)}
+  const avg=diffs.length?diffs.reduce((a,b)=>a+b,0)/diffs.length:null;
+  return `${avg!=null?`<div class="note" style="margin-bottom:8px">Средний интервал между отмеченными событиями: ${n(avg,1)} дня. Это статистика, а не прогноз поведения.</div>`:''}<div class="table-wrap"><table><thead><tr><th>Дата</th><th>Тип</th><th>Заметка</th><th></th></tr></thead><tbody>${sorted.map(x=>`<tr><td>${fmtDateTime(x.occurred_at)}</td><td>${intimateLabel(x.activity_type)}</td><td>${esc(x.notes||'—')}</td><td><button class="btn" onclick="openIntimateModal('${x.id}')">Изменить</button></td></tr>`).join('')}</tbody></table></div>`;
+}
+function cycleHistoryBadge(w){
+  if(!sensitiveAccessAvailable||!shouldShowCycleModule())return '';
+  const ci=cycleInfoForDate(w.started_at);if(!ci)return '';
+  const rec=ci.recorded;
+  const extras=[];
+  if(rec?.energy!=null)extras.push(`энергия ${rec.energy}/5`);
+  if(rec?.sleep_quality!=null)extras.push(`сон ${rec.sleep_quality}/5`);
+  if(rec?.pain_level!=null&&rec.pain_level>0)extras.push(`боль ${rec.pain_level}/10`);
+  return ` · <span class="badge gold">цикл: день ${ci.day} · ${esc(ci.phase)}${extras.length?' · '+esc(extras.join(', ')):''}</span>`;
+}
+
 function renderHistory(){
   const done=workouts.filter(w=>w.ended_at);
   $('historyList').innerHTML=done.length?done.map(w=>{
     const rows=workoutExerciseRows(w.id),a=activityForWorkout(w.id),metrics=activityMetricText(a);
-    return `<div class="routine-card" style="margin-bottom:9px"><div class="head"><div><h3>${esc(w.title)} ${splitBadge(w.split_group||'custom')} ${locationBadge(w.training_location||'both')}</h3><div class="note">${fmtDateTime(w.started_at)} · объём ${n(workoutVolume(w.id)/1000,1)} т${metrics?` · <b>${esc(metrics)}</b>`:''}</div></div><div class="history-card-actions">${a?'<span class="badge blue">Withings</span>':''}<button class="btn danger" type="button" onclick="deleteWorkout('${w.id}')">Удалить тренировку</button></div></div><div class="routine-list">${rows.map(row=>{const ex=exerciseById(row.exercise_id),ss=setsForWorkoutExercise(row.id);return `<div class="routine-row"><span><b>${esc(ex?.name||'Удалённое упражнение')}</b></span><span>${ss.map(s=>`${n(s.weight_kg,2)}×${s.reps}`).join(' · ')||'—'}</span></div>`}).join('')}</div></div>`
+    return `<div class="routine-card" style="margin-bottom:9px"><div class="head"><div><h3>${esc(w.title)} ${splitBadge(w.split_group||'custom')} ${locationBadge(w.training_location||'both')}</h3><div class="note">${fmtDateTime(w.started_at)} · объём ${n(workoutVolume(w.id)/1000,1)} т${metrics?` · <b>${esc(metrics)}</b>`:''}${cycleHistoryBadge(w)}</div></div><div class="history-card-actions">${a?'<span class="badge blue">Withings</span>':''}<button class="btn danger" type="button" onclick="deleteWorkout('${w.id}')">Удалить тренировку</button></div></div><div class="routine-list">${rows.map(row=>{const ex=exerciseById(row.exercise_id),ss=setsForWorkoutExercise(row.id);return `<div class="routine-row"><span><b>${esc(ex?.name||'Удалённое упражнение')}</b></span><span>${ss.map(s=>`${n(s.weight_kg,2)}×${s.reps}`).join(' · ')||'—'}</span></div>`}).join('')}</div></div>`
   }).join(''):'<div class="empty">История появится после завершения первой тренировки.</div>';
   renderWithingsActivityList();
 }
