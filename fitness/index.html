@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Fitness Studio v1.7.1 — Withings Body Composition</title>
+<title>VM Fitness Studio v1.8.0 — Withings Body Composition</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -133,13 +133,29 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 .preset-card{border:1px solid rgba(214,173,98,.18);border-radius:14px;padding:11px;background:rgba(214,173,98,.045);margin:10px 0}
 .preset-card b{color:#f2d49d}
 @media(max-width:760px){.inventory-grid{grid-template-columns:1fr}}
+
+.account-switcher{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:9px;background:rgba(255,255,255,.018)}
+.account-switcher.hidden{display:none}
+.account-switcher .label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:800;margin-bottom:7px}
+.account-switcher .switches{display:flex;gap:6px;flex-wrap:wrap}
+.account-switcher .btn{padding:7px 9px;font-size:10px;flex:1}
+.account-switcher .btn.active{background:rgba(214,173,98,.12);border-color:rgba(214,173,98,.3);color:#f3dba9}
+.delegate-banner{margin-bottom:14px;border:1px solid rgba(214,173,98,.28);background:rgba(214,173,98,.07);border-radius:14px;padding:11px 13px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.delegate-banner.hidden{display:none}
+.delegate-banner b{color:#f3d59c}
+.access-control{border:1px solid var(--line);border-radius:14px;padding:12px;background:rgba(255,255,255,.018)}
+.access-control .status{font-size:13px;font-weight:850;margin-bottom:6px}
+.access-control .status.on{color:#9de1b7}.access-control .status.off{color:#c6d0d9}
+.access-control .scope{display:grid;gap:5px;margin-top:10px;font-size:11px;color:#cdd8e2}
+.access-control .scope span:before{content:'✓';color:var(--good);font-weight:900;margin-right:7px}
+.access-control .scope span.locked:before{content:'•';color:var(--muted)}
 </style>
 </head>
 <body>
 <div id="authGate" class="auth-gate">
   <div class="auth-card">
     <div class="auth-brand">VM PRIVATE SUITE</div>
-    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v1.7.1</span></div>
+    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v1.8.0</span></div>
     <div class="auth-sub">Личный тренировочный дневник. Данные каждого аккаунта полностью раздельны.</div>
     <div class="auth-tabs">
       <button id="tabLogin" class="active" type="button">Войти</button>
@@ -157,7 +173,7 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 
 <div class="app">
 <aside>
-  <div class="brand"><b>VM FITNESS STUDIO</b><small>Тренировки · Прогрессия · Рекорды</small><small style="color:#d6ad62;font-weight:750">Версия 1.7.1</small></div>
+  <div class="brand"><b>VM FITNESS STUDIO</b><small>Тренировки · Прогрессия · Рекорды</small><small style="color:#d6ad62;font-weight:750">Версия 1.8.0</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Сегодня</button>
     <button class="nav" data-view="workout">Тренировка</button>
@@ -170,6 +186,7 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
   </nav>
   <div class="user-box">
     <div class="user-mail" id="userMail">—</div>
+    <div id="accountSwitcher" class="account-switcher hidden"></div>
     <button class="btn" style="width:100%;margin-top:8px" type="button" onclick="signOut()">Выйти</button>
     <a class="suite-link hidden" id="fitnessWealthLink" href="../"><span>←</span><span>WEALTH STUDIO</span></a>
     <a class="suite-link hidden" id="fitnessHrtLink" href="../hrt/"><span>♥</span><span>HRT HEALTH STUDIO</span></a>
@@ -177,6 +194,7 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 </aside>
 
 <main>
+<div id="delegatedBanner" class="delegate-banner hidden"></div>
 <section id="dashboard" class="view active">
   <div class="top">
     <div><h1>Сегодня</h1><div class="sub">Начните тренировку — программа покажет рекомендуемый вес и цель по повторениям для каждого упражнения.</div></div>
@@ -282,6 +300,10 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
     <div id="equipmentInventory"></div>
   </div>
   <div class="panel">
+    <div class="head"><div><h2>Совместное управление Fitness</h2><div class="sub">Владелец аккаунта может добровольно дать Виктору полный доступ к данным Fitness и в любой момент его отозвать.</div></div></div>
+    <div id="fitnessDelegateAccess"></div>
+  </div>
+  <div class="panel">
     <div class="head"><h2>Приватность и доступ</h2></div>
     <div id="moduleAccess" class="note"></div>
   </div>
@@ -299,6 +321,7 @@ const db=(window.supabase&&window.supabase.createClient)?window.supabase.createC
 let currentUser=null,moduleAccess=null,profile=null;
 let exercises=[],routines=[],routineExercises=[],workouts=[],workoutExercises=[],sets=[],bodyweights=[],fitnessActivities=[],equipment=[];
 let activeWorkoutId=null,exerciseLocationFilter='all',uiTrainingLocation='home',uiSplitGroup='back';
+let activeOwnerId=null,delegatedOwners=[],primaryManagerGranted=false;
 const $=id=>document.getElementById(id);
 const esc=x=>String(x??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const fmtDateTime=s=>s?new Date(s).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
@@ -330,7 +353,8 @@ async function submitAuth(){
     if(password.length<6)return authMessage('Пароль должен содержать минимум 6 символов.','err');
     if(password!==$('authPassword2').value)return authMessage('Пароли не совпадают.','err');
     authMessage('Создаю аккаунт…');
-    const {data,error}=await db.auth.signUp({email,password,options:{data:{display_name:$('authName').value.trim()||''}}});
+    const redirectUrl=new URL('./',window.location.href);redirectUrl.search='';redirectUrl.hash='';
+    const {data,error}=await db.auth.signUp({email,password,options:{data:{display_name:$('authName').value.trim()||''},emailRedirectTo:redirectUrl.href}});
     if(error)return authMessage(error.message,'err');
     if(data.session){await enterApp(data.session)}else authMessage('Аккаунт создан. Если Supabase просит подтверждение email — подтвердите письмо, затем войдите.','ok');
   }else{
@@ -340,6 +364,143 @@ async function submitAuth(){
 }
 function authMessage(t,k=''){$('authMsg').textContent=t;$('authMsg').className='auth-msg '+k}
 async function signOut(){await db.auth.signOut();location.reload()}
+
+function dataUserId(){return activeOwnerId||currentUser?.id||null}
+function isDelegatedMode(){return !!activeOwnerId && activeOwnerId!==currentUser?.id}
+function activeOwnerRecord(){return delegatedOwners.find(x=>x.id===activeOwnerId)||null}
+function activeOwnerName(){
+  if(!isDelegatedMode())return profile?.display_name||currentUser?.user_metadata?.display_name||'Мой Fitness';
+  return activeOwnerRecord()?.name||profile?.display_name||'Другой профиль';
+}
+async function loadDelegatedAccess(){
+  delegatedOwners=[];
+  primaryManagerGranted=false;
+  if(!currentUser)return;
+
+  const {data:status,error:statusError}=await db.rpc('fitness_primary_manager_access_status');
+  if(!statusError)primaryManagerGranted=!!status;
+
+  const {data:grants,error}=await db.from('fitness_access_grants')
+    .select('owner_user_id,delegate_user_id,permission,active')
+    .eq('delegate_user_id',currentUser.id)
+    .eq('active',true);
+  if(error)throw error;
+
+  const ownerIds=[...new Set((grants||[]).map(g=>g.owner_user_id).filter(Boolean))];
+  if(ownerIds.length){
+    const {data:profiles,error:pe}=await db.from('fitness_profiles')
+      .select('user_id,display_name')
+      .in('user_id',ownerIds);
+    if(pe)throw pe;
+    const names=new Map((profiles||[]).map(p=>[p.user_id,p.display_name||'Профиль']));
+    delegatedOwners=ownerIds.map(id=>({id,name:names.get(id)||'Профиль'}));
+  }
+
+  if(activeOwnerId && !delegatedOwners.some(x=>x.id===activeOwnerId)){
+    activeOwnerId=null;
+  }
+}
+async function loadActiveProfile(){
+  const target=dataUserId();
+  let {data,error}=await db.from('fitness_profiles').select('*').eq('user_id',target).maybeSingle();
+  if(error)throw error;
+  if(!data){
+    const display=!isDelegatedMode()?(currentUser?.user_metadata?.display_name||''):'Профиль';
+    const r=await db.from('fitness_profiles').insert({user_id:target,display_name:display}).select().single();
+    if(r.error)throw r.error;
+    data=r.data;
+  }
+  profile=data;
+}
+function renderAccountSwitcher(){
+  const box=$('accountSwitcher');
+  if(!box)return;
+  if(!delegatedOwners.length){
+    box.classList.add('hidden');
+    box.innerHTML='';
+  }else{
+    box.classList.remove('hidden');
+    box.innerHTML=`<div class="label">Управляемый профиль</div><div class="switches">
+      <button class="btn ${!isDelegatedMode()?'active':''}" type="button" onclick="switchFitnessOwner('')">Мой Fitness</button>
+      ${delegatedOwners.map(x=>`<button class="btn ${activeOwnerId===x.id?'active':''}" type="button" onclick="switchFitnessOwner('${x.id}')">${esc(x.name)}</button>`).join('')}
+    </div>`;
+  }
+
+  const banner=$('delegatedBanner');
+  if(!banner)return;
+  if(isDelegatedMode()){
+    const name=activeOwnerName();
+    banner.classList.remove('hidden');
+    banner.innerHTML=`<div><b>Вы управляете Fitness: ${esc(name)}</b><div class="note" style="margin-top:3px">Все изменения упражнений, программ, тренировок, подходов, веса и настроек сохраняются в её профиле.</div></div><button class="btn" type="button" onclick="switchFitnessOwner('')">Вернуться в мой Fitness</button>`;
+  }else{
+    banner.classList.add('hidden');
+    banner.innerHTML='';
+  }
+}
+async function switchFitnessOwner(ownerId=''){
+  if(ownerId && !delegatedOwners.some(x=>x.id===ownerId))return alert('Доступ к этому профилю больше недоступен.');
+  setBusy(true);
+  try{
+    activeOwnerId=ownerId||null;
+    await loadActiveProfile();
+    await loadAll();
+    renderAll();
+    renderAccountSwitcher();
+    toast(isDelegatedMode()?`Открыт Fitness: ${activeOwnerName()}`:'Открыт мой Fitness');
+  }catch(e){
+    console.error(e);
+    activeOwnerId=null;
+    alert(e.message||'Не удалось переключить профиль.');
+  }finally{setBusy(false)}
+}
+async function setPrimaryManagerAccess(enable){
+  if(isDelegatedMode())return alert('Изменять разрешения может только владелец своего аккаунта.');
+  const text=enable
+    ? 'Дать Виктору полный доступ к вашему Fitness? Он сможет добавлять, изменять и удалять упражнения, программы, тренировки, подходы, вес и настройки Fitness. Пароль, email и авторизация Withings ему не передаются.'
+    : 'Отозвать у Виктора доступ к вашему Fitness? После этого он больше не сможет открывать и изменять ваши данные.';
+  if(!confirm(text))return;
+  setBusy(true);
+  try{
+    const {data,error}=await db.rpc('fitness_set_primary_manager_access',{enable_access:!!enable});
+    if(error)throw error;
+    primaryManagerGranted=!!data;
+    await loadDelegatedAccess();
+    renderSettings();
+    renderAccountSwitcher();
+    toast(enable?'Полный доступ Виктору включён':'Доступ Виктора отозван');
+  }catch(e){console.error(e);alert(e.message||'Не удалось изменить доступ.')}
+  finally{setBusy(false)}
+}
+function renderDelegateAccess(){
+  const box=$('fitnessDelegateAccess');if(!box)return;
+  if(isDelegatedMode()){
+    box.innerHTML=`<div class="access-control"><div class="status on">Режим управления профилем ${esc(activeOwnerName())}</div><div class="note">Вы получили полный доступ к данным Fitness от владельца. Только владелец может управлять разрешением.</div></div>`;
+    return;
+  }
+  const isPrimary=(currentUser?.email||'').toLowerCase()==='viktor.morozow@gmail.com';
+  if(isPrimary){
+    box.innerHTML=`<div class="access-control"><div class="status on">Вы — основной управляющий</div><div class="note">Если другой пользователь Fitness даст вам полный доступ, его профиль появится в переключателе слева.</div>${delegatedOwners.length?`<div class="scope">${delegatedOwners.map(x=>`<span>Доступ к Fitness: ${esc(x.name)}</span>`).join('')}</div>`:''}</div>`;
+    return;
+  }
+  box.innerHTML=`<div class="access-control">
+    <div class="status ${primaryManagerGranted?'on':'off'}">${primaryManagerGranted?'Полный доступ Виктору включён':'Доступ Виктору не предоставлен'}</div>
+    <div class="note">${primaryManagerGranted?'Виктор может открыть ваш Fitness из своего аккаунта и полностью управлять данными Fitness.':'По умолчанию ваши данные видны только вам.'}</div>
+    <div class="scope">
+      <span>Упражнения, программы и сплиты</span>
+      <span>Тренировки, подходы и история</span>
+      <span>Вес, состав тела и домашнее оборудование</span>
+      <span>Настройки профиля Fitness</span>
+      <span class="locked">Пароль и email остаются только у владельца</span>
+      <span class="locked">Подключение Withings выполняется только владельцем</span>
+    </div>
+    <div class="actions">
+      ${primaryManagerGranted
+        ? '<button class="btn danger" type="button" onclick="setPrimaryManagerAccess(false)">Отозвать доступ у Виктора</button>'
+        : '<button class="btn primary" type="button" onclick="setPrimaryManagerAccess(true)">Дать Виктору полный доступ</button>'}
+    </div>
+  </div>`;
+}
+
 async function enterApp(session){
   currentUser=session?.user||null;if(!currentUser)return;
   setBusy(true);
@@ -351,9 +512,12 @@ async function enterApp(session){
     $('fitnessHrtLink')?.classList.toggle('hidden',!access.hrt);
     $('userMail').textContent=currentUser.email||'';
     await ensureProfile();
+    await loadDelegatedAccess();
+    await loadActiveProfile();
     await loadAll();
     $('authGate').classList.add('hidden');
     renderAll();
+    renderAccountSwitcher();
   }catch(e){console.error(e);authMessage(e.message||'Ошибка загрузки Fitness Studio','err')}
   finally{setBusy(false)}
 }
@@ -366,7 +530,7 @@ async function ensureProfile(){
   profile=data;
 }
 async function loadAll(){
-  const uid=currentUser.id;
+  const uid=dataUserId();
   const [ex,rt,re,wo,we,se,bw,fa,eq]=await Promise.all([
     db.from('fitness_exercises').select('*').eq('user_id',uid).order('name'),
     db.from('fitness_routines').select('*').eq('user_id',uid).order('name'),
@@ -383,7 +547,7 @@ async function loadAll(){
   activeWorkoutId=workouts.find(w=>!w.ended_at)?.id||null;
 }
 function renderAll(){
-  renderDashboard();renderExercises();renderRoutines();renderActiveWorkout();renderHistory();renderProgressOptions();renderBodyweight();renderSettings();
+  renderDashboard();renderExercises();renderRoutines();renderActiveWorkout();renderHistory();renderProgressOptions();renderBodyweight();renderSettings();renderAccountSwitcher();
 }
 document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));b.classList.add('active');
@@ -1024,7 +1188,7 @@ function exerciseRecentHistory(exerciseId,limit=3){
 }
 async function addExerciseToWorkout(workoutId, exerciseId){
   const pos=workoutExerciseRows(workoutId).length+1;
-  const res=await db.from('fitness_workout_exercises').insert({user_id:currentUser.id,workout_id:workoutId,exercise_id:exerciseId,position:pos});
+  const res=await db.from('fitness_workout_exercises').insert({user_id:dataUserId(),workout_id:workoutId,exercise_id:exerciseId,position:pos});
   if(res.error) throw res.error;
 }
 async function quickStartExercise(exerciseId){
@@ -1075,7 +1239,7 @@ async function deleteExercise(id){
   const used=workoutExercises.filter(x=>x.exercise_id===id).length;
   if(used){
     if(!confirm(`Упражнение «${ex.name}» уже использовалось в ${used} тренировочных записях.\n\nОно будет удалено из текущего каталога и программ, но старая история и подходы сохранятся. Продолжить?`))return;
-    const rr=await db.from('fitness_routine_exercises').delete().eq('exercise_id',id).eq('user_id',currentUser.id);
+    const rr=await db.from('fitness_routine_exercises').delete().eq('exercise_id',id).eq('user_id',dataUserId());
     if(rr.error)return alert(rr.error.message);
     const r=await db.from('fitness_exercises').update({archived:true,updated_at:new Date().toISOString()}).eq('id',id);
     if(r.error)return alert(r.error.message);
@@ -1118,7 +1282,7 @@ function openEquipmentModal(id=''){
 }
 async function saveEquipment(id=''){
   const name=$('eqName').value.trim();if(!name)return alert('Введите название оборудования.');
-  const data={user_id:currentUser.id,name,category:$('eqCategory').value,location:'home',notes:$('eqNotes').value.trim(),active:true,updated_at:new Date().toISOString()};
+  const data={user_id:dataUserId(),name,category:$('eqCategory').value,location:'home',notes:$('eqNotes').value.trim(),active:true,updated_at:new Date().toISOString()};
   const r=id?await db.from('fitness_equipment').update(data).eq('id',id):await db.from('fitness_equipment').insert(data);
   if(r.error)return alert(r.error.message);
   closeModal();await loadAll();renderAll();toast('Оборудование сохранено');
@@ -1148,7 +1312,7 @@ async function seedKnownHomeGym(){
   setBusy(true);
   try{
     for(const [name,category,notes] of rows){
-      const r=await db.from('fitness_equipment').upsert({user_id:currentUser.id,name,category,location:'home',notes,active:true,updated_at:new Date().toISOString()},{onConflict:'user_id,name,location'});
+      const r=await db.from('fitness_equipment').upsert({user_id:dataUserId(),name,category,location:'home',notes,active:true,updated_at:new Date().toISOString()},{onConflict:'user_id,name,location'});
       if(r.error)throw r.error;
     }
     await loadAll();renderAll();toast('Домашний зал заполнен');
@@ -1165,11 +1329,11 @@ async function createHomeSplitTemplates(){
   try{
     for(const t of templates){
       if(routines.some(r=>!r.archived&&r.name===t.name&&r.training_location==='home'))continue;
-      const ins=await db.from('fitness_routines').insert({user_id:currentUser.id,name:t.name,training_location:'home',split_group:t.split,notes:t.notes}).select().single();
+      const ins=await db.from('fitness_routines').insert({user_id:dataUserId(),name:t.name,training_location:'home',split_group:t.split,notes:t.notes}).select().single();
       if(ins.error)throw ins.error;
       const chosen=t.ex.map(name=>exercises.find(e=>!e.archived&&e.name===name&&matchesLocation(e.training_location||'both','home'))).filter(Boolean);
       if(chosen.length){
-        const rr=await db.from('fitness_routine_exercises').insert(chosen.map((e,i)=>({user_id:currentUser.id,routine_id:ins.data.id,exercise_id:e.id,position:i+1})));
+        const rr=await db.from('fitness_routine_exercises').insert(chosen.map((e,i)=>({user_id:dataUserId(),routine_id:ins.data.id,exercise_id:e.id,position:i+1})));
         if(rr.error)throw rr.error;
       }
     }
@@ -1251,7 +1415,7 @@ function openExerciseModal(id=''){
   <div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveExercise('${id}')">Сохранить</button></div>`);
 }
 async function saveExercise(id=''){
-  const data={user_id:currentUser.id,name:$('exName').value.trim(),muscle_group:$('exMuscle').value,equipment:$('exEquipment').value.trim(),training_location:$('exLocation').value,target_sets:+$('exSets').value,rep_min:+$('exRepMin').value,rep_max:+$('exRepMax').value,increment_kg:+$('exIncrement').value,progression_mode:$('exMode').value,notes:$('exNotes').value.trim(),updated_at:new Date().toISOString()};
+  const data={user_id:dataUserId(),name:$('exName').value.trim(),muscle_group:$('exMuscle').value,equipment:$('exEquipment').value.trim(),training_location:$('exLocation').value,target_sets:+$('exSets').value,rep_min:+$('exRepMin').value,rep_max:+$('exRepMax').value,increment_kg:+$('exIncrement').value,progression_mode:$('exMode').value,notes:$('exNotes').value.trim(),updated_at:new Date().toISOString()};
   if(!data.name)return alert('Введите название.');if(data.rep_max<data.rep_min)return alert('Максимум повторений должен быть не меньше минимума.');
   const r=id?await db.from('fitness_exercises').update(data).eq('id',id):await db.from('fitness_exercises').insert(data);if(r.error)return alert(r.error.message);closeModal();await loadAll();renderAll();toast('Упражнение сохранено');
 }
@@ -1280,17 +1444,17 @@ async function deleteAllExercises(){
 
   setBusy(true);
   try{
-    const rr=await db.from('fitness_routine_exercises').delete().eq('user_id',currentUser.id);
+    const rr=await db.from('fitness_routine_exercises').delete().eq('user_id',dataUserId());
     if(rr.error)throw rr.error;
 
     if(unused.length){
-      const r=await db.from('fitness_exercises').delete().eq('user_id',currentUser.id).in('id',unused.map(x=>x.id));
+      const r=await db.from('fitness_exercises').delete().eq('user_id',dataUserId()).in('id',unused.map(x=>x.id));
       if(r.error)throw r.error;
     }
 
     if(used.length){
       const r=await db.from('fitness_exercises').update({archived:true,updated_at:new Date().toISOString()})
-        .eq('user_id',currentUser.id).in('id',used.map(x=>x.id));
+        .eq('user_id',dataUserId()).in('id',used.map(x=>x.id));
       if(r.error)throw r.error;
     }
 
@@ -1427,7 +1591,7 @@ async function addStarterExercises(){
   ];
   const existing=new Set(exercises.map(x=>x.name.trim().toLowerCase()));
   const rows=base.filter(x=>!existing.has(x[0].toLowerCase())).map(x=>({
-    user_id:currentUser.id,name:x[0],muscle_group:x[1],equipment:x[2],training_location:x[3],
+    user_id:dataUserId(),name:x[0],muscle_group:x[1],equipment:x[2],training_location:x[3],
     target_sets:x[4],rep_min:x[5],rep_max:x[6],increment_kg:x[7],progression_mode:'double'
   }));
   if(!rows.length)return toast('Расширенный каталог уже добавлен');
@@ -1479,8 +1643,8 @@ async function saveRoutine(id=''){
   const picked=[...document.querySelectorAll('.rtPos')].map(x=>({exercise_id:x.dataset.id,pos:Number(x.value)})).filter(x=>x.pos>0).sort((a,b)=>a.pos-b.pos);
   let rid=id;
   if(id){const r=await db.from('fitness_routines').update({name,training_location,split_group,notes:$('rtNotes').value.trim(),updated_at:new Date().toISOString()}).eq('id',id);if(r.error)return alert(r.error.message);await db.from('fitness_routine_exercises').delete().eq('routine_id',id)}
-  else{const r=await db.from('fitness_routines').insert({user_id:currentUser.id,name,training_location,split_group,notes:$('rtNotes').value.trim()}).select().single();if(r.error)return alert(r.error.message);rid=r.data.id}
-  if(picked.length){const r=await db.from('fitness_routine_exercises').insert(picked.map((x,i)=>({user_id:currentUser.id,routine_id:rid,exercise_id:x.exercise_id,position:i})));if(r.error)return alert(r.error.message)}
+  else{const r=await db.from('fitness_routines').insert({user_id:dataUserId(),name,training_location,split_group,notes:$('rtNotes').value.trim()}).select().single();if(r.error)return alert(r.error.message);rid=r.data.id}
+  if(picked.length){const r=await db.from('fitness_routine_exercises').insert(picked.map((x,i)=>({user_id:dataUserId(),routine_id:rid,exercise_id:x.exercise_id,position:i})));if(r.error)return alert(r.error.message)}
   closeModal();await loadAll();renderAll();toast('Программа сохранена');
 }
 async function archiveRoutine(id){if(!confirm('Переместить программу в архив?'))return;await db.from('fitness_routines').update({archived:true,updated_at:new Date().toISOString()}).eq('id',id);await loadAll();renderAll()}
@@ -1511,11 +1675,11 @@ async function startWorkoutFromModal(){await startWorkout($('startRoutine').valu
 async function startWorkout(routineId='',customTitle='',trainingLocation='',splitGroup=''){
   if(activeWorkoutId){closeModal();goView('workout');return}
   const r=routineById(routineId),title=customTitle||r?.name||'Тренировка',training_location=trainingLocation||r?.training_location||'both',split_group=splitGroup||r?.split_group||'custom';
-  const ins=await db.from('fitness_workouts').insert({user_id:currentUser.id,title,routine_id:routineId||null,training_location,split_group}).select().single();if(ins.error)return alert(ins.error.message);
+  const ins=await db.from('fitness_workouts').insert({user_id:dataUserId(),title,routine_id:routineId||null,training_location,split_group}).select().single();if(ins.error)return alert(ins.error.message);
   const wid=ins.data.id;
   if(routineId){
     const items=routineExercises.filter(x=>x.routine_id===routineId).sort((a,b)=>a.position-b.position);
-    if(items.length){const rr=await db.from('fitness_workout_exercises').insert(items.map((x,i)=>({user_id:currentUser.id,workout_id:wid,exercise_id:x.exercise_id,position:i})));if(rr.error)return alert(rr.error.message)}
+    if(items.length){const rr=await db.from('fitness_workout_exercises').insert(items.map((x,i)=>({user_id:dataUserId(),workout_id:wid,exercise_id:x.exercise_id,position:i})));if(rr.error)return alert(rr.error.message)}
   }
   closeModal();await loadAll();renderAll();goView('workout');
 }
@@ -1535,11 +1699,11 @@ function openAddWorkoutExercise(){
   const used=new Set(workoutExerciseRows(activeWorkoutId).map(x=>x.exercise_id)),w=workoutById(activeWorkoutId),loc=w?.training_location||'both',split=w?.split_group||'custom',avail=exercises.filter(x=>!x.archived&&!used.has(x.id)&&matchesLocation(x.training_location||'both',loc)&&(split==='custom'||exerciseFitsSplit(x,split)));
   openModal(`<h3>Добавить упражнение</h3>${avail.length?`<label>Упражнение<select id="addWorkoutEx">${avail.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select></label>`:'<div class="empty">Все доступные упражнения уже добавлены.</div>'}<div class="actions"><button class="btn" onclick="closeModal()">Отмена</button>${avail.length?'<button class="btn primary" onclick="addWorkoutExercise()">Добавить</button>':''}</div>`);
 }
-async function addWorkoutExercise(){const exid=$('addWorkoutEx').value,pos=workoutExerciseRows(activeWorkoutId).length;const r=await db.from('fitness_workout_exercises').insert({user_id:currentUser.id,workout_id:activeWorkoutId,exercise_id:exid,position:pos});if(r.error)return alert(r.error.message);closeModal();await loadAll();renderAll()}
+async function addWorkoutExercise(){const exid=$('addWorkoutEx').value,pos=workoutExerciseRows(activeWorkoutId).length;const r=await db.from('fitness_workout_exercises').insert({user_id:dataUserId(),workout_id:activeWorkoutId,exercise_id:exid,position:pos});if(r.error)return alert(r.error.message);closeModal();await loadAll();renderAll()}
 async function saveSet(weid,no){
   const weight=Number($(`sw_${weid}_${no}`).value),reps=Number($(`sr_${weid}_${no}`).value),rv=$(`si_${weid}_${no}`).value,rir=rv===''?null:Number(rv);
   if(!Number.isFinite(weight)||weight<0||!Number.isFinite(reps)||reps<0)return alert('Проверьте вес и повторения.');
-  const data={user_id:currentUser.id,workout_exercise_id:weid,set_no:no,weight_kg:weight,reps,rir,completed_at:new Date().toISOString()};
+  const data={user_id:dataUserId(),workout_exercise_id:weid,set_no:no,weight_kg:weight,reps,rir,completed_at:new Date().toISOString()};
   const r=await db.from('fitness_sets').upsert(data,{onConflict:'workout_exercise_id,set_no'});if(r.error)return alert(r.error.message);await loadAll();renderAll();toast(`Подход ${no} сохранён`);
 }
 async function removeWorkoutExercise(id){if(setsForWorkoutExercise(id).length&&!confirm('У упражнения уже есть подходы. Удалить его из этой тренировки вместе с подходами?'))return;await db.from('fitness_workout_exercises').delete().eq('id',id);await loadAll();renderAll()}
@@ -1624,7 +1788,7 @@ async function openBodyweightModal(){
 async function saveBodyweight(){
   const v=Number($('bwValue').value),at=$('bwAt').value;if(!(v>0)||!at)return alert('Введите дату и вес.');
   const opt=id=>{const raw=$(id).value.trim();return raw===''?null:Number(raw)};
-  const r=await db.from('fitness_bodyweight').insert({user_id:currentUser.id,measured_at:new Date(at).toISOString(),weight_kg:v,muscle_mass_kg:opt('bwMuscle'),fat_mass_kg:opt('bwFatMass'),fat_percent:opt('bwFatPct'),source:'manual'});
+  const r=await db.from('fitness_bodyweight').insert({user_id:dataUserId(),measured_at:new Date(at).toISOString(),weight_kg:v,muscle_mass_kg:opt('bwMuscle'),fat_mass_kg:opt('bwFatMass'),fat_percent:opt('bwFatPct'),source:'manual'});
   if(r.error)return alert(r.error.message);closeModal();await loadAll();renderAll();toast('Измерение сохранено');
 }
 function normalizeWithingsWorkout(w){
@@ -1650,6 +1814,7 @@ function normalizeWithingsWorkout(w){
   };
 }
 async function syncFitnessWithings(){
+  if(isDelegatedMode())return alert('Подключение и синхронизацию Withings должен выполнять владелец профиля из своего аккаунта.');
   const {data:{session}}=await db.auth.getSession();if(!session)return alert('Нет активной сессии.');
   setBusy(true);
   try{
@@ -1711,12 +1876,13 @@ function drawBodyweightChart(){
   drawLineChart($('bodyweightCanvas'),pts,{unit,tip:$('bodyweightTip'),detail:p=>`${fmtDateTime(p.date)}<br><b>${esc(label)}: ${n(p.y,2)} ${unit}</b>`});
 }
 async function saveProfile(){
-  const data={display_name:$('profileName').value.trim(),bodyweight_source:$('profileWeightSource').value,updated_at:new Date().toISOString()};const r=await db.from('fitness_profiles').update(data).eq('user_id',currentUser.id).select().single();if(r.error)return alert(r.error.message);profile=r.data;toast('Настройки сохранены')
+  const data={display_name:$('profileName').value.trim(),bodyweight_source:$('profileWeightSource').value,updated_at:new Date().toISOString()};const r=await db.from('fitness_profiles').update(data).eq('user_id',dataUserId()).select().single();if(r.error)return alert(r.error.message);profile=r.data;toast('Настройки сохранены')
 }
 function renderSettings(){
   renderEquipmentInventory();
+  renderDelegateAccess();
   if(profile){$('profileName').value=profile.display_name||'';$('profileWeightSource').value=profile.bodyweight_source||'manual'}
-  $('moduleAccess').innerHTML=`<b>Fitness Studio:</b> ${moduleAccess?.fitness?'разрешён':'нет доступа'}<br><b>HRT Health Studio:</b> ${moduleAccess?.hrt?'разрешён':'нет доступа'}<br><b>Wealth Studio:</b> ${moduleAccess?.wealth?'разрешён':'нет доступа'}<br><br>Это не просто скрытие пунктов меню. Таблицы Fitness Studio защищены Row Level Security: текущий аккаунт может читать и изменять только строки со своим user_id.`;
+  $('moduleAccess').innerHTML=`<b>Fitness Studio:</b> ${moduleAccess?.fitness?'разрешён':'нет доступа'}<br><b>HRT Health Studio:</b> ${moduleAccess?.hrt?'разрешён':'нет доступа'}<br><b>Wealth Studio:</b> ${moduleAccess?.wealth?'разрешён':'нет доступа'}<br><br>${isDelegatedMode()?`Сейчас открыт делегированный Fitness-профиль <b>${esc(activeOwnerName())}</b>. Доступ разрешён владельцем и проверяется Supabase Row Level Security.`:'Данные Fitness защищены Row Level Security. По умолчанию аккаунт видит только свои данные; чужой Fitness становится доступен только после явного разрешения владельца.'}`;
 }
 
 async function init(){
