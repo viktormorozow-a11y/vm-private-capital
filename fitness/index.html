@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Fitness Studio v1.7.0 — Withings Body Composition</title>
+<title>VM Fitness Studio v1.7.1 — Withings Body Composition</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -139,7 +139,7 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 <div id="authGate" class="auth-gate">
   <div class="auth-card">
     <div class="auth-brand">VM PRIVATE SUITE</div>
-    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v1.7.0</span></div>
+    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v1.7.1</span></div>
     <div class="auth-sub">Личный тренировочный дневник. Данные каждого аккаунта полностью раздельны.</div>
     <div class="auth-tabs">
       <button id="tabLogin" class="active" type="button">Войти</button>
@@ -157,7 +157,7 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 
 <div class="app">
 <aside>
-  <div class="brand"><b>VM FITNESS STUDIO</b><small>Тренировки · Прогрессия · Рекорды</small><small style="color:#d6ad62;font-weight:750">Версия 1.0.0</small></div>
+  <div class="brand"><b>VM FITNESS STUDIO</b><small>Тренировки · Прогрессия · Рекорды</small><small style="color:#d6ad62;font-weight:750">Версия 1.7.1</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Сегодня</button>
     <button class="nav" data-view="workout">Тренировка</button>
@@ -196,7 +196,7 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 </section>
 
 <section id="exercises" class="view">
-  <div class="top"><div><h1>Упражнения</h1><div class="sub">Карточки упражнений показывают основные мышцы, инвентарь, подробную пошаговую технику, последние рабочие веса, историю прогресса и рекомендацию на следующий раз.</div></div><div class="actions" style="margin-top:0"><button class="btn" type="button" onclick="addStarterExercises()">Добавить расширенный каталог</button><button class="btn primary" type="button" onclick="openExerciseModal()">＋ Упражнение</button></div></div>
+  <div class="top"><div><h1>Упражнения</h1><div class="sub">Карточки упражнений показывают основные мышцы, инвентарь, подробную пошаговую технику, последние рабочие веса, историю прогресса и рекомендацию на следующий раз.</div></div><div class="actions" style="margin-top:0"><button class="btn" type="button" onclick="addStarterExercises()">Добавить расширенный каталог</button><button class="btn danger" type="button" onclick="deleteAllExercises()">Удалить все упражнения</button><button class="btn primary" type="button" onclick="openExerciseModal()">＋ Упражнение</button></div></div>
   <div class="panel">
     <div class="routine-toolbar">
       <div class="top-switch">
@@ -1231,7 +1231,7 @@ function renderExercises(){
           </div>
         </div>`;
       }).join('')}</div>`
-    : '<div class="empty">Для выбранного места пока нет упражнений.</div>';
+    : '<div class="empty">Для выбранного места пока нет упражнений. Можно добавить отдельное упражнение или заново загрузить расширенный каталог.</div>';
 }
 
 function openExerciseModal(id=''){
@@ -1256,6 +1256,55 @@ async function saveExercise(id=''){
   const r=id?await db.from('fitness_exercises').update(data).eq('id',id):await db.from('fitness_exercises').insert(data);if(r.error)return alert(r.error.message);closeModal();await loadAll();renderAll();toast('Упражнение сохранено');
 }
 async function archiveExercise(id){if(!confirm('Переместить упражнение в архив? История тренировок сохранится.'))return;const r=await db.from('fitness_exercises').update({archived:true,updated_at:new Date().toISOString()}).eq('id',id);if(r.error)return alert(r.error.message);await loadAll();renderAll()}
+
+async function deleteAllExercises(){
+  const live=exercises.filter(x=>!x.archived);
+  if(!live.length)return alert('В каталоге уже нет активных упражнений.');
+
+  const usedIds=new Set(workoutExercises.map(x=>x.exercise_id));
+  const used=live.filter(x=>usedIds.has(x.id));
+  const unused=live.filter(x=>!usedIds.has(x.id));
+
+  const msg=
+    `Удалить ВСЕ упражнения из каталога?\n\n`+
+    `Активных упражнений: ${live.length}.\n`+
+    `Использовались в истории: ${used.length} — они будут скрыты из каталога, но история, подходы и прогресс сохранятся.\n`+
+    `Ни разу не использовались: ${unused.length} — они будут удалены полностью.\n\n`+
+    `Все упражнения также будут убраны из программ тренировок.\n\n`+
+    `Продолжить?`;
+
+  if(!confirm(msg))return;
+
+  const verify=prompt('Для подтверждения напиши слово УДАЛИТЬ');
+  if(verify!=='УДАЛИТЬ')return alert('Удаление отменено.');
+
+  setBusy(true);
+  try{
+    const rr=await db.from('fitness_routine_exercises').delete().eq('user_id',currentUser.id);
+    if(rr.error)throw rr.error;
+
+    if(unused.length){
+      const r=await db.from('fitness_exercises').delete().eq('user_id',currentUser.id).in('id',unused.map(x=>x.id));
+      if(r.error)throw r.error;
+    }
+
+    if(used.length){
+      const r=await db.from('fitness_exercises').update({archived:true,updated_at:new Date().toISOString()})
+        .eq('user_id',currentUser.id).in('id',used.map(x=>x.id));
+      if(r.error)throw r.error;
+    }
+
+    await loadAll();
+    renderAll();
+    toast('Каталог упражнений очищен; история сохранена');
+  }catch(e){
+    console.error(e);
+    alert(e.message||'Не удалось удалить все упражнения.');
+  }finally{
+    setBusy(false);
+  }
+}
+
 async function addStarterExercises(){
   if(!confirm('Добавить расширенный каталог упражнений? Уже существующие упражнения по названию не будут дублироваться.'))return;
   // name, muscle_group, equipment, location, sets, repMin, repMax, increment
