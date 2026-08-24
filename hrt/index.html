@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HRT Health Studio v3.4.0 — Text Import + Robust Puhti</title>
+<title>HRT Health Studio v3.4.1 — Text Import + Robust Puhti</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -206,7 +206,7 @@ aside{display:flex;flex-direction:column}
 
 
 
-/* v3.4.0 — Withings help, protocol timeline and unified PDF */
+/* v3.4.1 — PDF layout fix */
 .withings-status-grid{display:grid;grid-template-columns:minmax(240px,1.2fr) minmax(180px,.7fr) minmax(190px,.7fr);gap:10px;align-items:end}
 .withings-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 .withings-kpi{border:1px solid var(--line);background:rgba(255,255,255,.018);border-radius:13px;padding:13px;min-width:0}
@@ -243,7 +243,7 @@ aside{display:flex;flex-direction:column}
 <div id="hrtAuthGate">
   <div class="hrt-auth-card">
     <div class="hrt-auth-brand">VM PRIVATE SUITE</div>
-    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.4.0</span></div>
+    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.4.1</span></div>
     <div class="hrt-auth-sub">Используйте тот же аккаунт, что и в Планировании капитала</div>
     <label>Email<input id="hrtGateEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
     <label>Пароль<input id="hrtGatePassword" type="password" autocomplete="current-password" placeholder="Введите пароль"></label>
@@ -255,10 +255,10 @@ aside{display:flex;flex-direction:column}
   </div>
 </div>
 <div id="hrtAppShell" class="auth-hidden">
-<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.4.0</div>
+<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.4.1</div>
 <div class="app">
 <aside>
-  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.4.0</small></div>
+  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.4.1</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Главная</button>
     <button class="nav" data-view="labs">Анализы</button>
@@ -604,7 +604,7 @@ state.goals=state.goals||[];
 state.labPlans=state.labPlans||[];
 state.settings=state.settings||{};
 state.settings.primaryGoal=state.settings.primaryGoal||'';
-state.settings.appVersion='3.4.0';
+state.settings.appVersion='3.4.1';
 state.withings=state.withings||{measurements:[],activity:[],sleep:[],workouts:[],lastSyncAt:'',autoSync:true,syncDays:365};
 state.withings.measurements=state.withings.measurements||[];state.withings.activity=state.withings.activity||[];state.withings.sleep=state.withings.sleep||[];state.withings.workouts=state.withings.workouts||[];
 if(state.withings.autoSync===undefined)state.withings.autoSync=true;if(!state.withings.syncDays)state.withings.syncDays=365;
@@ -666,7 +666,7 @@ function migrateHrtState(x){
   x.meds=x.meds||[];x.protocols=x.protocols||[];x.deviations=x.deviations||[];x.labs=x.labs||[];
   x.wellbeing=x.wellbeing||[];x.aliasMap=x.aliasMap||{};x.customAnalytes=x.customAnalytes||[];
   x.goals=x.goals||[];x.labPlans=x.labPlans||[];x.settings=x.settings||{};
-  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.4.0';x.withings=x.withings||{measurements:[],activity:[],sleep:[],workouts:[],lastSyncAt:'',autoSync:true,syncDays:365};x.withings.measurements=x.withings.measurements||[];x.withings.activity=x.withings.activity||[];x.withings.sleep=x.withings.sleep||[];x.withings.workouts=x.withings.workouts||[];if(x.withings.autoSync===undefined)x.withings.autoSync=true;if(!x.withings.syncDays)x.withings.syncDays=365;
+  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.4.1';x.withings=x.withings||{measurements:[],activity:[],sleep:[],workouts:[],lastSyncAt:'',autoSync:true,syncDays:365};x.withings.measurements=x.withings.measurements||[];x.withings.activity=x.withings.activity||[];x.withings.sleep=x.withings.sleep||[];x.withings.workouts=x.withings.workouts||[];if(x.withings.autoSync===undefined)x.withings.autoSync=true;if(!x.withings.syncDays)x.withings.syncDays=365;
   x.labs.forEach(l=>{l.doseContext=l.doseContext||{medId:'',lastDoseAt:'',relation:'unknown',adherence:'unknown'}});
   for(const dm of DEFAULT_MEDS){
     if(!x.meds.some(m=>String(m.name||'').trim().toLowerCase()===dm.name.toLowerCase()))x.meds.push({...dm});
@@ -980,11 +980,11 @@ function downloadHealthHistoryPdf(){
   const from=$('healthReportFrom')?.value||'',to=$('healthReportTo')?.value||'';if(!from||!to)return alert('Укажите начало и конец периода.');if(from>to)return alert('Дата начала не может быть позже даты окончания.');if(!window.pdfMake)return alert('Модуль PDF не загрузился. Проверьте интернет и перезагрузите страницу.');
   const labs=[...(state.labs||[])].filter(l=>withinReportPeriod(l.date,from,to)).sort((a,b)=>a.date.localeCompare(b.date));const weights=collectReportWeighings(from,to),bps=collectReportBp(from,to);const protocols=(state.protocols||[]).filter(p=>p.start<=to&&(!p.end||p.end>=from)).sort((a,b)=>a.start.localeCompare(b.start));
   const content=[{text:'HRT Health Studio — полный отчёт',style:'title'},{text:`Период: ${fmtDate(from)} — ${fmtDate(to)}`,style:'subtitle'},{text:`Лабораторных исследований: ${labs.length} · взвешиваний: ${weights.length} · измерений давления: ${bps.length}`,margin:[0,0,0,12]}];
-  content.push({text:'Лабораторные анализы',style:'h1'});if(!labs.length)content.push({text:'За выбранный период лабораторных анализов нет.',style:'muted'});for(const l of labs){content.push({text:`${fmtDate(l.date)} · ${l.lab||'Лаборатория не указана'}`,style:'h2',margin:[0,10,0,4]});content.push({text:`Протокол на дату анализа: ${protocolPdfText(l.date)}`,style:'small',margin:[0,0,0,5]});const body=[['Показатель','Результат','Референс']];for(const m of l.markers||[])body.push([analyteLabel(m.canonicalKey||canonicalMarkerKey(m.name),m.name||'—'),`${markerDisplayValue(m)} ${m.unit||''}`.trim(),pdfRefText(m)]);content.push({table:{headerRows:1,widths:['*',90,110],body},layout:'lightHorizontalLines',fontSize:8});}
-  content.push({text:'Взвешивания',style:'h1',pageBreak:labs.length?'before':undefined});if(weights.length){content.push({table:{headerRows:1,widths:[65,38,55,65,'*'],body:[['Дата','Время','Вес','Источник','Препараты / протокол'],...weights.map(x=>[fmtDate(x.date),x.time,`${wNum(x.weight,2)} кг`,x.source,protocolPdfText(x.date)])]},layout:'lightHorizontalLines',fontSize:8})}else content.push({text:'За выбранный период взвешиваний нет.',style:'muted'});
+  content.push({text:'Лабораторные анализы',style:'h1'});if(!labs.length)content.push({text:'За выбранный период лабораторных анализов нет.',style:'muted'});for(const l of labs){content.push({text:`${fmtDate(l.date)} · ${l.lab||'Лаборатория не указана'}`,style:'h2',margin:[0,7,0,3]});content.push({text:`Протокол на дату анализа: ${protocolPdfText(l.date)}`,style:'small',margin:[0,0,0,3]});const body=[['Показатель','Результат','Референс']];for(const m of l.markers||[])body.push([analyteLabel(m.canonicalKey||canonicalMarkerKey(m.name),m.name||'—'),`${markerDisplayValue(m)} ${m.unit||''}`.trim(),pdfRefText(m)]);content.push({table:{headerRows:1,widths:['*',90,110],body},layout:'lightHorizontalLines',fontSize:8});}
+  content.push({text:'Взвешивания',style:'h1'});if(weights.length){content.push({table:{headerRows:1,widths:[65,38,55,65,'*'],body:[['Дата','Время','Вес','Источник','Препараты / протокол'],...weights.map(x=>[fmtDate(x.date),x.time,`${wNum(x.weight,2)} кг`,x.source,protocolPdfText(x.date)])]},layout:'lightHorizontalLines',fontSize:8})}else content.push({text:'За выбранный период взвешиваний нет.',style:'muted'});
   content.push({text:'Артериальное давление',style:'h1',margin:[0,14,0,6]});if(bps.length){content.push({table:{headerRows:1,widths:[65,38,72,48,62,'*'],body:[['Дата','Время','АД','Пульс','Источник','Препараты / протокол'],...bps.map(x=>[fmtDate(x.date),x.time,`${Math.round(x.sys)}/${Math.round(x.dia)}`,x.pulse!=null?`${Math.round(x.pulse)} уд/мин`:'—',x.source,protocolPdfText(x.date)])]},layout:'lightHorizontalLines',fontSize:8})}else content.push({text:'За выбранный период измерений давления нет.',style:'muted'});
   content.push({text:'Протоколы препаратов в выбранном периоде',style:'h1',margin:[0,14,0,6]});if(protocols.length){content.push({table:{headerRows:1,widths:[100,90,'*'],body:[['Препарат','Период','Схема'],...protocols.map(p=>[medName(p.medId),`${fmtDate(p.start)} → ${p.end?fmtDate(p.end):'сейчас'}`,scheduleText(p)])]},layout:'lightHorizontalLines',fontSize:8})}else content.push({text:'В выбранном периоде нет записанных протоколов.',style:'muted'});
-  const doc={pageSize:'A4',pageMargins:[32,38,32,38],info:{title:`HRT Health Studio ${from}–${to}`},content,styles:{title:{fontSize:20,bold:true,color:'#17212b',margin:[0,0,0,4]},subtitle:{fontSize:10,color:'#667788',margin:[0,0,0,12]},h1:{fontSize:14,bold:true,color:'#17212b',margin:[0,10,0,6]},h2:{fontSize:10,bold:true,color:'#263746'},small:{fontSize:8,color:'#667788'},muted:{fontSize:9,color:'#667788'}},defaultStyle:{font:'Roboto',fontSize:9,color:'#263746'},footer:(current,pageCount)=>({text:`HRT Health Studio · ${current}/${pageCount}`,alignment:'center',fontSize:7,color:'#8a98a6',margin:[0,10,0,0]})};
+  const doc={pageSize:'A4',pageMargins:[28,32,28,32],info:{title:`HRT Health Studio ${from}–${to}`},content,styles:{title:{fontSize:19,bold:true,color:'#17212b',margin:[0,0,0,3]},subtitle:{fontSize:9,color:'#667788',margin:[0,0,0,9]},h1:{fontSize:13,bold:true,color:'#17212b',margin:[0,8,0,4]},h2:{fontSize:9.5,bold:true,color:'#263746'},small:{fontSize:7.5,color:'#667788'},muted:{fontSize:8.5,color:'#667788'}},defaultStyle:{font:'Roboto',fontSize:8.5,color:'#263746'},footer:(current,pageCount)=>({text:`HRT Health Studio · ${current}/${pageCount}`,alignment:'center',fontSize:7,color:'#8a98a6',margin:[0,8,0,0]})};
   window.pdfMake.createPdf(doc).download(`HRT_Health_Studio_${from}_${to}.pdf`);
 }
 
@@ -1056,10 +1056,9 @@ function protocolAtDate(date){
 }
 function protocolSummaryAt(date){
   const ps=protocolAtDate(date);
-  return ps.length?ps.map(p=>{
-    const sched=scheduleText(p);
-    return `${medName(p.medId)} · ${sched}${p.time?` · ${p.time}`:''}`;
-  }).join('; '):'Нет записанного протокола';
+  // scheduleText() уже включает время приёма/введения.
+  // Не добавляем p.time второй раз — иначе получалось «07:00 · 07:00».
+  return ps.length?ps.map(p=>`${medName(p.medId)} · ${scheduleText(p)}`).join('; '):'Нет записанного протокола';
 }
 function safeHtml(x){
   return String(x??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -2613,7 +2612,7 @@ function renderLatestChanges(){
   }
   box.innerHTML=cards.length?`<div class="change-grid">${cards.join('')}</div>`:`<div class="empty">Пока недостаточно повторных анализов для сравнения.</div>`;
 }
-const APP_VERSION='3.4.0';
+const APP_VERSION='3.4.1';
 
 function normalizedHctPercent(marker){
   if(!marker)return null;
