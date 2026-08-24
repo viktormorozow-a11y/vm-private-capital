@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Fitness Studio v2.5.3 — Withings Body Composition</title>
+<title>VM Fitness Studio v2.5.4 — Withings Body Composition</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -339,6 +339,17 @@ html,body{max-width:100%;overflow-x:hidden}.app,aside,main,nav,.view{min-width:0
 .workout-visual h3{margin:10px 0 6px;font-size:22px}.workout-visual p{margin:0;color:#d8e2ea;line-height:1.55;font-size:13px}
 .sets-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap}
 .bulk-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.bulk-actions .btn{white-space:nowrap}
+.withings-connect-card{border-color:rgba(127,200,255,.18);background:linear-gradient(135deg,rgba(127,200,255,.045),rgba(214,173,98,.025));margin-bottom:14px}
+.withings-connect-row{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.withings-status-wrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.withings-status-dot{width:10px;height:10px;border-radius:50%;background:#7e8c99;box-shadow:0 0 0 4px rgba(126,140,153,.08)}
+.withings-status-dot.ok{background:var(--good);box-shadow:0 0 0 4px rgba(115,217,154,.10)}
+.withings-status-dot.busy{background:#e2bd73;box-shadow:0 0 0 4px rgba(226,189,115,.10)}
+.withings-status-dot.err{background:var(--bad);box-shadow:0 0 0 4px rgba(255,126,138,.10)}
+.withings-connect-title{font-size:15px;font-weight:850}.withings-connect-detail{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.45}
+.withings-connect-actions{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:700px){.withings-connect-actions{width:100%}.withings-connect-actions .btn{flex:1 1 100%}.withings-connect-row{align-items:flex-start}}
+
 
 .set-grid{display:grid;grid-template-columns:48px minmax(120px,180px) minmax(100px,150px) minmax(90px,120px) 130px;gap:9px;align-items:end;margin-top:8px;max-width:820px}
 .set-grid .setno{align-self:end;height:46px;display:grid;place-items:center;border:1px solid var(--line);border-radius:11px;color:#dbe5ec;background:rgba(255,255,255,.025);font-size:12px;font-weight:800}
@@ -372,7 +383,7 @@ html,body{max-width:100%;overflow-x:hidden}.app,aside,main,nav,.view{min-width:0
  .action-row{grid-template-columns:minmax(0,1fr) 24px}.action-row .btn{font-size:14px}.ctx-help{flex-shrink:0}
 }
 
-/* v2.5.3 history + progress QA fixes */
+/* v2.5.4 history + progress QA fixes */
 .history-executed{display:grid;gap:7px;margin-top:10px}
 .history-ex-row{display:grid;grid-template-columns:minmax(220px,1fr) minmax(260px,auto) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:rgba(255,255,255,.018)}
 .history-ex-row .set-summary{font-size:11px;color:#dce6ee;text-align:right;line-height:1.45}
@@ -399,7 +410,7 @@ html,body{max-width:100%;overflow-x:hidden}.app,aside,main,nav,.view{min-width:0
 <div id="authGate" class="auth-gate">
   <div class="auth-card">
     <div class="auth-brand">VM PRIVATE SUITE</div>
-    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v2.5.3</span></div>
+    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v2.5.4</span></div>
     <div class="auth-sub">Личный тренировочный дневник. Данные каждого аккаунта полностью раздельны.</div>
     <div class="auth-tabs">
       <button id="tabLogin" class="active" type="button">Войти</button>
@@ -417,7 +428,7 @@ html,body{max-width:100%;overflow-x:hidden}.app,aside,main,nav,.view{min-width:0
 
 <div class="app">
 <aside>
-  <div class="brand"><b>VM FITNESS STUDIO</b><small>Тренировки · Прогрессия · Рекорды</small><small style="color:#d6ad62;font-weight:750">Версия 2.5.3</small></div>
+  <div class="brand"><b>VM FITNESS STUDIO</b><small>Тренировки · Прогрессия · Рекорды</small><small style="color:#d6ad62;font-weight:750">Версия 2.5.4</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Сегодня</button>
     <button class="nav" data-view="workout">Тренировка</button>
@@ -564,7 +575,18 @@ html,body{max-width:100%;overflow-x:hidden}.app,aside,main,nav,.view{min-width:0
 
 
 <section id="bodyweight" class="view">
-  <div class="top"><div><h1>Состав тела</h1><div class="sub">Вес, мышечная масса, жировая масса и процент жира. Withings синхронизирует доступные показатели для текущего аккаунта.</div></div><div class="actions" style="margin-top:0"><button class="btn" type="button" onclick="syncFitnessWithings()">↻ Синхронизировать Withings</button><button class="btn primary" type="button" onclick="openBodyweightModal()">＋ Измерение</button></div></div>
+  <div class="top"><div><h1>Состав тела</h1><div class="sub">Вес, мышечная масса, жировая масса и процент жира. Каждый пользователь Fitness подключает свой собственный аккаунт Withings.</div></div><div class="actions" style="margin-top:0"><button class="btn primary" type="button" onclick="openBodyweightModal()">＋ Измерение</button></div></div>
+  <div class="panel withings-connect-card" id="fitnessWithingsPanel">
+    <div class="withings-connect-row">
+      <div class="withings-status-wrap"><span id="fitnessWithingsDot" class="withings-status-dot"></span><div><div class="withings-connect-title">Withings</div><div id="fitnessWithingsStatus" class="withings-connect-detail">Проверяю подключение…</div></div></div>
+      <div class="withings-connect-actions">
+        <button class="btn primary" id="fitnessWithingsConnectBtn" type="button" onclick="connectFitnessWithings()">Подключить Withings</button>
+        <button class="btn" id="fitnessWithingsSyncBtn" type="button" onclick="syncFitnessWithings()">↻ Синхронизировать</button>
+        <button class="btn danger" id="fitnessWithingsDisconnectBtn" type="button" onclick="disconnectFitnessWithings()">Отключить</button>
+      </div>
+    </div>
+    <div class="note" style="margin-top:10px">Подключение выполняет только владелец текущего Fitness-профиля. Если открыт чужой профиль по совместному доступу, OAuth Withings недоступен.</div>
+  </div>
   <div id="bodyCompKpis" class="metric-row" style="margin-bottom:14px"></div>
   <div class="grid g2">
     <div class="panel">
@@ -596,6 +618,9 @@ html,body{max-width:100%;overflow-x:hidden}.app,aside,main,nav,.view{min-width:0
     <div class="actions"><button class="btn primary" type="button" onclick="saveProfile()">Сохранить</button></div>
   </div>
   <div class="panel">
+    <div class="head"><div><h2>Withings</h2><div class="sub">Первичное подключение выполняется в разделе «Состав тела» под аккаунтом владельца Fitness.</div></div><button class="btn" type="button" onclick="goView('bodyweight');setTimeout(()=>refreshFitnessWithingsStatus(),50)">Открыть Withings</button></div>
+  </div>
+  <div class="panel">
     <div class="head"><div><h2>Оборудование домашнего зала</h2><div class="sub">Этот список используется, чтобы домашние упражнения и сплит-программы соответствовали реальному оборудованию.</div></div><div class="actions" style="margin-top:0"><button class="btn" type="button" onclick="seedKnownHomeGym()">Заполнить наш домашний зал</button><button class="btn primary" type="button" onclick="openEquipmentModal()">＋ Оборудование</button></div></div>
     <div id="equipmentInventory"></div>
   </div>
@@ -623,6 +648,7 @@ const db=(window.supabase&&window.supabase.createClient)?window.supabase.createC
 let currentUser=null,moduleAccess=null,profile=null;
 let exercises=[],routines=[],routineExercises=[],workouts=[],workoutExercises=[],sets=[],bodyweights=[],fitnessActivities=[],equipment=[];
 let activeWorkoutId=null,exerciseLocationFilter='all',uiTrainingLocation='home',uiSplitGroup='back';
+let fitnessWithingsConnected=null,fitnessWithingsBusy=false,fitnessWithingsPopup=null,fitnessWithingsPollTimer=null;
 let activeOwnerId=null,delegatedOwners=[],primaryManagerGranted=false,primaryManagerSensitiveGranted=false;
 let sensitiveAccessAvailable=false,cycleSettings=null,cycleDays=[],intimateActivities=[],cycleCalendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
 let compareSeries=[];
@@ -944,6 +970,7 @@ async function switchFitnessOwner(ownerId=''){
     await loadAll();
     renderAll();
     renderAccountSwitcher();
+    if(isDelegatedMode()){fitnessWithingsConnected=null;renderFitnessWithingsPanel()}else refreshFitnessWithingsStatus({silent:true});
     toast(isDelegatedMode()?`Открыт Fitness: ${activeOwnerName()}`:'Открыт мой Fitness');
   }catch(e){
     console.error(e);
@@ -1063,6 +1090,7 @@ async function enterApp(session){
     $('authGate').classList.add('hidden');
     renderAll();
     renderAccountSwitcher();
+    if(!isDelegatedMode())refreshFitnessWithingsStatus({silent:true});
   }catch(e){console.error(e);authMessage(e.message||'Ошибка загрузки Fitness Studio','err')}
   finally{setBusy(false)}
 }
@@ -1158,7 +1186,7 @@ async function loadAll(){
   await loadSensitiveData();
 }
 function renderAll(){
-  renderDashboard();renderExercises();renderRoutines();renderActiveWorkout();renderHistory();renderProgressOptions();renderBodyweight();renderCycle();renderSettings();renderAccountSwitcher();renderCycleVisibility();renderCompareAnalytics();
+  renderDashboard();renderExercises();renderRoutines();renderActiveWorkout();renderHistory();renderProgressOptions();renderBodyweight();renderFitnessWithingsPanel();renderCycle();renderSettings();renderAccountSwitcher();renderCycleVisibility();renderCompareAnalytics();
   setTimeout(()=>injectContextHelp(document),0);
 }
 document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{
@@ -3463,17 +3491,80 @@ function normalizeWithingsWorkout(w){
     updated_at:new Date().toISOString()
   };
 }
+function renderFitnessWithingsPanel(){
+  const panel=$('fitnessWithingsPanel'),dot=$('fitnessWithingsDot'),status=$('fitnessWithingsStatus'),connect=$('fitnessWithingsConnectBtn'),sync=$('fitnessWithingsSyncBtn'),disconnect=$('fitnessWithingsDisconnectBtn');
+  if(!panel||!dot||!status)return;
+  const delegated=isDelegatedMode();
+  if(delegated){
+    dot.className='withings-status-dot';status.textContent='Withings подключает только владелец этого профиля из своего аккаунта.';
+    if(connect)connect.style.display='none';if(sync)sync.style.display='none';if(disconnect)disconnect.style.display='none';return;
+  }
+  if(connect)connect.style.display='inline-flex';if(sync)sync.style.display='inline-flex';if(disconnect)disconnect.style.display='inline-flex';
+  if(fitnessWithingsBusy){dot.className='withings-status-dot busy';status.textContent='Проверяю или выполняю подключение Withings…';if(connect)connect.disabled=true;if(sync)sync.disabled=true;if(disconnect)disconnect.disabled=true;return}
+  if(connect)connect.disabled=false;if(sync)sync.disabled=false;if(disconnect)disconnect.disabled=false;
+  if(fitnessWithingsConnected===true){dot.className='withings-status-dot ok';status.textContent='Подключено к вашему аккаунту Withings. Можно синхронизировать состав тела и тренировки.';connect.textContent='Переподключить Withings';sync.style.display='inline-flex';disconnect.style.display='inline-flex'}
+  else if(fitnessWithingsConnected===false){dot.className='withings-status-dot';status.textContent='Не подключено. Нажмите «Подключить Withings» и войдите в свой аккаунт Withings.';connect.textContent='Подключить Withings';sync.style.display='none';disconnect.style.display='none'}
+  else{dot.className='withings-status-dot busy';status.textContent='Проверяю подключение…';connect.textContent='Подключить Withings';sync.style.display='none';disconnect.style.display='none'}
+}
+async function fitnessWithingsApiFetch(path,{method='GET'}={}){
+  if(isDelegatedMode())throw new Error('Подключение Withings должен выполнять владелец профиля из своего аккаунта.');
+  const {data:{session}}=await db.auth.getSession();if(!session)throw new Error('Нет активной сессии Fitness.');
+  const res=await fetch(`${SUPABASE_URL}/functions/v1/${path}`,{method,headers:{Authorization:`Bearer ${session.access_token}`,apikey:SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json'}});
+  const j=await res.json().catch(()=>({}));if(!res.ok)throw new Error(j?.error||`HTTP ${res.status}`);return j;
+}
+async function refreshFitnessWithingsStatus({silent=false}={}){
+  if(isDelegatedMode()){fitnessWithingsConnected=null;renderFitnessWithingsPanel();return false}
+  if(!silent){fitnessWithingsBusy=true;renderFitnessWithingsPanel()}
+  try{
+    const j=await fitnessWithingsApiFetch('withings-oauth?action=status');
+    fitnessWithingsConnected=!!j.connected;return fitnessWithingsConnected;
+  }catch(e){console.warn('Fitness Withings status',e);fitnessWithingsConnected=false;if(!silent&&isNetworkError(e))toast('Не удалось проверить Withings из-за сетевой ошибки.');return false}
+  finally{if(!silent)fitnessWithingsBusy=false;renderFitnessWithingsPanel()}
+}
+async function connectFitnessWithings(){
+  if(isDelegatedMode())return alert('Подключение Withings должен выполнять владелец профиля из своего аккаунта.');
+  let popup=null;
+  try{
+    popup=window.open('about:blank','fitness_withings_oauth','width=600,height=780,resizable=yes,scrollbars=yes');
+    if(!popup)throw new Error('Браузер заблокировал окно Withings. Разрешите всплывающие окна для этого сайта.');
+    fitnessWithingsBusy=true;renderFitnessWithingsPanel();
+    const j=await fitnessWithingsApiFetch('withings-oauth?action=start');
+    if(!j.authorization_url)throw new Error('Сервер не вернул ссылку авторизации Withings.');
+    fitnessWithingsPopup=popup;popup.location.replace(j.authorization_url);
+    clearInterval(fitnessWithingsPollTimer);const started=Date.now();
+    fitnessWithingsPollTimer=setInterval(async()=>{
+      const connected=await refreshFitnessWithingsStatus({silent:true});
+      if(connected){
+        clearInterval(fitnessWithingsPollTimer);fitnessWithingsPollTimer=null;fitnessWithingsBusy=false;
+        try{if(fitnessWithingsPopup&&!fitnessWithingsPopup.closed)fitnessWithingsPopup.close()}catch(_){}
+        fitnessWithingsPopup=null;renderFitnessWithingsPanel();toast('Withings подключён');await syncFitnessWithings();return;
+      }
+      if(Date.now()-started>2*60*1000||(fitnessWithingsPopup&&fitnessWithingsPopup.closed)){
+        clearInterval(fitnessWithingsPollTimer);fitnessWithingsPollTimer=null;fitnessWithingsBusy=false;renderFitnessWithingsPanel();await refreshFitnessWithingsStatus({silent:true});
+      }
+    },1600);
+  }catch(e){console.error('Fitness Withings connect',e);try{if(popup&&!popup.closed)popup.close()}catch(_){}fitnessWithingsBusy=false;renderFitnessWithingsPanel();alert(friendlyError(e,'Не удалось запустить подключение Withings.'))}
+}
+async function disconnectFitnessWithings(){
+  if(isDelegatedMode())return alert('Отключить Withings может только владелец профиля.');
+  if(!confirm('Отключить этот аккаунт Withings от вашего Fitness? Уже загруженные измерения и история тренировок останутся в Fitness.'))return;
+  fitnessWithingsBusy=true;renderFitnessWithingsPanel();
+  try{await fitnessWithingsApiFetch('withings-oauth?action=disconnect',{method:'POST'});fitnessWithingsConnected=false;renderFitnessWithingsPanel();toast('Withings отключён')}
+  catch(e){console.error(e);alert(friendlyError(e,'Не удалось отключить Withings.'))}
+  finally{fitnessWithingsBusy=false;renderFitnessWithingsPanel()}
+}
 async function syncFitnessWithings(){
   if(isDelegatedMode())return alert('Подключение и синхронизацию Withings должен выполнять владелец профиля из своего аккаунта.');
   const {data:{session}}=await db.auth.getSession();if(!session)return alert('Нет активной сессии.');
-  setBusy(true);
+  setBusy(true);fitnessWithingsBusy=true;renderFitnessWithingsPanel();
   try{
     const res=await fetch(`${SUPABASE_URL}/functions/v1/withings-data?action=sync&days=1095`,{headers:{Authorization:`Bearer ${session.access_token}`,apikey:SUPABASE_PUBLISHABLE_KEY}});
-    const j=await res.json();
+    const j=await res.json().catch(()=>({}));
     if(!res.ok||!j.connected){
-      if(j.error==='not_connected')return alert('Этот аккаунт пока не подключён к Withings.');
+      if(j.error==='not_connected'){fitnessWithingsConnected=false;renderFitnessWithingsPanel();return alert('Этот аккаунт пока не подключён к Withings. Нажмите «Подключить Withings» в разделе «Состав тела».');}
       throw new Error(j.error||'Ошибка Withings');
     }
+    fitnessWithingsConnected=true;
 
     const bodyRows=(j.measurements||[]).filter(g=>g.values?.['1']).map(g=>({
       user_id:currentUser.id,
@@ -3501,7 +3592,7 @@ async function syncFitnessWithings(){
     await loadAll();
     renderAll();
     toast(`Withings: ${bodyRows.length} измерений состава тела · ${activityRows.length} тренировок`);
-  }catch(e){console.error(e);alert(isNetworkError(e)?'Withings сейчас недоступен из-за сетевой ошибки. Основные данные Fitness не затронуты. Попробуйте синхронизацию позже.':(e.message||'Ошибка Withings'))}finally{setBusy(false)}
+  }catch(e){console.error(e);alert(isNetworkError(e)?'Withings сейчас недоступен из-за сетевой ошибки. Основные данные Fitness не затронуты. Попробуйте синхронизацию позже.':(e.message||'Ошибка Withings'))}finally{setBusy(false);fitnessWithingsBusy=false;renderFitnessWithingsPanel()}
 }
 async function syncBodyweightWithings(){return syncFitnessWithings()}
 function latestBodyMetric(key){
