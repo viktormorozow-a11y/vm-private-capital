@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HRT Health Studio v3.5.0 — Combined Charts + PDF</title>
+<title>HRT Health Studio v3.5.1 — Combined Charts + PDF</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -206,7 +206,7 @@ aside{display:flex;flex-direction:column}
 
 
 
-/* v3.5.0 — PDF layout fix */
+/* v3.5.1 — PDF layout fix */
 .withings-status-grid{display:grid;grid-template-columns:minmax(240px,1.2fr) minmax(180px,.7fr) minmax(190px,.7fr);gap:10px;align-items:end}
 .withings-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 .withings-kpi{border:1px solid var(--line);background:rgba(255,255,255,.018);border-radius:13px;padding:13px;min-width:0}
@@ -238,7 +238,7 @@ aside{display:flex;flex-direction:column}
 
 
 
-/* v3.5.0 — combined charts + PDF charts */
+/* v3.5.1 — combined charts + PDF charts */
 .comparison-controls{display:grid;grid-template-columns:minmax(150px,190px) minmax(150px,190px) minmax(210px,1fr) auto;gap:10px;align-items:end;margin-bottom:12px}
 .comparison-controls .actions{margin:0;justify-content:flex-start}
 .comparison-wrap{position:relative;border:1px solid var(--line);border-radius:13px;background:#08121b;padding:12px;min-width:0}
@@ -264,7 +264,7 @@ aside{display:flex;flex-direction:column}
 <div id="hrtAuthGate">
   <div class="hrt-auth-card">
     <div class="hrt-auth-brand">VM PRIVATE SUITE</div>
-    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.5.0</span></div>
+    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.5.1</span></div>
     <div class="hrt-auth-sub">Используйте тот же аккаунт, что и в Планировании капитала</div>
     <label>Email<input id="hrtGateEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
     <label>Пароль<input id="hrtGatePassword" type="password" autocomplete="current-password" placeholder="Введите пароль"></label>
@@ -276,7 +276,7 @@ aside{display:flex;flex-direction:column}
   </div>
 </div>
 <div id="hrtAppShell" class="auth-hidden">
-<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.5.0</div>
+<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.5.1</div>
 <div class="app">
 <aside>
   <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.4.1</small></div>
@@ -298,7 +298,8 @@ aside{display:flex;flex-direction:column}
     <div class="hrt-cloud-actions"><button class="btn" type="button" onclick="saveHrtCloudState(true)">Сохранить</button><button class="btn" type="button" onclick="loadHrtCloudState({force:true,showToast:true})">Загрузить</button></div>
   </div>
   <div class="suite-back">
-    <a href="../" title="Вернуться в Планирование капитала"><span>←</span><span>Планирование капитала</span></a>
+    <a id="hrtSuiteWealthLink" href="../" title="Открыть Wealth Studio"><span>←</span><span>WEALTH STUDIO</span></a>
+    <a id="hrtSuiteFitnessLink" href="../fitness/" title="Открыть Fitness Studio" style="margin-top:8px"><span>↗</span><span>FITNESS STUDIO</span></a>
   </div>
 </aside>
 
@@ -639,7 +640,7 @@ const KEY='hrt_health_studio_v1';
 const HRT_CLOUD_DIRTY_KEY='hrt_cloud_dirty_v1';
 const HRT_CLOUD_LAST_SYNC_KEY='hrt_cloud_last_sync_v1';
 const HRT_LOCAL_UPDATED_KEY='hrt_local_updated_v1';
-let hrtCloudUser=null,hrtCloudBusy=false,hrtCloudSaveTimer=null,hrtSuppressCloudSave=false;
+let hrtCloudUser=null,hrtCloudBusy=false,hrtCloudSaveTimer=null,hrtSuppressCloudSave=false,hrtModuleAccess=null;
 const DEFAULT_MEDS=[
   {id:'med_testogel',name:'Testogel',form:'Гель',unit:'нажатий',comment:''},
   {id:'med_hcg',name:'HCG',form:'Инъекция',unit:'IU',comment:''},
@@ -803,9 +804,35 @@ async function loadHrtCloudState({force=false,showToast=false}={}){
     if(showToast)hrtCloudToast('Не удалось загрузить облачные данные');return false;
   }finally{hrtCloudBusy=false}
 }
+
+function applyHrtSuiteAccess(access){
+ hrtModuleAccess=access||{fitness:false,hrt:false,wealth:false};
+ const wealth=document.getElementById('hrtSuiteWealthLink');
+ const fitness=document.getElementById('hrtSuiteFitnessLink');
+ if(wealth)wealth.style.display=hrtModuleAccess.wealth?'':'none';
+ if(fitness)fitness.style.display=hrtModuleAccess.fitness?'':'none';
+}
+async function requireHrtAccess(user){
+ if(!hrtSupabase||!user)throw new Error('Не удалось проверить права доступа.');
+ const {data,error}=await hrtSupabase.from('user_module_access')
+   .select('fitness,hrt,wealth')
+   .eq('user_id',user.id)
+   .maybeSingle();
+ if(error)throw error;
+ const access=data||{fitness:false,hrt:false,wealth:false};
+ applyHrtSuiteAccess(access);
+ if(access.hrt)return {access,redirected:false};
+ hrtGateMessage('Для этого аккаунта HRT Health Studio недоступен. Открываю разрешённый модуль…','ok');
+ if(access.fitness){location.replace('../fitness/');return {access,redirected:true}}
+ if(access.wealth){location.replace('../');return {access,redirected:true}}
+ throw new Error('Для этого аккаунта не разрешён ни один модуль VM Private Suite.');
+}
+
 async function handleHrtCloudSession(session,{initial=false}={}){
   hrtCloudUser=session?.user||null;
-  if(!hrtCloudUser){hrtCloudSetStatus('','Облако не подключено','Требуется вход');return false}
+  if(!hrtCloudUser){hrtModuleAccess=null;applyHrtSuiteAccess(null);hrtCloudSetStatus('','Облако не подключено','Требуется вход');return {redirected:false}}
+  const accessCheck=await requireHrtAccess(hrtCloudUser);
+  if(accessCheck.redirected)return accessCheck;
   hrtCloudSetStatus('busy','Подключаю облако…',hrtCloudUser.email||'');
   const {data,error}=await hrtSupabase.from('hrt_user_data').select('payload,updated_at').eq('user_id',hrtCloudUser.id).maybeSingle();
   if(error)throw error;
@@ -859,7 +886,8 @@ async function hrtSignIn(){
     if(error)throw error;
     if(!data?.session?.user)throw new Error('Сессия не получена.');
     hrtGateMessage('Вход выполнен. Загружаю данные…','ok');
-    await handleHrtCloudSession(data.session,{initial:true});
+    const sessionResult=await handleHrtCloudSession(data.session,{initial:true});
+    if(sessionResult?.redirected)return;
     hrtUnlockApp();setTimeout(autoSyncWithings,900);
   }catch(e){
     hrtGateMessage(e?.message||'Не удалось войти.','err');
@@ -875,8 +903,11 @@ async function initHrtAuth(){
   }
   try{
     const {data:{session}}=await hrtSupabase.auth.getSession();
-    if(session?.user){await handleHrtCloudSession(session,{initial:true});hrtUnlockApp();setTimeout(autoSyncWithings,900);}
-    else hrtLockApp();
+    if(session?.user){
+      const sessionResult=await handleHrtCloudSession(session,{initial:true});
+      if(sessionResult?.redirected)return;
+      hrtUnlockApp();setTimeout(autoSyncWithings,900);
+    } else hrtLockApp();
   }catch(e){
     hrtGateMessage(e?.message||'Ошибка проверки авторизации.','err');
   }
@@ -884,9 +915,14 @@ async function initHrtAuth(){
     setTimeout(async()=>{
       try{
         if(session?.user){
-          if(hrtCloudUser?.id!==session.user.id)await handleHrtCloudSession(session,{initial:false});
+          const accessResult=await requireHrtAccess(session.user);
+          if(accessResult?.redirected)return;
+          if(hrtCloudUser?.id!==session.user.id){
+            const sessionResult=await handleHrtCloudSession(session,{initial:false});
+            if(sessionResult?.redirected)return;
+          }
           hrtUnlockApp();setTimeout(autoSyncWithings,900);
-        }else{hrtCloudUser=null;hrtLockApp();hrtCloudSetStatus('','Облако не подключено','Требуется вход')}
+        }else{hrtCloudUser=null;hrtModuleAccess=null;applyHrtSuiteAccess(null);hrtLockApp();hrtCloudSetStatus('','Облако не подключено','Требуется вход')}
       }catch(e){console.error('HRT auth cloud sync error',e);hrtCloudSetStatus('err','Ошибка облака',e?.message||'')}
     },0);
   });
