@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Fitness Studio v2.0.1 — Withings Body Composition</title>
+<title>VM Fitness Studio v2.1.0 — Withings Body Composition</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -198,13 +198,53 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 .quick-presets{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
 .compare-empty{display:grid;place-items:center;height:100%;color:var(--muted);font-size:12px;text-align:center;padding:20px}
 @media(max-width:700px){.analytics-controls{grid-template-columns:1fr}.analytics-canvas{height:330px}}
+
+/* v2.1 contextual help system */
+.ctx-help{
+  display:inline-grid;place-items:center;width:16px;height:16px;margin-left:5px;
+  border-radius:50%;border:1px solid rgba(127,200,255,.34);
+  color:#9fd5ff;background:rgba(127,200,255,.07);
+  font-size:10px;font-weight:900;line-height:1;cursor:help;
+  vertical-align:middle;position:relative;flex:0 0 auto;
+}
+.ctx-help:hover,.ctx-help:focus{background:rgba(127,200,255,.14);border-color:rgba(127,200,255,.6);outline:none}
+.ctx-help[data-help]:hover:after,.ctx-help[data-help]:focus:after{
+  content:attr(data-help);position:absolute;z-index:10000;
+  top:23px;left:50%;transform:translateX(-50%);
+  width:min(360px,82vw);padding:10px 12px;
+  background:#101b27;border:1px solid rgba(255,255,255,.14);
+  border-radius:11px;color:#eef4f7;font-size:11px;line-height:1.55;
+  font-weight:500;letter-spacing:0;text-transform:none;text-align:left;
+  white-space:normal;box-shadow:0 16px 40px rgba(0,0,0,.45);
+  pointer-events:none;
+}
+.ctx-help.edge-right[data-help]:hover:after,.ctx-help.edge-right[data-help]:focus:after{left:auto;right:0;transform:none}
+.ctx-help.edge-left[data-help]:hover:after,.ctx-help.edge-left[data-help]:focus:after{left:0;transform:none}
+.helpable-label{display:flex;align-items:center;gap:3px;flex-wrap:wrap}
+.helpable-title{display:inline-flex;align-items:center;gap:2px;flex-wrap:wrap}
+.helpable-button-wrap{display:inline-flex;align-items:center;gap:3px}
+#helpPopover{
+  position:fixed;z-index:100000;display:none;max-width:min(380px,calc(100vw - 24px));
+  background:#101b27;border:1px solid rgba(255,255,255,.15);border-radius:12px;
+  padding:12px 14px;box-shadow:0 18px 55px rgba(0,0,0,.52);color:#eef4f7;
+  font-size:11px;line-height:1.55;
+}
+#helpPopover.show{display:block}
+#helpPopover .help-pop-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:6px}
+#helpPopover .help-pop-head b{color:#f2d49d}
+#helpPopover .help-pop-close{border:0;background:transparent;color:#aebdca;font-size:18px;cursor:pointer;padding:0}
+.help-global-note{font-size:10px;color:var(--muted);margin-top:8px}
+@media(hover:none){
+  .ctx-help[data-help]:hover:after{display:none}
+  .ctx-help{cursor:pointer}
+}
 </style>
 </head>
 <body>
 <div id="authGate" class="auth-gate">
   <div class="auth-card">
     <div class="auth-brand">VM PRIVATE SUITE</div>
-    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v2.0.1</span></div>
+    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v2.1.0</span></div>
     <div class="auth-sub">Личный тренировочный дневник. Данные каждого аккаунта полностью раздельны.</div>
     <div class="auth-tabs">
       <button id="tabLogin" class="active" type="button">Войти</button>
@@ -222,7 +262,7 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 
 <div class="app">
 <aside>
-  <div class="brand"><b>VM FITNESS STUDIO</b><small>Тренировки · Прогрессия · Рекорды</small><small style="color:#d6ad62;font-weight:750">Версия 2.0.1</small></div>
+  <div class="brand"><b>VM FITNESS STUDIO</b><small>Тренировки · Прогрессия · Рекорды</small><small style="color:#d6ad62;font-weight:750">Версия 2.1.0</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Сегодня</button>
     <button class="nav" data-view="workout">Тренировка</button>
@@ -362,7 +402,8 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 
 <section id="settings" class="view">
   <div class="top"><div><h1>Настройки</h1><div class="sub">Профиль относится только к текущему аккаунту.</div></div></div>
-  <div class="panel">
+    <div class="panel"><div class="head"><h2>Как пользоваться подсказками</h2></div><div class="note">По всему сайту рядом с терминами и настройками есть значок <span class="ctx-help" data-help="Наведите мышь на знак вопроса. На телефоне нажмите на него — подсказка откроется отдельным окном.">?</span>. Подсказки объясняют, что означает показатель, как работает функция и на что обратить внимание.</div></div>
+<div class="panel">
     <div class="head"><h2>Профиль</h2></div>
     <div class="form-grid">
       <label>Отображаемое имя<input id="profileName"></label>
@@ -386,6 +427,8 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 </main>
 </div>
 
+<div id="helpPopover" role="dialog" aria-live="polite"><div class="help-pop-head"><b>Подсказка</b><button class="help-pop-close" type="button" onclick="closeHelpPopover()">×</button></div><div id="helpPopoverText"></div></div>
+
 <div id="modalBg" class="modal-bg" onclick="if(event.target===this)closeModal()"><div id="modal" class="modal"></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -407,13 +450,174 @@ const n=(x,d=1)=>Number.isFinite(Number(x))?Number(x).toLocaleString('ru-RU',{ma
 const roundTo=(value,step)=>Math.max(0,Math.round(Number(value)/Number(step))*Number(step));
 const uid=()=>crypto.randomUUID();
 
+
+const CONTEXT_HELP={
+  // Navigation / modules
+  'Сегодня':'Главный экран. Здесь кратко показаны текущая тренировка, следующая программа, последние результаты и рекорды.',
+  'Тренировка':'Экран текущей силовой тренировки. Здесь записываются рабочий вес, повторения и RIR каждого подхода.',
+  'Упражнения':'Каталог упражнений. Для каждого упражнения хранится место тренировки, техника, история и рекомендация на следующий раз.',
+  'Программы':'Готовые сплит-программы. Программа задаёт порядок упражнений для конкретного дня: спина, грудь + плечи, ноги или другое.',
+  'История':'Все завершённые тренировки. Старые рабочие веса и подходы используются для расчёта прогресса и рекомендаций.',
+  'Прогресс':'Подробный график одного упражнения: рабочий вес, повторения, объём или расчётная сила e1RM.',
+  'Аналитика':'Сравнительный график. Можно наложить друг на друга до 8 показателей и посмотреть, совпадают ли изменения во времени.',
+  'Состав тела':'Вес, мышечная масса, жировая масса и процент жира. Данные можно вводить вручную или синхронизировать из Withings.',
+  'Цикл и активность':'Приватный календарь цикла, месячных, самочувствия и интимной активности. Доступ к нему выдаётся отдельно от обычного Fitness.',
+  'Настройки':'Профиль, домашнее оборудование, совместный доступ и другие настройки Fitness Studio.',
+
+  // Workout concepts
+  'RIR':'Reps In Reserve — сколько повторений, по ощущению, осталось бы сделать до отказа. RIR 2 означает, что вы могли бы выполнить ещё примерно 2 повторения.',
+  'e1RM':'Расчётный одноповторный максимум. Это оценка силы по рабочему весу и количеству повторений, а не предложение реально делать максимальный подъём.',
+  'Расчётная сила (e1RM)':'Оценка максимальной силы по формуле Epley. Нужна прежде всего для сравнения собственного прогресса между тренировками.',
+  'Двойная прогрессия':'Сначала увеличиваются повторения в заданном диапазоне. Когда верхняя граница достигнута во всех рабочих подходах, увеличивается вес.',
+  'Рабочих подходов':'Количество основных подходов, которые учитываются в прогрессии. Разминочные подходы обычно сюда не входят.',
+  'Минимум повторений':'Нижняя граница рабочего диапазона. Если повторений стабильно меньше, выбранный вес может быть слишком тяжёлым.',
+  'Максимум повторений':'Верхняя граница рабочего диапазона. Если она достигнута во всех подходах с нормальной техникой, программа может предложить увеличить вес.',
+  'Шаг веса, кг':'На сколько килограммов увеличивать рабочий вес после успешного прохождения диапазона повторений.',
+  'Следующий вес':'Вес, который алгоритм рекомендует попробовать на следующей тренировке с учётом последних подходов и выбранного режима прогрессии.',
+  'Объём тренировки':'Сумма вес × повторения по всем подходам. Это полезный показатель общей выполненной силовой работы.',
+  'Максимальный рабочий вес':'Самый большой вес, с которым был записан рабочий подход в выбранном упражнении.',
+  'Лучшее число повторений':'Максимальное число повторений, записанное в одном рабочем подходе.',
+  'Свободная тренировка':'Тренировка без заранее выбранной программы. Упражнения можно добавлять вручную по ходу занятия.',
+
+  // Splits / locations
+  'Дом':'Показываются упражнения и программы, доступные в домашнем тренажёрном зале.',
+  'Зал':'Показываются упражнения и программы для обычного коммерческого тренажёрного зала.',
+  'Спина':'День сплита с акцентом на спину и бицепс.',
+  'Грудь + плечи':'День сплита с акцентом на грудь, плечи и трицепс.',
+  'Ноги':'День сплита для квадрицепсов, задней поверхности бедра, ягодиц и икр.',
+  'Везде':'Упражнение доступно и дома, и в обычном тренажёрном зале.',
+  'Место тренировки':'Определяет, в каком зале программа или упражнение будет доступно.',
+  'День сплита':'Группа мышц, которой посвящена тренировка. Это помогает автоматически фильтровать подходящие упражнения.',
+
+  // Withings/body
+  'Withings':'Синхронизация с аккаунтом Withings. Подтягивает доступные измерения состава тела и тренировочные показатели.',
+  'Вес':'Масса тела в килограммах.',
+  'Мышечная масса':'Оценка массы мышечной ткани. Значения бытовых весов лучше использовать для отслеживания тенденции, а не как абсолютно точное измерение.',
+  'Жировая масса':'Оценка массы жировой ткани в килограммах.',
+  'Жир, %':'Оценка доли жировой ткани в процентах от массы тела. Важнее долгосрочная тенденция, чем единичное измерение.',
+  'Калории':'Оценка энергозатрат тренировки. Значения носимых устройств приблизительные и лучше подходят для сравнения между собственными тренировками.',
+  'Средний пульс':'Средняя частота сердечных сокращений за зарегистрированную активность.',
+  'Источник веса':'Определяет, откуда обычно берутся данные веса: ручной ввод или Withings.',
+
+  // Analytics
+  'Период':'Какой временной промежуток показывать на сравнительном графике.',
+  'Сравнительная аналитика':'Можно выбрать до 8 показателей. Если у них разные единицы, каждый ряд отдельно переводится в относительную шкалу 0–100.',
+  'Шкала 0–100':'Это не реальные килограммы или баллы. Минимум каждого выбранного показателя становится примерно 0, максимум — 100, чтобы сравнивать форму кривых.',
+  'Сила + объём':'Быстрый пресет: расчётная сила выбранного упражнения и общий тренировочный объём на одном графике.',
+  'Вес + сила':'Быстрый пресет: динамика массы тела вместе с силовым показателем упражнения.',
+  'Тренировка + пульс':'Быстрый пресет: объём тренировки, калории и средний пульс.',
+  'Сила + цикл':'Сравнивает силовой показатель упражнения с днём цикла и отмеченными месячными.',
+  'Цикл + секс':'Накладывает день цикла, месячные и отмеченную интимную активность.',
+  'Вес + цикл':'Показывает массу тела вместе с днём цикла и месячными.',
+  'Добавить показатель':'Добавляет ещё один ряд на сравнительный график. Можно одновременно выбрать до 8 показателей.',
+
+  // Cycle / sensitive
+  'День цикла':'Считается от первого отмеченного дня месячных. День 1 — первый день нового цикла.',
+  'Менструация':'Отметьте, были ли в этот день месячные.',
+  'Это первый день нового цикла':'Включайте только на первом дне очередных месячных. Эта дата используется как точка отсчёта для прогноза.',
+  'Интенсивность':'Субъективная интенсивность менструальных выделений: лёгкая, средняя или сильная.',
+  'Энергия 1–5':'Субъективная оценка энергии за день. 1 — очень низкая, 5 — очень высокая.',
+  'Качество сна 1–5':'Субъективная оценка сна. 1 — очень плохой, 5 — очень хороший.',
+  'Боль 0–10':'Субъективная интенсивность боли: 0 — боли нет, 10 — максимально сильная.',
+  'Обычная длина цикла, дней':'Используется для прогноза следующего начала месячных, пока не накопилась достаточная собственная история.',
+  'Обычная длительность месячных, дней':'Используется для ориентировочного прогноза окончания месячных.',
+  'Следующие месячные':'Приблизительный прогноз на основе отмеченных первых дней предыдущих циклов.',
+  'Текущие месячные':'Показывает отмеченное начало текущего цикла и ориентировочную дату окончания.',
+  'Интимная активность':'Приватные отметки сексуальной активности. Эти данные не открываются делегированному управляющему без отдельного разрешения владельца.',
+  'Секс':'Отметка сексуальной активности в выбранную дату и время.',
+  'Оральный секс':'Отдельная отметка оральной сексуальной активности.',
+  'Сила и фазы цикла':'Сравнивает относительную силовую производительность тренировок с ориентировочной фазой цикла. Это корреляция, а не доказательство причины.',
+
+  // Permissions/privacy
+  'Совместное управление Fitness':'Владелец может дать другому аккаунту право управлять его Fitness. Разрешение проверяется на уровне Supabase, а не только интерфейса.',
+  'Дать Виктору полный доступ':'Разрешает выбранному управляющему видеть и менять обычные данные Fitness: упражнения, программы, тренировки, подходы, вес и настройки.',
+  'Разрешить цикл и интимную активность':'Отдельное разрешение на чувствительные данные. Без него даже полный управляющий доступ к Fitness не открывает цикл и интимную активность.',
+  'Отозвать доступ у Виктора':'Немедленно закрывает делегированный доступ к обычным данным Fitness.',
+  'Закрыть приватные данные':'Закрывает делегированному управляющему доступ к циклу и интимной активности, не отменяя обычный доступ Fitness.',
+  'Управляемый профиль':'Переключатель между собственным Fitness и профилем другого пользователя, который добровольно выдал вам доступ.',
+
+  // Equipment / deletion
+  'Оборудование домашнего зала':'Список реального оборудования дома. Он помогает не предлагать домашние упражнения, которые невозможно выполнить на имеющемся инвентаре.',
+  'Удалить все упражнения':'Очищает активный каталог. Упражнения, уже использованные в истории, архивируются, чтобы старые тренировки и прогресс не потерялись.',
+  'Удалить тренировку':'Удаляет выбранную тренировку и её подходы. Данные Withings при этом не удаляются из источника.',
+  'Архив':'Скрывает упражнение из активного каталога, сохраняя его старую историю.'
+};
+
+function normalizeHelpText(x){
+  return String(x||'').replace(/\s+/g,' ').trim().replace(/[：:]+$/,'');
+}
+function findHelpText(text){
+  const t=normalizeHelpText(text);
+  if(!t)return null;
+  if(CONTEXT_HELP[t])return CONTEXT_HELP[t];
+  // Exact contained keys for dynamic labels like "Вес, кг" or "RIR 0–5".
+  const keys=Object.keys(CONTEXT_HELP).sort((a,b)=>b.length-a.length);
+  const k=keys.find(key=>t===key||t.startsWith(key+' ')||t.startsWith(key+',')||t.includes(' '+key+' '));
+  return k?CONTEXT_HELP[k]:null;
+}
+function createHelpIcon(help){
+  const q=document.createElement('span');
+  q.className='ctx-help';q.textContent='?';q.tabIndex=0;
+  q.setAttribute('role','button');q.setAttribute('aria-label','Показать подсказку');
+  q.dataset.help=help;
+  q.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openHelpPopover(q,help)});
+  q.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openHelpPopover(q,help)}});
+  return q;
+}
+function injectContextHelp(root=document){
+  // Titles/headings
+  root.querySelectorAll('h1,h2,h3').forEach(el=>{
+    if(el.dataset.helpDone)return;
+    const help=findHelpText(el.childNodes[0]?.textContent||el.textContent);
+    if(help){el.appendChild(createHelpIcon(help));el.dataset.helpDone='1'}
+  });
+  // Labels. Insert after the label's first text node, before controls.
+  root.querySelectorAll('label').forEach(el=>{
+    if(el.dataset.helpDone)return;
+    let txt='';
+    for(const n of el.childNodes){if(n.nodeType===3&&normalizeHelpText(n.textContent)){txt=n.textContent;break}}
+    if(!txt)txt=el.textContent;
+    const help=findHelpText(txt);
+    if(help){
+      const icon=createHelpIcon(help);
+      const firstControl=[...el.children].find(x=>['INPUT','SELECT','TEXTAREA','DIV'].includes(x.tagName));
+      if(firstControl)el.insertBefore(icon,firstControl);else el.appendChild(icon);
+      el.dataset.helpDone='1';
+    }
+  });
+  // Buttons and navigation: attach a sibling icon only where we have a meaningful explanation.
+  root.querySelectorAll('button').forEach(btn=>{
+    if(btn.dataset.helpDone||btn.classList.contains('help-pop-close')||btn.closest('#helpPopover'))return;
+    const help=findHelpText(btn.textContent);
+    if(!help)return;
+    btn.dataset.helpDone='1';
+    const parent=btn.parentElement;
+    if(parent&&parent.classList.contains('actions')){
+      btn.insertAdjacentElement('afterend',createHelpIcon(help));
+    }else{
+      btn.title=help; // navigation/tight layouts get native hover help without changing geometry
+    }
+  });
+  // Existing explicit help elements are left as-is.
+}
+function openHelpPopover(anchor,help){
+  const pop=$('helpPopover'),txt=$('helpPopoverText');if(!pop||!txt)return;
+  txt.textContent=help;pop.classList.add('show');
+  const r=anchor.getBoundingClientRect(),pw=Math.min(380,window.innerWidth-24);
+  let left=Math.min(window.innerWidth-pw-12,Math.max(12,r.left+r.width/2-pw/2));
+  let top=r.bottom+8;if(top+150>window.innerHeight)top=Math.max(12,r.top-158);
+  pop.style.width=pw+'px';pop.style.left=left+'px';pop.style.top=top+'px';
+}
+function closeHelpPopover(){$('helpPopover')?.classList.remove('show')}
+document.addEventListener('click',e=>{if(!e.target.closest('.ctx-help')&&!e.target.closest('#helpPopover'))closeHelpPopover()});
+
 function setBusy(on){document.body.classList.toggle('busy',!!on)}
 function toast(msg){
   const old=$('toast');if(old)old.remove();const el=document.createElement('div');el.id='toast';el.textContent=msg;
   Object.assign(el.style,{position:'fixed',right:'16px',bottom:'16px',zIndex:99999,background:'#101b27',color:'#eef4f7',border:'1px solid rgba(255,255,255,.12)',borderRadius:'10px',padding:'10px 13px',fontSize:'11px',boxShadow:'0 12px 35px rgba(0,0,0,.35)'});
   document.body.appendChild(el);setTimeout(()=>el.remove(),2500);
 }
-function openModal(html,wide=false){$('modal').className='modal'+(wide?' wide-modal':'');$('modal').innerHTML=html;$('modalBg').classList.add('show')}
+function openModal(html,wide=false){$('modal').className='modal'+(wide?' wide-modal':'');$('modal').innerHTML=html;$('modalBg').classList.add('show');setTimeout(()=>injectContextHelp($('modal')),0)}
 function closeModal(){$('modalBg').classList.remove('show')}
 
 let authMode='login';
@@ -698,6 +902,7 @@ async function loadAll(){
 }
 function renderAll(){
   renderDashboard();renderExercises();renderRoutines();renderActiveWorkout();renderHistory();renderProgressOptions();renderBodyweight();renderCycle();renderSettings();renderAccountSwitcher();renderCycleVisibility();renderCompareAnalytics();
+  setTimeout(()=>injectContextHelp(document),0);
 }
 document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));b.classList.add('active');
@@ -2177,8 +2382,8 @@ function compareSeriesMeta(key){
       energy:['Энергия','/5','line'],
       sleep:['Сон','/5','line'],
       pain:['Боль','/10','line'],
-      period:['Месячные · факт','','band'],
-      period_forecast:['Месячные · прогноз','','bandForecast']
+      period:['Месячные — отмеченные дни','','band'],
+      period_forecast:['Месячные — прогноз','','bandForecast']
     }[a]||[a,'','line'];
     return {label:m[0],unit:m[1],kind:m[2]};
   }
@@ -2246,9 +2451,9 @@ function compareAvailableSeries(){
     {group:'Тренировки',key:'workout:avg_hr',label:'Средний пульс'}
   );
   if(canUseSensitiveAnalytics())rows.push(
-    {group:'Цикл',key:'cycle:day',label:'День цикла'},
-    {group:'Цикл',key:'cycle:period',label:'Месячные · факт'},
-    {group:'Цикл',key:'cycle:period_forecast',label:'Месячные · прогноз'},
+    {group:'Цикл',key:'cycle:day',label:'День цикла (1 = первый день месячных)'},
+    {group:'Цикл',key:'cycle:period',label:'Месячные — отмеченные дни'},
+    {group:'Цикл',key:'cycle:period_forecast',label:'Месячные — прогноз'},
     {group:'Цикл',key:'cycle:energy',label:'Энергия'},
     {group:'Цикл',key:'cycle:sleep',label:'Сон'},
     {group:'Цикл',key:'cycle:pain',label:'Боль'},
@@ -2309,7 +2514,7 @@ function renderCompareAnalytics(){
     ? 'Накладывайте на один график силовые показатели, состав тела, цикл, месячные, самочувствие, интимную активность, калории и пульс. Для показателей с разными единицами линии приводятся к шкале 0–100.'
     : 'Накладывайте на один график силовые показатели, состав тела, объём тренировок, калории и пульс. Для показателей с разными единицами линии приводятся к шкале 0–100.';
   if(help)help.textContent=sensitive
-    ? 'Линии разных единиц нормализуются отдельно к диапазону 0–100. Месячные отображаются полосами, интимная активность — событиями. Наведите курсор, чтобы увидеть исходные значения.'
+    ? 'Линии разных единиц нормализуются отдельно к диапазону 0–100. Поэтому высота линии показывает относительное изменение, а не исходное число. Месячные отображаются полосами, секс и другие события — точками. В подсказке показываются реальные значения.'
     : 'Линии разных единиц нормализуются отдельно к диапазону 0–100, поэтому график показывает совпадение подъёмов и падений во времени. Наведите курсор, чтобы увидеть исходные значения.';
   if(presets)presets.innerHTML=sensitive
     ? `<button class="btn" type="button" onclick="setComparePreset('strength_cycle')">Сила + цикл</button>
@@ -2337,6 +2542,30 @@ function renderCompareAnalytics(){
   legend.innerHTML=series.map(x=>`<span><i class="legend-dot" style="background:${x.color}"></i>${esc(x.label)}</span>`).join('');
   drawCompareChart(canvas,series,$('compareTip'));
 }
+
+function humanCompareValue(series,point){
+  const key=series.key||'';
+  const raw=point.raw??point.y;
+  if(key==='cycle:period')return 'Отмечено как день менструации';
+  if(key==='cycle:period_forecast')return 'Прогнозируемый день менструации';
+  if(key==='cycle:day')return `День цикла: ${n(raw,0)}`;
+  if(key==='cycle:energy')return `Энергия: ${n(raw,0)} из 5`;
+  if(key==='cycle:sleep')return `Сон: ${n(raw,0)} из 5`;
+  if(key==='cycle:pain')return `Боль: ${n(raw,0)} из 10`;
+  if(key==='intimate:sex')return `Секс: ${n(raw,0)} ${Number(raw)===1?'раз':'раза'}`;
+  if(key==='intimate:oral_sex')return `Оральный секс: ${n(raw,0)} ${Number(raw)===1?'раз':'раза'}`;
+  if(key==='intimate:other')return `Другая интимная активность: ${n(raw,0)} ${Number(raw)===1?'раз':'раза'}`;
+  if(key.startsWith('ex:'))return `${series.label}: ${n(raw,1)} ${series.unit||''}`.trim();
+  if(key==='body:weight_kg')return `Вес: ${n(raw,2)} кг`;
+  if(key==='body:muscle_mass_kg')return `Мышечная масса: ${n(raw,2)} кг`;
+  if(key==='body:fat_mass_kg')return `Жировая масса: ${n(raw,2)} кг`;
+  if(key==='body:fat_percent')return `Жир: ${n(raw,2)} %`;
+  if(key==='workout:volume')return `Объём тренировки: ${n(raw,0)} кг`;
+  if(key==='workout:calories')return `Калории: ${n(raw,0)} kcal`;
+  if(key==='workout:avg_hr')return `Средний пульс: ${n(raw,0)} уд/мин`;
+  return `${series.label}: ${n(raw,1)} ${series.unit||''}`.trim();
+}
+
 function drawCompareChart(canvas,series,tip){
   const rect=canvas.getBoundingClientRect(),w=Math.max(360,rect.width||900),h=Math.max(300,rect.height||410),dpr=window.devicePixelRatio||1;
   canvas.width=w*dpr;canvas.height=h*dpr;const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);c.fillStyle='#08121b';c.fillRect(0,0,w,h);
@@ -2380,7 +2609,7 @@ function drawCompareChart(canvas,series,tip){
       if(!nearby.length){tip.style.display='none';return}
       nearby.sort((a,b)=>a.dist-b.dist);
       const date=nearby[0].p.date||new Date(nearby[0].p.x).toISOString();
-      tip.innerHTML=`<b>${fmtDate(date)}</b><br>${nearby.slice(0,8).map(({s,p})=>`${esc(s.label)}: <b>${s.kind==='band'||s.kind==='bandForecast'?'да':n(p.raw??p.y,1)+' '+esc(s.unit||'')}</b>`).join('<br>')}`;
+      tip.innerHTML=`<b>${fmtDate(date)}</b><br>${nearby.slice(0,8).map(({s,p})=>`<span style="color:${s.color}">●</span> ${esc(humanCompareValue(s,p))}`).join('<br>')}`;
       tip.style.display='block';tip.style.left=Math.min(w-tip.offsetWidth-8,Math.max(8,px+10))+'px';tip.style.top='12px';
     };
     canvas.onmousemove=show;canvas.onclick=show;canvas.ontouchstart=show;canvas.onmouseleave=()=>tip.style.display='none';
@@ -2520,6 +2749,7 @@ async function init(){
   db.auth.onAuthStateChange((_e,s)=>{if(!s)$('authGate').classList.remove('hidden')});
 }
 window.addEventListener('resize',()=>{if($('progress')?.classList.contains('active'))renderProgress();if($('bodyweight')?.classList.contains('active'))drawBodyweightChart();if($('analytics')?.classList.contains('active'))renderCompareAnalytics()});
+window.addEventListener('load',()=>setTimeout(()=>injectContextHelp(document),50));
 init();
 </script>
 </body>
