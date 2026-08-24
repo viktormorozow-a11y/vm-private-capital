@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Fitness Studio v1.0.1</title>
+<title>VM Fitness Studio v1.1.0 — Withings Body Composition</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -55,7 +55,7 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 <div id="authGate" class="auth-gate">
   <div class="auth-card">
     <div class="auth-brand">VM PRIVATE SUITE</div>
-    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v1.0.1</span></div>
+    <div class="auth-title">Fitness Studio <span style="font-size:12px;color:#8ea0b1">v1.1.0</span></div>
     <div class="auth-sub">Личный тренировочный дневник. Данные каждого аккаунта полностью раздельны.</div>
     <div class="auth-tabs">
       <button id="tabLogin" class="active" type="button">Войти</button>
@@ -81,7 +81,7 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
     <button class="nav" data-view="routines">Программы</button>
     <button class="nav" data-view="history">История</button>
     <button class="nav" data-view="progress">Прогресс</button>
-    <button class="nav" data-view="bodyweight">Вес тела</button>
+    <button class="nav" data-view="bodyweight">Состав тела</button>
     <button class="nav" data-view="settings">Настройки</button>
   </nav>
   <div class="user-box">
@@ -124,6 +124,7 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 <section id="history" class="view">
   <div class="top"><div><h1>История</h1><div class="sub">Все завершённые тренировки и выполненные подходы.</div></div></div>
   <div class="panel"><div id="historyList"></div></div>
+  <div class="panel"><div class="head"><div><h2>Данные тренировок Withings</h2><div class="sub">Калории и пульс автоматически связываются с ближайшей по времени тренировкой Fitness Studio.</div></div><button class="btn" type="button" onclick="syncFitnessWithings()">↻ Withings</button></div><div id="withingsActivityList"></div></div>
 </section>
 
 <section id="progress" class="view">
@@ -139,9 +140,13 @@ label{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select,textar
 </section>
 
 <section id="bodyweight" class="view">
-  <div class="top"><div><h1>Вес тела</h1><div class="sub">Можно записывать вручную. Если этот аккаунт подключён к Withings, можно импортировать измерения одним нажатием.</div></div><div class="actions" style="margin-top:0"><button class="btn" type="button" onclick="syncBodyweightWithings()">↻ Withings</button><button class="btn primary" type="button" onclick="openBodyweightModal()">＋ Вес</button></div></div>
+  <div class="top"><div><h1>Состав тела</h1><div class="sub">Вес, мышечная масса, жировая масса и процент жира. Withings синхронизирует доступные показатели для текущего аккаунта.</div></div><div class="actions" style="margin-top:0"><button class="btn" type="button" onclick="syncFitnessWithings()">↻ Синхронизировать Withings</button><button class="btn primary" type="button" onclick="openBodyweightModal()">＋ Измерение</button></div></div>
+  <div id="bodyCompKpis" class="metric-row" style="margin-bottom:14px"></div>
   <div class="grid g2">
-    <div class="panel"><div class="head"><h2>Динамика</h2></div><div class="progress-canvas"><canvas id="bodyweightCanvas"></canvas><div id="bodyweightTip" class="tip"></div></div></div>
+    <div class="panel">
+      <div class="head"><h2>Динамика</h2><label style="min-width:190px">Показатель<select id="bodyCompMetric" onchange="drawBodyweightChart()"><option value="weight_kg">Вес</option><option value="muscle_mass_kg">Мышечная масса</option><option value="fat_mass_kg">Жировая масса</option><option value="fat_percent">Жир, %</option></select></label></div>
+      <div class="progress-canvas"><canvas id="bodyweightCanvas"></canvas><div id="bodyweightTip" class="tip"></div></div>
+    </div>
     <div class="panel"><div class="head"><h2>Последние измерения</h2></div><div id="bodyweightList"></div></div>
   </div>
 </section>
@@ -172,7 +177,7 @@ const SUPABASE_URL='https://hlrvwzqwxqmycuttvzbx.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_RBRKa6zqrw7-CW77RW__QQ_vrqebWCp';
 const db=(window.supabase&&window.supabase.createClient)?window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}):null;
 let currentUser=null,moduleAccess=null,profile=null;
-let exercises=[],routines=[],routineExercises=[],workouts=[],workoutExercises=[],sets=[],bodyweights=[];
+let exercises=[],routines=[],routineExercises=[],workouts=[],workoutExercises=[],sets=[],bodyweights=[],fitnessActivities=[];
 let activeWorkoutId=null;
 const $=id=>document.getElementById(id);
 const esc=x=>String(x??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -242,17 +247,18 @@ async function ensureProfile(){
 }
 async function loadAll(){
   const uid=currentUser.id;
-  const [ex,rt,re,wo,we,se,bw]=await Promise.all([
+  const [ex,rt,re,wo,we,se,bw,fa]=await Promise.all([
     db.from('fitness_exercises').select('*').eq('user_id',uid).order('name'),
     db.from('fitness_routines').select('*').eq('user_id',uid).order('name'),
     db.from('fitness_routine_exercises').select('*').eq('user_id',uid).order('position'),
     db.from('fitness_workouts').select('*').eq('user_id',uid).order('started_at',{ascending:false}).limit(150),
     db.from('fitness_workout_exercises').select('*').eq('user_id',uid).order('position'),
     db.from('fitness_sets').select('*').eq('user_id',uid).order('set_no'),
-    db.from('fitness_bodyweight').select('*').eq('user_id',uid).order('measured_at',{ascending:false}).limit(500)
+    db.from('fitness_bodyweight').select('*').eq('user_id',uid).order('measured_at',{ascending:false}).limit(500),
+    db.from('fitness_activity').select('*').eq('user_id',uid).order('started_at',{ascending:false}).limit(500)
   ]);
-  for(const r of [ex,rt,re,wo,we,se,bw])if(r.error)throw r.error;
-  exercises=ex.data||[];routines=rt.data||[];routineExercises=re.data||[];workouts=wo.data||[];workoutExercises=we.data||[];sets=se.data||[];bodyweights=bw.data||[];
+  for(const r of [ex,rt,re,wo,we,se,bw,fa])if(r.error)throw r.error;
+  exercises=ex.data||[];routines=rt.data||[];routineExercises=re.data||[];workouts=wo.data||[];workoutExercises=we.data||[];sets=se.data||[];bodyweights=bw.data||[];fitnessActivities=fa.data||[];
   activeWorkoutId=workouts.find(w=>!w.ended_at)?.id||null;
 }
 function renderAll(){
@@ -273,6 +279,53 @@ function e1rm(weight,reps){weight=Number(weight);reps=Number(reps);return weight
 function workoutVolume(workoutId){
   const ids=new Set(workoutExerciseRows(workoutId).map(x=>x.id));return sets.filter(s=>ids.has(s.workout_exercise_id)).reduce((a,s)=>a+Number(s.weight_kg||0)*Number(s.reps||0),0)
 }
+
+function numOrNull(v){const x=Number(v);return Number.isFinite(x)?x:null}
+function activityMetricText(a){
+  if(!a)return '';
+  const bits=[];
+  if(a.calories!=null)bits.push(`${n(a.calories,0)} kcal`);
+  if(a.avg_hr!=null)bits.push(`ср. пульс ${n(a.avg_hr,0)}`);
+  if(a.min_hr!=null)bits.push(`min ${n(a.min_hr,0)}`);
+  if(a.max_hr!=null)bits.push(`max ${n(a.max_hr,0)}`);
+  return bits.join(' · ');
+}
+function activityForWorkout(workoutId){
+  return fitnessActivities.find(a=>a.linked_workout_id===workoutId)||null;
+}
+function nearestWithingsActivityForWorkout(w,activities=fitnessActivities){
+  if(!w)return null;
+  const ws=new Date(w.started_at).getTime(),we=new Date(w.ended_at||Date.now()).getTime();
+  let best=null,bestScore=-Infinity;
+  for(const a of activities){
+    const as=new Date(a.started_at).getTime(),ae=new Date(a.ended_at||a.started_at).getTime();
+    if(!Number.isFinite(as))continue;
+    const startDiff=Math.abs(as-ws);
+    const overlap=Math.max(0,Math.min(we,ae)-Math.max(ws,as));
+    if(startDiff>4*3600e3&&overlap<=0)continue;
+    const score=(overlap>0?overlap*10:0)+(4*3600e3-startDiff);
+    if(score>bestScore){bestScore=score;best=a}
+  }
+  return best;
+}
+async function relinkWithingsActivities(){
+  if(!fitnessActivities.length||!workouts.length)return;
+  const used=new Set();
+  for(const w of workouts.filter(x=>x.started_at)){
+    const already=fitnessActivities.find(a=>a.linked_workout_id===w.id);
+    if(already){used.add(already.id);continue}
+    const candidates=fitnessActivities.filter(a=>!a.linked_workout_id&&!used.has(a.id));
+    const a=nearestWithingsActivityForWorkout(w,candidates);
+    if(!a)continue;
+    const diff=Math.abs(new Date(a.started_at)-new Date(w.started_at));
+    const ws=new Date(w.started_at).getTime(),we=new Date(w.ended_at||Date.now()).getTime(),as=new Date(a.started_at).getTime(),ae=new Date(a.ended_at||a.started_at).getTime();
+    const overlap=Math.max(0,Math.min(we,ae)-Math.max(ws,as));
+    if(diff>3*3600e3&&overlap<=0)continue;
+    const r=await db.from('fitness_activity').update({linked_workout_id:w.id,updated_at:new Date().toISOString()}).eq('id',a.id);
+    if(!r.error)used.add(a.id);
+  }
+}
+
 function completedWorkoutsForExercise(exerciseId,excludeWorkoutId=null){
   const we=workoutExercises.filter(x=>x.exercise_id===exerciseId&&x.workout_id!==excludeWorkoutId);
   return we.map(x=>({we:x,workout:workoutById(x.workout_id),sets:setsForWorkoutExercise(x.id)})).filter(x=>x.workout?.ended_at&&x.sets.length).sort((a,b)=>new Date(b.workout.started_at)-new Date(a.workout.started_at));
@@ -320,7 +373,7 @@ function renderDashboard(){
   if(active)$('nextWorkout').innerHTML=`<div class="rec-card"><div class="rec-title">Тренировка уже начата</div><div class="rec-main">${esc(active.title)}</div><div class="rec-why">${fmtDateTime(active.started_at)}</div><button class="btn primary" style="margin-top:10px" onclick="goView('workout')">Продолжить</button></div>`;
   else if(routines.filter(r=>!r.archived).length)$('nextWorkout').innerHTML=routines.filter(r=>!r.archived).slice(0,3).map(r=>`<div class="routine-row"><span><b>${esc(r.name)}</b><br><small style="color:var(--muted)">${routineExercises.filter(x=>x.routine_id===r.id).length} упражнений</small></span><button class="btn" onclick="startWorkout('${r.id}')">Начать</button></div>`).join('');
   else $('nextWorkout').innerHTML='<div class="empty">Создайте программу тренировки или начните свободную тренировку.</div>';
-  const last=done[0];$('lastWorkout').innerHTML=last?`<b>${esc(last.title)}</b><div class="note" style="margin-top:6px">${fmtDateTime(last.started_at)} · ${workoutExerciseRows(last.id).length} упражнений · объём ${n(workoutVolume(last.id)/1000,1)} т</div>`:'<div class="empty">Завершённых тренировок пока нет.</div>';
+  const last=done[0],lastActivity=last?activityForWorkout(last.id):null,lastMetrics=activityMetricText(lastActivity);$('lastWorkout').innerHTML=last?`<b>${esc(last.title)}</b><div class="note" style="margin-top:6px">${fmtDateTime(last.started_at)} · ${workoutExerciseRows(last.id).length} упражнений · объём ${n(workoutVolume(last.id)/1000,1)} т${lastMetrics?`<br><span style="color:var(--blue)">${esc(lastMetrics)}</span>`:''}</div>`:'<div class="empty">Завершённых тренировок пока нет.</div>';
   renderRecentPrs();
 }
 function renderRecentPrs(){
@@ -419,7 +472,8 @@ async function startWorkout(routineId='',customTitle=''){
 function renderActiveWorkout(){
   const box=$('activeWorkout'),btn=$('finishWorkoutBtn');if(!activeWorkoutId){btn.style.display='none';box.innerHTML='<div class="panel"><div class="empty">Активной тренировки нет. Нажмите «Новая», чтобы начать.</div></div>';return}
   btn.style.display='inline-block';const w=workoutById(activeWorkoutId),rows=workoutExerciseRows(activeWorkoutId);
-  box.innerHTML=`<div class="panel"><div class="workout-head"><div><h2 style="margin:0">${esc(w.title)}</h2><div class="note">${fmtDateTime(w.started_at)}</div></div><button class="btn" onclick="openAddWorkoutExercise()">＋ Добавить упражнение</button></div></div>`+
+  const wa=activityForWorkout(w.id);
+  box.innerHTML=`<div class="panel"><div class="workout-head"><div><h2 style="margin:0">${esc(w.title)}</h2><div class="note">${fmtDateTime(w.started_at)}${wa&&activityMetricText(wa)?` · <b>${esc(activityMetricText(wa))}</b>`:''}</div></div><div class="actions" style="margin-top:0"><button class="btn" onclick="syncFitnessWithings()">↻ Withings</button><button class="btn" onclick="openAddWorkoutExercise()">＋ Добавить упражнение</button></div></div></div>`+
   (rows.length?rows.map(row=>renderWorkoutExercise(row)).join(''):'<div class="panel"><div class="empty">Добавьте первое упражнение.</div></div>');
 }
 function renderWorkoutExercise(row){
@@ -446,7 +500,20 @@ async function finishActiveWorkout(){
 
 function renderHistory(){
   const done=workouts.filter(w=>w.ended_at);
-  $('historyList').innerHTML=done.length?done.map(w=>{const rows=workoutExerciseRows(w.id);return `<div class="routine-card" style="margin-bottom:9px"><div class="head"><div><h3>${esc(w.title)}</h3><div class="note">${fmtDateTime(w.started_at)} · объём ${n(workoutVolume(w.id)/1000,1)} т</div></div></div><div class="routine-list">${rows.map(row=>{const ex=exerciseById(row.exercise_id),ss=setsForWorkoutExercise(row.id);return `<div class="routine-row"><span><b>${esc(ex?.name||'Упражнение')}</b></span><span>${ss.map(s=>`${n(s.weight_kg,2)}×${s.reps}`).join(' · ')||'—'}</span></div>`}).join('')}</div></div>`}).join(''):'<div class="empty">История появится после завершения первой тренировки.</div>';
+  $('historyList').innerHTML=done.length?done.map(w=>{
+    const rows=workoutExerciseRows(w.id),a=activityForWorkout(w.id),metrics=activityMetricText(a);
+    return `<div class="routine-card" style="margin-bottom:9px"><div class="head"><div><h3>${esc(w.title)}</h3><div class="note">${fmtDateTime(w.started_at)} · объём ${n(workoutVolume(w.id)/1000,1)} т${metrics?` · <b>${esc(metrics)}</b>`:''}</div></div>${a?'<span class="badge blue">Withings</span>':''}</div><div class="routine-list">${rows.map(row=>{const ex=exerciseById(row.exercise_id),ss=setsForWorkoutExercise(row.id);return `<div class="routine-row"><span><b>${esc(ex?.name||'Упражнение')}</b></span><span>${ss.map(s=>`${n(s.weight_kg,2)}×${s.reps}`).join(' · ')||'—'}</span></div>`}).join('')}</div></div>`
+  }).join(''):'<div class="empty">История появится после завершения первой тренировки.</div>';
+  renderWithingsActivityList();
+}
+function renderWithingsActivityList(){
+  const box=$('withingsActivityList');if(!box)return;
+  if(!fitnessActivities.length){box.innerHTML='<div class="empty">Данные тренировок Withings пока не импортированы.</div>';return}
+  box.innerHTML=`<div class="table-wrap"><table><thead><tr><th>Дата</th><th>Длительность</th><th>Калории</th><th>Пульс</th><th>Связано</th></tr></thead><tbody>${fitnessActivities.slice(0,80).map(a=>{
+    const dur=a.ended_at?Math.max(0,(new Date(a.ended_at)-new Date(a.started_at))/60000):null;
+    const linked=workoutById(a.linked_workout_id);
+    return `<tr><td>${fmtDateTime(a.started_at)}</td><td>${dur!=null?n(dur,0)+' мин':'—'}</td><td>${a.calories!=null?'<b>'+n(a.calories,0)+' kcal</b>':'—'}</td><td>${a.avg_hr!=null?`ср. ${n(a.avg_hr,0)}${a.max_hr!=null?' · max '+n(a.max_hr,0):''}`:'—'}</td><td>${linked?`<span class="badge good">${esc(linked.title)}</span>`:'<span class="badge">не связано</span>'}</td></tr>`
+  }).join('')}</tbody></table></div>`;
 }
 function renderProgressOptions(){
   const sel=$('progressExercise'),cur=sel.value;sel.innerHTML=exercises.filter(x=>!x.archived||completedWorkoutsForExercise(x.id).length).map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('');if(cur&&exercises.some(x=>x.id===cur))sel.value=cur;
@@ -481,29 +548,102 @@ function drawLineChart(canvas,pts,{unit='',tip=null,detail=null}={}){
 }
 
 async function openBodyweightModal(){
-  openModal(`<h3>Добавить вес</h3><div class="form-grid"><label>Дата и время<input id="bwAt" type="datetime-local" value="${new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16)}"></label><label>Вес, кг<input id="bwValue" type="number" min="20" max="400" step=".01"></label></div><div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveBodyweight()">Сохранить</button></div>`);
+  openModal(`<h3>Добавить состав тела</h3><div class="form-grid">
+    <label>Дата и время<input id="bwAt" type="datetime-local" value="${new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16)}"></label>
+    <label>Вес, кг<input id="bwValue" type="number" min="20" max="400" step=".01"></label>
+    <label>Мышечная масса, кг<input id="bwMuscle" type="number" min="0" step=".01" placeholder="Необязательно"></label>
+    <label>Жировая масса, кг<input id="bwFatMass" type="number" min="0" step=".01" placeholder="Необязательно"></label>
+    <label>Жир, %<input id="bwFatPct" type="number" min="0" max="100" step=".01" placeholder="Необязательно"></label>
+  </div><div class="actions"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" onclick="saveBodyweight()">Сохранить</button></div>`);
 }
 async function saveBodyweight(){
   const v=Number($('bwValue').value),at=$('bwAt').value;if(!(v>0)||!at)return alert('Введите дату и вес.');
-  const r=await db.from('fitness_bodyweight').insert({user_id:currentUser.id,measured_at:new Date(at).toISOString(),weight_kg:v,source:'manual'});if(r.error)return alert(r.error.message);closeModal();await loadAll();renderAll();toast('Вес сохранён');
+  const opt=id=>{const raw=$(id).value.trim();return raw===''?null:Number(raw)};
+  const r=await db.from('fitness_bodyweight').insert({user_id:currentUser.id,measured_at:new Date(at).toISOString(),weight_kg:v,muscle_mass_kg:opt('bwMuscle'),fat_mass_kg:opt('bwFatMass'),fat_percent:opt('bwFatPct'),source:'manual'});
+  if(r.error)return alert(r.error.message);closeModal();await loadAll();renderAll();toast('Измерение сохранено');
 }
-async function syncBodyweightWithings(){
+function normalizeWithingsWorkout(w){
+  const d=w?.data||{};
+  const start=Number(w?.startdate??w?.start_date??w?.start??0);
+  const end=Number(w?.enddate??w?.end_date??w?.end??0);
+  if(!start)return null;
+  const ms=x=>x>1e12?x:x*1000;
+  const sourceKey=String(w?.id??w?.workoutid??w?.workout_id??`${start}:${w?.category??w?.type??''}`);
+  return {
+    user_id:currentUser.id,
+    source:'withings',
+    source_key:sourceKey,
+    started_at:new Date(ms(start)).toISOString(),
+    ended_at:end?new Date(ms(end)).toISOString():null,
+    activity_type:String(w?.category??w?.type??'workout'),
+    calories:numOrNull(d.calories??d.totalcalories??w?.calories),
+    avg_hr:numOrNull(d.hr_average??w?.hr_average),
+    min_hr:numOrNull(d.hr_min??w?.hr_min),
+    max_hr:numOrNull(d.hr_max??w?.hr_max),
+    raw:w,
+    updated_at:new Date().toISOString()
+  };
+}
+async function syncFitnessWithings(){
   const {data:{session}}=await db.auth.getSession();if(!session)return alert('Нет активной сессии.');
   setBusy(true);
   try{
-    const res=await fetch(`${SUPABASE_URL}/functions/v1/withings-data?action=sync&days=1095`,{headers:{Authorization:`Bearer ${session.access_token}`,apikey:SUPABASE_PUBLISHABLE_KEY}});const j=await res.json();
-    if(!res.ok||!j.connected){if(j.error==='not_connected')return alert('Этот аккаунт пока не подключён к Withings. Подключение можно будет выполнить из HRT/Withings или отдельной кнопкой в следующей версии.');throw new Error(j.error||'Ошибка Withings')}
-    const rows=(j.measurements||[]).filter(g=>g.values?.['1']).map(g=>({user_id:currentUser.id,measured_at:new Date(Number(g.date)*1000).toISOString(),weight_kg:Number(g.values['1'].value),source:'withings',source_key:String(g.grpid||'')}));let added=0;
-    for(const row of rows){const r=await db.from('fitness_bodyweight').upsert(row,{onConflict:'user_id,measured_at,source',ignoreDuplicates:true});if(!r.error)added++}
-    await loadAll();renderAll();toast(`Withings: обработано ${rows.length} взвешиваний`);
-  }catch(e){alert(e.message||'Ошибка Withings')}finally{setBusy(false)}
+    const res=await fetch(`${SUPABASE_URL}/functions/v1/withings-data?action=sync&days=1095`,{headers:{Authorization:`Bearer ${session.access_token}`,apikey:SUPABASE_PUBLISHABLE_KEY}});
+    const j=await res.json();
+    if(!res.ok||!j.connected){
+      if(j.error==='not_connected')return alert('Этот аккаунт пока не подключён к Withings.');
+      throw new Error(j.error||'Ошибка Withings');
+    }
+
+    const bodyRows=(j.measurements||[]).filter(g=>g.values?.['1']).map(g=>({
+      user_id:currentUser.id,
+      measured_at:new Date(Number(g.date)*1000).toISOString(),
+      weight_kg:Number(g.values['1'].value),
+      muscle_mass_kg:numOrNull(g.values?.['76']?.value),
+      fat_mass_kg:numOrNull(g.values?.['8']?.value),
+      fat_percent:numOrNull(g.values?.['6']?.value),
+      source:'withings',
+      source_key:String(g.grpid||'')
+    }));
+    for(const row of bodyRows){
+      const r=await db.from('fitness_bodyweight').upsert(row,{onConflict:'user_id,measured_at,source'});
+      if(r.error)console.warn('Body composition upsert',r.error);
+    }
+
+    const activityRows=(j.workouts||[]).map(normalizeWithingsWorkout).filter(Boolean);
+    for(const row of activityRows){
+      const r=await db.from('fitness_activity').upsert(row,{onConflict:'user_id,source,source_key'});
+      if(r.error)console.warn('Workout metrics upsert',r.error);
+    }
+
+    await loadAll();
+    await relinkWithingsActivities();
+    await loadAll();
+    renderAll();
+    toast(`Withings: ${bodyRows.length} измерений состава тела · ${activityRows.length} тренировок`);
+  }catch(e){console.error(e);alert(e.message||'Ошибка Withings')}finally{setBusy(false)}
+}
+async function syncBodyweightWithings(){return syncFitnessWithings()}
+function latestBodyMetric(key){
+  return bodyweights.find(x=>x[key]!==null&&x[key]!==undefined&&Number.isFinite(Number(x[key])))||null;
 }
 function renderBodyweight(){
-  $('bodyweightList').innerHTML=bodyweights.length?`<div class="table-wrap"><table><thead><tr><th>Дата</th><th>Вес</th><th>Источник</th></tr></thead><tbody>${bodyweights.slice(0,50).map(x=>`<tr><td>${fmtDateTime(x.measured_at)}</td><td><b>${n(x.weight_kg,2)} кг</b></td><td>${x.source==='withings'?'<span class="badge blue">Withings</span>':'<span class="badge">Ручной</span>'}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Измерений веса пока нет.</div>';
+  const metrics=[
+    ['Вес','weight_kg','кг'],
+    ['Мышечная масса','muscle_mass_kg','кг'],
+    ['Жировая масса','fat_mass_kg','кг'],
+    ['Жир','fat_percent','%']
+  ];
+  $('bodyCompKpis').innerHTML=metrics.map(([label,key,unit])=>{const x=latestBodyMetric(key);return `<div class="metric-mini"><div class="l">${label}</div><div class="v">${x?n(x[key],2)+' '+unit:'—'}</div><div class="note" style="margin-top:4px;padding:0;border:0;background:transparent">${x?fmtDate(x.measured_at):'Нет данных'}</div></div>`}).join('');
+  $('bodyweightList').innerHTML=bodyweights.length?`<div class="table-wrap"><table><thead><tr><th>Дата</th><th>Вес</th><th>Мышцы</th><th>Жировая масса</th><th>Жир</th><th>Источник</th></tr></thead><tbody>${bodyweights.slice(0,60).map(x=>`<tr><td>${fmtDateTime(x.measured_at)}</td><td><b>${n(x.weight_kg,2)} кг</b></td><td>${x.muscle_mass_kg!=null?n(x.muscle_mass_kg,2)+' кг':'—'}</td><td>${x.fat_mass_kg!=null?n(x.fat_mass_kg,2)+' кг':'—'}</td><td>${x.fat_percent!=null?n(x.fat_percent,2)+' %':'—'}</td><td>${x.source==='withings'?'<span class="badge blue">Withings</span>':'<span class="badge">Ручной</span>'}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Измерений состава тела пока нет.</div>';
   setTimeout(drawBodyweightChart,0);
 }
 function drawBodyweightChart(){
-  const pts=[...bodyweights].reverse().map(x=>({x:new Date(x.measured_at).getTime(),y:Number(x.weight_kg),date:x.measured_at}));drawLineChart($('bodyweightCanvas'),pts,{unit:'кг',tip:$('bodyweightTip')});
+  const key=$('bodyCompMetric')?.value||'weight_kg';
+  const meta={weight_kg:['кг','Вес'],muscle_mass_kg:['кг','Мышечная масса'],fat_mass_kg:['кг','Жировая масса'],fat_percent:['%','Жир']};
+  const [unit,label]=meta[key]||['',''];
+  const pts=[...bodyweights].reverse().filter(x=>x[key]!==null&&x[key]!==undefined&&Number.isFinite(Number(x[key]))).map(x=>({x:new Date(x.measured_at).getTime(),y:Number(x[key]),date:x.measured_at}));
+  drawLineChart($('bodyweightCanvas'),pts,{unit,tip:$('bodyweightTip'),detail:p=>`${fmtDateTime(p.date)}<br><b>${esc(label)}: ${n(p.y,2)} ${unit}</b>`});
 }
 async function saveProfile(){
   const data={display_name:$('profileName').value.trim(),bodyweight_source:$('profileWeightSource').value,updated_at:new Date().toISOString()};const r=await db.from('fitness_profiles').update(data).eq('user_id',currentUser.id).select().single();if(r.error)return alert(r.error.message);profile=r.data;toast('Настройки сохранены')
