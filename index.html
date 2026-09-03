@@ -5157,230 +5157,7 @@ function pdfReport(){
   <p class="note">Прогноз является математическим сценарием на основе заданной доходности и не гарантирует будущий результат.</p>
   <footer>Capital Studio Offline · Отчёт сформирован локально на компьютере пользователя.</footer>
   <script>window.onload=()=>setTimeout(()=>window.print(),250)<\/script></div>
-<script id="wealthOsV8Script">
-/* VM Private Capital — Wealth OS v8: presentation / navigation enhancements only */
-(function(){
-  'use strict';
 
-  const $=(s,r=document)=>r.querySelector(s);
-  const $$=(s,r=document)=>[...r.querySelectorAll(s)];
-  const esc8=v=>String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
-
-  /* Decorative SVG illustrations — no external network dependency */
-  const heroArt=$('.hero-art');
-  if(heroArt){
-    heroArt.innerHTML=`<svg class="v8-wealth-orbit" viewBox="0 0 640 330" aria-hidden="true">
-      <defs>
-        <linearGradient id="v8glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9f6ff" stop-opacity=".76"/><stop offset=".48" stop-color="#74d4ff" stop-opacity=".22"/><stop offset="1" stop-color="#a6ffcf" stop-opacity=".08"/></linearGradient>
-        <linearGradient id="v8line" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#74d4ff"/><stop offset=".58" stop-color="#d7f5ff"/><stop offset="1" stop-color="#a6ffcf"/></linearGradient>
-        <radialGradient id="v8orb"><stop offset="0" stop-color="#d8f7ff" stop-opacity=".32"/><stop offset=".45" stop-color="#74d4ff" stop-opacity=".09"/><stop offset="1" stop-color="#74d4ff" stop-opacity="0"/></radialGradient>
-        <filter id="v8blur"><feGaussianBlur stdDeviation="16"/></filter>
-      </defs>
-      <ellipse cx="355" cy="176" rx="205" ry="89" fill="url(#v8orb)" filter="url(#v8blur)" opacity=".7"/>
-      <g fill="none" stroke="url(#v8glass)">
-        <ellipse class="v8-ring r1" cx="352" cy="170" rx="213" ry="76" stroke-width="1.2" opacity=".62"/>
-        <ellipse class="v8-ring r2" cx="352" cy="170" rx="164" ry="116" stroke-width="1" opacity=".34" transform="rotate(-17 352 170)"/>
-        <ellipse class="v8-ring r3" cx="352" cy="170" rx="116" ry="146" stroke-width="1" opacity=".28" transform="rotate(35 352 170)"/>
-      </g>
-      <g opacity=".2" stroke="#d5f4ff" stroke-width=".65"><path d="M120 256H585"/><path d="M150 226H555"/><path d="M180 196H530"/></g>
-      <path d="M126 244 C180 238 188 205 238 211 S310 188 345 173 S403 181 439 135 S510 126 578 77" fill="none" stroke="#061019" stroke-width="13" opacity=".38"/>
-      <path d="M126 244 C180 238 188 205 238 211 S310 188 345 173 S403 181 439 135 S510 126 578 77" fill="none" stroke="url(#v8line)" stroke-width="3.2" stroke-linecap="round"/>
-      <path d="M126 244 C180 238 188 205 238 211 S310 188 345 173 S403 181 439 135 S510 126 578 77 L578 258 L126 258 Z" fill="url(#v8glass)" opacity=".075"/>
-      <circle cx="578" cy="77" r="5.5" fill="#e5fbff"/><circle class="v8-pulse" cx="578" cy="77" r="6" fill="none" stroke="#74d4ff" opacity=".75"/>
-      <g transform="translate(282 104)"><rect x="0" y="0" width="142" height="78" rx="20" fill="#0c1219" fill-opacity=".64" stroke="#d9f6ff" stroke-opacity=".13"/><text x="18" y="27" fill="#718296" font-size="10" font-family="-apple-system,sans-serif" letter-spacing="1.5">WEALTH VECTOR</text><text x="18" y="54" fill="#eefbff" font-size="21" font-family="-apple-system,sans-serif" font-weight="650">LIVE</text><circle cx="114" cy="49" r="7" fill="#a6ffcf" fill-opacity=".8"/></g>
-    </svg>`;
-  }
-
-  const reportArt=$('.report-art');
-  if(reportArt)reportArt.innerHTML=`<svg class="v8-report-visual" viewBox="0 0 220 140" aria-hidden="true"><defs><linearGradient id="rv8" x1="0" x2="1"><stop stop-color="#74d4ff" stop-opacity=".48"/><stop offset="1" stop-color="#a6ffcf" stop-opacity=".12"/></linearGradient></defs><rect x="25" y="26" width="132" height="88" rx="18" fill="#101821" stroke="#c8efff" stroke-opacity=".14"/><rect x="52" y="15" width="140" height="92" rx="19" fill="#121c26" stroke="#c8efff" stroke-opacity=".18"/><rect x="74" y="35" width="93" height="7" rx="3.5" fill="url(#rv8)"/><rect x="74" y="54" width="76" height="5" rx="2.5" fill="#dcefff" fill-opacity=".15"/><rect x="74" y="68" width="61" height="5" rx="2.5" fill="#dcefff" fill-opacity=".1"/><path d="M74 91 C92 87 100 74 116 79 S140 74 167 52" fill="none" stroke="#74d4ff" stroke-width="2.2" stroke-linecap="round"/><circle cx="167" cy="52" r="3" fill="#b8f3ff"/></svg>`;
-
-  const insightArt=$('.insights-symbol');
-  if(insightArt)insightArt.innerHTML=`<svg class="v8-insight-visual" viewBox="0 0 220 140" aria-hidden="true"><defs><radialGradient id="iv8"><stop stop-color="#74d4ff" stop-opacity=".22"/><stop offset="1" stop-color="#74d4ff" stop-opacity="0"/></radialGradient></defs><circle cx="116" cy="70" r="62" fill="url(#iv8)"/><g fill="none" stroke="#a8eaff" stroke-opacity=".28"><ellipse cx="116" cy="70" rx="75" ry="30"/><ellipse cx="116" cy="70" rx="43" ry="58" transform="rotate(25 116 70)"/></g><g fill="#c8f3ff"><circle cx="54" cy="57" r="3"/><circle cx="109" cy="39" r="4"/><circle cx="160" cy="75" r="3.5"/><circle cx="127" cy="112" r="2.8"/></g><path d="M54 57L109 39L160 75L127 112L54 57" stroke="#74d4ff" stroke-opacity=".6" fill="none"/></svg>`;
-
-  /* Topbar controls */
-  const topActions=$('.top-actions');
-  if(topActions){
-    const searchBtn=document.createElement('button');
-    searchBtn.className='v8-icon-btn';searchBtn.id='v8SearchBtn';searchBtn.title='Поиск и команды (Ctrl/⌘ + K)';searchBtn.setAttribute('aria-label','Поиск и команды');searchBtn.innerHTML='⌕';
-    const intelBtn=document.createElement('button');
-    intelBtn.className='v8-icon-btn';intelBtn.id='v8IntelBtn';intelBtn.title='Wealth Intelligence';intelBtn.setAttribute('aria-label','Wealth Intelligence');intelBtn.innerHTML='◎';
-    topActions.insertBefore(intelBtn,topActions.firstChild);
-    topActions.insertBefore(searchBtn,topActions.firstChild);
-  }
-
-  /* Command palette */
-  const overlay=document.createElement('div');
-  overlay.className='v8-overlay';overlay.id='v8Spotlight';overlay.setAttribute('aria-hidden','true');
-  overlay.innerHTML=`<div class="v8-spotlight" role="dialog" aria-modal="true" aria-label="Быстрые команды">
-    <div class="v8-search-row"><div class="glass">⌕</div><input id="v8SpotlightInput" autocomplete="off" placeholder="Раздел, портфель или действие…"><span class="v8-key">ESC</span></div>
-    <div class="v8-spotlight-list" id="v8SpotlightList"></div>
-  </div>`;
-  document.body.appendChild(overlay);
-  const spotInput=$('#v8SpotlightInput'),spotList=$('#v8SpotlightList');
-  let cmdItems=[],cmdActive=0;
-
-  const baseCommands=()=>[
-    {group:'РАЗДЕЛЫ',icon:'⌂',title:'Планирование капитала',sub:'Главный экран',run:()=>switchView('dashboard')},
-    {group:'РАЗДЕЛЫ',icon:'◇',title:'Портфель',sub:'Все активы и оценки',run:()=>switchView('portfolios')},
-    {group:'РАЗДЕЛЫ',icon:'▤',title:'Источники и история',sub:'Проверка и журнал данных',run:()=>switchView('history')},
-    {group:'РАЗДЕЛЫ',icon:'↗',title:'Сценарии',sub:'Прогноз капитала',run:()=>switchView('forecast')},
-    {group:'РАЗДЕЛЫ',icon:'⇢',title:'План вывода средств',sub:'Снятия и устойчивость',run:()=>switchView('withdrawals')},
-    {group:'РАЗДЕЛЫ',icon:'⌗',title:'Портфели: история и прогноз',sub:'Аналитика по каждому портфелю',run:()=>switchView('portfolioanalytics')},
-    {group:'РАЗДЕЛЫ',icon:'◎',title:'Дополнительная информация',sub:'Wealth Intelligence',run:()=>switchView('insights')},
-    {group:'РАЗДЕЛЫ',icon:'⌁',title:'Отчёты',sub:'Excel, PDF, backup',run:()=>switchView('reports')},
-    {group:'РАЗДЕЛЫ',icon:'⚙',title:'Настройки',sub:'Валюта, налоги, данные',run:()=>switchView('settings')},
-    {group:'БЫСТРЫЕ ДЕЙСТВИЯ',icon:'＋',title:'Новая оценка',sub:'Добавить текущую стоимость портфеля',hint:'N',run:()=>openSnapshotModal()},
-    {group:'БЫСТРЫЕ ДЕЙСТВИЯ',icon:'€',title:'Денежное событие',sub:'Пополнение, вывод, перевод, дивиденд',run:()=>openFlowModal()},
-    {group:'БЫСТРЫЕ ДЕЙСТВИЯ',icon:'◇',title:'Новый портфель',sub:'Создать актив',run:()=>openPortfolioModal()},
-    {group:'БЫСТРЫЕ ДЕЙСТВИЯ',icon:'B',title:'Резервная копия JSON',sub:'Экспорт всех данных',run:()=>exportJSON()},
-    {group:'ИНТЕРФЕЙС',icon:'◐',title:'Фокус-режим',sub:'Свернуть навигацию и расширить рабочую область',run:()=>toggleFocus()}
-  ];
-
-  function portfolioCommands(){
-    try{return (state?.portfolios||[]).map(p=>({group:'ПОРТФЕЛИ',icon:p.owner==='oy'?'Oy':'P',title:p.name,sub:`${p.owner==='oy'?'VM Private Capital Oy':'Personal'} · ${money(latestValue(p.id))}`,run:()=>focusPortfolio(p.id,p.name)}))}catch(e){return []}
-  }
-  function focusPortfolio(id,name){
-    switchView('portfolios');
-    requestAnimationFrame(()=>setTimeout(()=>{
-      const card=$$('.port-card').find(c=>c.textContent.includes(name));
-      if(card){card.scrollIntoView({behavior:'smooth',block:'center'});card.animate([{boxShadow:'0 0 0 0 rgba(116,212,255,0)'},{boxShadow:'0 0 0 4px rgba(116,212,255,.22)'},{boxShadow:'0 0 0 0 rgba(116,212,255,0)'}],{duration:1100,easing:'ease-out'})}
-    },80));
-  }
-  function renderCommands(){
-    const term=(spotInput.value||'').trim().toLowerCase();
-    cmdItems=[...baseCommands(),...portfolioCommands()].filter(x=>!term||`${x.title} ${x.sub} ${x.group}`.toLowerCase().includes(term));
-    cmdActive=Math.max(0,Math.min(cmdActive,cmdItems.length-1));
-    if(!cmdItems.length){spotList.innerHTML='<div class="v8-empty">Ничего не найдено</div>';return}
-    let last='';
-    spotList.innerHTML=cmdItems.map((x,i)=>{
-      const heading=x.group!==last?`<div class="v8-cmd-section">${esc8(x.group)}</div>`:'';last=x.group;
-      return `${heading}<button class="v8-cmd ${i===cmdActive?'active':''}" data-v8cmd="${i}"><span class="v8-cmd-icon">${esc8(x.icon)}</span><span><b>${esc8(x.title)}</b><small>${esc8(x.sub||'')}</small></span><span class="hint">${esc8(x.hint||'')}</span></button>`;
-    }).join('');
-    $$('[data-v8cmd]',spotList).forEach(b=>b.addEventListener('click',()=>runCommand(Number(b.dataset.v8cmd))));
-  }
-  function openSpotlight(){overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');spotInput.value='';cmdActive=0;renderCommands();setTimeout(()=>spotInput.focus(),30)}
-  function closeSpotlight(){overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true')}
-  function runCommand(i){const x=cmdItems[i];if(!x)return;closeSpotlight();try{x.run()}catch(e){console.error(e)}}
-  $('#v8SearchBtn')?.addEventListener('click',openSpotlight);
-  overlay.addEventListener('click',e=>{if(e.target===overlay)closeSpotlight()});
-  spotInput.addEventListener('input',()=>{cmdActive=0;renderCommands()});
-  spotInput.addEventListener('keydown',e=>{
-    if(e.key==='ArrowDown'){e.preventDefault();cmdActive=Math.min(cmdItems.length-1,cmdActive+1);renderCommands();$$('[data-v8cmd]',spotList)[cmdActive]?.scrollIntoView({block:'nearest'})}
-    else if(e.key==='ArrowUp'){e.preventDefault();cmdActive=Math.max(0,cmdActive-1);renderCommands();$$('[data-v8cmd]',spotList)[cmdActive]?.scrollIntoView({block:'nearest'})}
-    else if(e.key==='Enter'){e.preventDefault();runCommand(cmdActive)}
-    else if(e.key==='Escape'){closeSpotlight()}
-  });
-
-  /* Intelligence drawer */
-  const drawerBackdrop=document.createElement('div');drawerBackdrop.className='v8-drawer-backdrop';document.body.appendChild(drawerBackdrop);
-  const drawer=document.createElement('aside');drawer.className='v8-intel-drawer';drawer.id='v8IntelDrawer';drawer.setAttribute('aria-label','Wealth Intelligence');document.body.appendChild(drawer);
-
-  function safe8(fn,f='—'){try{return fn()}catch(e){return f}}
-  function latestActivity(){
-    try{
-      const items=[];
-      (state.snapshots||[]).forEach(x=>items.push({date:x.date,text:`Оценка · ${portfolioName(x.portfolioId)} · ${money(Number(x.value)||0)}`}));
-      (state.flows||[]).forEach(x=>items.push({date:x.date,text:`${flowLabel(flowTypeOf(x))} · ${portfolioName(x.portfolioId)} · ${money(Math.abs(Number(x.amount)||0))}`}));
-      items.sort((a,b)=>b.date.localeCompare(a.date));
-      return items[0]||null;
-    }catch(e){return null}
-  }
-  function refreshIntel(){
-    const total=safe8(()=>totalNow(),0),ytd=safe8(()=>totalPerf(state.settings.fyStart),{profit:0,pct:null});
-    const personal=safe8(()=>ownerTotal('personal'),0),oy=safe8(()=>ownerTotal('oy'),0),planning=safe8(()=>planningTotal(),0);
-    const rows=safe8(()=>state.portfolios.map(p=>({name:p.name,value:latestValue(p.id)})).sort((a,b)=>b.value-a.value).slice(0,5),[]);
-    const act=latestActivity();
-    drawer.innerHTML=`<div class="v8-drawer-head"><div><div class="eyebrow"><span class="v8-live-dot"></span>LIVE CAPITAL</div><h3>Wealth Intelligence</h3></div><button class="v8-drawer-close" id="v8DrawerClose">×</button></div>
-      <div class="v8-intel-hero"><span>СОВОКУПНЫЙ КАПИТАЛ</span><b>${esc8(safe8(()=>money(total)))}</b></div>
-      <div class="v8-intel-grid">
-        <div class="v8-intel-card"><span>YTD результат</span><b class="${Number(ytd.profit)>=0?'good':'bad'}">${Number(ytd.profit)>=0?'+':''}${esc8(safe8(()=>money(ytd.profit)))}</b></div>
-        <div class="v8-intel-card"><span>YTD доходность</span><b class="${Number(ytd.pct)>=0?'good':'bad'}">${ytd.pct==null?'—':`${Number(ytd.pct)>=0?'+':''}${esc8(safe8(()=>pct(ytd.pct)))}`}</b></div>
-        <div class="v8-intel-card"><span>Personal</span><b>${esc8(safe8(()=>money(personal)))}</b></div>
-        <div class="v8-intel-card"><span>VM Private Capital Oy</span><b>${esc8(safe8(()=>money(oy)))}</b></div>
-        <div class="v8-intel-card"><span>В сценариях</span><b>${esc8(safe8(()=>money(planning)))}</b></div>
-        <div class="v8-intel-card"><span>Портфелей</span><b>${safe8(()=>state.portfolios.length,0)}</b></div>
-      </div>
-      <div class="v8-intel-section"><h4>КРУПНЕЙШИЕ ПОЗИЦИИ</h4><div class="v8-intel-allocation">${rows.length?rows.map(r=>{const sh=total>0?r.value/total*100:0;return `<div class="v8-intel-alloc"><span>${esc8(r.name)}</span><b>${esc8(safe8(()=>money(r.value)))}</b><div class="v8-intel-bar"><i style="width:${Math.max(0,Math.min(100,sh)).toFixed(1)}%"></i></div></div>`}).join(''):'<div class="v8-last-update">Портфели пока не добавлены.</div>'}</div></div>
-      <div class="v8-intel-section"><h4>ПОСЛЕДНЕЕ ИЗМЕНЕНИЕ</h4><div class="v8-last-update">${act?`<b>${esc8(safe8(()=>formatDate(act.date),act.date))}</b><br>${esc8(act.text)}`:'История пока пуста.'}</div></div>
-      <div class="v8-drawer-actions"><button data-v8go="forecast">Открыть сценарии</button><button data-v8go="insights">Глубокая аналитика</button><button data-v8quick="snapshot">＋ Новая оценка</button><button data-v8quick="report">Сформировать отчёт</button></div>`;
-    $('#v8DrawerClose',drawer)?.addEventListener('click',closeDrawer);
-    $$('[data-v8go]',drawer).forEach(b=>b.addEventListener('click',()=>{closeDrawer();switchView(b.dataset.v8go)}));
-    $('[data-v8quick="snapshot"]',drawer)?.addEventListener('click',()=>{closeDrawer();openSnapshotModal()});
-    $('[data-v8quick="report"]',drawer)?.addEventListener('click',()=>{closeDrawer();switchView('reports')});
-  }
-  function openDrawer(){refreshIntel();drawerBackdrop.classList.add('open');drawer.classList.add('open')}
-  function closeDrawer(){drawerBackdrop.classList.remove('open');drawer.classList.remove('open')}
-  $('#v8IntelBtn')?.addEventListener('click',openDrawer);drawerBackdrop.addEventListener('click',closeDrawer);
-
-  /* Focus mode */
-  function toggleFocus(){document.body.classList.toggle('v8-focus');try{localStorage.setItem('vm_v8_focus',document.body.classList.contains('v8-focus')?'1':'0')}catch(e){}setTimeout(()=>{try{rerenderVisibleCharts()}catch(e){}},240)}
-  try{if(localStorage.getItem('vm_v8_focus')==='1')document.body.classList.add('v8-focus')}catch(e){}
-  window.v8ToggleFocus=toggleFocus;
-
-  /* Chart interactivity. The original drawSeries stores source series on each canvas. */
-  const chartTip=document.createElement('div');chartTip.className='v8-chart-tooltip';document.body.appendChild(chartTip);
-  function chartXLabel(t,mode){
-    if(mode==='date'){const d=new Date(Number(t));return Number.isFinite(d.getTime())?d.toLocaleDateString('ru-RU',{day:'2-digit',month:'short',year:'numeric'}):''}
-    if(mode==='year')return Number(t)===0?'Сейчас':`Через ${Math.round(Number(t))} г.`;
-    return String(t);
-  }
-  function chartValue(v){try{return money(Number(v))}catch(e){return Number(v).toLocaleString('ru-RU')+' €'}}
-  function ensureCanvasShell(canvas){
-    if(!canvas||canvas.parentElement?.classList.contains('v8-canvas-shell'))return;
-    const shell=document.createElement('div');shell.className='v8-canvas-shell';
-    canvas.parentNode.insertBefore(shell,canvas);shell.appendChild(canvas);
-    const line=document.createElement('div');line.className='v8-chart-crosshair';shell.appendChild(line);
-    canvas.addEventListener('pointermove',e=>showChartTip(canvas,shell,line,e));
-    canvas.addEventListener('pointerleave',()=>{line.style.opacity='0';chartTip.style.display='none'});
-  }
-  function showChartTip(canvas,shell,line,e){
-    const pack=canvas.__v8Series;if(!pack)return;
-    const valid=(pack.series||[]).map(s=>({...s,points:(s.points||[]).filter(p=>Number.isFinite(Number(p.t))&&Number.isFinite(Number(p.v)))})).filter(s=>s.points.length);
-    const all=valid.flatMap(s=>s.points);if(!all.length)return;
-    const rect=canvas.getBoundingClientRect(),x=e.clientX-rect.left;
-    const w=rect.width,h=Number(canvas.getAttribute('height'))||rect.height||280;
-    const legendRows=w<560&&valid.length>2?2:1,padL=w<520?60:76,padR=24,padT=22,padB=42+legendRows*18,plotW=w-padL-padR,plotH=h-padT-padB;
-    if(x<padL||x>padL+plotW){line.style.opacity='0';chartTip.style.display='none';return}
-    const xvals=all.map(p=>Number(p.t)),xmin=Math.min(...xvals),xmax=Math.max(...xvals),xspan=Math.max(1,xmax-xmin),target=xmin+(x-padL)/plotW*xspan;
-    let nearestT=all.reduce((best,p)=>Math.abs(Number(p.t)-target)<Math.abs(Number(best.t)-target)?p:best,all[0]).t;
-    const px=padL+plotW*(Number(nearestT)-xmin)/xspan;
-    const vals=all.map(p=>Number(p.v)),rawMin=Math.min(...vals),rawMax=Math.max(...vals),positive=rawMin>=0,includeZero=pack.options?.includeZero===true||(positive&&rawMax!==0&&rawMin/rawMax<.32),scale=niceScale(rawMin,rawMax,5,includeZero);
-    const rows=[];let firstY=null;
-    valid.forEach((s,si)=>{
-      const pt=s.points.reduce((best,p)=>Math.abs(Number(p.t)-Number(nearestT))<Math.abs(Number(best.t)-Number(nearestT))?p:best,s.points[0]);
-      if(Math.abs(Number(pt.t)-Number(nearestT))>xspan*.08&&valid.length>1)return;
-      const py=padT+plotH*(1-(Number(pt.v)-scale.min)/(scale.max-scale.min));if(firstY===null)firstY=py;
-      rows.push(`<div class="t-row"><span>${esc8(s.name||`Серия ${si+1}`)}</span><b>${esc8(chartValue(pt.v))}</b></div>`);
-    });
-    line.style.left=`${px}px`;line.style.setProperty('--v8-dot-y',`${Math.max(10,Math.min(h-40,firstY??60))}px`);line.style.opacity='1';
-    chartTip.innerHTML=`<div class="t-date">${esc8(chartXLabel(nearestT,pack.options?.xMode||'year'))}</div>${rows.join('')}`;chartTip.style.display='block';
-    const tw=chartTip.offsetWidth,th=chartTip.offsetHeight;let left=e.clientX+16,top=e.clientY+16;if(left+tw>innerWidth-10)left=e.clientX-tw-16;if(top+th>innerHeight-10)top=e.clientY-th-16;chartTip.style.left=Math.max(8,left)+'px';chartTip.style.top=Math.max(8,top)+'px';
-  }
-  $$('canvas').forEach(ensureCanvasShell);
-
-  /* Shortcuts */
-  document.addEventListener('keydown',e=>{
-    const typing=/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||'');
-    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();overlay.classList.contains('open')?closeSpotlight():openSpotlight();return}
-    if(e.key==='Escape'){closeSpotlight();closeDrawer();return}
-    if(!typing && !e.ctrlKey && !e.metaKey && !e.altKey && e.key.toLowerCase()==='n'){e.preventDefault();openSnapshotModal()}
-  });
-
-  /* Keep UI additions synced when views rerender. */
-  const obs=new MutationObserver(()=>{
-    $$('canvas').forEach(ensureCanvasShell);
-  });
-  const main=$('.main');if(main)obs.observe(main,{childList:true,subtree:true});
-
-  /* Small copy upgrades, presentation only */
-  const eyebrow=$('.topbar .eyebrow');if(eyebrow)eyebrow.firstChild.textContent='VM PRIVATE CAPITAL · WEALTH OS ';
-  const strip=$('.premium-context-strip');if(strip)strip.setAttribute('aria-hidden','false');
-
-  /* Initial redraw after canvas wrapping so chart dimensions stay accurate */
-  setTimeout(()=>{try{rerenderVisibleCharts()}catch(e){}},80);
-})();
-
-</script>
 </body></html>`);w.document.close()
 }
 
@@ -5648,6 +5425,231 @@ setInterval(()=>{if(cloudUser&&localStorage.getItem(CLOUD_DIRTY_KEY)==='1'&&!clo
   window.addEventListener('resize',()=>{ if(activeRow && portal) placePortal(activeRow); },{passive:true});
   document.addEventListener('scroll',()=>{ if(activeRow && portal) placePortal(activeRow); },true);
 })();
+</script>
+
+<script id="wealthOsV8Script">
+/* VM Private Capital — Wealth OS v8: presentation / navigation enhancements only */
+(function(){
+  'use strict';
+
+  const $=(s,r=document)=>r.querySelector(s);
+  const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+  const esc8=v=>String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+
+  /* Decorative SVG illustrations — no external network dependency */
+  const heroArt=$('.hero-art');
+  if(heroArt){
+    heroArt.innerHTML=`<svg class="v8-wealth-orbit" viewBox="0 0 640 330" aria-hidden="true">
+      <defs>
+        <linearGradient id="v8glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9f6ff" stop-opacity=".76"/><stop offset=".48" stop-color="#74d4ff" stop-opacity=".22"/><stop offset="1" stop-color="#a6ffcf" stop-opacity=".08"/></linearGradient>
+        <linearGradient id="v8line" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#74d4ff"/><stop offset=".58" stop-color="#d7f5ff"/><stop offset="1" stop-color="#a6ffcf"/></linearGradient>
+        <radialGradient id="v8orb"><stop offset="0" stop-color="#d8f7ff" stop-opacity=".32"/><stop offset=".45" stop-color="#74d4ff" stop-opacity=".09"/><stop offset="1" stop-color="#74d4ff" stop-opacity="0"/></radialGradient>
+        <filter id="v8blur"><feGaussianBlur stdDeviation="16"/></filter>
+      </defs>
+      <ellipse cx="355" cy="176" rx="205" ry="89" fill="url(#v8orb)" filter="url(#v8blur)" opacity=".7"/>
+      <g fill="none" stroke="url(#v8glass)">
+        <ellipse class="v8-ring r1" cx="352" cy="170" rx="213" ry="76" stroke-width="1.2" opacity=".62"/>
+        <ellipse class="v8-ring r2" cx="352" cy="170" rx="164" ry="116" stroke-width="1" opacity=".34" transform="rotate(-17 352 170)"/>
+        <ellipse class="v8-ring r3" cx="352" cy="170" rx="116" ry="146" stroke-width="1" opacity=".28" transform="rotate(35 352 170)"/>
+      </g>
+      <g opacity=".2" stroke="#d5f4ff" stroke-width=".65"><path d="M120 256H585"/><path d="M150 226H555"/><path d="M180 196H530"/></g>
+      <path d="M126 244 C180 238 188 205 238 211 S310 188 345 173 S403 181 439 135 S510 126 578 77" fill="none" stroke="#061019" stroke-width="13" opacity=".38"/>
+      <path d="M126 244 C180 238 188 205 238 211 S310 188 345 173 S403 181 439 135 S510 126 578 77" fill="none" stroke="url(#v8line)" stroke-width="3.2" stroke-linecap="round"/>
+      <path d="M126 244 C180 238 188 205 238 211 S310 188 345 173 S403 181 439 135 S510 126 578 77 L578 258 L126 258 Z" fill="url(#v8glass)" opacity=".075"/>
+      <circle cx="578" cy="77" r="5.5" fill="#e5fbff"/><circle class="v8-pulse" cx="578" cy="77" r="6" fill="none" stroke="#74d4ff" opacity=".75"/>
+      <g transform="translate(282 104)"><rect x="0" y="0" width="142" height="78" rx="20" fill="#0c1219" fill-opacity=".64" stroke="#d9f6ff" stroke-opacity=".13"/><text x="18" y="27" fill="#718296" font-size="10" font-family="-apple-system,sans-serif" letter-spacing="1.5">WEALTH VECTOR</text><text x="18" y="54" fill="#eefbff" font-size="21" font-family="-apple-system,sans-serif" font-weight="650">LIVE</text><circle cx="114" cy="49" r="7" fill="#a6ffcf" fill-opacity=".8"/></g>
+    </svg>`;
+  }
+
+  const reportArt=$('.report-art');
+  if(reportArt)reportArt.innerHTML=`<svg class="v8-report-visual" viewBox="0 0 220 140" aria-hidden="true"><defs><linearGradient id="rv8" x1="0" x2="1"><stop stop-color="#74d4ff" stop-opacity=".48"/><stop offset="1" stop-color="#a6ffcf" stop-opacity=".12"/></linearGradient></defs><rect x="25" y="26" width="132" height="88" rx="18" fill="#101821" stroke="#c8efff" stroke-opacity=".14"/><rect x="52" y="15" width="140" height="92" rx="19" fill="#121c26" stroke="#c8efff" stroke-opacity=".18"/><rect x="74" y="35" width="93" height="7" rx="3.5" fill="url(#rv8)"/><rect x="74" y="54" width="76" height="5" rx="2.5" fill="#dcefff" fill-opacity=".15"/><rect x="74" y="68" width="61" height="5" rx="2.5" fill="#dcefff" fill-opacity=".1"/><path d="M74 91 C92 87 100 74 116 79 S140 74 167 52" fill="none" stroke="#74d4ff" stroke-width="2.2" stroke-linecap="round"/><circle cx="167" cy="52" r="3" fill="#b8f3ff"/></svg>`;
+
+  const insightArt=$('.insights-symbol');
+  if(insightArt)insightArt.innerHTML=`<svg class="v8-insight-visual" viewBox="0 0 220 140" aria-hidden="true"><defs><radialGradient id="iv8"><stop stop-color="#74d4ff" stop-opacity=".22"/><stop offset="1" stop-color="#74d4ff" stop-opacity="0"/></radialGradient></defs><circle cx="116" cy="70" r="62" fill="url(#iv8)"/><g fill="none" stroke="#a8eaff" stroke-opacity=".28"><ellipse cx="116" cy="70" rx="75" ry="30"/><ellipse cx="116" cy="70" rx="43" ry="58" transform="rotate(25 116 70)"/></g><g fill="#c8f3ff"><circle cx="54" cy="57" r="3"/><circle cx="109" cy="39" r="4"/><circle cx="160" cy="75" r="3.5"/><circle cx="127" cy="112" r="2.8"/></g><path d="M54 57L109 39L160 75L127 112L54 57" stroke="#74d4ff" stroke-opacity=".6" fill="none"/></svg>`;
+
+  /* Topbar controls */
+  const topActions=$('.top-actions');
+  if(topActions){
+    const searchBtn=document.createElement('button');
+    searchBtn.className='v8-icon-btn';searchBtn.id='v8SearchBtn';searchBtn.title='Поиск и команды (Ctrl/⌘ + K)';searchBtn.setAttribute('aria-label','Поиск и команды');searchBtn.innerHTML='⌕';
+    const intelBtn=document.createElement('button');
+    intelBtn.className='v8-icon-btn';intelBtn.id='v8IntelBtn';intelBtn.title='Wealth Intelligence';intelBtn.setAttribute('aria-label','Wealth Intelligence');intelBtn.innerHTML='◎';
+    topActions.insertBefore(intelBtn,topActions.firstChild);
+    topActions.insertBefore(searchBtn,topActions.firstChild);
+  }
+
+  /* Command palette */
+  const overlay=document.createElement('div');
+  overlay.className='v8-overlay';overlay.id='v8Spotlight';overlay.setAttribute('aria-hidden','true');
+  overlay.innerHTML=`<div class="v8-spotlight" role="dialog" aria-modal="true" aria-label="Быстрые команды">
+    <div class="v8-search-row"><div class="glass">⌕</div><input id="v8SpotlightInput" autocomplete="off" placeholder="Раздел, портфель или действие…"><span class="v8-key">ESC</span></div>
+    <div class="v8-spotlight-list" id="v8SpotlightList"></div>
+  </div>`;
+  document.body.appendChild(overlay);
+  const spotInput=$('#v8SpotlightInput'),spotList=$('#v8SpotlightList');
+  let cmdItems=[],cmdActive=0;
+
+  const baseCommands=()=>[
+    {group:'РАЗДЕЛЫ',icon:'⌂',title:'Планирование капитала',sub:'Главный экран',run:()=>switchView('dashboard')},
+    {group:'РАЗДЕЛЫ',icon:'◇',title:'Портфель',sub:'Все активы и оценки',run:()=>switchView('portfolios')},
+    {group:'РАЗДЕЛЫ',icon:'▤',title:'Источники и история',sub:'Проверка и журнал данных',run:()=>switchView('history')},
+    {group:'РАЗДЕЛЫ',icon:'↗',title:'Сценарии',sub:'Прогноз капитала',run:()=>switchView('forecast')},
+    {group:'РАЗДЕЛЫ',icon:'⇢',title:'План вывода средств',sub:'Снятия и устойчивость',run:()=>switchView('withdrawals')},
+    {group:'РАЗДЕЛЫ',icon:'⌗',title:'Портфели: история и прогноз',sub:'Аналитика по каждому портфелю',run:()=>switchView('portfolioanalytics')},
+    {group:'РАЗДЕЛЫ',icon:'◎',title:'Дополнительная информация',sub:'Wealth Intelligence',run:()=>switchView('insights')},
+    {group:'РАЗДЕЛЫ',icon:'⌁',title:'Отчёты',sub:'Excel, PDF, backup',run:()=>switchView('reports')},
+    {group:'РАЗДЕЛЫ',icon:'⚙',title:'Настройки',sub:'Валюта, налоги, данные',run:()=>switchView('settings')},
+    {group:'БЫСТРЫЕ ДЕЙСТВИЯ',icon:'＋',title:'Новая оценка',sub:'Добавить текущую стоимость портфеля',hint:'N',run:()=>openSnapshotModal()},
+    {group:'БЫСТРЫЕ ДЕЙСТВИЯ',icon:'€',title:'Денежное событие',sub:'Пополнение, вывод, перевод, дивиденд',run:()=>openFlowModal()},
+    {group:'БЫСТРЫЕ ДЕЙСТВИЯ',icon:'◇',title:'Новый портфель',sub:'Создать актив',run:()=>openPortfolioModal()},
+    {group:'БЫСТРЫЕ ДЕЙСТВИЯ',icon:'B',title:'Резервная копия JSON',sub:'Экспорт всех данных',run:()=>exportJSON()},
+    {group:'ИНТЕРФЕЙС',icon:'◐',title:'Фокус-режим',sub:'Свернуть навигацию и расширить рабочую область',run:()=>toggleFocus()}
+  ];
+
+  function portfolioCommands(){
+    try{return (state?.portfolios||[]).map(p=>({group:'ПОРТФЕЛИ',icon:p.owner==='oy'?'Oy':'P',title:p.name,sub:`${p.owner==='oy'?'VM Private Capital Oy':'Personal'} · ${money(latestValue(p.id))}`,run:()=>focusPortfolio(p.id,p.name)}))}catch(e){return []}
+  }
+  function focusPortfolio(id,name){
+    switchView('portfolios');
+    requestAnimationFrame(()=>setTimeout(()=>{
+      const card=$$('.port-card').find(c=>c.textContent.includes(name));
+      if(card){card.scrollIntoView({behavior:'smooth',block:'center'});card.animate([{boxShadow:'0 0 0 0 rgba(116,212,255,0)'},{boxShadow:'0 0 0 4px rgba(116,212,255,.22)'},{boxShadow:'0 0 0 0 rgba(116,212,255,0)'}],{duration:1100,easing:'ease-out'})}
+    },80));
+  }
+  function renderCommands(){
+    const term=(spotInput.value||'').trim().toLowerCase();
+    cmdItems=[...baseCommands(),...portfolioCommands()].filter(x=>!term||`${x.title} ${x.sub} ${x.group}`.toLowerCase().includes(term));
+    cmdActive=Math.max(0,Math.min(cmdActive,cmdItems.length-1));
+    if(!cmdItems.length){spotList.innerHTML='<div class="v8-empty">Ничего не найдено</div>';return}
+    let last='';
+    spotList.innerHTML=cmdItems.map((x,i)=>{
+      const heading=x.group!==last?`<div class="v8-cmd-section">${esc8(x.group)}</div>`:'';last=x.group;
+      return `${heading}<button class="v8-cmd ${i===cmdActive?'active':''}" data-v8cmd="${i}"><span class="v8-cmd-icon">${esc8(x.icon)}</span><span><b>${esc8(x.title)}</b><small>${esc8(x.sub||'')}</small></span><span class="hint">${esc8(x.hint||'')}</span></button>`;
+    }).join('');
+    $$('[data-v8cmd]',spotList).forEach(b=>b.addEventListener('click',()=>runCommand(Number(b.dataset.v8cmd))));
+  }
+  function openSpotlight(){overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');spotInput.value='';cmdActive=0;renderCommands();setTimeout(()=>spotInput.focus(),30)}
+  function closeSpotlight(){overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true')}
+  function runCommand(i){const x=cmdItems[i];if(!x)return;closeSpotlight();try{x.run()}catch(e){console.error(e)}}
+  $('#v8SearchBtn')?.addEventListener('click',openSpotlight);
+  overlay.addEventListener('click',e=>{if(e.target===overlay)closeSpotlight()});
+  spotInput.addEventListener('input',()=>{cmdActive=0;renderCommands()});
+  spotInput.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){e.preventDefault();cmdActive=Math.min(cmdItems.length-1,cmdActive+1);renderCommands();$$('[data-v8cmd]',spotList)[cmdActive]?.scrollIntoView({block:'nearest'})}
+    else if(e.key==='ArrowUp'){e.preventDefault();cmdActive=Math.max(0,cmdActive-1);renderCommands();$$('[data-v8cmd]',spotList)[cmdActive]?.scrollIntoView({block:'nearest'})}
+    else if(e.key==='Enter'){e.preventDefault();runCommand(cmdActive)}
+    else if(e.key==='Escape'){closeSpotlight()}
+  });
+
+  /* Intelligence drawer */
+  const drawerBackdrop=document.createElement('div');drawerBackdrop.className='v8-drawer-backdrop';document.body.appendChild(drawerBackdrop);
+  const drawer=document.createElement('aside');drawer.className='v8-intel-drawer';drawer.id='v8IntelDrawer';drawer.setAttribute('aria-label','Wealth Intelligence');document.body.appendChild(drawer);
+
+  function safe8(fn,f='—'){try{return fn()}catch(e){return f}}
+  function latestActivity(){
+    try{
+      const items=[];
+      (state.snapshots||[]).forEach(x=>items.push({date:x.date,text:`Оценка · ${portfolioName(x.portfolioId)} · ${money(Number(x.value)||0)}`}));
+      (state.flows||[]).forEach(x=>items.push({date:x.date,text:`${flowLabel(flowTypeOf(x))} · ${portfolioName(x.portfolioId)} · ${money(Math.abs(Number(x.amount)||0))}`}));
+      items.sort((a,b)=>b.date.localeCompare(a.date));
+      return items[0]||null;
+    }catch(e){return null}
+  }
+  function refreshIntel(){
+    const total=safe8(()=>totalNow(),0),ytd=safe8(()=>totalPerf(state.settings.fyStart),{profit:0,pct:null});
+    const personal=safe8(()=>ownerTotal('personal'),0),oy=safe8(()=>ownerTotal('oy'),0),planning=safe8(()=>planningTotal(),0);
+    const rows=safe8(()=>state.portfolios.map(p=>({name:p.name,value:latestValue(p.id)})).sort((a,b)=>b.value-a.value).slice(0,5),[]);
+    const act=latestActivity();
+    drawer.innerHTML=`<div class="v8-drawer-head"><div><div class="eyebrow"><span class="v8-live-dot"></span>LIVE CAPITAL</div><h3>Wealth Intelligence</h3></div><button class="v8-drawer-close" id="v8DrawerClose">×</button></div>
+      <div class="v8-intel-hero"><span>СОВОКУПНЫЙ КАПИТАЛ</span><b>${esc8(safe8(()=>money(total)))}</b></div>
+      <div class="v8-intel-grid">
+        <div class="v8-intel-card"><span>YTD результат</span><b class="${Number(ytd.profit)>=0?'good':'bad'}">${Number(ytd.profit)>=0?'+':''}${esc8(safe8(()=>money(ytd.profit)))}</b></div>
+        <div class="v8-intel-card"><span>YTD доходность</span><b class="${Number(ytd.pct)>=0?'good':'bad'}">${ytd.pct==null?'—':`${Number(ytd.pct)>=0?'+':''}${esc8(safe8(()=>pct(ytd.pct)))}`}</b></div>
+        <div class="v8-intel-card"><span>Personal</span><b>${esc8(safe8(()=>money(personal)))}</b></div>
+        <div class="v8-intel-card"><span>VM Private Capital Oy</span><b>${esc8(safe8(()=>money(oy)))}</b></div>
+        <div class="v8-intel-card"><span>В сценариях</span><b>${esc8(safe8(()=>money(planning)))}</b></div>
+        <div class="v8-intel-card"><span>Портфелей</span><b>${safe8(()=>state.portfolios.length,0)}</b></div>
+      </div>
+      <div class="v8-intel-section"><h4>КРУПНЕЙШИЕ ПОЗИЦИИ</h4><div class="v8-intel-allocation">${rows.length?rows.map(r=>{const sh=total>0?r.value/total*100:0;return `<div class="v8-intel-alloc"><span>${esc8(r.name)}</span><b>${esc8(safe8(()=>money(r.value)))}</b><div class="v8-intel-bar"><i style="width:${Math.max(0,Math.min(100,sh)).toFixed(1)}%"></i></div></div>`}).join(''):'<div class="v8-last-update">Портфели пока не добавлены.</div>'}</div></div>
+      <div class="v8-intel-section"><h4>ПОСЛЕДНЕЕ ИЗМЕНЕНИЕ</h4><div class="v8-last-update">${act?`<b>${esc8(safe8(()=>formatDate(act.date),act.date))}</b><br>${esc8(act.text)}`:'История пока пуста.'}</div></div>
+      <div class="v8-drawer-actions"><button data-v8go="forecast">Открыть сценарии</button><button data-v8go="insights">Глубокая аналитика</button><button data-v8quick="snapshot">＋ Новая оценка</button><button data-v8quick="report">Сформировать отчёт</button></div>`;
+    $('#v8DrawerClose',drawer)?.addEventListener('click',closeDrawer);
+    $$('[data-v8go]',drawer).forEach(b=>b.addEventListener('click',()=>{closeDrawer();switchView(b.dataset.v8go)}));
+    $('[data-v8quick="snapshot"]',drawer)?.addEventListener('click',()=>{closeDrawer();openSnapshotModal()});
+    $('[data-v8quick="report"]',drawer)?.addEventListener('click',()=>{closeDrawer();switchView('reports')});
+  }
+  function openDrawer(){refreshIntel();drawerBackdrop.classList.add('open');drawer.classList.add('open')}
+  function closeDrawer(){drawerBackdrop.classList.remove('open');drawer.classList.remove('open')}
+  $('#v8IntelBtn')?.addEventListener('click',openDrawer);drawerBackdrop.addEventListener('click',closeDrawer);
+
+  /* Focus mode */
+  function toggleFocus(){document.body.classList.toggle('v8-focus');try{localStorage.setItem('vm_v8_focus',document.body.classList.contains('v8-focus')?'1':'0')}catch(e){}setTimeout(()=>{try{rerenderVisibleCharts()}catch(e){}},240)}
+  try{if(localStorage.getItem('vm_v8_focus')==='1')document.body.classList.add('v8-focus')}catch(e){}
+  window.v8ToggleFocus=toggleFocus;
+
+  /* Chart interactivity. The original drawSeries stores source series on each canvas. */
+  const chartTip=document.createElement('div');chartTip.className='v8-chart-tooltip';document.body.appendChild(chartTip);
+  function chartXLabel(t,mode){
+    if(mode==='date'){const d=new Date(Number(t));return Number.isFinite(d.getTime())?d.toLocaleDateString('ru-RU',{day:'2-digit',month:'short',year:'numeric'}):''}
+    if(mode==='year')return Number(t)===0?'Сейчас':`Через ${Math.round(Number(t))} г.`;
+    return String(t);
+  }
+  function chartValue(v){try{return money(Number(v))}catch(e){return Number(v).toLocaleString('ru-RU')+' €'}}
+  function ensureCanvasShell(canvas){
+    if(!canvas||canvas.parentElement?.classList.contains('v8-canvas-shell'))return;
+    const shell=document.createElement('div');shell.className='v8-canvas-shell';
+    canvas.parentNode.insertBefore(shell,canvas);shell.appendChild(canvas);
+    const line=document.createElement('div');line.className='v8-chart-crosshair';shell.appendChild(line);
+    canvas.addEventListener('pointermove',e=>showChartTip(canvas,shell,line,e));
+    canvas.addEventListener('pointerleave',()=>{line.style.opacity='0';chartTip.style.display='none'});
+  }
+  function showChartTip(canvas,shell,line,e){
+    const pack=canvas.__v8Series;if(!pack)return;
+    const valid=(pack.series||[]).map(s=>({...s,points:(s.points||[]).filter(p=>Number.isFinite(Number(p.t))&&Number.isFinite(Number(p.v)))})).filter(s=>s.points.length);
+    const all=valid.flatMap(s=>s.points);if(!all.length)return;
+    const rect=canvas.getBoundingClientRect(),x=e.clientX-rect.left;
+    const w=rect.width,h=Number(canvas.getAttribute('height'))||rect.height||280;
+    const legendRows=w<560&&valid.length>2?2:1,padL=w<520?60:76,padR=24,padT=22,padB=42+legendRows*18,plotW=w-padL-padR,plotH=h-padT-padB;
+    if(x<padL||x>padL+plotW){line.style.opacity='0';chartTip.style.display='none';return}
+    const xvals=all.map(p=>Number(p.t)),xmin=Math.min(...xvals),xmax=Math.max(...xvals),xspan=Math.max(1,xmax-xmin),target=xmin+(x-padL)/plotW*xspan;
+    let nearestT=all.reduce((best,p)=>Math.abs(Number(p.t)-target)<Math.abs(Number(best.t)-target)?p:best,all[0]).t;
+    const px=padL+plotW*(Number(nearestT)-xmin)/xspan;
+    const vals=all.map(p=>Number(p.v)),rawMin=Math.min(...vals),rawMax=Math.max(...vals),positive=rawMin>=0,includeZero=pack.options?.includeZero===true||(positive&&rawMax!==0&&rawMin/rawMax<.32),scale=niceScale(rawMin,rawMax,5,includeZero);
+    const rows=[];let firstY=null;
+    valid.forEach((s,si)=>{
+      const pt=s.points.reduce((best,p)=>Math.abs(Number(p.t)-Number(nearestT))<Math.abs(Number(best.t)-Number(nearestT))?p:best,s.points[0]);
+      if(Math.abs(Number(pt.t)-Number(nearestT))>xspan*.08&&valid.length>1)return;
+      const py=padT+plotH*(1-(Number(pt.v)-scale.min)/(scale.max-scale.min));if(firstY===null)firstY=py;
+      rows.push(`<div class="t-row"><span>${esc8(s.name||`Серия ${si+1}`)}</span><b>${esc8(chartValue(pt.v))}</b></div>`);
+    });
+    line.style.left=`${px}px`;line.style.setProperty('--v8-dot-y',`${Math.max(10,Math.min(h-40,firstY??60))}px`);line.style.opacity='1';
+    chartTip.innerHTML=`<div class="t-date">${esc8(chartXLabel(nearestT,pack.options?.xMode||'year'))}</div>${rows.join('')}`;chartTip.style.display='block';
+    const tw=chartTip.offsetWidth,th=chartTip.offsetHeight;let left=e.clientX+16,top=e.clientY+16;if(left+tw>innerWidth-10)left=e.clientX-tw-16;if(top+th>innerHeight-10)top=e.clientY-th-16;chartTip.style.left=Math.max(8,left)+'px';chartTip.style.top=Math.max(8,top)+'px';
+  }
+  $$('canvas').forEach(ensureCanvasShell);
+
+  /* Shortcuts */
+  document.addEventListener('keydown',e=>{
+    const typing=/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||'');
+    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();overlay.classList.contains('open')?closeSpotlight():openSpotlight();return}
+    if(e.key==='Escape'){closeSpotlight();closeDrawer();return}
+    if(!typing && !e.ctrlKey && !e.metaKey && !e.altKey && e.key.toLowerCase()==='n'){e.preventDefault();openSnapshotModal()}
+  });
+
+  /* Keep UI additions synced when views rerender. */
+  const obs=new MutationObserver(()=>{
+    $$('canvas').forEach(ensureCanvasShell);
+  });
+  const main=$('.main');if(main)obs.observe(main,{childList:true,subtree:true});
+
+  /* Small copy upgrades, presentation only */
+  const eyebrow=$('.topbar .eyebrow');if(eyebrow)eyebrow.firstChild.textContent='VM PRIVATE CAPITAL · WEALTH OS ';
+  const strip=$('.premium-context-strip');if(strip)strip.setAttribute('aria-hidden','false');
+
+  /* Initial redraw after canvas wrapping so chart dimensions stay accurate */
+  setTimeout(()=>{try{rerenderVisibleCharts()}catch(e){}},80);
+})();
+
 </script>
 </body>
 </html>
