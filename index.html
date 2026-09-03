@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.12.2</title>
+<title>VM Private Capital — Wealth Studio v7.12.3</title>
 <style>
 
 :root{
@@ -790,7 +790,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:650px){.app-version-badge{margin-left:5px}.crypto-wallet-fields{padding:12px}}
 
 
-/* v7.12.2 — manual portfolio order */
+/* v7.12.3 — manual portfolio order */
 .portfolio-head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .portfolio-order-list{display:grid;gap:8px}
 .portfolio-order-row{
@@ -1369,7 +1369,7 @@ body.auth-locked{overflow:hidden}
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.12.2</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.12.3</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -1392,7 +1392,7 @@ body.auth-locked{overflow:hidden}
   <main class="main">
     <header class="topbar">
       <div>
-        <div class="eyebrow">PERSONAL CAPITAL CONTROL <span class="app-version-badge">v7.12.2</span></div>
+        <div class="eyebrow">PERSONAL CAPITAL CONTROL <span class="app-version-badge">v7.12.3</span></div>
         <h1 id="viewTitle">Обзор капитала</h1>
         <div id="todayText" class="muted"></div><div class="topbar-subtitle">Планируйте капитал, сравнивайте сценарии и контролируйте будущие выплаты.</div>
       </div>
@@ -1806,7 +1806,7 @@ body.auth-locked{overflow:hidden}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 
-const APP_VERSION='v7.12.2';
+const APP_VERSION='v7.12.3';
 const SUPABASE_URL='https://hlrvwzqwxqmycuttvzbx.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_RBRKa6zqrw7-CW77RW__QQ_vrqebWCp';
 const STORAGE_KEY='capital_tracker_offline_v1';
@@ -1846,7 +1846,7 @@ const defaultState=()=>({
 });
 let state=normalizeState(loadState()),currentView='dashboard',chartRange=365;
 let saveTimer=null,withdrawalResultsReady=false;
-let cloudSaveTimer=null,cloudUser=null,cloudLastSync=null,cloudBusy=false,suppressCloudSave=false,cloudModuleAccess=null;
+let cloudSaveTimer=null,cloudPullTimer=null,cloudUser=null,cloudLastSync=null,cloudBusy=false,suppressCloudSave=false,cloudModuleAccess=null;
 const supabaseClient=(window.supabase&&window.supabase.createClient)
   ? window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}})
   : null;
@@ -1896,7 +1896,7 @@ function normalizeState(raw){
  };
 });
 
- // v7.12.2: persist a user-defined portfolio order. Existing data keeps its current array order.
+ // v7.12.3: persist a user-defined portfolio order. Existing data keeps its current array order.
  {
    const validIds=new Set(s.portfolios.map(p=>p.id));
    const seen=new Set();
@@ -1960,7 +1960,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.12.2';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.12.3';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -2063,6 +2063,35 @@ async function requireWealthAccess(user){
  throw new Error('Для этого аккаунта не разрешён ни один модуль VM Private Suite.');
 }
 
+function isoMs(v){const n=Date.parse(String(v||''));return Number.isFinite(n)?n:0}
+async function pullCloudIfNewer(){
+  if(!supabaseClient||!cloudUser||cloudBusy)return false;
+  // Never overwrite unsaved local edits. They will be pushed by the normal save queue first.
+  if(localStorage.getItem(CLOUD_DIRTY_KEY)==='1')return false;
+  try{
+    const {data,error}=await supabaseClient.from('user_data').select('payload,updated_at').eq('user_id',cloudUser.id).maybeSingle();
+    if(error||!data)return false;
+    const remoteMs=isoMs(data.updated_at),knownMs=isoMs(cloudLastSync||localStorage.getItem('vm_cloud_last_sync'));
+    if(remoteMs<=knownMs)return false;
+    suppressCloudSave=true;
+    state=normalizeState(data.payload||defaultState());
+    persistState({localOnly:true});
+    suppressCloudSave=false;
+    cloudLastSync=data.updated_at;
+    localStorage.setItem('vm_cloud_last_sync',cloudLastSync);
+    withdrawalResultsReady=false;
+    renderAll();
+    setCloudStatus('ok','Облако синхронизировано',`${cloudUser.email||''} · ${cloudTimeText()}`);
+    return true;
+  }catch(e){suppressCloudSave=false;console.warn('Background cloud pull failed',e);return false}
+}
+function startCloudPulling(){
+  clearInterval(cloudPullTimer);
+  if(!cloudUser)return;
+  cloudPullTimer=setInterval(()=>pullCloudIfNewer(),15000);
+}
+function stopCloudPulling(){clearInterval(cloudPullTimer);cloudPullTimer=null}
+
 async function handleCloudSession(session,{initial=false}={}){
  cloudUser=session?.user||null;
  if(!cloudUser){
@@ -2083,8 +2112,18 @@ async function handleCloudSession(session,{initial=false}={}){
    if(data){
      const localDirty=localStorage.getItem(CLOUD_DIRTY_KEY)==='1';
      if(localDirty&&hasMeaningfulLocalData(state)){
-       setCloudStatus('busy','Есть несинхронизированные изменения','Сначала отправляю локальную копию в облако');
-       await saveCloudState(false);
+       const localMs=isoMs(localStorage.getItem(CLOUD_LOCAL_SAVED_AT));
+       const remoteMs=isoMs(data.updated_at);
+       if(localMs>remoteMs){
+         setCloudStatus('busy','Есть более новые локальные изменения','Отправляю их в облако');
+         await saveCloudState(false);
+       }else{
+         // A different computer already saved newer data. Do not let this browser overwrite it.
+         localStorage.removeItem(CLOUD_DIRTY_KEY);
+         suppressCloudSave=true;state=normalizeState(data.payload||defaultState());persistState({localOnly:true});suppressCloudSave=false;
+         cloudLastSync=data.updated_at||new Date().toISOString();localStorage.setItem('vm_cloud_last_sync',cloudLastSync);withdrawalResultsReady=false;renderAll();
+         setCloudStatus('ok','Загружена более новая облачная версия',`${cloudUser.email||''} · ${cloudTimeText()}`);
+       }
      }else{
        suppressCloudSave=true;state=normalizeState(data.payload||defaultState());persistState({localOnly:true});suppressCloudSave=false;
        cloudLastSync=data.updated_at||new Date().toISOString();localStorage.setItem('vm_cloud_last_sync',cloudLastSync);withdrawalResultsReady=false;renderAll();
@@ -2098,6 +2137,7 @@ async function handleCloudSession(session,{initial=false}={}){
  }else{
    setCloudStatus('ok','Облако подключено',`${cloudUser.email||''} · ${cloudTimeText()}`);
  }
+ startCloudPulling();
  return {access:cloudModuleAccess,redirected:false};
 }
 
@@ -2170,7 +2210,7 @@ async function initCloud(){
      gateMessage(e?.message||'Не удалось загрузить данные из облака.','err');
    }
  }else{
-   cloudUser=null;cloudModuleAccess=null;applyWealthSuiteAccess(null);
+   cloudUser=null;stopCloudPulling();cloudModuleAccess=null;applyWealthSuiteAccess(null);
    setCloudStatus('idle','Облако не подключено','Требуется вход');
    lockApp();
  }
@@ -2237,7 +2277,7 @@ function openCloudModal(){
    q('cloudSaveNow').onclick=async()=>{cloudMessage('Сохраняю…');const ok=await saveCloudState(false);cloudMessage(ok?'Готово. Данные сохранены в облаке.':'Ошибка сохранения.',ok?'ok':'err')};
    q('cloudLoadNow').onclick=async()=>{const dirty=localStorage.getItem(CLOUD_DIRTY_KEY)==='1';const warning=dirty?'Есть локальные изменения, которые ещё не сохранены в облако. Загрузка из облака их перезапишет. Продолжить?':'Заменить локальные данные данными из облака?';if(!confirm(warning))return;localStorage.removeItem(CLOUD_DIRTY_KEY);cloudMessage('Загружаю…');const ok=await loadCloudState({force:true,showToast:false});cloudMessage(ok?'Данные загружены.':'Ошибка загрузки.',ok?'ok':'err')};
    q('cloudExportBackup').onclick=exportJSON;
-   q('cloudSignOut').onclick=async()=>{await supabaseClient.auth.signOut();cloudUser=null;closeModal();lockApp();setCloudStatus('idle','Облако не подключено','Требуется вход');toast('Вы вышли из облака')};
+   q('cloudSignOut').onclick=async()=>{await supabaseClient.auth.signOut();cloudUser=null;stopCloudPulling();closeModal();lockApp();setCloudStatus('idle','Облако не подключено','Требуется вход');toast('Вы вышли из облака')};
  }else{
    const authData=()=>({email:q('cloudEmail').value.trim(),password:q('cloudPassword').value});
    q('cloudSignIn').onclick=async()=>{
@@ -2545,7 +2585,11 @@ function yearEndForecast(){
  const n=new Date(),e=new Date(n.getFullYear(),11,31,12),days=Math.max(0,(e-n)/86400000),ar=annualizedFromYtd();
  return fixed+projectable*Math.pow(1+ar,days/365)
 }
-function portfolioName(id){return state.portfolios.find(p=>p.id===id)?.name||'Удалён'}
+function portfolioName(id){
+ const p=state.portfolios.find(p=>p.id===id);if(!p)return 'Удалён';
+ const dup=state.portfolios.filter(x=>normPortfolioName(x.name)===normPortfolioName(p.name)).length>1;
+ return dup?`${p.name} · ${p.owner==='oy'?'VMPC Oy':'Personal'}`:p.name;
+}
 
 
 function portfolioRole(p){if((p?.type||'')==='Крипто')return'excluded';return p?.calcRole||'investable'}
@@ -2714,59 +2758,82 @@ function cryptoMiningSummary(pid,from='',to=todayISO()){
     a.btc+=Math.abs(Number(t.btc)||0);a.eur+=cryptoFlowValue(t);a.count++;return a;
   },{btc:0,eur:0,count:0});
 }
-function cryptoPerf(pid,from,to=todayISO()){
-  const rows=uniqueSnapshots(pid).filter(x=>x.date<=to);
-  if(!rows.length)return{start:0,end:0,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:'',endDate:'',miningBtc:0,miningEur:0};
-  let startSnap=[...rows].reverse().find(x=>x.date<=from);
-  if(!startSnap)startSnap=rows.find(x=>x.date>=from);
-  const endSnap=[...rows].reverse().find(x=>x.date<=to);
-  if(!startSnap||!endSnap)return{start:0,end:0,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:'',endDate:'',miningBtc:0,miningEur:0};
-  const start=Number(startSnap.value)||0,end=Number(endSnap.value)||0,startDate=startSnap.date,endDate=endSnap.date;
-  if(endDate<=startDate)return{start,end,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate,endDate,miningBtc:0,miningEur:0};
-
-  const tx=cryptoTxFor(pid).filter(t=>t.date>startDate&&t.date<=endDate);
-  let netFlow=0,miningBtc=0,miningEur=0;
-  const synthFlows=[];
-  for(const t of tx){
-    const val=cryptoFlowValue(t);
-    if(t.type==='mining'||t.type==='purchase'||t.type==='transfer_in'){
-      netFlow+=val;synthFlows.push({date:t.date,amount:val,flowType:'contribution'});
-      if(t.type==='mining'){miningBtc+=Math.abs(Number(t.btc)||0);miningEur+=val}
-    }else if(t.type==='transfer_out'){
-      netFlow-=val;synthFlows.push({date:t.date,amount:-val,flowType:'withdrawal'});
-    }
-  }
-  const profit=end-start-netFlow;
-  const denominator=dietzDenominator(start,synthFlows,startDate,endDate);
-  const pct=denominator?profit/denominator*100:null;
-  return{start,end,flow:netFlow,profit,pct,denominator,sufficient:true,startDate,endDate,miningBtc,miningEur};
+function cryptoMiningSummaryStrict(pid,from='',to=todayISO()){
+  return cryptoTxFor(pid).filter(t=>t.type==='mining'&&(!from||t.date>from)&&(!to||t.date<=to)).reduce((a,t)=>{
+    a.btc+=Math.abs(Number(t.btc)||0);a.eur+=cryptoFlowValue(t);a.count++;return a;
+  },{btc:0,eur:0,count:0});
 }
+function cryptoSnapshotPoint(snapshot,pid){
+  if(!snapshot)return null;
+  const value=Number(snapshot.value)||0;
+  const comment=String(snapshot.comment||'');
+  // Wallet and manual BTC valuations store both quantity and BTC/EUR in the comment.
+  // Prefer those explicit historical values; they make price return independent of wallet inflows/outflows.
+  const m=comment.match(/([0-9]+(?:[.,][0-9]+)?)\s*BTC\s*[×x*]\s*([0-9]+(?:[.,][0-9]+)?)\s*EUR/i);
+  if(m){
+    const btc=Number(String(m[1]).replace(',','.'))||0;
+    const rate=Number(String(m[2]).replace(',','.'))||0;
+    if(btc>0&&rate>0)return{date:snapshot.date,value,btc,rate,snapshot,explicit:true};
+  }
+  // Fallback for older snapshots that did not embed BTC quantity/rate.
+  // This is less exact for same-day flows, therefore explicit wallet snapshots are preferred above.
+  const btc=cryptoBalanceAtDate(pid,snapshot.date);
+  const rate=btc>0?value/btc:0;
+  return btc>0&&rate>0?{date:snapshot.date,value,btc,rate,snapshot,explicit:false}:null;
+}
+function cryptoSnapshotPoints(pid,to=todayISO()){
+  return uniqueSnapshots(pid).filter(x=>x.date<=to).map(x=>cryptoSnapshotPoint(x,pid)).filter(Boolean);
+}
+function cryptoPricePerf(pid,from,to=todayISO()){
+  const pts=cryptoSnapshotPoints(pid,to);
+  if(!pts.length)return{start:0,end:0,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:'',endDate:'',startBtc:0,endBtc:0,startRate:0,endRate:0,quantityChangeBtc:0,quantityEffect:0,walletChange:0};
+  let a=[...pts].reverse().find(x=>x.date<=from);
+  if(!a)a=pts.find(x=>x.date>=from);
+  const b=[...pts].reverse().find(x=>x.date<=to);
+  if(!a||!b||b.date<=a.date||!(a.rate>0)||!(b.rate>0))return{start:a?.value||0,end:b?.value||0,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:a?.date||'',endDate:b?.date||'',startBtc:a?.btc||0,endBtc:b?.btc||0,startRate:a?.rate||0,endRate:b?.rate||0,quantityChangeBtc:(b?.btc||0)-(a?.btc||0),quantityEffect:0,walletChange:(b?.value||0)-(a?.value||0)};
+
+  const pct=(b.rate/a.rate-1)*100;
+  // Exact two-factor decomposition for wallet value:
+  // ΔV = Q0*(P1-P0) + (Q1-Q0)*P1
+  const priceEffect=a.btc*(b.rate-a.rate);
+  const quantityChangeBtc=b.btc-a.btc;
+  const quantityEffect=quantityChangeBtc*b.rate;
+  const walletChange=b.value-a.value;
+  return{
+    start:a.value,end:b.value,flow:quantityEffect,profit:priceEffect,pct,
+    denominator:a.btc*a.rate,sufficient:true,startDate:a.date,endDate:b.date,
+    startBtc:a.btc,endBtc:b.btc,startRate:a.rate,endRate:b.rate,
+    quantityChangeBtc,quantityEffect,walletChange,
+    reconciliation:walletChange-priceEffect-quantityEffect
+  };
+}
+// Backward-compatible name used elsewhere: for Crypto "performance" now means BTC price performance,
+// not raw wallet-value growth. Quantity changes are reported separately.
+function cryptoPerf(pid,from,to=todayISO()){return cryptoPricePerf(pid,from,to)}
 function cryptoWalletGrowth(pid,from,to=todayISO()){
-  const rows=uniqueSnapshots(pid).filter(x=>x.date<=to);
-  if(!rows.length)return{start:0,end:0,change:0,pct:null,sufficient:false,startDate:'',endDate:''};
-  let startSnap=[...rows].reverse().find(x=>x.date<=from);
-  if(!startSnap)startSnap=rows.find(x=>x.date>=from);
-  const endSnap=[...rows].reverse().find(x=>x.date<=to);
-  if(!startSnap||!endSnap)return{start:0,end:0,change:0,pct:null,sufficient:false,startDate:'',endDate:''};
-  const start=Number(startSnap.value)||0,end=Number(endSnap.value)||0,startDate=startSnap.date,endDate=endSnap.date;
-  if(endDate<=startDate||!(start>0))return{start,end,change:end-start,pct:null,sufficient:false,startDate,endDate};
-  const change=end-start;
-  return{start,end,change,pct:change/start*100,sufficient:true,startDate,endDate};
+  const pts=cryptoSnapshotPoints(pid,to);
+  if(!pts.length)return{start:0,end:0,change:0,pct:null,sufficient:false,startDate:'',endDate:''};
+  let a=[...pts].reverse().find(x=>x.date<=from);
+  if(!a)a=pts.find(x=>x.date>=from);
+  const b=[...pts].reverse().find(x=>x.date<=to);
+  if(!a||!b)return{start:0,end:0,change:0,pct:null,sufficient:false,startDate:'',endDate:''};
+  const change=b.value-a.value;
+  if(b.date<=a.date||!(a.value>0))return{start:a.value,end:b.value,change,pct:null,sufficient:false,startDate:a.date,endDate:b.date};
+  return{start:a.value,end:b.value,change,pct:change/a.value*100,sufficient:true,startDate:a.date,endDate:b.date};
 }
 function cryptoAllTimeWalletGrowth(pid){
-  const rows=uniqueSnapshots(pid);
-  if(rows.length<2)return{start:rows[0]?Number(rows[0].value):0,end:rows.at(-1)?Number(rows.at(-1).value):0,change:0,pct:null,sufficient:false,startDate:rows[0]?.date||'',endDate:rows.at(-1)?.date||''};
-  return cryptoWalletGrowth(pid,rows[0].date,rows.at(-1).date);
+  const pts=cryptoSnapshotPoints(pid,'9999-12-31');
+  if(pts.length<2)return{start:pts[0]?.value||0,end:pts.at(-1)?.value||0,change:0,pct:null,sufficient:false,startDate:pts[0]?.date||'',endDate:pts.at(-1)?.date||''};
+  return cryptoWalletGrowth(pid,pts[0].date,pts.at(-1).date);
 }
-
 function cryptoAllTimePerf(pid){
-  const rows=uniqueSnapshots(pid);
-  if(rows.length<2)return{start:rows[0]?Number(rows[0].value):0,end:rows.at(-1)?Number(rows.at(-1).value):0,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:rows[0]?.date||'',endDate:rows.at(-1)?.date||''};
-  return cryptoPerf(pid,rows[0].date,rows.at(-1).date);
+  const pts=cryptoSnapshotPoints(pid,'9999-12-31');
+  if(pts.length<2)return{start:pts[0]?.value||0,end:pts.at(-1)?.value||0,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:pts[0]?.date||'',endDate:pts.at(-1)?.date||''};
+  return cryptoPricePerf(pid,pts[0].date,pts.at(-1).date);
 }
 function cryptoYearPerf(pid,year){
   const to=year===new Date().getFullYear()?todayISO():`${year+1}-01-01`;
-  return cryptoPerf(pid,`${year}-01-01`,to);
+  return cryptoPricePerf(pid,`${year}-01-01`,to);
 }
 function allTimePerfForDashboardRow(p,isNordea=false){
   if(isNordea){
@@ -2780,10 +2847,7 @@ function allTimePerfForDashboardRow(p,isNordea=false){
   return portfolioAllTimePerf(p.id);
 }
 function cryptoPriceSeries(pid){
-  return uniqueSnapshots(pid).map(s=>{
-    const btc=cryptoBalanceAtDate(pid,s.date);
-    return btc>0?{date:s.date,value:(Number(s.value)||0)/btc,portfolioValue:Number(s.value)||0,btc}:null;
-  }).filter(Boolean);
+  return cryptoSnapshotPoints(pid,'9999-12-31').map(x=>({date:x.date,value:x.rate,portfolioValue:x.value,btc:x.btc}));
 }
 function cryptoTimeWeightedStats(pid){
   const rows=cryptoPriceSeries(pid);
@@ -2900,7 +2964,7 @@ function sortedPortfolioRows(){
 
    const role=portfolioRole(p),latest=latestValue(p.id);
    const r=p.type==='Крипто'
-     ? {...cryptoPerf(p.id,state.settings.fyStart),end:latest}
+     ? {...cryptoYearPerf(p.id,cy),end:latest}
      : role==='investable'
        ? portfolioPerf(p.id,state.settings.fyStart)
        : {start:0,end:latest,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:'',endDate:''};
@@ -2937,13 +3001,14 @@ function renderDashboard(){
    const role=portfolioRole(p);
    const isCrypto=p.type==='Крипто';
    const allRow=allTimePerfForDashboardRow(p,isNordea);
-   const miningYtd=isCrypto?cryptoMiningSummary(p.id,state.settings.fyStart,todayISO()):null;
+   const miningYtd=isCrypto&&r?.sufficient?cryptoMiningSummaryStrict(p.id,r.startDate||state.settings.fyStart,r.endDate||todayISO()):{btc:0,eur:0,count:0};
    const walletYtd=isCrypto?cryptoWalletGrowth(p.id,state.settings.fyStart,todayISO()):null;
    const walletAll=isCrypto?cryptoAllTimeWalletGrowth(p.id):null;
    const ytdProfit = isCrypto
      ? (r.sufficient?`<div class="crypto-return-detail">
-          <div class="crypto-line market"><span class="label">Цена BTC:</span><b class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</b></div>
-          <div class="crypto-line mining"><span class="label">Майнинг:</span><b>+${miningYtd.btc.toFixed(8)} BTC · ${money(miningYtd.eur)}</b></div>
+          <div class="crypto-line market"><span class="label">Эффект цены BTC:</span><b class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</b></div>
+          <div class="crypto-line mining"><span class="label">Изм. количества:</span><b class="${r.quantityChangeBtc>=0?'good':'bad'}">${r.quantityChangeBtc>=0?'+':''}${Number(r.quantityChangeBtc||0).toFixed(8)} BTC · ${r.quantityEffect>=0?'+':''}${money(r.quantityEffect||0)}</b></div>
+          <div class="crypto-line mining"><span class="label">Майнинг между оценками:</span><b>+${miningYtd.btc.toFixed(8)} BTC · ${money(miningYtd.eur)}</b></div>
           <div class="crypto-line wallet"><span class="label">Кошелёк:</span><b class="${walletYtd?.change>=0?'good':'bad'}">${walletYtd?.change>=0?'+':''}${money(walletYtd?.change||0)}</b></div>
         </div>`:'—')
      : isNordea
@@ -3224,6 +3289,7 @@ async function syncDirectBtcWallet(options={}){
     p.btcWalletBlockchainBalance=blockchainBalance;
     persistState();
     renderAll();
+    if(cloudUser)await saveCloudState(false);
 
     const msg=`Готово. Баланс: ${blockchainBalance.toFixed(8)} BTC`+
       (currentRate?` · BTC/EUR ${money(currentRate)} · стоимость ${money(blockchainBalance*currentRate)}`:'')+
@@ -4298,7 +4364,7 @@ function analyticsRangeStart(range,lastDate){
   return localISODate(d);
 }
 function analyticsPeriodPerf(entity,from,to){
-  if(entity.p?.type==='Крипто')return cryptoPerf(entity.p.id,from,to);
+  if(entity.p?.type==='Крипто')return cryptoPricePerf(entity.p.id,from,to);
   return entity.kind==='group'?groupPerf(entity.members,from,to):portfolioPerf(entity.p.id,from,to);
 }
 function analyticsTimeWeightedStats(entity){
@@ -4909,6 +4975,8 @@ window.addEventListener('resize',()=>{
  resizeTimer=setTimeout(rerenderVisibleCharts,140)
 });
 renderAll();
+window.addEventListener('focus',()=>pullCloudIfNewer());
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pullCloudIfNewer()});
 initCloud();
 setTimeout(async()=>{
   try{await syncConfiguredBtcWallets({silent:true})}
