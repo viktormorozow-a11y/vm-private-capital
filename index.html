@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.12.3</title>
+<title>VM Private Capital — Wealth Studio v7.12.4</title>
 <style>
 
 :root{
@@ -668,19 +668,30 @@ th,td{border-color:rgba(255,255,255,.055)}
 
 
 
-/* v7.11.2 Crypto Breakdown */
-.crypto-return-detail{display:grid;gap:3px;margin-top:4px;font-size:9px;line-height:1.35}
-.crypto-return-detail .crypto-line{display:flex;gap:5px;align-items:baseline;flex-wrap:wrap}
-.crypto-return-detail .label{color:#8293a7}
-.crypto-return-detail .mining{color:#d7b76e}
-.crypto-return-detail .market{color:#a8c7dd}
-.crypto-return-detail .wallet{color:#c8d5e2}
-.crypto-return-detail b{font-size:10px}
-.crypto-pct-stack{display:grid;gap:4px;justify-items:end}
-.crypto-pct-row{display:flex;align-items:center;gap:5px;font-size:9px;color:#8293a7}
-.crypto-pct-pill{display:inline-flex;align-items:center;padding:3px 6px;border-radius:999px;border:1px solid var(--line);font-size:9px;font-weight:750}
-.crypto-pct-pill.good{background:rgba(120,227,155,.06)}
-.crypto-pct-pill.bad{background:rgba(255,123,136,.06)}
+/* v7.12.4 Crypto summary rows + hover details */
+#portfolioSummaryBody tr.crypto-summary-row{position:relative;transition:background .16s ease,box-shadow .16s ease}
+#portfolioSummaryBody tr.crypto-summary-row:hover{background:rgba(111,183,255,.035);box-shadow:inset 2px 0 0 rgba(111,183,255,.28)}
+#portfolioSummaryBody tr.crypto-summary-row>td:first-child{position:relative}
+.crypto-hover-card{
+  display:none;position:absolute;z-index:80;left:8px;top:calc(100% - 2px);min-width:610px;max-width:720px;
+  padding:11px 12px;border-radius:12px;border:1px solid rgba(111,183,255,.22);
+  background:rgba(7,18,28,.985);box-shadow:0 18px 42px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.02);
+  backdrop-filter:blur(12px);white-space:normal;text-align:left
+}
+.crypto-hover-card:before{content:'';position:absolute;top:-6px;left:26px;width:11px;height:11px;transform:rotate(45deg);background:rgba(7,18,28,.985);border-left:1px solid rgba(111,183,255,.22);border-top:1px solid rgba(111,183,255,.22)}
+.crypto-summary-row:hover .crypto-hover-card{display:block}
+.crypto-hover-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.06)}
+.crypto-hover-title b{font-size:11px;color:#e8eef4}.crypto-hover-title span{font-size:9px;color:#7e8d9e}
+.crypto-hover-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0}
+.crypto-hover-item{padding:1px 11px;border-right:1px solid rgba(255,255,255,.055)}
+.crypto-hover-item:first-child{padding-left:0}.crypto-hover-item:last-child{border-right:0;padding-right:0}
+.crypto-hover-item span{display:block;color:#8190a2;font-size:9px;line-height:1.25;margin-bottom:5px}
+.crypto-hover-item b{display:block;font-size:11px;line-height:1.3;color:#dce6ef}
+.crypto-hover-item small{display:block;margin-top:3px;font-size:9px;color:#8293a7}
+.crypto-hover-item .good{color:var(--good)}.crypto-hover-item .bad{color:var(--bad)}
+.crypto-hover-foot{display:flex;gap:18px;flex-wrap:wrap;margin-top:9px;padding-top:8px;border-top:1px solid rgba(255,255,255,.055);font-size:9px;color:#8190a2}
+.crypto-hover-foot b{color:#cbd6df;font-size:10px}
+@media(max-width:900px){.crypto-hover-card{min-width:480px;max-width:78vw}.crypto-hover-grid{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:10px}.crypto-hover-item:nth-child(2){border-right:0}.crypto-hover-item:nth-child(3){padding-left:0}}
 
 /* v7.10.0 Portfolio Analytics */
 .portfolio-analytics-toolbar{
@@ -790,7 +801,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 @media(max-width:650px){.app-version-badge{margin-left:5px}.crypto-wallet-fields{padding:12px}}
 
 
-/* v7.12.3 — manual portfolio order */
+/* v7.12.4 — manual portfolio order */
 .portfolio-head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .portfolio-order-list{display:grid;gap:8px}
 .portfolio-order-row{
@@ -1369,7 +1380,7 @@ body.auth-locked{overflow:hidden}
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.12.3</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.12.4</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -1392,7 +1403,7 @@ body.auth-locked{overflow:hidden}
   <main class="main">
     <header class="topbar">
       <div>
-        <div class="eyebrow">PERSONAL CAPITAL CONTROL <span class="app-version-badge">v7.12.3</span></div>
+        <div class="eyebrow">PERSONAL CAPITAL CONTROL <span class="app-version-badge">v7.12.4</span></div>
         <h1 id="viewTitle">Обзор капитала</h1>
         <div id="todayText" class="muted"></div><div class="topbar-subtitle">Планируйте капитал, сравнивайте сценарии и контролируйте будущие выплаты.</div>
       </div>
@@ -1806,7 +1817,7 @@ body.auth-locked{overflow:hidden}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 
-const APP_VERSION='v7.12.3';
+const APP_VERSION='v7.12.4';
 const SUPABASE_URL='https://hlrvwzqwxqmycuttvzbx.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_RBRKa6zqrw7-CW77RW__QQ_vrqebWCp';
 const STORAGE_KEY='capital_tracker_offline_v1';
@@ -1896,7 +1907,7 @@ function normalizeState(raw){
  };
 });
 
- // v7.12.3: persist a user-defined portfolio order. Existing data keeps its current array order.
+ // v7.12.4: persist a user-defined portfolio order. Existing data keeps its current array order.
  {
    const validIds=new Set(s.portfolios.map(p=>p.id));
    const seen=new Set();
@@ -1960,7 +1971,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.12.3';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.12.4';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -3005,12 +3016,7 @@ function renderDashboard(){
    const walletYtd=isCrypto?cryptoWalletGrowth(p.id,state.settings.fyStart,todayISO()):null;
    const walletAll=isCrypto?cryptoAllTimeWalletGrowth(p.id):null;
    const ytdProfit = isCrypto
-     ? (r.sufficient?`<div class="crypto-return-detail">
-          <div class="crypto-line market"><span class="label">Эффект цены BTC:</span><b class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</b></div>
-          <div class="crypto-line mining"><span class="label">Изм. количества:</span><b class="${r.quantityChangeBtc>=0?'good':'bad'}">${r.quantityChangeBtc>=0?'+':''}${Number(r.quantityChangeBtc||0).toFixed(8)} BTC · ${r.quantityEffect>=0?'+':''}${money(r.quantityEffect||0)}</b></div>
-          <div class="crypto-line mining"><span class="label">Майнинг между оценками:</span><b>+${miningYtd.btc.toFixed(8)} BTC · ${money(miningYtd.eur)}</b></div>
-          <div class="crypto-line wallet"><span class="label">Кошелёк:</span><b class="${walletYtd?.change>=0?'good':'bad'}">${walletYtd?.change>=0?'+':''}${money(walletYtd?.change||0)}</b></div>
-        </div>`:'—')
+     ? (r.sufficient?`<span class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</span>`:'—')
      : isNordea
      ? (r.sufficient?`<span class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</span>`:'—')
      : role==='excluded'
@@ -3020,10 +3026,7 @@ function renderDashboard(){
          : (r.sufficient?`<span class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</span>`:'—');
 
    const ytdPct = isCrypto
-     ? (r.sufficient?`<div class="crypto-pct-stack">
-          <div class="crypto-pct-row"><span>Цена BTC</span><span class="crypto-pct-pill ${r.pct===null?'':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</span></div>
-          <div class="crypto-pct-row"><span>Кошелёк</span><span class="crypto-pct-pill ${walletYtd?.pct===null?'':walletYtd?.pct>=0?'good':'bad'}">${walletYtd?.sufficient?fmtReturn(walletYtd.pct):'—'}</span></div>
-        </div>`:'—')
+     ? (r.sufficient?`<span class="${r.pct===null?'return-na':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</span>`:'—')
      : isNordea
        ? (r.sufficient?`<span class="${r.pct===null?'return-na':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</span>`:'—')
        : (role==='excluded'||role==='exit')
@@ -3031,17 +3034,25 @@ function renderDashboard(){
          : (r.sufficient?`<span class="${r.pct===null?'return-na':r.pct>=0?'good':'bad'}">${fmtReturn(r.pct)}</span>`:'—');
 
    const allPct = isCrypto
-     ? (allRow?.sufficient?`<div class="crypto-pct-stack">
-          <div class="crypto-pct-row"><span>Цена BTC</span><span class="crypto-pct-pill ${allRow.pct===null?'':allRow.pct>=0?'good':'bad'}">${fmtReturn(allRow.pct)}</span></div>
-          <div class="crypto-pct-row"><span>Кошелёк</span><span class="crypto-pct-pill ${walletAll?.pct===null?'':walletAll?.pct>=0?'good':'bad'}">${walletAll?.sufficient?fmtReturn(walletAll.pct):'—'}</span></div>
-        </div>`:'<span class="return-na">—</span>')
+     ? (allRow?.sufficient?`<span class="${allRow.pct===null?'return-na':allRow.pct>=0?'good':'bad'}">${fmtReturn(allRow.pct)}</span>`:'<span class="return-na">—</span>')
      : allRow?.sufficient
        ? `<span class="${allRow.pct===null?'return-na':allRow.pct>=0?'good':'bad'}">${fmtReturn(allRow.pct)}</span>`
        : '<span class="return-na">—</span>';
 
+   const cryptoHover=isCrypto?`<div class="crypto-hover-card">
+      <div class="crypto-hover-title"><b>Детали Crypto · ${esc(p.owner==='oy'?'VMPC Oy':'Personal')}</b><span>Дополнительная информация</span></div>
+      <div class="crypto-hover-grid">
+        <div class="crypto-hover-item"><span>Эффект цены BTC · YTD</span><b class="${r?.profit>=0?'good':'bad'}">${r?.sufficient?(r.profit>=0?'+':'')+money(r.profit):'—'}</b><small>${r?.sufficient?fmtReturn(r.pct):'Недостаточно истории'}</small></div>
+        <div class="crypto-hover-item"><span>Изменение количества</span><b class="${Number(r?.quantityChangeBtc||0)>=0?'good':'bad'}">${Number(r?.quantityChangeBtc||0)>=0?'+':''}${Number(r?.quantityChangeBtc||0).toFixed(8)} BTC</b><small class="${Number(r?.quantityEffect||0)>=0?'good':'bad'}">${Number(r?.quantityEffect||0)>=0?'+':''}${money(Number(r?.quantityEffect||0))}</small></div>
+        <div class="crypto-hover-item"><span>Майнинг между оценками</span><b class="good">+${Number(miningYtd.btc||0).toFixed(8)} BTC</b><small>${money(Number(miningYtd.eur||0))}</small></div>
+        <div class="crypto-hover-item"><span>Изменение кошелька · YTD</span><b class="${Number(walletYtd?.change||0)>=0?'good':'bad'}">${walletYtd?.sufficient?(Number(walletYtd.change)>=0?'+':'')+money(Number(walletYtd.change||0)):'—'}</b><small>${walletYtd?.sufficient?fmtReturn(walletYtd.pct):'—'}</small></div>
+      </div>
+      <div class="crypto-hover-foot"><span>Вся история · цена BTC: <b>${allRow?.sufficient?fmtReturn(allRow.pct):'—'}</b></span><span>Вся история · кошелёк: <b>${walletAll?.sufficient?fmtReturn(walletAll.pct):'—'}</b></span></div>
+    </div>`:'';
+
    const nameHtml=isNordea
      ? `<b>Nordea</b><div class="nordea-breakdown"><span>Investments ${money(invValue||0)}</span><span>Cash ${money(cashValue||0)}</span></div>`
-     : `<b>${esc(p.name)}</b><div class="muted small">${esc(p.type||'Портфель')}</div>`;
+     : `<b>${esc(p.name)}</b><div class="muted small">${esc(p.type||'Портфель')}</div>${cryptoHover}`;
 
    const actions=isNordea
      ? `<div class="table-actions">
@@ -3051,7 +3062,7 @@ function renderDashboard(){
         </div>`
      : `<div class="table-actions"><button class="mini-action" data-editport="${p.id}" title="Редактировать">✎</button><button class="mini-action" data-snap="${p.id}" title="Новая оценка">＋</button></div>`;
 
-   body.insertAdjacentHTML('beforeend',`<tr>
+   body.insertAdjacentHTML('beforeend',`<tr class="${isCrypto?'crypto-summary-row':''}">
     <td>${nameHtml}</td>
     <td><span class="owner-badge ${p.owner==='oy'?'oy':'personal'}">${p.owner==='oy'?'VMPC Oy':'Personal'}</span><div class="asset-role-badge role-${role}">${role==='investable'?'В расчёте':role==='excluded'?'Вне расчёта':'Exit-актив'}</div></td>
     <td>${money(r.end)}</td><td>${ytdProfit}</td>
