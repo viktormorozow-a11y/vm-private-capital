@@ -681,7 +681,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 .crypto-hover-card:before{content:'';position:absolute;left:26px;width:11px;height:11px;transform:rotate(45deg);background:rgba(7,18,28,.985)}
 .crypto-hover-card[data-side="below"]:before{top:-6px;border-left:1px solid rgba(111,183,255,.22);border-top:1px solid rgba(111,183,255,.22)}
 .crypto-hover-card[data-side="above"]:before{bottom:-6px;border-right:1px solid rgba(111,183,255,.22);border-bottom:1px solid rgba(111,183,255,.22)}
-.crypto-summary-row:hover .crypto-hover-card{display:block}
+.crypto-summary-row:hover .crypto-hover-card{display:none}
 .crypto-hover-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.06)}
 .crypto-hover-title b{font-size:11px;color:#e8eef4}.crypto-hover-title span{font-size:9px;color:#7e8d9e}
 .crypto-hover-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0}
@@ -694,6 +694,7 @@ th,td{border-color:rgba(255,255,255,.055)}
 .crypto-hover-foot{display:flex;gap:18px;flex-wrap:wrap;margin-top:9px;padding-top:8px;border-top:1px solid rgba(255,255,255,.055);font-size:9px;color:#8190a2}
 .crypto-hover-foot b{color:#cbd6df;font-size:10px}
 @media(max-width:900px){.crypto-hover-card{min-width:min(480px,calc(100vw - 24px));max-width:calc(100vw - 24px)}.crypto-hover-grid{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:10px}.crypto-hover-item:nth-child(2){border-right:0}.crypto-hover-item:nth-child(3){padding-left:0}}
+.crypto-hover-portal{display:block!important;position:fixed!important;z-index:100000!important;pointer-events:none!important;}
 
 /* v7.10.0 Portfolio Analytics */
 .portfolio-analytics-toolbar{
@@ -5093,43 +5094,72 @@ setInterval(()=>{if(cloudUser&&localStorage.getItem(CLOUD_DIRTY_KEY)==='1'&&!clo
 </script>
 
 <script>
-/* v7.12.5 — keep Crypto hover details inside the visible viewport */
+/* v7.12.6 — render Crypto hover details in a body-level portal so table overflow cannot clip them */
 (function(){
-  const GAP=8, EDGE=12;
-  function placeCryptoHover(row){
-    const card=row && row.querySelector('.crypto-hover-card');
-    if(!card) return;
+  const GAP=10, EDGE=12;
+  let portal=null, activeRow=null;
+
+  function removePortal(){
+    if(portal){ portal.remove(); portal=null; }
+    activeRow=null;
+  }
+
+  function placePortal(row){
+    if(!portal || !row) return;
     const rr=row.getBoundingClientRect();
-    const cr=card.getBoundingClientRect();
+    const cr=portal.getBoundingClientRect();
     const vw=document.documentElement.clientWidth;
     const vh=document.documentElement.clientHeight;
-    let left=rr.left+16;
-    left=Math.max(EDGE,Math.min(left,vw-cr.width-EDGE));
+
+    let left=rr.left+Math.min(150, Math.max(18, rr.width*0.28));
+    left=Math.max(EDGE, Math.min(left, vw-cr.width-EDGE));
+
     const roomBelow=vh-rr.bottom-EDGE;
     const roomAbove=rr.top-EDGE;
-    let top,side;
-    if(roomBelow>=cr.height+GAP || roomBelow>=roomAbove){
-      top=rr.bottom+GAP;
-      side='below';
-      if(top+cr.height>vh-EDGE) top=Math.max(EDGE,vh-cr.height-EDGE);
+    let top, side;
+    if(roomBelow>=cr.height+GAP){
+      top=rr.bottom+GAP; side='below';
+    }else if(roomAbove>=cr.height+GAP){
+      top=rr.top-cr.height-GAP; side='above';
     }else{
-      top=rr.top-cr.height-GAP;
-      side='above';
-      if(top<EDGE) top=EDGE;
+      // If neither side fully fits, use the side with more room and clamp inside viewport.
+      if(roomBelow>=roomAbove){ top=Math.max(EDGE, vh-cr.height-EDGE); side='below'; }
+      else { top=EDGE; side='above'; }
     }
-    card.style.left=Math.round(left)+'px';
-    card.style.top=Math.round(top)+'px';
-    card.dataset.side=side;
+    portal.style.left=Math.round(left)+'px';
+    portal.style.top=Math.round(top)+'px';
+    portal.dataset.side=side;
   }
-  function placeHovered(){
-    document.querySelectorAll('#portfolioSummaryBody tr.crypto-summary-row:hover').forEach(placeCryptoHover);
+
+  function showFor(row){
+    if(!row) return;
+    if(activeRow===row && portal) return;
+    removePortal();
+    const template=row.querySelector('.crypto-hover-card');
+    if(!template) return;
+    portal=template.cloneNode(true);
+    portal.classList.add('crypto-hover-portal');
+    portal.style.display='block';
+    document.body.appendChild(portal);
+    activeRow=row;
+    requestAnimationFrame(()=>placePortal(row));
   }
+
   document.addEventListener('mouseover',function(e){
     const row=e.target.closest && e.target.closest('#portfolioSummaryBody tr.crypto-summary-row');
-    if(row) requestAnimationFrame(function(){placeCryptoHover(row)});
+    if(row) showFor(row);
   },true);
-  window.addEventListener('resize',placeHovered,{passive:true});
-  document.addEventListener('scroll',placeHovered,true);
+
+  document.addEventListener('mouseout',function(e){
+    const row=e.target.closest && e.target.closest('#portfolioSummaryBody tr.crypto-summary-row');
+    if(!row || row!==activeRow) return;
+    const rel=e.relatedTarget;
+    if(rel && row.contains(rel)) return;
+    removePortal();
+  },true);
+
+  window.addEventListener('resize',()=>{ if(activeRow && portal) placePortal(activeRow); },{passive:true});
+  document.addEventListener('scroll',()=>{ if(activeRow && portal) placePortal(activeRow); },true);
 })();
 </script>
 </body>
