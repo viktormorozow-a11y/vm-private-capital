@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.14.1</title>
+<title>VM Private Capital — Wealth Studio v7.14.2</title>
 <style>
 
 :root{
@@ -1317,7 +1317,7 @@ body.auth-locked{overflow:hidden}
   .ownership-strip,.metric-grid{grid-template-columns:1fr!important}
 }
 
-/* v7.14.1 — compact Insights, fixed suite footer and light/dark themes */
+/* v7.14.2 — compact Insights, fixed suite footer and light/dark themes */
 .sidebar-bottom{display:grid;gap:8px;flex:0 0 auto;min-width:0}
 .sidebar-bottom .sidebar-card,.sidebar-bottom .suite-switch-card{margin-top:0}
 #view-insights .insight-grid.two-col > .chart-panel{align-self:start;min-height:0}
@@ -1413,6 +1413,181 @@ html[data-theme="light"] #chartHoverTooltip{background:rgba(255,253,249,.985);co
 html[data-theme="light"] #chartHoverTooltip .cht-title{color:#746c60}
 html[data-theme="light"] #chartHoverTooltip .cht-row span{color:#8b601e}
 html[data-theme="light"] #chartHoverTooltip .cht-row b{color:#2b2c27}
+
+
+/* v7.14.2 — executive-grade light theme polish */
+html[data-theme="light"]{
+  --bg:#f2efe8;
+  --bg2:#e9e4da;
+  --panel:#fffdfa;
+  --panel-solid:#fffdfa;
+  --panel2:#f8f4ec;
+  --text:#242926;
+  --muted:#68645c;
+  --line:rgba(83,72,57,.15);
+  --line2:rgba(83,72,57,.25);
+  --accent:#a66f21;
+  --accent-strong:#7f5014;
+  --teal:#2b7a70;
+  --good:#1f7650;
+  --bad:#b64250;
+  --gold:#a66f21;
+}
+html[data-theme="light"] body{
+  background:
+    radial-gradient(circle at 88% -4%,rgba(194,157,93,.15),transparent 30%),
+    linear-gradient(180deg,#f8f5ef 0%,#f2efe8 50%,#ece7de 100%)!important;
+  color:#242926!important;
+}
+html[data-theme="light"] .main{color:#242926}
+html[data-theme="light"] .panel,
+html[data-theme="light"] .metric-card,
+html[data-theme="light"] .ownership-card,
+html[data-theme="light"] .port-card,
+html[data-theme="light"] .report-card,
+html[data-theme="light"] .analytics-card,
+html[data-theme="light"] .insights-year-card,
+html[data-theme="light"] .chart-panel{
+  background:#fffdfa!important;
+  border-color:rgba(83,72,57,.14)!important;
+  box-shadow:0 10px 30px rgba(65,52,36,.055)!important;
+}
+
+/* Withdrawal-plan cards: never inherit the dark-theme surfaces. */
+html[data-theme="light"] .rule{
+  background:linear-gradient(180deg,#fffdfa 0%,#faf6ef 100%)!important;
+  border:1px solid rgba(83,72,57,.17)!important;
+  box-shadow:0 8px 22px rgba(65,52,36,.055),inset 0 1px 0 rgba(255,255,255,.9)!important;
+  color:#272b28!important;
+}
+html[data-theme="light"] .rule-headline{border-color:rgba(83,72,57,.12)!important}
+html[data-theme="light"] .rule-headline b{color:#252a27!important}
+html[data-theme="light"] .rule .muted,
+html[data-theme="light"] .rule .small,
+html[data-theme="light"] .rule-source label,
+html[data-theme="light"] .rule-grid label,
+html[data-theme="light"] .rule .field-label{
+  color:#68645c!important;
+}
+html[data-theme="light"] .rule-extra{border-color:rgba(83,72,57,.11)!important}
+html[data-theme="light"] .age-note{color:#66717a!important;font-weight:560}
+html[data-theme="light"] .delete-btn{color:#bd4553!important;font-weight:700}
+html[data-theme="light"] .delete-btn:hover{color:#962f3c!important}
+
+/* Notes and secondary information need readable dark copy on warm surfaces. */
+html[data-theme="light"] .note,
+html[data-theme="light"] .info-note,
+html[data-theme="light"] .scenario-tax-rule{
+  background:#f8f2e7!important;
+  border-color:rgba(166,111,33,.18)!important;
+  color:#625d54!important;
+}
+html[data-theme="light"] .calculation-stamp{
+  background:linear-gradient(90deg,#f5f0e7,#faf7f1)!important;
+  border-color:rgba(74,105,130,.15)!important;
+  color:#5f6870!important;
+}
+html[data-theme="light"] .calculation-stamp b{color:#2d373e!important}
+html[data-theme="light"] .section-explain,
+html[data-theme="light"] .data-status{color:#69645c!important}
+
+/* Scenario cards and their nested surfaces. */
+html[data-theme="light"] .scenario-info-card{
+  background:linear-gradient(180deg,#fffdfa,#faf7f0)!important;
+  border-color:rgba(83,72,57,.14)!important;
+  box-shadow:0 8px 24px rgba(65,52,36,.05)!important;
+  color:#272b28!important;
+}
+html[data-theme="light"] .scenario-info-card.scenario-0{border-color:rgba(182,66,80,.22)!important;background:linear-gradient(180deg,#fff9f9,#fffdfa 28%)!important}
+html[data-theme="light"] .scenario-info-card.scenario-1{border-color:rgba(64,123,169,.20)!important;background:linear-gradient(180deg,#f8fbfe,#fffdfa 28%)!important}
+html[data-theme="light"] .scenario-info-card.scenario-2{border-color:rgba(31,118,80,.20)!important;background:linear-gradient(180deg,#f7fcf9,#fffdfa 28%)!important}
+html[data-theme="light"] .scenario-split>div,
+html[data-theme="light"] .scenario-metrics>div,
+html[data-theme="light"] .forecast-scenario-card,
+html[data-theme="light"] .scenario-real-strip{
+  background:#f9f6f0!important;
+  border-color:rgba(83,72,57,.12)!important;
+}
+html[data-theme="light"] .scenario-end-label,
+html[data-theme="light"] .forecast-scenario-sub,
+html[data-theme="light"] .scenario-real-row,
+html[data-theme="light"] .source-real{color:#6d6961!important}
+html[data-theme="light"] .scenario-real-row b,
+html[data-theme="light"] .forecast-scenario-sub b{color:#29302c!important}
+html[data-theme="light"] .scenario-tax-details{border-color:rgba(83,72,57,.12)!important}
+html[data-theme="light"] .scenario-tax-details summary{color:#5f6d76!important}
+html[data-theme="light"] .tax-year-table{background:#fffdfa!important;border-color:rgba(83,72,57,.14)!important}
+html[data-theme="light"] .tax-year-row{border-color:rgba(83,72,57,.09)!important;color:#464b47!important}
+html[data-theme="light"] .tax-year-head{background:#f1ece3!important;color:#625b50!important;box-shadow:0 1px 0 rgba(83,72,57,.11)}
+html[data-theme="light"] .scenario-action.good-action{background:#f3faf6!important;border-color:rgba(31,118,80,.15)!important}
+html[data-theme="light"] .scenario-action.bad-action{background:#f4f8fb!important;border-color:rgba(64,123,169,.15)!important}
+html[data-theme="light"] .scenario-action-title{color:#303b41!important}
+html[data-theme="light"] .action-line{color:#626b71!important}
+html[data-theme="light"] .action-line b{color:#283139!important}
+html[data-theme="light"] .shortfall-box{background:#fff5f5!important;border-color:rgba(182,66,80,.16)!important}
+
+/* Source panels. */
+html[data-theme="light"] .source-board.personal{background:#f7fafc!important;border-color:rgba(64,123,169,.17)!important}
+html[data-theme="light"] .source-board.oy{background:#f7fbf8!important;border-color:rgba(31,118,80,.17)!important}
+html[data-theme="light"] .source-board-grid>div{
+  background:#fffdfa!important;
+  border-color:rgba(83,72,57,.12)!important;
+  box-shadow:0 1px 0 rgba(255,255,255,.8)!important;
+}
+html[data-theme="light"] .source-board-grid span{color:#706b63!important}
+html[data-theme="light"] .source-board-grid b{color:#29302c!important}
+html[data-theme="light"] .source-rec{border-color:rgba(83,72,57,.11)!important}
+html[data-theme="light"] .source-rec-title{color:#646f77!important}
+html[data-theme="light"] .source-rec-line{color:#676b6b!important}
+html[data-theme="light"] .source-rec-line b{color:#2a302d!important}
+html[data-theme="light"] .scenario-overall-rec{background:#f8f2e7!important;border-color:rgba(166,111,33,.15)!important;color:#625d54!important}
+html[data-theme="light"] .age-tag{background:#edf4f8!important;border-color:rgba(64,123,169,.16)!important;color:#4c6c80!important}
+
+/* Tables: opaque, premium light surfaces instead of the old translucent dark layer. */
+html[data-theme="light"] .table-wrap{
+  background:#fffdfa!important;
+  border:1px solid rgba(83,72,57,.14)!important;
+  box-shadow:0 6px 18px rgba(65,52,36,.035)!important;
+}
+html[data-theme="light"] table{
+  background:#fffdfa!important;
+  color:#2b302d!important;
+}
+html[data-theme="light"] table thead th{
+  background:#f1ece3!important;
+  color:#746a5c!important;
+  border-bottom:1px solid rgba(83,72,57,.14)!important;
+}
+html[data-theme="light"] table tbody tr{background:#fffdfa!important}
+html[data-theme="light"] table tbody tr:nth-child(even){background:#fcfaf6!important}
+html[data-theme="light"] table tbody tr:hover{background:#f8f1e5!important}
+html[data-theme="light"] table td,
+html[data-theme="light"] table th{border-color:rgba(83,72,57,.10)!important}
+html[data-theme="light"] table td{color:#2f3431!important}
+html[data-theme="light"] table td .muted{color:#6d6961!important}
+html[data-theme="light"] .mini-action{
+  background:#fbf8f2!important;
+  border-color:rgba(83,72,57,.17)!important;
+  color:#66737c!important;
+}
+html[data-theme="light"] .mini-action:hover{
+  background:#f1e8da!important;
+  border-color:rgba(166,111,33,.28)!important;
+  color:#80561b!important;
+}
+html[data-theme="light"] #portfolioSummaryBody tr.crypto-summary-row:hover{
+  background:#f3f8fa!important;
+  box-shadow:inset 3px 0 0 rgba(64,123,169,.34)!important;
+}
+
+/* Stronger typography hierarchy throughout the light theme. */
+html[data-theme="light"] .muted{color:#68645c!important}
+html[data-theme="light"] .topbar .muted{color:#6b675f!important}
+html[data-theme="light"] .metric-sub{color:#6c675f!important}
+html[data-theme="light"] .history-empty{background:#fbf8f2!important;border-color:rgba(83,72,57,.18)!important;color:#68645c!important}
+html[data-theme="light"] .history-empty b{color:#2b302d!important}
+html[data-theme="light"] .tax-preview b{color:#303632!important}
+
 </style>
 <style id="calcTooltipStyles">
 .calc-tooltip-target{cursor:help!important}
@@ -1488,7 +1663,7 @@ html[data-theme="light"] #calcTooltip .ct-formula{background:rgba(176,128,47,.07
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.14.1</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.14.2</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -1512,7 +1687,7 @@ html[data-theme="light"] #calcTooltip .ct-formula{background:rgba(176,128,47,.07
   <main class="main">
     <header class="topbar">
       <div>
-        <div class="eyebrow">PERSONAL CAPITAL CONTROL <span class="app-version-badge">v7.14.1</span></div>
+        <div class="eyebrow">PERSONAL CAPITAL CONTROL <span class="app-version-badge">v7.14.2</span></div>
         <h1 id="viewTitle">Обзор капитала</h1>
         <div id="todayText" class="muted"></div><div class="topbar-subtitle">Планируйте капитал, сравнивайте сценарии и контролируйте будущие выплаты.</div>
       </div>
@@ -1934,7 +2109,7 @@ html[data-theme="light"] #calcTooltip .ct-formula{background:rgba(176,128,47,.07
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2"></script>
 <script>
 
-const APP_VERSION='v7.14.1';
+const APP_VERSION='v7.14.2';
 const BACKUP_SCHEMA_VERSION=2;
 const SUPABASE_URL='https://hlrvwzqwxqmycuttvzbx.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_RBRKa6zqrw7-CW77RW__QQ_vrqebWCp';
@@ -2103,7 +2278,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.14.1';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.14.2';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
