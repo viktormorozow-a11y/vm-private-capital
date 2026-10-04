@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v8.0.1</title>
+<title>VM Private Capital — Wealth Studio v8.0.0</title>
 <style>
 
 :root{
@@ -1317,7 +1317,7 @@ body.auth-locked{overflow:hidden}
   .ownership-strip,.metric-grid{grid-template-columns:1fr!important}
 }
 
-/* v8.0.1 — compact Insights, fixed suite footer and light/dark themes */
+/* v8.0.0 — compact Insights, fixed suite footer and light/dark themes */
 .sidebar-bottom{display:grid;gap:8px;flex:0 0 auto;min-width:0}
 .sidebar-bottom .sidebar-card,.sidebar-bottom .suite-switch-card{margin-top:0}
 #view-insights .insight-grid.two-col > .chart-panel{align-self:start;min-height:0}
@@ -1415,7 +1415,7 @@ html[data-theme="light"] #chartHoverTooltip .cht-row span{color:#8b601e}
 html[data-theme="light"] #chartHoverTooltip .cht-row b{color:#2b2c27}
 
 
-/* v8.0.1 — executive-grade light theme polish */
+/* v8.0.0 — executive-grade light theme polish */
 html[data-theme="light"]{
   --bg:#f2efe8;
   --bg2:#e9e4da;
@@ -1589,7 +1589,7 @@ html[data-theme="light"] .history-empty b{color:#2b302d!important}
 html[data-theme="light"] .tax-preview b{color:#303632!important}
 
 
-/* v8.0.1 — professional scenario chart layout and comparison graphs */
+/* v8.0.0 — professional scenario chart layout and comparison graphs */
 #view-forecast .forecast-chart-grid{
   display:grid;
   grid-template-columns:minmax(0,1.45fr) minmax(390px,.75fr);
@@ -1750,7 +1750,7 @@ body.phone-mode .modal-backdrop{z-index:120;padding:0;place-items:stretch}body.p
       <a class="mobile-more-item" href="./hrt/"><span class="mi">♥</span><span><b>HRT Health Studio</b><small>Private Suite</small></span><span class="arrow">›</span></a>
       <a class="mobile-more-item" href="./fitness/"><span class="mi">↗</span><span><b>Fitness Studio</b><small>Private Suite</small></span><span class="arrow">›</span></a>
     </div>
-    <div class="mobile-card-sub" style="text-align:center;margin:14px 0 0">VM Wealth Studio <span id="mobileVersionLabel">v8.0.1</span></div>
+    <div class="mobile-card-sub" style="text-align:center;margin:14px 0 0">VM Wealth Studio <span id="mobileVersionLabel">v8.0.0</span></div>
   </aside>
   <div id="mobileChartTooltip" class="mobile-chart-tooltip" role="tooltip"></div>
 </div>
@@ -1791,7 +1791,7 @@ body.phone-mode .modal-backdrop{z-index:120;padding:0;place-items:stretch}body.p
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v8.0.1</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v8.0.0</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -1815,7 +1815,7 @@ body.phone-mode .modal-backdrop{z-index:120;padding:0;place-items:stretch}body.p
   <main class="main">
     <header class="topbar">
       <div>
-        <div class="eyebrow">PERSONAL CAPITAL CONTROL <span class="app-version-badge">v8.0.1</span></div>
+        <div class="eyebrow">PERSONAL CAPITAL CONTROL <span class="app-version-badge">v8.0.0</span></div>
         <h1 id="viewTitle">Обзор капитала</h1>
         <div id="todayText" class="muted"></div><div class="topbar-subtitle">Планируйте капитал, сравнивайте сценарии и контролируйте будущие выплаты.</div>
       </div>
@@ -2239,7 +2239,7 @@ body.phone-mode .modal-backdrop{z-index:120;padding:0;place-items:stretch}body.p
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2"></script>
 <script>
 
-const APP_VERSION='v8.0.1';
+const APP_VERSION='v8.0.0';
 const BACKUP_SCHEMA_VERSION=2;
 const SUPABASE_URL='https://hlrvwzqwxqmycuttvzbx.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_RBRKa6zqrw7-CW77RW__QQ_vrqebWCp';
@@ -2348,8 +2348,7 @@ function normalizeState(raw){
      returnAdjustment:flexNumber(p.returnAdjustment||0),exitTargetPortfolioId:p.exitTargetPortfolioId||'',
      btcWalletAddress:String(p.btcWalletAddress||''),btcWalletAutoSync:p.btcWalletAutoSync!==false,
      btcWalletLastSync:p.btcWalletLastSync||'',btcWalletCurrentRate:Number(p.btcWalletCurrentRate||0),
-     btcWalletBlockchainBalance:Number(p.btcWalletBlockchainBalance||0),
-     btcWalletHistoryCursor:/^\d{4}-\d{2}-\d{2}$/.test(String(p.btcWalletHistoryCursor||''))?String(p.btcWalletHistoryCursor):''
+     btcWalletBlockchainBalance:Number(p.btcWalletBlockchainBalance||0)
    };
  });
 
@@ -2409,7 +2408,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v8.0.1';
+ if(s)s.textContent=sub||'VM Wealth Studio v8.0.0';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -2795,47 +2794,7 @@ function snapshotMoment(x){
  return Number.isFinite(t)?t:0;
 }
 function isBtcWalletAutoSnapshot(x){
- const source=String(x?.source||'');
- return source==='btc_wallet'||source==='btc_wallet_daily'||String(x?.comment||'').startsWith('Автооценка BTC wallet:');
-}
-function btcWalletGapDates(cursor,endDate){
- if(!/^\d{4}-\d{2}-\d{2}$/.test(String(cursor||''))||!/^\d{4}-\d{2}-\d{2}$/.test(String(endDate||''))||cursor>=endDate)return[];
- const out=[];let d=isoToDate(cursor),guard=0;if(!d)return out;
- while(guard++<20000){d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1,12);const iso=localISODate(d);if(iso>endDate)break;out.push(iso)}
- return out;
-}
-function btcWalletHistoryCursorDate(p,today=todayISO()){
- const saved=String(p?.btcWalletHistoryCursor||'');
- if(/^\d{4}-\d{2}-\d{2}$/.test(saved)&&saved<today)return saved;
- const autos=state.snapshots.filter(x=>x.portfolioId===p?.id&&x.date<today&&isBtcWalletAutoSnapshot(x)).sort((a,b)=>String(a.date).localeCompare(String(b.date))||snapshotMoment(a)-snapshotMoment(b));
- if(autos.length)return autos.at(-1).date;
- const any=uniqueSnapshots(p?.id).filter(x=>x.date<today);
- return any.length?any.at(-1).date:today;
-}
-function upsertBtcWalletDailySnapshot({portfolioId,date,btc,rate,source='btc_wallet_daily',capturedAt=new Date().toISOString(),comment=''}){
- btc=Math.max(0,Number(btc)||0);rate=Number(rate)||0;if(!portfolioId||!date||!(rate>0))return null;
- const autos=state.snapshots.filter(x=>x.portfolioId===portfolioId&&x.date===date&&isBtcWalletAutoSnapshot(x)).sort((a,b)=>snapshotMoment(a)-snapshotMoment(b));
- const old=autos.at(-1)||null;
- const rec={id:old?.id||uid(),portfolioId,date,value:btc*rate,btcQuantity:btc,btcEurRate:rate,comment:comment||'BTC wallet daily',capturedAt:old?.capturedAt||capturedAt,updatedAt:capturedAt,source};
- if(old)Object.assign(old,rec);else state.snapshots.push(rec);
- return rec;
-}
-function btcDailyTargetTimestamp(date){const t=new Date(`${date}T23:55:00`).getTime();return Number.isFinite(t)?t:0}
-async function backfillBtcWalletDailyHistory(p,{throughDate=localISODate(new Date(Date.now()-86400000))}={}){
- if(!p?.id)return{added:0,processed:0,pending:0,cursor:''};
- const today=todayISO(),cursor=btcWalletHistoryCursorDate(p,today),dates=btcWalletGapDates(cursor,throughDate);
- if(!dates.length){if(!p.btcWalletHistoryCursor&&cursor<today)p.btcWalletHistoryCursor=cursor;return{added:0,processed:0,pending:0,cursor}}
- const monthKeys=[...new Set(dates.map(d=>d.slice(0,7)))],priceCache=new Map();
- for(const key of monthKeys){const [yy,mm]=key.split('-').map(Number);try{priceCache.set(key,await btcHistoricalMonthPrices(yy,mm))}catch(e){console.warn('BTC daily history price failed',key,e);priceCache.set(key,[])}}
- let added=0,processed=0,pending=0,last=cursor;
- for(let i=0;i<dates.length;i++){
-   const date=dates[i],prices=priceCache.get(date.slice(0,7))||[],rate=nearestBtcPrice(prices,btcDailyTargetTimestamp(date));
-   if(!(rate>0)){pending=dates.length-i;break}
-   const btc=cryptoBalanceAtDate(p.id,date),capturedAt=new Date().toISOString();
-   if(btc>0){upsertBtcWalletDailySnapshot({portfolioId:p.id,date,btc,rate,source:'btc_wallet_daily',capturedAt,comment:'Автоистория BTC wallet'});added++}
-   processed++;last=date;p.btcWalletHistoryCursor=date;
- }
- return{added,processed,pending,cursor:last};
+ return String(x?.comment||'').startsWith('Автооценка BTC wallet:');
 }
 function uniqueSnapshots(pid){
  // Для расчётов используем только последнюю оценку каждого дня.
@@ -3613,11 +3572,10 @@ async function syncDirectBtcWallet(options={}){
      const rec={id:old?.id||uid(),portfolioId:p.id,date:x.date,type,btc,eurRate:rate,eurValue:btc*rate,source:'Bitcoin wallet',txid:x.txid,comment:type==='mining'?'Входящая транзакция BTC · автоматически из блокчейна':'Исходящая транзакция BTC · автоматически из блокчейна',walletAddress:address,confirmed:x.confirmed,pricingStatus:rate>0?'ok':'pending',blockchainSync:true,blockchainTimestamp:x.timestamp||0,capturedAt:old?.capturedAt||new Date().toISOString(),updatedAt:new Date().toISOString()};
      if(old){Object.assign(old,rec);updated++}else{state.cryptoTransactions.push(rec);existingByKey.set(key,rec);if(type==='mining')addedIn++;else addedOut++}if(!(rate>0))pendingPrices++;
    }
-   const history=await backfillBtcWalletDailyHistory(p);
-   if(currentRate>0){const today=todayISO(),capturedAt=new Date().toISOString(),timeText=new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',second:'2-digit'}),comment=`Автооценка BTC wallet: ${blockchainBalance.toFixed(8)} BTC × ${currentRate.toFixed(2)} EUR · ${timeText}`;upsertBtcWalletDailySnapshot({portfolioId:p.id,date:today,btc:blockchainBalance,rate:currentRate,source:'btc_wallet',capturedAt,comment})}
+   if(currentRate>0){const value=blockchainBalance*currentRate,today=todayISO(),capturedAt=new Date().toISOString(),timeText=new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',second:'2-digit'}),comment=`Автооценка BTC wallet: ${blockchainBalance.toFixed(8)} BTC × ${currentRate.toFixed(2)} EUR · ${timeText}`;state.snapshots.push({id:uid(),portfolioId:p.id,date:today,value,btcQuantity:blockchainBalance,btcEurRate:currentRate,comment,capturedAt,updatedAt:capturedAt,source:'btc_wallet'})}
    p.btcWalletAddress=address;p.btcWalletLastSync=new Date().toISOString();p.btcWalletCurrentRate=currentRate||Number(p.btcWalletCurrentRate||0);p.btcWalletBlockchainBalance=blockchainBalance;
    persistState();renderAll();if(cloudUser)await saveCloudState(false);
-   const msg=`Готово. Баланс: ${blockchainBalance.toFixed(8)} BTC`+(currentRate?` · BTC/EUR ${money(currentRate)} · стоимость ${money(blockchainBalance*currentRate)}`:'')+` · новых входящих ${addedIn} · новых исходящих ${addedOut}`+(updated?` · обновлено ${updated}`:'')+(history.processed?` · история +${history.processed} дн.`:'')+(history.pending?` · история ожидает цен: ${history.pending} дн.`:'')+(pendingPrices?` · цена транзакций ожидает уточнения: ${pendingPrices}`:'')+'.';
+   const msg=`Готово. Баланс: ${blockchainBalance.toFixed(8)} BTC`+(currentRate?` · BTC/EUR ${money(currentRate)} · стоимость ${money(blockchainBalance*currentRate)}`:'')+` · новых входящих ${addedIn} · новых исходящих ${addedOut}`+(updated?` · обновлено ${updated}`:'')+(pendingPrices?` · цена ожидает уточнения: ${pendingPrices}`:'')+'.';
    const refreshedStatus=btcWalletStatusEl(p.id);if(refreshedStatus){refreshedStatus.className=pendingPrices?'btc-wallet-status warn':'btc-wallet-status ok';refreshedStatus.textContent=msg}if(!silent)toast(`${p.name}: BTC-кошелёк обновлён`);
  }catch(e){console.error(e);const refreshedStatus=btcWalletStatusEl(p.id)||status;if(refreshedStatus){refreshedStatus.className='btc-wallet-status warn';refreshedStatus.textContent='Ошибка: '+e.message}if(!silent)toast(`${p.name}: не удалось обновить BTC-кошелёк`)}
 }
@@ -4979,8 +4937,7 @@ function openPortfolioModal(id=null){
      btcWalletAutoSync:type==='Крипто'?!!q('pBtcWalletAutoSync')?.checked:false,
      btcWalletLastSync:type==='Крипто'&&walletAddress&&walletAddress===String(p?.btcWalletAddress||'').trim()?(p?.btcWalletLastSync||''):'',
      btcWalletCurrentRate:type==='Крипто'&&walletAddress&&walletAddress===String(p?.btcWalletAddress||'').trim()?Number(p?.btcWalletCurrentRate||0):0,
-     btcWalletBlockchainBalance:type==='Крипто'&&walletAddress&&walletAddress===String(p?.btcWalletAddress||'').trim()?Number(p?.btcWalletBlockchainBalance||0):0,
-     btcWalletHistoryCursor:type==='Крипто'&&walletAddress&&walletAddress===String(p?.btcWalletAddress||'').trim()?String(p?.btcWalletHistoryCursor||''):''
+     btcWalletBlockchainBalance:type==='Крипто'&&walletAddress&&walletAddress===String(p?.btcWalletAddress||'').trim()?Number(p?.btcWalletBlockchainBalance||0):0
    };
    if(p){
      Object.assign(p,{name,type,owner:role==='exit'?'oy':q('pOwner').value,groupId:p?.groupId||(normPortfolioName(name)==='nordea'||normPortfolioName(name)==='nordea cash'?'nordea':''),...extra});
