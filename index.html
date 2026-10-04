@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.12.4</title>
+<title>VM Private Capital — Wealth Studio v7.13.1</title>
 <style>
 
 :root{
@@ -1383,7 +1383,7 @@ body.auth-locked{overflow:hidden}
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.13.0</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.13.1</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -1827,7 +1827,7 @@ body.auth-locked{overflow:hidden}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2"></script>
 <script>
 
-const APP_VERSION='v7.13.0';
+const APP_VERSION='v7.13.1';
 const BACKUP_SCHEMA_VERSION=2;
 const SUPABASE_URL='https://hlrvwzqwxqmycuttvzbx.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_RBRKa6zqrw7-CW77RW__QQ_vrqebWCp';
@@ -1993,7 +1993,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.13.0';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.13.1';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -2320,6 +2320,30 @@ function targetYearFromAge(age){return birthYear()+Math.max(0,Math.round(Number(
 function targetDateFromAge(age){const now=new Date(),y=targetYearFromAge(age),d=new Date(y,now.getMonth(),now.getDate(),12);return localISODate(d)}
 function yearsFromTargetAge(age){return Math.max(1,targetYearFromAge(age)-new Date().getFullYear())}
 function targetAgeFromYears(years){return Math.max(0,new Date().getFullYear()+Math.max(0,Number(years)||0)-birthYear())}
+function ageWord(n){const a=Math.abs(Math.trunc(Number(n)||0)),m10=a%10,m100=a%100;return m10===1&&m100!==11?'год':m10>=2&&m10<=4&&(m100<12||m100>14)?'года':'лет'}
+function syncAgeHorizon(yearId,ageId,dateId,changed){
+ const yearInput=q(yearId),ageInput=q(ageId),dateEl=q(dateId);
+ if(!yearInput||!ageInput||!dateEl)return;
+ if(changed==='age'){
+   const minAge=approxCurrentAge()+1;
+   const raw=String(ageInput.value??'').trim();
+   if(raw===''){dateEl.textContent='—';return}
+   let age=Math.round(Number(raw));
+   if(!Number.isFinite(age)){dateEl.textContent='—';return}
+   age=Math.max(minAge,Math.min(120,age));
+   ageInput.value=age;
+   yearInput.value=yearsFromTargetAge(age);
+ }else{
+   let years=Math.round(Number(yearInput.value)||1);
+   years=Math.max(1,Math.min(80,years));
+   yearInput.value=years;
+   ageInput.value=targetAgeFromYears(years);
+ }
+ const age=Number(ageInput.value);
+ const years=Number(yearInput.value);
+ dateEl.innerHTML=`${formatDate(targetDateFromAge(age))} <span class="age-tag">≈ ${age} ${ageWord(age)}</span>`;
+ dateEl.title=`Горизонт: ${years} ${ageWord(years)}. Точная дата рождения не задана, поэтому дата ориентировочная.`;
+}
 function ageTextByYear(year){return `${Math.max(0,Number(year)-birthYear())} лет`}
 function ageInYear(year){return Number(year)-birthYear()}
 function ageTextForIso(iso){if(!iso)return '—';return ageTextByYear(Number(String(iso).slice(0,4)))}
