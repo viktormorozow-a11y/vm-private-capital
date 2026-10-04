@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v7.14.2</title>
+<title>VM Private Capital — Wealth Studio v7.14.3</title>
 <style>
 
 :root{
@@ -1317,7 +1317,7 @@ body.auth-locked{overflow:hidden}
   .ownership-strip,.metric-grid{grid-template-columns:1fr!important}
 }
 
-/* v7.14.2 — compact Insights, fixed suite footer and light/dark themes */
+/* v7.14.3 — compact Insights, fixed suite footer and light/dark themes */
 .sidebar-bottom{display:grid;gap:8px;flex:0 0 auto;min-width:0}
 .sidebar-bottom .sidebar-card,.sidebar-bottom .suite-switch-card{margin-top:0}
 #view-insights .insight-grid.two-col > .chart-panel{align-self:start;min-height:0}
@@ -1415,7 +1415,7 @@ html[data-theme="light"] #chartHoverTooltip .cht-row span{color:#8b601e}
 html[data-theme="light"] #chartHoverTooltip .cht-row b{color:#2b2c27}
 
 
-/* v7.14.2 — executive-grade light theme polish */
+/* v7.14.3 — executive-grade light theme polish */
 html[data-theme="light"]{
   --bg:#f2efe8;
   --bg2:#e9e4da;
@@ -1588,6 +1588,53 @@ html[data-theme="light"] .history-empty{background:#fbf8f2!important;border-colo
 html[data-theme="light"] .history-empty b{color:#2b302d!important}
 html[data-theme="light"] .tax-preview b{color:#303632!important}
 
+
+/* v7.14.3 — professional scenario chart layout and comparison graphs */
+#view-forecast .forecast-chart-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.45fr) minmax(390px,.75fr);
+  gap:14px;
+  margin-top:12px;
+  align-items:stretch;
+}
+#view-forecast .forecast-chart-grid>.chart-panel{margin:0;min-width:0;padding:17px 18px 13px}
+#view-forecast .forecast-main-chart{box-shadow:0 20px 52px rgba(0,0,0,.16)}
+#view-forecast .forecast-owner-chart{box-shadow:0 16px 42px rgba(0,0,0,.12)}
+#forecastChart{height:320px!important}
+#forecastOwnerChart{height:300px!important}
+#view-withdrawals.active{
+  grid-template-areas:
+    "plan scenarios"
+    "plan withdrawalMain"
+    "plan withdrawalExit";
+}
+#view-withdrawals>.chart-panel{grid-area:auto;margin:0}
+#view-withdrawals>.withdrawal-main-chart{grid-area:withdrawalMain}
+#view-withdrawals>.withdrawal-exit-chart{grid-area:withdrawalExit}
+#withdrawalChart{height:320px!important}
+#withdrawalExitChart{height:250px!important}
+.chart-panel .panel-head h2{line-height:1.2}
+#chartHoverTooltip .cht-row+.cht-row{margin-top:5px}
+#chartHoverTooltip .cht-row{min-width:220px}
+#chartHoverTooltip .cht-row span{display:flex;align-items:center;gap:7px}
+#chartHoverTooltip .cht-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:0 0 auto}
+#chartHoverTooltip .cht-title{font-size:12px;font-weight:700;margin-bottom:7px}
+@media(max-width:1450px){
+  #view-forecast .forecast-chart-grid{grid-template-columns:1fr}
+  #forecastChart{height:300px!important}
+  #forecastOwnerChart{height:280px!important}
+}
+@media(max-width:1120px){
+  #view-withdrawals>.withdrawal-main-chart,#view-withdrawals>.withdrawal-exit-chart{margin-top:12px}
+}
+@media(max-width:700px){
+  #view-forecast .forecast-chart-grid{display:block;margin-top:10px}
+  #view-forecast .forecast-chart-grid>.chart-panel+ .chart-panel{margin-top:10px}
+  #forecastChart,#withdrawalChart{height:240px!important}
+  #forecastOwnerChart,#withdrawalExitChart{height:220px!important}
+}
+html[data-theme="light"] #view-forecast .forecast-main-chart,
+html[data-theme="light"] #view-withdrawals .withdrawal-main-chart{box-shadow:0 18px 42px rgba(83,65,36,.09)}
 </style>
 <style id="calcTooltipStyles">
 .calc-tooltip-target{cursor:help!important}
@@ -1663,7 +1710,7 @@ html[data-theme="light"] #calcTooltip .ct-formula{background:rgba(176,128,47,.07
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.14.2</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v7.14.3</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -1687,7 +1734,7 @@ html[data-theme="light"] #calcTooltip .ct-formula{background:rgba(176,128,47,.07
   <main class="main">
     <header class="topbar">
       <div>
-        <div class="eyebrow">PERSONAL CAPITAL CONTROL <span class="app-version-badge">v7.14.2</span></div>
+        <div class="eyebrow">PERSONAL CAPITAL CONTROL <span class="app-version-badge">v7.14.3</span></div>
         <h1 id="viewTitle">Обзор капитала</h1>
         <div id="todayText" class="muted"></div><div class="topbar-subtitle">Планируйте капитал, сравнивайте сценарии и контролируйте будущие выплаты.</div>
       </div>
@@ -1896,13 +1943,15 @@ html[data-theme="light"] #calcTooltip .ct-formula{background:rgba(176,128,47,.07
           <div id="forecastStats" class="scenario-stats"></div>
         </div>
       </div>
-      <div class="panel chart-panel">
-        <div class="panel-head"><div><div class="eyebrow">PROJECTION</div><h2>Три траектории капитала без снятий, с налогом Oy</h2></div></div>
-        <canvas id="forecastChart" height="245"></canvas>
-      </div>
-      <div class="panel chart-panel">
-        <div class="panel-head"><div><div class="eyebrow">OWNERSHIP</div><h2>Personal и VM Private Capital Oy — базовый сценарий</h2><div class="muted small">Отдельно видно, где формируется капитал к концу горизонта.</div></div></div>
-        <canvas id="forecastOwnerChart" height="225"></canvas>
+      <div class="forecast-chart-grid">
+        <div class="panel chart-panel forecast-main-chart">
+          <div class="panel-head"><div><div class="eyebrow">PROJECTION</div><h2>Три траектории капитала без снятий, с налогом Oy</h2><div class="muted small">Все три сценария на одной шкале. Наведите курсор на график, чтобы сравнить суммы в выбранном году.</div></div></div>
+          <canvas id="forecastChart" height="320"></canvas>
+        </div>
+        <div class="panel chart-panel forecast-owner-chart">
+          <div class="panel-head"><div><div class="eyebrow">OWNERSHIP</div><h2>Personal и VM Private Capital Oy — базовый сценарий</h2><div class="muted small">Структура капитала внутри базового сценария.</div></div></div>
+          <canvas id="forecastOwnerChart" height="300"></canvas>
+        </div>
       </div>
     </section>
 
@@ -1939,13 +1988,13 @@ html[data-theme="light"] #calcTooltip .ct-formula{background:rgba(176,128,47,.07
         <div class="panel-head"><div><div class="eyebrow">SCENARIOS</div><h2>Три сценария — отдельные информационные табло</h2><div class="muted small">В каждом: остаток, Personal, VM Private Capital Oy, налоги и отдельная рекомендация для каждого источника. Дефицит одного источника не блокирует рекомендации для другого.</div></div></div>
         <div id="withdrawalStats" class="scenario-stats"></div>
       </div>
-      <div class="panel chart-panel">
-        <div class="panel-head"><div><div class="eyebrow">LONGEVITY</div><h2>Капитал при регулярных снятиях</h2></div></div>
-        <canvas id="withdrawalChart" height="245"></canvas>
+      <div class="panel chart-panel withdrawal-main-chart">
+        <div class="panel-head"><div><div class="eyebrow">LONGEVITY</div><h2>Капитал при регулярных снятиях — три сценария</h2><div class="muted small">Консервативный, базовый и оптимистичный сценарии показаны одновременно на одном графике. Наведите курсор на год, чтобы увидеть все три суммы.</div></div></div>
+        <canvas id="withdrawalChart" height="320"></canvas>
       </div>
-      <div class="panel chart-panel">
-        <div class="panel-head"><div><div class="eyebrow">EXIT IMPACT</div><h2>Базовый сценарий: с Exit и без Exit</h2><div class="muted small">Так видно влияние Reno Group на капитал по годам.</div></div></div>
-        <canvas id="withdrawalExitChart" height="225"></canvas>
+      <div class="panel chart-panel withdrawal-exit-chart">
+        <div class="panel-head"><div><div class="eyebrow">EXIT IMPACT</div><h2>Базовый сценарий: с Exit и без Exit</h2><div class="muted small">Отдельное сравнение влияния Reno Group внутри базового сценария.</div></div></div>
+        <canvas id="withdrawalExitChart" height="250"></canvas>
       </div>
     </section>
 
@@ -2109,7 +2158,7 @@ html[data-theme="light"] #calcTooltip .ct-formula{background:rgba(176,128,47,.07
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2"></script>
 <script>
 
-const APP_VERSION='v7.14.2';
+const APP_VERSION='v7.14.3';
 const BACKUP_SCHEMA_VERSION=2;
 const SUPABASE_URL='https://hlrvwzqwxqmycuttvzbx.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_RBRKa6zqrw7-CW77RW__QQ_vrqebWCp';
@@ -2278,7 +2327,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v7.14.2';
+ if(s)s.textContent=sub||'VM Wealth Studio v7.14.3';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -4238,7 +4287,7 @@ function simulateWithdrawals(){
  q('withdrawalDiagnostics').innerHTML=base?`<div class="plan-status ${base.success?'ok':'warn'}"><div class="status-title">${base.success?'✓ Базовый план выполняется':'✕ Базовый план требует корректировки'}</div><div class="status-main">${base.success?`Через ${years} лет (${ageTextAfterYears(years)}) останется <b>${money(base.cap)}</b>.`:`Первый дефицит: <b>${base.firstShortfall?formatDateFromDate(base.firstShortfall.date):'—'}</b> <span class="age-tag">${base.firstShortfall?ageTextForDate(base.firstShortfall.date):''}</span>, источник: <b>${scenarioSourceLabel(base.firstShortfall?.source)}</b>.`}</div><div class="required-return"><span>Минимальная расчётная доходность для всего плана</span><b>${req.found?req.rate.toFixed(2)+'%':req.incompleteTax?'н/д — налоговая ставка не задана':'> 50%'}</b></div></div>`:'';
  q('taxSummary').innerHTML=base?`<div class="mini-stat"><span class="muted small">Снято из Personal</span><b>${money(base.spentPersonal)}</b></div><div class="mini-stat"><span class="muted small">Дивиденды из VM Private Capital Oy, gross</span><b>${money(base.spentFromOyGross)}</b></div><div class="mini-stat"><span class="muted small">Налог с дивидендов</span><b>${money(base.totalDividendTax)}</b></div><div class="mini-stat"><span class="muted small">Налог VM Private Capital Oy</span><b>${money(base.totalCompanyTax)}</b></div>`:'';
  const warning=q('withdrawalWarning');if(warning){const incomplete=out.some(o=>o.taxModelIncomplete);warning.style.display=incomplete?'block':'none';warning.innerHTML=incomplete?'Расчёт дивидендов пересекает 8%-лимит, но ставка earned-income tax не задана. Net-сценарий выше лимита намеренно не считается как точный. Укажите ставку в Настройках → Налоговая модель.':''}
- drawSeries(q('withdrawalChart'),out.map(o=>({name:o.name,points:o.ptsTotal,ci:o.ci})),{xMode:'year'});renderWithdrawalExitChart();
+ drawSeries(q('withdrawalChart'),out.map((o,i)=>({name:o.name,points:o.ptsTotal,ci:o.ci,color:['#c85a66','#d3a342','#278f66'][i]})),{xMode:'year',sharedTooltip:true,lineWidth:3.2,pointMarkers:true});renderWithdrawalExitChart();
  withdrawalResultsReady=true;if(btn){btn.disabled=false;btn.textContent='Пересчитать сценарии';btn.classList.remove('needs-calc')}
 }
 
@@ -4328,12 +4377,12 @@ function drawBars(canvas,items,options={}){
 
 function renderForecastOwnerChart(){
  const years=Math.max(1,Number(state.forecast.years||20)),m=runGrowthModel(Number(state.forecast.base||0),years);
- drawSeries(q('forecastOwnerChart'),[{name:'Personal',points:m.ptsPersonal,ci:0},{name:'VM Private Capital Oy',points:m.ptsOy,ci:1}],{xMode:'year'});
+ drawSeries(q('forecastOwnerChart'),[{name:'Personal',points:m.ptsPersonal,ci:0,color:'#d3a342'},{name:'VM Private Capital Oy',points:m.ptsOy,ci:1,color:'#4f8fbd'}],{xMode:'year',sharedTooltip:true,lineWidth:3,pointMarkers:true});
 }
 function renderWithdrawalExitChart(){
  const years=Math.max(1,Number(q('withdrawYears')?.value||30)),annual=Number(state.forecast.base||0);
  const a=runWithdrawalModel(annual,years),b=runWithdrawalModel(annual,years,{}, {}, {includeExits:false});
- drawSeries(q('withdrawalExitChart'),[{name:'С Exit',points:a.ptsTotal,ci:2},{name:'Без Exit',points:b.ptsTotal,ci:0}],{xMode:'year'});
+ drawSeries(q('withdrawalExitChart'),[{name:'С Exit',points:a.ptsTotal,ci:2,color:'#278f66'},{name:'Без Exit',points:b.ptsTotal,ci:0,color:'#87939c'}],{xMode:'year',sharedTooltip:true,lineWidth:3,pointMarkers:true});
 }
 function renderInsights(){
  renderInsightsAllYears();
@@ -4589,9 +4638,10 @@ function renderForecastChart(){
  const series=[['Консервативный',+f.conservative],['Базовый',+f.base],['Оптимистичный',+f.optimistic]].map(([name,r],ci)=>{
    const m=runGrowthModel(r,years);return{name,ci,points:m.ptsTotal};
  });
- drawSeries(q('forecastChart'),series,{xMode:'year'});
+ drawSeries(q('forecastChart'),series.map((x,i)=>({...x,color:['#c85a66','#d3a342','#278f66'][i]})),{xMode:'year',sharedTooltip:true,lineWidth:3.2,pointMarkers:true});
 }
 function chartColor(ci){return['#d7ab57','#64cda1','#7fb9e8','#ff7c8b'][ci%4]}
+function seriesColor(s,si){return s?.color||chartColor(s?.ci??si)}
 function seriesXLabel(v,mode){
  if(mode==='date'){
    const d=new Date(Number(v));if(!Number.isFinite(d.getTime()))return '';
@@ -4600,26 +4650,75 @@ function seriesXLabel(v,mode){
  if(mode==='year')return Number(v)===0?'сейчас':`+${Math.round(Number(v))} г.`;
  return String(Math.round(Number(v)));
 }
+function seriesTooltipLabel(v,mode){
+ if(mode==='date'){
+   const d=new Date(Number(v));if(!Number.isFinite(d.getTime()))return '';
+   return d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'});
+ }
+ if(mode==='year'){
+   const y=new Date().getFullYear()+Math.round(Number(v)||0);
+   return `${y} · ${ageTextByYear(y)}`;
+ }
+ return String(Math.round(Number(v)));
+}
+function seriesHoverRows(valid,targetX){
+ const all=valid.flatMap(s=>(s.points||[]).map(p=>({t:Number(p.t),v:Number(p.v)})).filter(p=>Number.isFinite(p.t)&&Number.isFinite(p.v)));
+ if(!all.length)return{anchorT:Number(targetX)||0,rows:[]};
+ const anchor=all.reduce((best,p)=>Math.abs(p.t-targetX)<Math.abs(best.t-targetX)?p:best,all[0]);
+ const anchorT=anchor.t;
+ const rows=valid.map((s,si)=>{
+   const points=(s.points||[]).filter(p=>Number.isFinite(Number(p.t))&&Number.isFinite(Number(p.v)));
+   if(!points.length)return null;
+   const point=points.reduce((best,p)=>Math.abs(Number(p.t)-anchorT)<Math.abs(Number(best.t)-anchorT)?p:best,points[0]);
+   return{name:s.name||`Серия ${si+1}`,value:Number(point.v),t:Number(point.t),color:seriesColor(s,si)};
+ }).filter(Boolean);
+ return{anchorT,rows};
+}
+function bindSeriesChartHover(canvas,valid,geom,options={}){
+ if(!canvas||(!options.sharedTooltip&&!options.hover))return;
+ const {pad,plotW,plotH,w,h,xmin,xspan}=geom;
+ const hitFromEvent=e=>{
+   const rect=canvas.getBoundingClientRect(),sx=rect.width?w/rect.width:1,sy=rect.height?h/rect.height:1;
+   const x=(e.clientX-rect.left)*sx,y=(e.clientY-rect.top)*sy;
+   if(x<pad.l||x>pad.l+plotW||y<pad.t-10||y>pad.t+plotH+14)return null;
+   const ratio=Math.max(0,Math.min(1,(x-pad.l)/Math.max(1,plotW)));
+   return seriesHoverRows(valid,xmin+ratio*xspan);
+ };
+ const show=(e,hit)=>{
+   if(!hit||!hit.rows.length){hideChartHoverTooltip();canvas.style.cursor='default';return}
+   const el=chartHoverTooltipEl(),chartTitle=canvas.closest('.chart-panel')?.querySelector('h2')?.textContent?.trim()||'График';
+   const timeLabel=seriesTooltipLabel(hit.anchorT,options.xMode||'year');
+   el.innerHTML=`<div class="cht-title">${esc(chartTitle)} · ${esc(timeLabel)}</div>`+hit.rows.map(r=>`<div class="cht-row"><span><i class="cht-dot" style="background:${esc(r.color)}"></i>${esc(r.name)}</span><b>${money(r.value)}</b></div>`).join('');
+   el.style.display='block';canvas.style.cursor='crosshair';positionChartHoverTooltip(el,e);
+ };
+ canvas.onpointermove=e=>{if(e.pointerType==='touch')return;show(e,hitFromEvent(e))};
+ canvas.onpointerleave=()=>{canvas.style.cursor='default';hideChartHoverTooltip()};
+ canvas.onpointerdown=e=>{const hit=hitFromEvent(e);if(hit){show(e,hit);if(e.pointerType==='touch')setTimeout(hideChartHoverTooltip,2600)}};
+}
 function drawSeries(canvas,series,options={}){
  if(!canvas)return;
  const env=setupCanvas(canvas,280);if(!env)return;const {c,w,h}=env,ui=chartUiColors();
  const valid=(series||[]).map(s=>({...s,points:(s.points||[]).filter(p=>Number.isFinite(Number(p.t))&&Number.isFinite(Number(p.v)))})).filter(s=>s.points.length);
  const pts=valid.flatMap(s=>s.points);
- if(pts.length<2){c.fillStyle=ui.empty;c.font='13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.fillText('Недостаточно данных для графика',18,32);return}
+ if(pts.length<2){c.fillStyle=ui.empty;c.font='600 13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.fillText('Недостаточно данных для графика',18,32);return}
  const vals=pts.map(p=>Number(p.v)),xvals=pts.map(p=>Number(p.t)),rawMin=Math.min(...vals),rawMax=Math.max(...vals),positive=rawMin>=0;
  const includeZero=options.includeZero===true||(positive&&rawMin/rawMax<.32);
  const scale=niceScale(rawMin,rawMax,5,includeZero),xmin=Math.min(...xvals),xmax=Math.max(...xvals),xspan=Math.max(1,xmax-xmin);
- const legendRows=w<560&&valid.length>2?2:1,pad={l:w<520?60:76,r:24,t:22,b:42+legendRows*18},plotW=w-(w<520?60:76)-24,plotH=h-22-(42+legendRows*18);
- c.font='11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
- scale.ticks.forEach(v=>{const y=pad.t+plotH*(1-(v-scale.min)/(scale.max-scale.min));c.strokeStyle=ui.grid;c.lineWidth=1;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();c.fillStyle=ui.axis;c.textAlign='right';c.fillText(formatChartValue(v),pad.l-10,y+4)});
- const targetXTicks=w<560?4:6,xStep=xspan/targetXTicks;
- for(let i=0;i<=targetXTicks;i++){const xv=xmin+xStep*i,x=pad.l+plotW*i/targetXTicks;c.strokeStyle=ui.gridSoft;c.beginPath();c.moveTo(x,pad.t);c.lineTo(x,pad.t+plotH);c.stroke();c.fillStyle=ui.label;c.textAlign=i===0?'left':i===targetXTicks?'right':'center';c.fillText(seriesXLabel(xv,options.xMode||'year'),x,pad.t+plotH+20)}
- valid.forEach((s,si)=>{const color=chartColor(s.ci??si),points=s.points;
+ const legendRows=w<620&&valid.length>2?2:1,leftPad=w<520?68:88,pad={l:leftPad,r:26,t:24,b:44+legendRows*20},plotW=w-leftPad-26,plotH=h-24-(44+legendRows*20);
+ c.font='600 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+ scale.ticks.forEach(v=>{const y=pad.t+plotH*(1-(v-scale.min)/(scale.max-scale.min));c.strokeStyle=ui.grid;c.lineWidth=1;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();c.fillStyle=ui.axis;c.textAlign='right';c.fillText(formatChartValue(v),pad.l-12,y+4)});
+ const targetXTicks=w<560?4:w<1050?6:7,xStep=xspan/targetXTicks;
+ for(let i=0;i<=targetXTicks;i++){const xv=xmin+xStep*i,x=pad.l+plotW*i/targetXTicks;c.strokeStyle=ui.gridSoft;c.lineWidth=1;c.beginPath();c.moveTo(x,pad.t);c.lineTo(x,pad.t+plotH);c.stroke();c.fillStyle=ui.label;c.font='600 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.textAlign=i===0?'left':i===targetXTicks?'right':'center';c.fillText(seriesXLabel(xv,options.xMode||'year'),x,pad.t+plotH+22)}
+ const requestedWidth=Number(options.lineWidth||2.6);
+ valid.forEach((s,si)=>{const color=seriesColor(s,si),points=s.points;
    if(valid.length===1&&options.fill!==false){c.beginPath();points.forEach((p,i)=>{const x=pad.l+plotW*(Number(p.t)-xmin)/xspan,y=pad.t+plotH*(1-(Number(p.v)-scale.min)/(scale.max-scale.min));i?c.lineTo(x,y):c.moveTo(x,y)});const last=points[points.length-1],lx=pad.l+plotW*(Number(last.t)-xmin)/xspan;c.lineTo(lx,pad.t+plotH);c.lineTo(pad.l,pad.t+plotH);c.closePath();const g=c.createLinearGradient(0,pad.t,0,pad.t+plotH);g.addColorStop(0,color+'2f');g.addColorStop(1,color+'03');c.fillStyle=g;c.fill()}
-   c.strokeStyle=color;c.lineWidth=2.5;c.setLineDash(s.dash?[7,5]:[]);c.beginPath();points.forEach((p,i)=>{const x=pad.l+plotW*(Number(p.t)-xmin)/xspan,y=pad.t+plotH*(1-(Number(p.v)-scale.min)/(scale.max-scale.min));i?c.lineTo(x,y):c.moveTo(x,y)});c.stroke();c.setLineDash([]);
-   const last=points[points.length-1],lx=pad.l+plotW*(Number(last.t)-xmin)/xspan,ly=pad.t+plotH*(1-(Number(last.v)-scale.min)/(scale.max-scale.min));c.fillStyle=color;c.beginPath();c.arc(lx,ly,3.2,0,Math.PI*2);c.fill();
+   c.strokeStyle=color;c.lineWidth=requestedWidth;c.setLineDash(s.dash?[7,5]:[]);c.beginPath();points.forEach((p,i)=>{const x=pad.l+plotW*(Number(p.t)-xmin)/xspan,y=pad.t+plotH*(1-(Number(p.v)-scale.min)/(scale.max-scale.min));i?c.lineTo(x,y):c.moveTo(x,y)});c.stroke();c.setLineDash([]);
+   if(options.pointMarkers){const every=Math.max(1,Math.ceil(points.length/9));points.forEach((p,i)=>{if(i!==0&&i!==points.length-1&&i%every!==0)return;const x=pad.l+plotW*(Number(p.t)-xmin)/xspan,y=pad.t+plotH*(1-(Number(p.v)-scale.min)/(scale.max-scale.min));c.fillStyle=currentTheme()==='light'?'#fffdf8':'#0b1119';c.strokeStyle=color;c.lineWidth=2;c.beginPath();c.arc(x,y,3.5,0,Math.PI*2);c.fill();c.stroke()})}
+   const last=points[points.length-1],lx=pad.l+plotW*(Number(last.t)-xmin)/xspan,ly=pad.t+plotH*(1-(Number(last.v)-scale.min)/(scale.max-scale.min));c.fillStyle=color;c.beginPath();c.arc(lx,ly,4,0,Math.PI*2);c.fill();
  });
- let lx=pad.l,ly=h-(legendRows===2?30:18);c.textAlign='left';valid.forEach((s,si)=>{const color=chartColor(s.ci??si),label=s.name||'',tw=c.measureText(label).width+34;if(lx+tw>w-pad.r&&lx>pad.l){lx=pad.l;ly+=16}c.strokeStyle=color;c.lineWidth=3;c.beginPath();c.moveTo(lx,ly-3);c.lineTo(lx+14,ly-3);c.stroke();c.fillStyle=ui.legend;c.fillText(label,lx+20,ly);lx+=tw+14});
+ c.font='600 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+ let lx=pad.l,ly=h-(legendRows===2?32:18);c.textAlign='left';valid.forEach((s,si)=>{const color=seriesColor(s,si),label=s.name||'',tw=c.measureText(label).width+40;if(lx+tw>w-pad.r&&lx>pad.l){lx=pad.l;ly+=18}c.strokeStyle=color;c.lineWidth=3.4;c.beginPath();c.moveTo(lx,ly-4);c.lineTo(lx+17,ly-4);c.stroke();c.fillStyle=ui.legend;c.fillText(label,lx+23,ly);lx+=tw+15});
+ bindSeriesChartHover(canvas,valid,{pad,plotW,plotH,w,h,xmin,xmax,xspan,scale},options);
 }
 function compact(v){const a=Math.abs(v);return a>=1e6?(v/1e6).toFixed(1)+'M':a>=1e3?(v/1e3).toFixed(0)+'k':Math.round(v).toString()}
 
@@ -4868,7 +4967,7 @@ function pdfReport(){
 }
 
 document.querySelectorAll('.nav-item').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
-function switchView(v){currentView=v;document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.view===v));document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));q('view-'+v).classList.add('active');const t={dashboard:'Планирование капитала',portfolios:'Портфель',history:'Источники и история',forecast:'Сценарии',withdrawals:'План вывода средств',reports:'Аналитика и отчёты',portfolioanalytics:'Портфели: история и прогноз',insights:'Дополнительная информация',settings:'Настройки'};q('viewTitle').textContent=t[v];if(v==='history')renderHistory();if(v==='withdrawals'){renderWithdrawalRules();if(!withdrawalResultsReady)markWithdrawalDirty();else{renderWithdrawalExitChart();const yrs=Math.max(1,Number(q('withdrawYears')?.value||30)),f=state.forecast,out=[['Консервативный',+f.conservative,0],['Базовый',+f.base,1],['Оптимистичный',+f.optimistic,2]].map(([name,r,ci])=>{const m=runWithdrawalModel(r,yrs);return{name,points:m.ptsTotal,ci}});drawSeries(q('withdrawalChart'),out,{xMode:'year'})}}if(v==='dashboard')renderCapitalChart();if(v==='forecast'){renderForecastChart();renderForecastOwnerChart()}if(v==='portfolioanalytics')renderPortfolioAnalytics();if(v==='insights')renderInsights()}
+function switchView(v){currentView=v;document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.view===v));document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));q('view-'+v).classList.add('active');const t={dashboard:'Планирование капитала',portfolios:'Портфель',history:'Источники и история',forecast:'Сценарии',withdrawals:'План вывода средств',reports:'Аналитика и отчёты',portfolioanalytics:'Портфели: история и прогноз',insights:'Дополнительная информация',settings:'Настройки'};q('viewTitle').textContent=t[v];if(v==='history')renderHistory();if(v==='withdrawals'){renderWithdrawalRules();if(!withdrawalResultsReady)markWithdrawalDirty();else{renderWithdrawalExitChart();const yrs=Math.max(1,Number(q('withdrawYears')?.value||30)),f=state.forecast,out=[['Консервативный',+f.conservative,0],['Базовый',+f.base,1],['Оптимистичный',+f.optimistic,2]].map(([name,r,ci])=>{const m=runWithdrawalModel(r,yrs);return{name,points:m.ptsTotal,ci,color:['#c85a66','#d3a342','#278f66'][ci]}});drawSeries(q('withdrawalChart'),out,{xMode:'year',sharedTooltip:true,lineWidth:3.2,pointMarkers:true})}}if(v==='dashboard')renderCapitalChart();if(v==='forecast'){renderForecastChart();renderForecastOwnerChart()}if(v==='portfolioanalytics')renderPortfolioAnalytics();if(v==='insights')renderInsights()}
 q('closeModalBtn').addEventListener('click',closeModal);q('modalBackdrop').addEventListener('click',e=>{if(e.target===q('modalBackdrop'))closeModal()});
 q('quickAddBtn').addEventListener('click',()=>openSnapshotModal());q('addSnapshotBtn').addEventListener('click',()=>openSnapshotModal());q('addFlowBtn').addEventListener('click',()=>openFlowModal());q('addPortfolioBtn').addEventListener('click',()=>openPortfolioModal());q('addPortfolioBtn2').addEventListener('click',()=>openPortfolioModal());q('portfolioOrderBtn').addEventListener('click',openPortfolioOrderModal);q('portfolioOrderBtn2').addEventListener('click',openPortfolioOrderModal);
 
@@ -4953,7 +5052,7 @@ q('saveSettingsBtn').addEventListener('click',()=>{const iso=parseDate(q('fyStar
 q('exportBtn').addEventListener('click',exportJSON);q('jsonReportBtn').addEventListener('click',exportJSON);q('excelReportBtn').addEventListener('click',excelReport);q('pdfReportBtn').addEventListener('click',pdfReport);q('reportsQuickBtn').addEventListener('click',()=>switchView('reports'));
 q('importFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const obj=JSON.parse(await f.text()),payload=(obj&&obj.payload&&obj.schemaVersion)?obj.payload:obj;if(obj?.schemaVersion&&Number(obj.schemaVersion)>BACKUP_SCHEMA_VERSION)throw new Error('Резервная копия создана более новой версией программы');if(!confirm('Импорт заменит текущие данные. Продолжить?'))return;state=normalizeState(payload);persistState();renderAll();withdrawalResultsReady=false;toast('Данные импортированы')}catch(err){toast('Не удалось прочитать файл')}e.target.value=''});
 q('resetBtn').addEventListener('click',()=>{if(confirm('Удалить текущие данные? Если вы вошли в облако, пустое состояние также будет синхронизировано. Сначала рекомендуется сделать резервную копию.')){state=normalizeState(defaultState());persistState();renderAll();withdrawalResultsReady=false;toast('Данные удалены')}});
-let resizeTimer=null;function rerenderVisibleCharts(){if(currentView==='dashboard')renderCapitalChart();if(currentView==='forecast'){renderForecastChart();renderForecastOwnerChart()}if(currentView==='withdrawals'&&withdrawalResultsReady){renderWithdrawalExitChart();const yrs=Math.max(1,Number(q('withdrawYears')?.value||30)),f=state.forecast,out=[['Консервативный',+f.conservative,0],['Базовый',+f.base,1],['Оптимистичный',+f.optimistic,2]].map(([name,r,ci])=>{const m=runWithdrawalModel(r,yrs);return{name,points:m.ptsTotal,ci}});drawSeries(q('withdrawalChart'),out,{xMode:'year'})}if(currentView==='portfolioanalytics')renderPortfolioAnalytics();if(currentView==='insights')renderInsights()}
+let resizeTimer=null;function rerenderVisibleCharts(){if(currentView==='dashboard')renderCapitalChart();if(currentView==='forecast'){renderForecastChart();renderForecastOwnerChart()}if(currentView==='withdrawals'&&withdrawalResultsReady){renderWithdrawalExitChart();const yrs=Math.max(1,Number(q('withdrawYears')?.value||30)),f=state.forecast,out=[['Консервативный',+f.conservative,0],['Базовый',+f.base,1],['Оптимистичный',+f.optimistic,2]].map(([name,r,ci])=>{const m=runWithdrawalModel(r,yrs);return{name,points:m.ptsTotal,ci,color:['#c85a66','#d3a342','#278f66'][ci]}});drawSeries(q('withdrawalChart'),out,{xMode:'year',sharedTooltip:true,lineWidth:3.2,pointMarkers:true})}if(currentView==='portfolioanalytics')renderPortfolioAnalytics();if(currentView==='insights')renderInsights()}
 function applyResponsiveCanvasHeights(){
  const c=q('capitalChart');
  if(c)c.setAttribute('height',window.innerWidth<=1120?'205':'155');
