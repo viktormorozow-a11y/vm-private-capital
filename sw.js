@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vm-private-capital-shell-v8.0.1';
+const CACHE_NAME = 'vm-private-capital-shell-v8.0.2';
 const STATIC_ASSETS = [
   './manifest.webmanifest',
   './icons/vm-private-capital-180.png',
