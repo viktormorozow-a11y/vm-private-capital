@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HRT Health Studio v3.7.0 — VM Private Suite UI</title>
+<title>HRT Health Studio v3.8.0 — VM Private Suite UI</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -293,7 +293,7 @@ html[data-theme="light"] .note{color:var(--muted)}html[data-theme="light"] .note
 @media(max-width:930px){.app{grid-template-columns:1fr}aside{padding:14px}.hrt-theme-sidebar{margin:8px 0}.theme-toggle{padding:8px 10px}main{padding:24px 16px 40px}}
 
 
-/* v3.7.0 — comprehensive bilingual physician report */
+/* v3.8.0 — comprehensive bilingual physician report */
 .doctor-report-card{border-color:color-mix(in srgb,var(--accent) 22%,var(--line));background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 7%,var(--panel)),var(--panel))}
 .doctor-report-actions{display:flex;gap:8px;flex-wrap:wrap}
 .doctor-report-features{font-size:11px;color:var(--muted);line-height:1.55;border-top:1px solid var(--line);padding-top:10px}
@@ -309,7 +309,7 @@ html[data-theme="light"] .note{color:var(--muted)}html[data-theme="light"] .note
 <div id="hrtAuthGate">
   <div class="hrt-auth-card">
     <div class="hrt-auth-brand">VM PRIVATE SUITE</div>
-    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.7.0</span></div>
+    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.8.0</span></div>
     <div class="hrt-auth-sub">Используйте тот же аккаунт, что и в Планировании капитала</div>
     <label>Email<input id="hrtGateEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
     <label>Пароль<input id="hrtGatePassword" type="password" autocomplete="current-password" placeholder="Введите пароль"></label>
@@ -321,10 +321,10 @@ html[data-theme="light"] .note{color:var(--muted)}html[data-theme="light"] .note
   </div>
 </div>
 <div id="hrtAppShell" class="auth-hidden">
-<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.7.0</div>
+<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.8.0</div>
 <div class="app">
 <aside>
-  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.7.0</small></div>
+  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.8.0</small></div>
   <div class="hrt-theme-sidebar"><button class="theme-toggle" type="button" onclick="toggleHrtTheme()" title="Переключить светлую/тёмную тему"><span class="theme-icon" id="hrtThemeIcon">☾</span><span class="theme-label" id="hrtThemeLabel">Тёмная тема</span></button></div>
   <nav>
     <button class="nav active" data-view="dashboard">Главная</button>
@@ -363,7 +363,7 @@ html[data-theme="light"] .note{color:var(--muted)}html[data-theme="light"] .note
         <button class="btn" type="button" onclick="openDoctorReportModal('fi')">Suomenkielinen PDF</button>
       </div>
     </div>
-    <div class="doctor-report-features">Анализы и их динамика · препараты и изменения схемы на графиках · отклонения от протокола · безопасность · самочувствие · вес, давление и доступные данные Withings</div>
+    <div class="doctor-report-features">Анализы и их динамика · дозировки препаратов прямо на графиках · отклонения · безопасность · самочувствие · месячные средние веса, давления и пульса</div>
   </div>
   <div class="grid g4" id="dashKpis"></div>
   <div class="panel" id="dashboardWithingsPanel">
@@ -725,7 +725,7 @@ state.goals=state.goals||[];
 state.labPlans=state.labPlans||[];
 state.settings=state.settings||{};
 state.settings.primaryGoal=state.settings.primaryGoal||'';
-state.settings.appVersion='3.7.0';
+state.settings.appVersion='3.8.0';
 state.withings=state.withings||{measurements:[],activity:[],sleep:[],workouts:[],lastSyncAt:'',autoSync:true,syncDays:365};
 state.withings.measurements=state.withings.measurements||[];state.withings.activity=state.withings.activity||[];state.withings.sleep=state.withings.sleep||[];state.withings.workouts=state.withings.workouts||[];
 if(state.withings.autoSync===undefined)state.withings.autoSync=true;if(!state.withings.syncDays)state.withings.syncDays=365;
@@ -798,7 +798,7 @@ function migrateHrtState(x){
   x.meds=x.meds||[];x.protocols=x.protocols||[];x.deviations=x.deviations||[];x.labs=x.labs||[];
   x.wellbeing=x.wellbeing||[];x.aliasMap=x.aliasMap||{};x.customAnalytes=x.customAnalytes||[];
   x.goals=x.goals||[];x.labPlans=x.labPlans||[];x.settings=x.settings||{};
-  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.7.0';
+  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.8.0';
   x.settings.chartKeys=Array.isArray(x.settings.chartKeys)?x.settings.chartKeys:['testosterone','free_testosterone','shbg','estradiol','hematocrit','hemoglobin'];
   x.settings.comparisonKeys=Array.isArray(x.settings.comparisonKeys)?x.settings.comparisonKeys:['withings:weight','lab:testosterone','lab:free_testosterone'];
   x.settings.comparisonMode=x.settings.comparisonMode||'auto';
@@ -1420,7 +1420,7 @@ function downloadHealthHistoryPdf(){
   content.push({text:'Взвешивания',style:'h1'});if(weights.length){content.push({table:{headerRows:1,widths:[65,38,55,65,'*'],body:[['Дата','Время','Вес','Источник','Препараты / протокол'],...weights.map(x=>[fmtDate(x.date),x.time,`${wNum(x.weight,2)} кг`,x.source,protocolPdfText(x.date)])]},layout:'lightHorizontalLines',fontSize:8})}else content.push({text:'За выбранный период взвешиваний нет.',style:'muted'});
   content.push({text:'Артериальное давление',style:'h1',margin:[0,14,0,6]});if(bps.length){content.push({table:{headerRows:1,widths:[65,38,72,48,62,'*'],body:[['Дата','Время','АД','Пульс','Источник','Препараты / протокол'],...bps.map(x=>[fmtDate(x.date),x.time,`${Math.round(x.sys)}/${Math.round(x.dia)}`,x.pulse!=null?`${Math.round(x.pulse)} уд/мин`:'—',x.source,protocolPdfText(x.date)])]},layout:'lightHorizontalLines',fontSize:8})}else content.push({text:'За выбранный период измерений давления нет.',style:'muted'});
   content.push({text:'Протоколы препаратов в выбранном периоде',style:'h1',margin:[0,14,0,6]});if(protocols.length){content.push({table:{headerRows:1,widths:[100,90,'*'],body:[['Препарат','Период','Схема'],...protocols.map(p=>[medName(p.medId),`${fmtDate(p.start)} → ${p.end?fmtDate(p.end):'сейчас'}`,scheduleText(p)])]},layout:'lightHorizontalLines',fontSize:8})}else content.push({text:'В выбранном периоде нет записанных протоколов.',style:'muted'});
-  const doc={pageSize:'A4',pageMargins:[28,32,28,32],info:{title:`HRT Health Studio ${from}–${to}`},content,styles:{title:{fontSize:19,bold:true,color:'#17212b',margin:[0,0,0,3]},subtitle:{fontSize:9,color:'#667788',margin:[0,0,0,9]},h1:{fontSize:13,bold:true,color:'#17212b',margin:[0,8,0,4]},h2:{fontSize:9.5,bold:true,color:'#263746'},small:{fontSize:7.5,color:'#667788'},muted:{fontSize:8.5,color:'#667788'}},defaultStyle:{font:'Roboto',fontSize:8.5,color:'#263746'},footer:(current,pageCount)=>({text:`HRT Health Studio · ${current}/${pageCount}`,alignment:'center',fontSize:7,color:'#8a98a6',margin:[0,8,0,0]})};
+  const doc={pageSize:'A4',pageMargins:[28,32,28,32],info:{title:`HRT Health Studio ${from}–${to}`},content,styles:{title:{fontSize:19,bold:true,color:'#17212b',margin:[0,0,0,3]},subtitle:{fontSize:9,color:'#667788',margin:[0,0,0,9]},h1:{fontSize:13,bold:true,color:'#17212b',margin:[0,8,0,4]},h2:{fontSize:9.5,bold:true,color:'#263746'},small:{fontSize:7.5,color:'#667788'},muted:{fontSize:8.5,color:'#667788'}},defaultStyle:{font:'Roboto',fontSize:8.5,color:'#263746'},footer:(current,pageCount)=>({text:`HRT Health Studio · ${current}/${pageCount}`,alignment:'center',fontSize:7.4,color:'#8a98a6',margin:[0,8,0,0]})};
   window.pdfMake.createPdf(doc).download(`HRT_Health_Studio_${from}_${to}.pdf`);
 }
 
@@ -3139,7 +3139,7 @@ function renderLatestChanges(){
   }
   box.innerHTML=cards.length?`<div class="change-grid">${cards.join('')}</div>`:`<div class="empty">Пока недостаточно повторных анализов для сравнения.</div>`;
 }
-const APP_VERSION='3.7.0';
+const APP_VERSION='3.8.0';
 
 function normalizedHctPercent(marker){
   if(!marker)return null;
@@ -3256,19 +3256,19 @@ const DOCTOR_TEXT={
     overview:'Краткое резюме',goal:'Текущая цель лечения',goalMissing:'Цель не указана',currentTreatment:'Текущая схема лечения',noActiveTreatment:'Нет активных протоколов на конец выбранного периода.',
     dataQuality:'Пригодность последнего анализа для оценки схемы',safety:'Показатели безопасности и общего риска',doctorDiscussion:'Что обсудить с врачом',observations:'Наблюдения программы',
     timeline:'История лечения и отклонений',treatmentChanges:'Изменения протокола',deviations:'Зарегистрированные отклонения',noProtocols:'В выбранном периоде нет записанных протоколов.',noDeviations:'В выбранном периоде нет зарегистрированных отклонений.',
-    charts:'Динамика показателей',chartGuide:'Вертикальные метки P — начало/изменение протокола; D — зарегистрированное отклонение. Метка в начале периода может означать протокол, начатый раньше и продолжавшийся в выбранном периоде.',
+    charts:'Динамика показателей',chartGuide:'На каждом графике золотые вертикальные пунктирные линии показывают начало или изменение схемы лечения; рядом указаны препарат и дозировка. Красные пунктирные линии D показывают зарегистрированные отклонения. По оси времени отдельно отмечены даты лабораторных анализов.',
     hormoneOverview:'Гормональная динамика — сравнительный индекс',individualLabTrends:'Динамика лабораторных показателей',weight:'Вес',bodyFat:'Жировая масса, %',muscleMass:'Мышечная масса',bloodPressure:'Артериальное давление',
     labs:'Все лабораторные анализы',lab:'Лаборатория',analyte:'Показатель',result:'Результат',reference:'Референс лаборатории',personalTarget:'Личная цель',protocolAtDate:'Протокол на дату анализа',doseContext:'Контекст дозы',
-    date:'Дата',time:'Время',medicine:'Препарат',scheme:'Схема',periodCol:'Период',type:'Тип',fact:'Факт',comment:'Комментарий',source:'Источник',pulse:'Пульс',
+    date:'Дата',time:'Время',medicine:'Препарат',scheme:'Схема',periodCol:'Период',type:'Тип',fact:'Факт',comment:'Комментарий',source:'Источник',pulse:'Пульс',month:'Месяц',avgWeight:'Средний вес',avgSystolic:'Среднее систолическое',avgDiastolic:'Среднее диастолическое',avgPulse:'Средний пульс',samples:'Измерений',
     wellbeing:'Самочувствие',energy:'Энергия',libido:'Либидо',sleep:'Сон',mood:'Настроение',recovery:'Восстановление',bp:'АД',
     withings:'Объективные данные Withings',activity:'Активность',steps:'Шаги',distance:'Расстояние',calories:'Ккал',avgHr:'Средний пульс',sleepData:'Сон',deep:'Глубокий сон',rem:'REM',score:'Оценка',workouts:'Тренировки',category:'Категория',duration:'Длительность',
     noData:'Нет данных за выбранный период.',notSet:'Не задана',unknown:'Не указано',latestValue:'Последнее значение',insideGoal:'В личной цели',belowGoal:'Ниже личной цели',aboveGoal:'Выше личной цели',
     reportNote:'Отчёт предназначен для обсуждения с врачом. Автоматические оценки программы не являются диагнозом или назначением лечения. Данные о лекарствах отражают записанный базовый протокол и зарегистрированные отклонения; они не подтверждают фактический приём каждой отдельной дозы.',
     indexNote:'Индексный график: первое доступное значение каждой линии в выбранном периоде = 100. Он показывает относительное направление изменений; точные исходные значения приведены в таблицах и на отдельных графиках.',
-    fullScope:'Отчёт включает все доступные лабораторные анализы, повторные лабораторные показатели с графиками, историю препаратов, отклонения, самочувствие, вес, давление и доступные данные Withings.',
-    lastLab:'Последний анализ',labsCount:'Анализов',protocolsCount:'Протоколов',deviationsCount:'Отклонений',measurementsCount:'Измерений',
+    fullScope:'Отчёт включает лабораторные анализы и их динамику, историю препаратов и дозировок, отклонения, безопасность, самочувствие, а также среднемесячные вес, давление и пульс. Шаги и тренировки в отчёт не включаются.',
+    lastLab:'Последний анализ',labsCount:'Анализов',protocolsCount:'Протоколов',deviationsCount:'Отклонений',measurementsCount:'Месяцев Withings-данных',
     from:'Период с',to:'Период по',create:'Скачать полный PDF',cancel:'Отмена',chooseLanguage:'Язык',
-    reportDialogTitle:'Полный отчёт врачу',reportDialogHelp:'По умолчанию выбран весь доступный период. В отчёт войдут все доступные медицинские данные за эти даты и графики динамики.',
+    reportDialogTitle:'Полный отчёт врачу',reportDialogHelp:'По умолчанию выбран весь доступный период. Вес, давление и пульс будут автоматически сведены в среднемесячные значения; шаги и тренировки исключены.',
     noLabTrends:'Нет лабораторных показателей с двумя или более значениями в выбранном периоде.',
     protocolStartedEarlier:'начат до выбранного периода',now:'сейчас',adherence:'Соблюдение схемы',lastDose:'Последняя доза',relation:'Точка относительно дозы',
     reportFile:'HRT_Doctor_Report',page:'стр.'
@@ -3278,19 +3278,19 @@ const DOCTOR_TEXT={
     overview:'Yhteenveto',goal:'Hoidon nykyinen tavoite',goalMissing:'Tavoitetta ei ole määritetty',currentTreatment:'Nykyinen lääkitys ja hoito-ohjelma',noActiveTreatment:'Valitun ajanjakson lopussa ei ole aktiivisia kirjattuja protokollia.',
     dataQuality:'Viimeisimmän laboratoriokokeen soveltuvuus hoito-ohjelman arviointiin',safety:'Turvallisuus- ja yleisen riskin seuranta',doctorDiscussion:'Lääkärin kanssa keskusteltavat asiat',observations:'Ohjelman havainnot',
     timeline:'Hoidon aikajana ja poikkeamat',treatmentChanges:'Hoitoprotokollan muutokset',deviations:'Kirjatut poikkeamat',noProtocols:'Valitulla ajanjaksolla ei ole kirjattuja protokollia.',noDeviations:'Valitulla ajanjaksolla ei ole kirjattuja poikkeamia.',
-    charts:'Mittausarvojen kehitys',chartGuide:'Pystymerkinnät P = protokollan aloitus/muutos ja D = kirjattu poikkeama. Ajanjakson alussa oleva merkintä voi tarkoittaa protokollaa, joka alkoi ennen valittua ajanjaksoa ja jatkui sen aikana.',
+    charts:'Mittausarvojen kehitys',chartGuide:'Jokaisessa kaaviossa kultaiset pystysuorat katkoviivat osoittavat hoito-ohjelman aloituksen tai muutoksen; viivan vieressä näkyvät lääke ja annostus. Punaiset D-katkoviivat osoittavat kirjatut poikkeamat. Aika-akselille on merkitty myös laboratoriokokeiden päivät.',
     hormoneOverview:'Hormonien kehitys — vertailuindeksi',individualLabTrends:'Laboratoriotulosten kehitys',weight:'Paino',bodyFat:'Rasvaprosentti',muscleMass:'Lihasmassa',bloodPressure:'Verenpaine',
     labs:'Kaikki laboratoriotutkimukset',lab:'Laboratorio',analyte:'Tutkimus',result:'Tulos',reference:'Laboratorion viitealue',personalTarget:'Henkilökohtainen tavoite',protocolAtDate:'Protokolla näytteenottopäivänä',doseContext:'Annoskonteksti',
-    date:'Päivä',time:'Aika',medicine:'Lääke',scheme:'Annostus / ohjelma',periodCol:'Ajanjakso',type:'Tyyppi',fact:'Toteutunut',comment:'Kommentti',source:'Lähde',pulse:'Syke',
+    date:'Päivä',time:'Aika',medicine:'Lääke',scheme:'Annostus / ohjelma',periodCol:'Ajanjakso',type:'Tyyppi',fact:'Toteutunut',comment:'Kommentti',source:'Lähde',pulse:'Syke',month:'Kuukausi',avgWeight:'Keskipaino',avgSystolic:'Systolinen keskiarvo',avgDiastolic:'Diastolinen keskiarvo',avgPulse:'Keskisyke',samples:'Mittauksia',
     wellbeing:'Oma vointi',energy:'Energia',libido:'Libido',sleep:'Uni',mood:'Mieliala',recovery:'Palautuminen',bp:'Verenpaine',
     withings:'Withingsin objektiiviset tiedot',activity:'Aktiivisuus',steps:'Askeleet',distance:'Matka',calories:'kcal',avgHr:'Keskisyke',sleepData:'Uni',deep:'Syvä uni',rem:'REM',score:'Pisteet',workouts:'Harjoitukset',category:'Luokka',duration:'Kesto',
     noData:'Ei tietoja valitulta ajanjaksolta.',notSet:'Ei määritetty',unknown:'Ei ilmoitettu',latestValue:'Viimeisin arvo',insideGoal:'Henkilökohtaisella tavoitealueella',belowGoal:'Alle henkilökohtaisen tavoitealueen',aboveGoal:'Yli henkilökohtaisen tavoitealueen',
     reportNote:'Raportti on tarkoitettu lääkärin kanssa käytävää keskustelua varten. Ohjelman automaattiset arviot eivät ole diagnoosi tai hoitomääräys. Lääkitystä koskevat tiedot perustuvat kirjattuun perusprotokollaan ja kirjattuihin poikkeamiin; ne eivät vahvista jokaisen yksittäisen annoksen toteutunutta ottamista.',
     indexNote:'Indeksikaavio: kunkin sarjan ensimmäinen käytettävissä oleva arvo valitulla ajanjaksolla = 100. Kaavio näyttää muutoksen suunnan suhteellisesti; tarkat alkuperäiset arvot ovat taulukoissa ja erillisissä kaavioissa.',
-    fullScope:'Raportti sisältää kaikki käytettävissä olevat laboratoriotutkimukset, toistettujen laboratoriomittausten trendikaaviot, lääkehistorian, poikkeamat, oman voinnin, painon, verenpaineen ja käytettävissä olevat Withings-tiedot.',
-    lastLab:'Viimeisin laboratoriotutkimus',labsCount:'Laboratoriotutkimuksia',protocolsCount:'Protokollia',deviationsCount:'Poikkeamia',measurementsCount:'Mittauksia',
+    fullScope:'Raportti sisältää laboratoriotutkimukset ja niiden kehityksen, lääke- ja annostushistorian, poikkeamat, turvallisuusseurannan, oman voinnin sekä kuukausittaiset painon, verenpaineen ja sykkeen keskiarvot. Askeleita ja harjoituksia ei sisällytetä raporttiin.',
+    lastLab:'Viimeisin laboratoriotutkimus',labsCount:'Laboratoriotutkimuksia',protocolsCount:'Protokollia',deviationsCount:'Poikkeamia',measurementsCount:'Withings-seurantakuukausia',
     from:'Ajanjakso alkaa',to:'Ajanjakso päättyy',create:'Lataa kattava PDF',cancel:'Peruuta',chooseLanguage:'Kieli',
-    reportDialogTitle:'Kattava lääkäriraportti',reportDialogHelp:'Oletuksena valitaan koko käytettävissä oleva ajanjakso. Raporttiin sisällytetään kaikki käytettävissä olevat terveystiedot valituilta päiviltä ja trendikaaviot.',
+    reportDialogTitle:'Kattava lääkäriraportti',reportDialogHelp:'Oletuksena valitaan koko käytettävissä oleva ajanjakso. Paino, verenpaine ja syke esitetään kuukausikeskiarvoina; askeleet ja harjoitukset jätetään pois.',
     noLabTrends:'Valitulla ajanjaksolla ei ole laboratoriomittaria, jolla olisi vähintään kaksi tulosta.',
     protocolStartedEarlier:'alkanut ennen valittua ajanjaksoa',now:'nyt',adherence:'Hoidon toteutuminen',lastDose:'Viimeisin annos',relation:'Suhde viimeiseen annokseen',
     reportFile:'HRT_Laakariraportti',page:'s.'
@@ -3400,7 +3400,8 @@ function doctorReportSummaryCounts(from,to){
   const protocols=(state.protocols||[]).filter(p=>p.start<=to&&(!p.end||p.end>=from));
   const deviations=(state.deviations||[]).filter(d=>withinReportPeriod(d.date,from,to));
   const weights=collectReportWeighings(from,to),bps=collectReportBp(from,to);
-  return {labs:labs.length,protocols:protocols.length,deviations:deviations.length,measurements:weights.length+bps.length};
+  const months=new Set([...weights.map(x=>String(x.date||'').slice(0,7)),...bps.map(x=>String(x.date||'').slice(0,7))].filter(Boolean));
+  return {labs:labs.length,protocols:protocols.length,deviations:deviations.length,measurements:months.size};
 }
 function openDoctorReportModal(lang='ru'){
   const b=doctorReportBounds();
@@ -3441,27 +3442,67 @@ function doctorTimelineEvents(from,to,lang='ru'){
   }
   return events.filter(e=>Number.isFinite(e.x)&&e.x>=startMs&&e.x<=new Date(to+'T23:59:59').getTime()).sort((a,b)=>a.x-b.x||String(a.date||'').localeCompare(String(b.date||''))||String(a.id||'').localeCompare(String(b.id||''),undefined,{numeric:true}));
 }
+function doctorMonthKey(date){return String(date||'').slice(0,7)}
+function doctorMonthLabel(key,lang='ru'){
+  if(!/^\d{4}-\d{2}$/.test(String(key||'')))return key||'—';
+  const d=new Date(key+'-15T12:00:00');
+  const raw=d.toLocaleDateString(doctorLocale(lang),{month:'long',year:'numeric'});
+  return raw?raw.charAt(0).toUpperCase()+raw.slice(1):key;
+}
+function doctorMonthlyWeightAverages(rows){
+  const m=new Map();
+  for(const x of rows||[]){const v=Number(x.weight),k=doctorMonthKey(x.date);if(!k||!Number.isFinite(v))continue;const a=m.get(k)||{month:k,sum:0,n:0};a.sum+=v;a.n++;m.set(k,a)}
+  return [...m.values()].sort((a,b)=>a.month.localeCompare(b.month)).map(a=>({month:a.month,avg:a.sum/a.n,n:a.n,x:new Date(a.month+'-15T12:00:00').getTime()}));
+}
+function doctorMonthlyBpAverages(rows){
+  const m=new Map();
+  for(const x of rows||[]){const k=doctorMonthKey(x.date);if(!k)continue;const a=m.get(k)||{month:k,sys:0,sysN:0,dia:0,diaN:0,pulse:0,pulseN:0,n:0};const sy=Number(x.sys),di=Number(x.dia),pu=Number(x.pulse);if(Number.isFinite(sy)){a.sys+=sy;a.sysN++}if(Number.isFinite(di)){a.dia+=di;a.diaN++}if(Number.isFinite(pu)){a.pulse+=pu;a.pulseN++}a.n++;m.set(k,a)}
+  return [...m.values()].sort((a,b)=>a.month.localeCompare(b.month)).map(a=>({month:a.month,sys:a.sysN?a.sys/a.sysN:null,dia:a.diaN?a.dia/a.diaN:null,pulse:a.pulseN?a.pulse/a.pulseN:null,n:a.n,x:new Date(a.month+'-15T12:00:00').getTime()}));
+}
+function doctorChartTickDates(from,to){
+  const set=new Set([from,to]);
+  for(const l of state.labs||[])if(withinReportPeriod(l.date,from,to))set.add(l.date);
+  for(const p of doctorProtocolRows(from,to)){const d=p.start<from?from:p.start;if(withinReportPeriod(d,from,to))set.add(d)}
+  return [...set].filter(Boolean).sort();
+}
 function doctorPdfChartFromSets(sets,from,to,{mode='auto',events=[],lang='ru'}={}){
   const c=document.createElement('canvas');
   const start=new Date(from+'T00:00:00').getTime(),end=new Date(to+'T23:59:59').getTime();
   const filtered=(sets||[]).map((x,i)=>({...x,color:x.color||HRT_SERIES_COLORS[i%HRT_SERIES_COLORS.length],points:(x.points||[]).filter(p=>p.x>=start&&p.x<=end&&Number.isFinite(Number(p.y)))})).filter(x=>x.points.length);
   const units=[...new Set(filtered.map(x=>x.unit||''))],effective=mode==='auto'?(units.length<=1?'raw':'index'):mode;
   const transformed=filtered.map(x=>{const base=x.points.find(p=>Number.isFinite(Number(p.y))&&Number(p.y)!==0)?.y;return {...x,plotPoints:x.points.map(p=>({...p,plotY:effective==='index'?(base?Number(p.y)/Number(base)*100:100):Number(p.y)}))}});
-  const protocolEvents=(events||[]).filter(e=>e.kind==='protocol'&&e.protocol),bandRows=protocolEvents.length;
-  c.width=1100;c.height=390+Math.max(0,bandRows-2)*15;const ctx=c.getContext('2d'),w=c.width,h=c.height;ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);
-  if(!transformed.length){ctx.fillStyle='#677788';ctx.font='14px Arial';ctx.textAlign='center';ctx.fillText(doctorText(lang,'noData'),w/2,h/2);return {image:c.toDataURL('image/png'),effective,hasData:false}}
-  const all=transformed.flatMap(x=>x.plotPoints),ys=all.map(p=>p.plotY).filter(Number.isFinite);let ymin=Math.min(...ys),ymax=Math.max(...ys);if(ymin===ymax){ymin-=1;ymax+=1}const yr=(ymax-ymin)||1;ymin-=yr*.12;ymax+=yr*.12;
-  const pad={l:64,r:24,t:76+bandRows*15,b:38},xmin=start,xmax=end,mapX=x=>pad.l+(x-xmin)/(xmax-xmin)*(w-pad.l-pad.r),mapY=y=>pad.t+(ymax-y)/(ymax-ymin)*(h-pad.t-pad.b);
-  ctx.strokeStyle='#dfe5eb';ctx.lineWidth=1;
-  for(let i=0;i<=4;i++){const y=pad.t+(h-pad.t-pad.b)*i/4;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();const val=ymax-(ymax-ymin)*i/4;ctx.fillStyle='#687989';ctx.font='11px Arial';ctx.textAlign='right';ctx.fillText(wNum(val,1),pad.l-8,y+4)}
-  const evs=(events||[]).filter(e=>e.x>=xmin&&e.x<=xmax);
-  ctx.save();ctx.font='10px Arial';
-  protocolEvents.forEach((ev,idx)=>{const p=ev.protocol,ps=Math.max(xmin,new Date(p.start+'T12:00:00').getTime()),pe=Math.min(xmax,p.end?new Date(p.end+'T12:00:00').getTime():xmax);if(pe<ps)return;const x1=mapX(ps),x2=mapX(pe),y=22+idx*15;ctx.fillStyle='rgba(169,134,66,.15)';ctx.fillRect(x1,y-9,Math.max(2,x2-x1),11);ctx.strokeStyle='rgba(169,134,66,.55)';ctx.strokeRect(x1,y-9,Math.max(2,x2-x1),11);ctx.fillStyle='#795b25';ctx.textAlign='left';const raw=`${ev.id} ${medName(p.medId)} · ${doctorShortSchedule(p,lang)}`,label=raw.length>48?raw.slice(0,47)+'…':raw;ctx.fillText(label,Math.min(x1+3,w-pad.r-ctx.measureText(label).width),y)});
-  evs.filter(e=>e.kind==='deviation').forEach((ev,idx)=>{const x=mapX(ev.x);ctx.setLineDash([2,4]);ctx.strokeStyle='#c95a66';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,h-pad.b);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#a43e49';const raw=String(ev.label||ev.id||''),label=raw.length>38?raw.slice(0,37)+'…':raw;ctx.textAlign=x>w*0.76?'right':'left';ctx.fillText(label,x+(ctx.textAlign==='right'?-4:4),60+(idx%2)*13)});ctx.restore();
-  transformed.forEach(set=>{ctx.strokeStyle=set.color;ctx.lineWidth=2.5;ctx.beginPath();set.plotPoints.forEach((p,i)=>{const x=mapX(p.x),y=mapY(p.plotY);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();set.plotPoints.forEach(p=>{ctx.fillStyle=set.color;ctx.beginPath();ctx.arc(mapX(p.x),mapY(p.plotY),3,0,Math.PI*2);ctx.fill()})});
-  ctx.fillStyle='#687989';ctx.font='11px Arial';ctx.textAlign='left';ctx.fillText(doctorFmtDate(from,lang),pad.l,h-11);ctx.textAlign='right';ctx.fillText(doctorFmtDate(to,lang),w-pad.r,h-11);
-  ctx.textAlign='left';let lx=pad.l,ly=59;transformed.forEach(set=>{const label=`${set.label}${set.unit?' ('+set.unit+')':''}`;const need=20+ctx.measureText(label).width+22;if(lx+need>w-pad.r){lx=pad.l;ly+=15}ctx.fillStyle=set.color;ctx.fillRect(lx,ly-4,13,4);ctx.fillStyle='#263746';ctx.fillText(label,lx+18,ly);lx+=need});
-  return {image:c.toDataURL('image/png',0.95),effective,hasData:true};
+  const protocolEvents=(events||[]).filter(e=>e.kind==='protocol'&&e.protocol&&e.x>=start&&e.x<=end);
+  const deviationEvents=(events||[]).filter(e=>e.kind==='deviation'&&e.x>=start&&e.x<=end);
+  const tickDates=doctorChartTickDates(from,to),tickRows=tickDates.length>6?3:(tickDates.length>4?2:1);
+  c.width=1500;c.height=650;const ctx=c.getContext('2d'),w=c.width,h=c.height;ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);
+  if(!transformed.length){ctx.fillStyle='#677788';ctx.font='26px Arial';ctx.textAlign='center';ctx.fillText(doctorText(lang,'noData'),w/2,h/2);return {image:c.toDataURL('image/png'),effective,hasData:false}}
+  const all=transformed.flatMap(x=>x.plotPoints),ys=all.map(p=>p.plotY).filter(Number.isFinite);let ymin=Math.min(...ys),ymax=Math.max(...ys);if(ymin===ymax){ymin-=1;ymax+=1}const yr=(ymax-ymin)||1;ymin-=yr*.13;ymax+=yr*.13;
+  const pad={l:105,r:42,t:150,b:105+(tickRows-1)*28},xmin=start,xmax=end,mapX=x=>pad.l+(x-xmin)/(xmax-xmin)*(w-pad.l-pad.r),mapY=y=>pad.t+(ymax-y)/(ymax-ymin)*(h-pad.t-pad.b);
+  ctx.strokeStyle='#e0e6ec';ctx.lineWidth=2;
+  for(let i=0;i<=4;i++){const y=pad.t+(h-pad.t-pad.b)*i/4;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();const val=ymax-(ymax-ymin)*i/4;ctx.fillStyle='#5f7080';ctx.font='27px Arial';ctx.textAlign='right';ctx.fillText(wNum(val,1),pad.l-14,y+8)}
+  // Laboratory/protocol dates on the x-axis and light vertical guides.
+  ctx.save();
+  for(let i=0;i<tickDates.length;i++){
+    const d=tickDates[i],x=mapX(new Date(d+'T12:00:00').getTime());
+    ctx.setLineDash([3,9]);ctx.strokeStyle='#d8e0e7';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,h-pad.b);ctx.stroke();ctx.setLineDash([]);
+    ctx.strokeStyle='#9aa8b5';ctx.beginPath();ctx.moveTo(x,h-pad.b);ctx.lineTo(x,h-pad.b+9);ctx.stroke();
+    ctx.fillStyle='#536575';ctx.font='25px Arial';ctx.textAlign='right';ctx.save();ctx.translate(x-3,h-pad.b+25+(i%tickRows)*28);ctx.rotate(-Math.PI/4);ctx.fillText(doctorFmtDate(d,lang),0,0);ctx.restore();
+  }
+  ctx.restore();
+  // Protocol changes: dashed gold lines on every chart with the actual drug and dose.
+  ctx.save();
+  protocolEvents.forEach((ev,idx)=>{
+    const x=mapX(ev.x),label=`${medName(ev.protocol.medId)} · ${doctorShortSchedule(ev.protocol,lang)}`;
+    ctx.setLineDash([10,9]);ctx.strokeStyle='#a9833c';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,h-pad.b);ctx.stroke();ctx.setLineDash([]);
+    ctx.font='27px Arial';const tw=Math.min(520,ctx.measureText(label).width+28),row=idx%3,y=34+row*34;let bx=x+8;if(bx+tw>w-pad.r)bx=x-tw-8;if(bx<pad.l)bx=pad.l;
+    ctx.fillStyle='rgba(255,250,239,.96)';ctx.strokeStyle='#c7a45f';ctx.lineWidth=1.5;ctx.fillRect(bx,y-29,tw,35);ctx.strokeRect(bx,y-29,tw,35);ctx.fillStyle='#6f5421';ctx.textAlign='left';let shown=label;while(ctx.measureText(shown).width>tw-18&&shown.length>8)shown=shown.slice(0,-2);if(shown!==label)shown=shown.replace(/\s+$/,'')+'…';ctx.fillText(shown,bx+12,y-4);
+  });
+  deviationEvents.forEach((ev,idx)=>{const x=mapX(ev.x);ctx.setLineDash([5,8]);ctx.strokeStyle='#c95a66';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,h-pad.b);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#a43e49';ctx.font='25px Arial';ctx.textAlign=x>w*.78?'right':'left';ctx.fillText(String(ev.id||'D'),x+(ctx.textAlign==='right'?-6:6),pad.t+24+(idx%2)*26)});
+  ctx.restore();
+  transformed.forEach(set=>{ctx.strokeStyle=set.color;ctx.lineWidth=4;ctx.beginPath();set.plotPoints.forEach((p,i)=>{const x=mapX(p.x),y=mapY(p.plotY);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();set.plotPoints.forEach(p=>{ctx.fillStyle='#fff';ctx.strokeStyle=set.color;ctx.lineWidth=3.5;ctx.beginPath();ctx.arc(mapX(p.x),mapY(p.plotY),6,0,Math.PI*2);ctx.fill();ctx.stroke()})});
+  // Legend with larger typography.
+  ctx.textAlign='left';ctx.font='27px Arial';let lx=pad.l,ly=132;transformed.forEach(set=>{const label=`${set.label}${set.unit?' ('+set.unit+')':''}`;const need=30+ctx.measureText(label).width+34;if(lx+need>w-pad.r){lx=pad.l;ly+=30}ctx.fillStyle=set.color;ctx.fillRect(lx,ly-7,20,6);ctx.fillStyle='#263746';ctx.fillText(label,lx+28,ly);lx+=need});
+  return {image:c.toDataURL('image/png',0.96),effective,hasData:true};
 }
 function doctorLabTrendSeries(from,to){
   const priority=['testosterone','free_testosterone','shbg','estradiol','hematocrit','hemoglobin','psa','ldl','hdl','triglycerides','hba1c','creatinine','egfr','alt','ast'];
@@ -3548,14 +3589,11 @@ function doctorLabRowsForReport(lab,lang='ru'){
 }
 function doctorWithingsPeriodData(from,to){
   const w=ensureWithingsState();
-  const activities=(w.activity||[]).filter(a=>withinReportPeriod(a.date,from,to)).sort((a,b)=>String(a.date).localeCompare(String(b.date)));
-  const sleeps=(w.sleep||[]).map(x=>({...x,_date:x.date||(x.enddate?isoDateFromMs(Number(x.enddate)*1000):'')})).filter(x=>withinReportPeriod(x._date,from,to)).sort((a,b)=>xDate(a).localeCompare(xDate(b)));
-  const workouts=(w.workouts||[]).map(x=>({...x,_date:x.date||(x.startdate?isoDateFromMs(Number(x.startdate)*1000):'')})).filter(x=>withinReportPeriod(x._date,from,to)).sort((a,b)=>xDate(a).localeCompare(xDate(b)));
-  function xDate(x){return String(x._date||x.date||'')}
-  return {activities,sleeps,workouts};
+  const sleeps=(w.sleep||[]).map(x=>({...x,_date:x.date||(x.enddate?isoDateFromMs(Number(x.enddate)*1000):'')})).filter(x=>withinReportPeriod(x._date,from,to)).sort((a,b)=>String(a._date||'').localeCompare(String(b._date||'')));
+  return {sleeps};
 }
 function doctorWellbeingRows(from,to){return (state.wellbeing||[]).filter(w=>withinReportPeriod(w.date,from,to)).sort((a,b)=>a.date.localeCompare(b.date))}
-function doctorPdfSectionTitle(text){return {text,style:'h1',margin:[0,12,0,5]}}
+function doctorPdfSectionTitle(text){return {table:{widths:['*'],body:[[{text,style:'sectionTitle',fillColor:'#eef3f7',margin:[8,6,8,6]}]]},layout:{hLineWidth:()=>0,vLineWidth:()=>0,paddingLeft:()=>0,paddingRight:()=>0,paddingTop:()=>0,paddingBottom:()=>0},margin:[0,14,0,6]}}
 function doctorPdfMuted(text){return {text,style:'muted'} }
 function doctorEventLegendTable(events,lang='ru'){
   if(!events.length)return null;
@@ -3570,11 +3608,12 @@ function downloadDoctorReportPdf(lang='ru',from='',to=''){
   if(!window.pdfMake)return alert(lang==='fi'?'PDF-moduulia ei voitu ladata. Tarkista internetyhteys ja lataa sivu uudelleen.':'Модуль PDF не загрузился. Проверьте интернет и перезагрузите страницу.');
   if(!from||!to){const b=doctorReportBounds();from=from||b.min;to=to||b.max}
   const labs=[...(state.labs||[])].filter(l=>withinReportPeriod(l.date,from,to)).sort((a,b)=>a.date.localeCompare(b.date));
-  const protocols=doctorProtocolRows(from,to),deviations=doctorDeviationRows(from,to),well=doctorWellbeingRows(from,to),weights=collectReportWeighings(from,to),bps=collectReportBp(from,to),events=doctorTimelineEvents(from,to,lang),counts=doctorReportSummaryCounts(from,to);
+  const protocols=doctorProtocolRows(from,to),deviations=doctorDeviationRows(from,to),well=doctorWellbeingRows(from,to),weights=collectReportWeighings(from,to),bps=collectReportBp(from,to),monthlyWeights=doctorMonthlyWeightAverages(weights),monthlyBp=doctorMonthlyBpAverages(bps),events=doctorTimelineEvents(from,to,lang),counts=doctorReportSummaryCounts(from,to);
   const clinical=doctorClinicalSummary(lang,from,to),last=[...labs].sort((a,b)=>b.date.localeCompare(a.date))[0]||null,readiness=doctorReadinessSummary(last,lang),safety=doctorSafetySnapshot(from,to);
   const content=[];
   content.push({text:doctorText(lang,'report'),style:'title'});
   content.push({text:`${doctorText(lang,'period')}: ${doctorFmtDate(from,lang)} — ${doctorFmtDate(to,lang)} · ${doctorText(lang,'generated')}: ${new Date().toLocaleString(doctorLocale(lang))} · ${doctorText(lang,'version')} ${APP_VERSION}`,style:'subtitle'});
+  content.push({canvas:[{type:'line',x1:0,y1:0,x2:539,y2:0,lineWidth:2,lineColor:'#7b9fbd'}],margin:[0,2,0,10]});
   content.push({columns:[
     {width:'*',stack:[{text:doctorText(lang,'labsCount'),style:'kpiLabel'},{text:String(counts.labs),style:'kpiValue'}]},
     {width:'*',stack:[{text:doctorText(lang,'protocolsCount'),style:'kpiLabel'},{text:String(counts.protocols),style:'kpiValue'}]},
@@ -3600,32 +3639,32 @@ function downloadDoctorReportPdf(lang='ru',from='',to=''){
 
   content.push(doctorPdfSectionTitle(doctorText(lang,'charts')));content.push({text:doctorText(lang,'chartGuide'),style:'small',margin:[0,0,0,6]});
   const hormoneKeys=['testosterone','free_testosterone','shbg','estradiol'];const hormoneSets=hormoneKeys.map((k,i)=>{const cs=chartSeriesForKey(k);return {label:doctorAnalyteLabel(k,cs.group?.label||k,lang),unit:cs.unit||'',color:HRT_SERIES_COLORS[i%HRT_SERIES_COLORS.length],points:cs.points.map(p=>({x:new Date(p.date+'T12:00:00').getTime(),y:Number(p.value)}))}}).filter(x=>x.points.some(p=>p.x>=new Date(from+'T00:00:00').getTime()&&p.x<=new Date(to+'T23:59:59').getTime()));
-  if(hormoneSets.length>=2){const ch=doctorPdfChartFromSets(hormoneSets,from,to,{mode:'index',events,lang});if(ch.hasData){content.push({text:doctorText(lang,'hormoneOverview'),style:'h2'});content.push({image:ch.image,width:510,margin:[0,0,0,2]});content.push({text:doctorText(lang,'indexNote'),style:'small',margin:[0,0,0,5]});const lt=doctorEventLegendTable(events,lang);if(lt)content.push(lt)}}
-  if(weights.length>=2){const pts=weights.filter(x=>Number.isFinite(x.weight)).map(x=>({x:new Date(x.date+'T'+(x.time&&x.time!=='—'?x.time:'12:00')+':00').getTime(),y:x.weight}));const ch=doctorPdfChartFromSets([{label:doctorText(lang,'weight'),unit:'kg',points:pts,color:HRT_SERIES_COLORS[0]}],from,to,{mode:'raw',events,lang});if(ch.hasData){content.push({text:doctorText(lang,'weight'),style:'h2'});content.push({image:ch.image,width:510,margin:[0,0,0,6]})}}
-  if(bps.length>=2){const sys=bps.map(x=>({x:new Date(x.date+'T'+(x.time&&x.time!=='—'?x.time:'12:00')+':00').getTime(),y:x.sys})),dia=bps.map(x=>({x:new Date(x.date+'T'+(x.time&&x.time!=='—'?x.time:'12:00')+':00').getTime(),y:x.dia}));const ch=doctorPdfChartFromSets([{label:lang==='fi'?'Systolinen':'Систолическое',unit:'mmHg',points:sys,color:HRT_SERIES_COLORS[1]},{label:lang==='fi'?'Diastolinen':'Диастолическое',unit:'mmHg',points:dia,color:HRT_SERIES_COLORS[4]}],from,to,{mode:'raw',events,lang});if(ch.hasData){content.push({text:doctorText(lang,'bloodPressure'),style:'h2'});content.push({image:ch.image,width:510,margin:[0,0,0,6]})}}
-  const fatPts=metricSeries(6).filter(p=>p.x>=new Date(from+'T00:00:00').getTime()&&p.x<=new Date(to+'T23:59:59').getTime());if(fatPts.length>=2){const ch=doctorPdfChartFromSets([{label:doctorText(lang,'bodyFat'),unit:'%',points:fatPts,color:HRT_SERIES_COLORS[4]}],from,to,{mode:'raw',events,lang});if(ch.hasData){content.push({text:doctorText(lang,'bodyFat'),style:'h2'});content.push({image:ch.image,width:510,margin:[0,0,0,6]})}}
-  const musclePts=metricSeries(76).filter(p=>p.x>=new Date(from+'T00:00:00').getTime()&&p.x<=new Date(to+'T23:59:59').getTime());if(musclePts.length>=2){const ch=doctorPdfChartFromSets([{label:doctorText(lang,'muscleMass'),unit:'kg',points:musclePts,color:HRT_SERIES_COLORS[2]}],from,to,{mode:'raw',events,lang});if(ch.hasData){content.push({text:doctorText(lang,'muscleMass'),style:'h2'});content.push({image:ch.image,width:510,margin:[0,0,0,6]})}}
+  if(hormoneSets.length>=2){const ch=doctorPdfChartFromSets(hormoneSets,from,to,{mode:'index',events,lang});if(ch.hasData){content.push({text:doctorText(lang,'hormoneOverview'),style:'h2'});content.push({image:ch.image,width:515,margin:[0,0,0,4]});content.push({text:doctorText(lang,'indexNote'),style:'small',margin:[0,0,0,5]});const lt=doctorEventLegendTable(events,lang);if(lt)content.push(lt)}}
+  if(monthlyWeights.length>=2){const pts=monthlyWeights.map(x=>({x:x.x,y:x.avg}));const ch=doctorPdfChartFromSets([{label:doctorText(lang,'avgWeight'),unit:'kg',points:pts,color:HRT_SERIES_COLORS[0]}],from,to,{mode:'raw',events,lang});if(ch.hasData){content.push({text:doctorText(lang,'avgWeight'),style:'h2'});content.push({image:ch.image,width:515,margin:[0,0,0,8]})}}
+  if(monthlyBp.length>=2){const sys=monthlyBp.filter(x=>Number.isFinite(x.sys)).map(x=>({x:x.x,y:x.sys})),dia=monthlyBp.filter(x=>Number.isFinite(x.dia)).map(x=>({x:x.x,y:x.dia}));const ch=doctorPdfChartFromSets([{label:lang==='fi'?'Systolinen ka.':'Систолическое ср.',unit:'mmHg',points:sys,color:HRT_SERIES_COLORS[1]},{label:lang==='fi'?'Diastolinen ka.':'Диастолическое ср.',unit:'mmHg',points:dia,color:HRT_SERIES_COLORS[4]}],from,to,{mode:'raw',events,lang});if(ch.hasData){content.push({text:lang==='fi'?'Verenpaine — kuukausikeskiarvot':'Артериальное давление — среднемесячные значения',style:'h2'});content.push({image:ch.image,width:515,margin:[0,0,0,8]})}const pulse=monthlyBp.filter(x=>Number.isFinite(x.pulse)).map(x=>({x:x.x,y:x.pulse}));if(pulse.length>=2){const ph=doctorPdfChartFromSets([{label:doctorText(lang,'avgPulse'),unit:'/min',points:pulse,color:HRT_SERIES_COLORS[2]}],from,to,{mode:'raw',events,lang});if(ph.hasData){content.push({text:doctorText(lang,'avgPulse'),style:'h2'});content.push({image:ph.image,width:515,margin:[0,0,0,8]})}}}
+  const fatPts=metricSeries(6).filter(p=>p.x>=new Date(from+'T00:00:00').getTime()&&p.x<=new Date(to+'T23:59:59').getTime());if(fatPts.length>=2){const ch=doctorPdfChartFromSets([{label:doctorText(lang,'bodyFat'),unit:'%',points:fatPts,color:HRT_SERIES_COLORS[4]}],from,to,{mode:'raw',events,lang});if(ch.hasData){content.push({text:doctorText(lang,'bodyFat'),style:'h2'});content.push({image:ch.image,width:515,margin:[0,0,0,8]})}}
+  const musclePts=metricSeries(76).filter(p=>p.x>=new Date(from+'T00:00:00').getTime()&&p.x<=new Date(to+'T23:59:59').getTime());if(musclePts.length>=2){const ch=doctorPdfChartFromSets([{label:doctorText(lang,'muscleMass'),unit:'kg',points:musclePts,color:HRT_SERIES_COLORS[2]}],from,to,{mode:'raw',events,lang});if(ch.hasData){content.push({text:doctorText(lang,'muscleMass'),style:'h2'});content.push({image:ch.image,width:515,margin:[0,0,0,8]})}}
   const trendSeries=doctorLabTrendSeries(from,to);content.push({text:doctorText(lang,'individualLabTrends'),style:'h2',margin:[0,9,0,3]});
-  if(!trendSeries.length)content.push(doctorPdfMuted(doctorText(lang,'noLabTrends')));else for(const s of trendSeries){const ch=doctorPdfChartFromSets([{label:doctorAnalyteLabel(s.key,s.label,lang),unit:s.unit,points:s.points,color:HRT_SERIES_COLORS[0]}],from,to,{mode:'raw',events,lang});if(ch.hasData){content.push({text:`${doctorAnalyteLabel(s.key,s.label,lang)}${s.unit?' · '+s.unit:''}`,style:'h3',margin:[0,6,0,2]});content.push({image:ch.image,width:510,margin:[0,0,0,5]})}}
+  if(!trendSeries.length)content.push(doctorPdfMuted(doctorText(lang,'noLabTrends')));else for(const s of trendSeries){const ch=doctorPdfChartFromSets([{label:doctorAnalyteLabel(s.key,s.label,lang),unit:s.unit,points:s.points,color:HRT_SERIES_COLORS[0]}],from,to,{mode:'raw',events,lang});if(ch.hasData){content.push({text:`${doctorAnalyteLabel(s.key,s.label,lang)}${s.unit?' · '+s.unit:''}`,style:'h3',margin:[0,6,0,2]});content.push({image:ch.image,width:515,margin:[0,0,0,7]})}}
 
   content.push(doctorPdfSectionTitle(doctorText(lang,'labs')));
   if(!labs.length)content.push(doctorPdfMuted(doctorText(lang,'noData')));else for(const l of labs){content.push({text:`${doctorFmtDate(l.date,lang)}${l.time?' · '+l.time:''} · ${l.lab||doctorText(lang,'lab')}`,style:'h2',margin:[0,8,0,2]});content.push({text:`${doctorText(lang,'protocolAtDate')}: ${doctorProtocolSummaryAt(l.date,lang)}\n${doctorText(lang,'doseContext')}: ${doctorDoseContextText(l,lang)}`,style:'small',margin:[0,0,0,4]});content.push({table:{headerRows:1,widths:['*',85,105,125],body:[[doctorText(lang,'analyte'),doctorText(lang,'result'),doctorText(lang,'reference'),doctorText(lang,'personalTarget')],...doctorLabRowsForReport(l,lang)]},layout:'lightHorizontalLines',fontSize:7.2})}
 
   content.push(doctorPdfSectionTitle(doctorText(lang,'withings')));
-  content.push({text:doctorText(lang,'weight'),style:'h2'});if(weights.length)content.push({table:{headerRows:1,widths:[60,38,52,58,'*'],body:[[doctorText(lang,'date'),doctorText(lang,'time'),doctorText(lang,'weight'),doctorText(lang,'source'),doctorText(lang,'protocolAtDate')],...weights.map(x=>[doctorFmtDate(x.date,lang),x.time,`${doctorNum(x.weight,2,lang)} kg`,doctorSource(x.source,lang),doctorProtocolSummaryAt(x.date,lang)])]},layout:'lightHorizontalLines',fontSize:7.3});else content.push(doctorPdfMuted(doctorText(lang,'noData')));
-  content.push({text:doctorText(lang,'bloodPressure'),style:'h2',margin:[0,8,0,3]});if(bps.length)content.push({table:{headerRows:1,widths:[58,36,62,54,58,'*'],body:[[doctorText(lang,'date'),doctorText(lang,'time'),doctorText(lang,'bp'),doctorText(lang,'pulse'),doctorText(lang,'source'),doctorText(lang,'protocolAtDate')],...bps.map(x=>[doctorFmtDate(x.date,lang),x.time,`${Math.round(x.sys)}/${Math.round(x.dia)}`,x.pulse!=null?`${Math.round(x.pulse)} /min`:'—',doctorSource(x.source,lang),doctorProtocolSummaryAt(x.date,lang)])]},layout:'lightHorizontalLines',fontSize:7.1});else content.push(doctorPdfMuted(doctorText(lang,'noData')));
+  content.push({text:lang==='fi'?'Paino — kuukausikeskiarvot':'Вес — среднемесячные значения',style:'h2'});
+  if(monthlyWeights.length)content.push({table:{headerRows:1,widths:['*',105,70],body:[[doctorText(lang,'month'),doctorText(lang,'avgWeight'),doctorText(lang,'samples')],...monthlyWeights.map(x=>[doctorMonthLabel(x.month,lang),`${doctorNum(x.avg,2,lang)} kg`,String(x.n)])]},layout:'lightHorizontalLines',fontSize:8});else content.push(doctorPdfMuted(doctorText(lang,'noData')));
+  content.push({text:lang==='fi'?'Verenpaine ja syke — kuukausikeskiarvot':'Давление и пульс — среднемесячные значения',style:'h2',margin:[0,9,0,3]});
+  if(monthlyBp.length)content.push({table:{headerRows:1,widths:['*',82,82,75,58],body:[[doctorText(lang,'month'),doctorText(lang,'avgSystolic'),doctorText(lang,'avgDiastolic'),doctorText(lang,'avgPulse'),doctorText(lang,'samples')],...monthlyBp.map(x=>[doctorMonthLabel(x.month,lang),Number.isFinite(x.sys)?doctorNum(x.sys,1,lang):'—',Number.isFinite(x.dia)?doctorNum(x.dia,1,lang):'—',Number.isFinite(x.pulse)?doctorNum(x.pulse,1,lang):'—',String(x.n)])]},layout:'lightHorizontalLines',fontSize:7.8});else content.push(doctorPdfMuted(doctorText(lang,'noData')));
   const wd=doctorWithingsPeriodData(from,to);
-  content.push({text:doctorText(lang,'activity'),style:'h2',margin:[0,8,0,3]});if(wd.activities.length)content.push({table:{headerRows:1,widths:[60,60,70,60,65],body:[[doctorText(lang,'date'),doctorText(lang,'steps'),doctorText(lang,'distance'),doctorText(lang,'calories'),doctorText(lang,'avgHr')],...wd.activities.map(a=>[doctorFmtDate(a.date,lang),Number(a.steps||0).toLocaleString(doctorLocale(lang)),Number.isFinite(Number(a.distance))?`${doctorNum(Number(a.distance)/1000,2,lang)} km`:'—',doctorNum(a.calories,0,lang),doctorNum(a.hr_average,0,lang)])]},layout:'lightHorizontalLines',fontSize:7.4});else content.push(doctorPdfMuted(doctorText(lang,'noData')));
-  content.push({text:doctorText(lang,'sleepData'),style:'h2',margin:[0,8,0,3]});if(wd.sleeps.length)content.push({table:{headerRows:1,widths:[60,62,62,62,52,58],body:[[doctorText(lang,'date'),doctorText(lang,'sleep'),doctorText(lang,'deep'),doctorText(lang,'rem'),doctorText(lang,'score'),doctorText(lang,'avgHr')],...wd.sleeps.map(x=>{const d=x.data||{};return [doctorFmtDate(x._date,lang),doctorDuration(d.total_sleep_time||d.asleepduration,lang),doctorDuration(d.deepsleepduration,lang),doctorDuration(d.remsleepduration,lang),doctorNum(d.sleep_score,0,lang),doctorNum(d.hr_average,0,lang)]})]},layout:'lightHorizontalLines',fontSize:7.2});else content.push(doctorPdfMuted(doctorText(lang,'noData')));
-  content.push({text:doctorText(lang,'workouts'),style:'h2',margin:[0,8,0,3]});if(wd.workouts.length)content.push({table:{headerRows:1,widths:[60,95,72,55,60],body:[[doctorText(lang,'date'),doctorText(lang,'category'),doctorText(lang,'duration'),doctorText(lang,'calories'),doctorText(lang,'avgHr')],...wd.workouts.map(x=>{const d=x.data||x;return [doctorFmtDate(x._date,lang),String(x.category??x.sport??'—'),doctorDuration(x.enddate&&x.startdate?Number(x.enddate)-Number(x.startdate):d.duration,lang),doctorNum(d.calories,0,lang),doctorNum(d.hr_average,0,lang)]})]},layout:'lightHorizontalLines',fontSize:7.2});else content.push(doctorPdfMuted(doctorText(lang,'noData')));
+  content.push({text:doctorText(lang,'sleepData'),style:'h2',margin:[0,9,0,3]});if(wd.sleeps.length)content.push({table:{headerRows:1,widths:[60,62,62,62,52,58],body:[[doctorText(lang,'date'),doctorText(lang,'sleep'),doctorText(lang,'deep'),doctorText(lang,'rem'),doctorText(lang,'score'),doctorText(lang,'avgHr')],...wd.sleeps.map(x=>{const d=x.data||{};return [doctorFmtDate(x._date,lang),doctorDuration(d.total_sleep_time||d.asleepduration,lang),doctorDuration(d.deepsleepduration,lang),doctorDuration(d.remsleepduration,lang),doctorNum(d.sleep_score,0,lang),doctorNum(d.hr_average,0,lang)]})]},layout:'lightHorizontalLines',fontSize:7.5});else content.push(doctorPdfMuted(doctorText(lang,'noData')));
 
   content.push(doctorPdfSectionTitle(doctorText(lang,'wellbeing')));
   if(well.length)content.push({table:{headerRows:1,widths:[58,37,37,37,42,48,50,55],body:[[doctorText(lang,'date'),doctorText(lang,'energy'),doctorText(lang,'libido'),doctorText(lang,'sleep'),doctorText(lang,'mood'),doctorText(lang,'recovery'),doctorText(lang,'weight'),doctorText(lang,'bp')],...well.map(w=>[doctorFmtDate(w.date,lang),w.energy??'—',w.libido??'—',w.sleep??'—',w.mood??'—',w.recovery??'—',w.weight!=null?`${w.weight} kg`:'—',w.bp||'—'])]},layout:'lightHorizontalLines',fontSize:7});else content.push(doctorPdfMuted(doctorText(lang,'noData')));
   content.push({text:doctorText(lang,'reportNote'),style:'disclaimer',margin:[0,15,0,0]});
   const doc={
     pageSize:'A4',pageMargins:[28,34,28,34],info:{title:`${doctorText(lang,'report')} ${from}–${to}`,subject:'HRT Health Studio physician report'},content,
-    styles:{title:{fontSize:19,bold:true,color:'#17212b',margin:[0,0,0,3]},subtitle:{fontSize:8.5,color:'#667788',margin:[0,0,0,8]},h1:{fontSize:13,bold:true,color:'#17212b',margin:[0,10,0,4]},h2:{fontSize:9.5,bold:true,color:'#263746'},h3:{fontSize:8.5,bold:true,color:'#34485a'},small:{fontSize:7.2,color:'#667788',lineHeight:1.2},muted:{fontSize:8,color:'#667788'},box:{fontSize:8.2,color:'#263746',margin:[0,2,0,5]},kpiLabel:{fontSize:6.8,color:'#718095',alignment:'center'},kpiValue:{fontSize:14,bold:true,color:'#17212b',alignment:'center'},disclaimer:{fontSize:7,color:'#778694',italics:true,lineHeight:1.25}},
-    defaultStyle:{font:'Roboto',fontSize:8,color:'#263746'},
+    styles:{title:{fontSize:21,bold:true,color:'#17212b',margin:[0,0,0,4]},subtitle:{fontSize:9,color:'#667788',margin:[0,0,0,6]},sectionTitle:{fontSize:13.5,bold:true,color:'#20384d'},h1:{fontSize:13.5,bold:true,color:'#17212b',margin:[0,10,0,4]},h2:{fontSize:10.5,bold:true,color:'#263746'},h3:{fontSize:9.4,bold:true,color:'#34485a'},small:{fontSize:7.8,color:'#667788',lineHeight:1.25},muted:{fontSize:8.4,color:'#667788'},box:{fontSize:8.7,color:'#263746',margin:[0,2,0,6]},kpiLabel:{fontSize:7.1,color:'#718095',alignment:'center'},kpiValue:{fontSize:15,bold:true,color:'#17212b',alignment:'center'},disclaimer:{fontSize:7.4,color:'#778694',italics:true,lineHeight:1.3}},
+    defaultStyle:{font:'Roboto',fontSize:8.4,color:'#263746'},
     footer:(current,pageCount)=>({text:`HRT Health Studio · ${doctorText(lang,'page')} ${current}/${pageCount}`,alignment:'center',fontSize:7,color:'#8a98a6',margin:[0,8,0,0]})
   };
   const filename=`${doctorText(lang,'reportFile')}_${from}_${to}_${lang.toUpperCase()}.pdf`;
