@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HRT Health Studio v3.6.1 — VM Private Suite UI</title>
+<title>HRT Health Studio v3.7.0 — VM Private Suite UI</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -292,13 +292,24 @@ canvas,.chart-panel,.withings-chart,.comparison-wrap{background:var(--canvas)}.c
 html[data-theme="light"] .note{color:var(--muted)}html[data-theme="light"] .note b{color:var(--text)!important}html[data-theme="light"] th{color:#758399}html[data-theme="light"] .hrt-auth-card{background:#fff;border-color:var(--line2);box-shadow:0 28px 90px rgba(30,50,75,.18)}html[data-theme="light"] #hrtAuthGate{background:radial-gradient(circle at 50% 15%,rgba(38,120,200,.10),transparent 34%),linear-gradient(180deg,#f7f9fc,#edf2f7 55%,#f7f9fc)}
 @media(max-width:930px){.app{grid-template-columns:1fr}aside{padding:14px}.hrt-theme-sidebar{margin:8px 0}.theme-toggle{padding:8px 10px}main{padding:24px 16px 40px}}
 
+
+/* v3.7.0 — comprehensive bilingual physician report */
+.doctor-report-card{border-color:color-mix(in srgb,var(--accent) 22%,var(--line));background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 7%,var(--panel)),var(--panel))}
+.doctor-report-actions{display:flex;gap:8px;flex-wrap:wrap}
+.doctor-report-features{font-size:11px;color:var(--muted);line-height:1.55;border-top:1px solid var(--line);padding-top:10px}
+.doctor-report-modal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.doctor-report-lang{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.doctor-report-lang button.active{border-color:color-mix(in srgb,var(--accent) 52%,transparent);background:color-mix(in srgb,var(--accent) 13%,transparent);color:var(--accent)}
+.doctor-report-scope{margin-top:12px;padding:11px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.018);font-size:10px;color:var(--muted);line-height:1.5}
+@media(max-width:650px){.doctor-report-actions{width:100%}.doctor-report-actions .btn{flex:1 1 150px}.doctor-report-modal-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body class="hrt-auth-locked">
 <div id="hrtAuthGate">
   <div class="hrt-auth-card">
     <div class="hrt-auth-brand">VM PRIVATE SUITE</div>
-    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.6.1</span></div>
+    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.7.0</span></div>
     <div class="hrt-auth-sub">Используйте тот же аккаунт, что и в Планировании капитала</div>
     <label>Email<input id="hrtGateEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
     <label>Пароль<input id="hrtGatePassword" type="password" autocomplete="current-password" placeholder="Введите пароль"></label>
@@ -310,10 +321,10 @@ html[data-theme="light"] .note{color:var(--muted)}html[data-theme="light"] .note
   </div>
 </div>
 <div id="hrtAppShell" class="auth-hidden">
-<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.6.1</div>
+<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.7.0</div>
 <div class="app">
 <aside>
-  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.6.0</small></div>
+  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.7.0</small></div>
   <div class="hrt-theme-sidebar"><button class="theme-toggle" type="button" onclick="toggleHrtTheme()" title="Переключить светлую/тёмную тему"><span class="theme-icon" id="hrtThemeIcon">☾</span><span class="theme-label" id="hrtThemeLabel">Тёмная тема</span></button></div>
   <nav>
     <button class="nav active" data-view="dashboard">Главная</button>
@@ -341,6 +352,19 @@ html[data-theme="light"] .note{color:var(--muted)}html[data-theme="light"] .note
 <main>
 <section id="dashboard" class="view active">
   <div class="top"><div><h1>Контроль ГЗТ</h1><div class="sub">Протоколы действуют автоматически. Вручную добавляются только изменения и исключения.</div></div><button class="btn primary" onclick="openQuickDeviation()">Сегодня было иначе</button></div>
+  <div class="panel doctor-report-card">
+    <div class="head">
+      <div>
+        <h2>Полный отчёт врачу <span class="help-dot" tabindex="0" data-help="Отчёт объединяет историю анализов, динамику показателей, протоколы препаратов, зарегистрированные отклонения, данные самочувствия и доступные данные Withings. На графиках отмечаются изменения схемы лечения и отклонения.">?</span></h2>
+        <div class="sub">Максимально полный PDF за выбранный период · русский или финский язык.</div>
+      </div>
+      <div class="doctor-report-actions">
+        <button class="btn primary" type="button" onclick="openDoctorReportModal('ru')">Русский PDF</button>
+        <button class="btn" type="button" onclick="openDoctorReportModal('fi')">Suomenkielinen PDF</button>
+      </div>
+    </div>
+    <div class="doctor-report-features">Анализы и их динамика · препараты и изменения схемы на графиках · отклонения от протокола · безопасность · самочувствие · вес, давление и доступные данные Withings</div>
+  </div>
   <div class="grid g4" id="dashKpis"></div>
   <div class="panel" id="dashboardWithingsPanel">
     <div class="head"><div><h2>Withings</h2><div class="sub">Последние объективные показатели из подключённых устройств.</div></div><button class="btn" onclick="openView('withings')">Открыть Withings</button></div>
@@ -701,7 +725,7 @@ state.goals=state.goals||[];
 state.labPlans=state.labPlans||[];
 state.settings=state.settings||{};
 state.settings.primaryGoal=state.settings.primaryGoal||'';
-state.settings.appVersion='3.5.0';
+state.settings.appVersion='3.7.0';
 state.withings=state.withings||{measurements:[],activity:[],sleep:[],workouts:[],lastSyncAt:'',autoSync:true,syncDays:365};
 state.withings.measurements=state.withings.measurements||[];state.withings.activity=state.withings.activity||[];state.withings.sleep=state.withings.sleep||[];state.withings.workouts=state.withings.workouts||[];
 if(state.withings.autoSync===undefined)state.withings.autoSync=true;if(!state.withings.syncDays)state.withings.syncDays=365;
@@ -774,7 +798,7 @@ function migrateHrtState(x){
   x.meds=x.meds||[];x.protocols=x.protocols||[];x.deviations=x.deviations||[];x.labs=x.labs||[];
   x.wellbeing=x.wellbeing||[];x.aliasMap=x.aliasMap||{};x.customAnalytes=x.customAnalytes||[];
   x.goals=x.goals||[];x.labPlans=x.labPlans||[];x.settings=x.settings||{};
-  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.5.0';
+  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.7.0';
   x.settings.chartKeys=Array.isArray(x.settings.chartKeys)?x.settings.chartKeys:['testosterone','free_testosterone','shbg','estradiol','hematocrit','hemoglobin'];
   x.settings.comparisonKeys=Array.isArray(x.settings.comparisonKeys)?x.settings.comparisonKeys:['withings:weight','lab:testosterone','lab:free_testosterone'];
   x.settings.comparisonMode=x.settings.comparisonMode||'auto';
@@ -3115,7 +3139,7 @@ function renderLatestChanges(){
   }
   box.innerHTML=cards.length?`<div class="change-grid">${cards.join('')}</div>`:`<div class="empty">Пока недостаточно повторных анализов для сравнения.</div>`;
 }
-const APP_VERSION='3.6.1';
+const APP_VERSION='3.7.0';
 
 function normalizedHctPercent(marker){
   if(!marker)return null;
@@ -3212,51 +3236,403 @@ function readinessHtml(lab){
   </div>`;
 }
 function printDoctorReport(){
-  const labs=[...state.labs].sort((a,b)=>b.date.localeCompare(a.date));
-  const last=labs[0]||null;
-  const a=clinicalAdvice();
-  const readiness=assessLabReadiness(last);
-  const safety=safetySnapshot();
-  const protocols=[...state.protocols].sort((a,b)=>b.start.localeCompare(a.start)).slice(0,8);
-  const well=[...state.wellbeing].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);
-  const goals=state.goals||[];
-  const markerRows=last?.markers?.map(m=>{
-    const key=analyteKeyForMarker(m),g=goalFor(key);
-    let ref='—';if(m.min!=null&&m.max!=null)ref=`${m.min}–${m.max}`;else if(m.max!=null)ref=`<${m.max}`;else if(m.min!=null)ref=`>${m.min}`;
-    let target='—';if(g)target=`${g.min??'—'}–${g.max??'—'} ${g.unit||m.unit||''}`;
-    return `<tr><td>${safeHtml(analyteLabel(key,m.name))}</td><td><b>${m.value} ${safeHtml(m.unit||'')}</b></td><td>${safeHtml(ref)}</td><td>${safeHtml(target)}</td></tr>`;
-  }).join('')||'<tr><td colspan="4">Нет анализов</td></tr>';
-  const dc=last?doseContextSummary(last):null;
-  const win=window.open('','_blank');
-  if(!win)return alert('Браузер заблокировал новое окно. Разрешите всплывающие окна для создания отчёта.');
-  const style=`<style>
-    body{font-family:Arial,sans-serif;color:#17212b;margin:28px;font-size:12px}h1{font-size:24px;margin:0 0 4px}h2{font-size:16px;margin:22px 0 8px;border-bottom:1px solid #d9e1e8;padding-bottom:6px}.muted{color:#697988}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.box{border:1px solid #d9e1e8;border-radius:8px;padding:10px}table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid #e2e7ec;padding:7px;text-align:left}th{font-size:10px;text-transform:uppercase;color:#697988}.warn{color:#a45d00}.bad{color:#b52f3d}.good{color:#218454}.small{font-size:10px}.no-print{margin:12px 0}@media print{.no-print{display:none}body{margin:10mm}}</style>`;
-  const html=`<!doctype html><html><head><meta charset="utf-8"><title>HRT report ${today()}</title>${style}</head><body>
-    <div class="no-print"><button onclick="window.print()">Печать / Сохранить как PDF</button></div>
-    <h1>HRT Health Studio — отчёт врачу</h1>
-    <div class="muted">Версия v${APP_VERSION} · сформирован ${new Date().toLocaleString('ru-RU')}</div>
-    <h2>Текущая цель</h2><div class="box">${safeHtml(state.settings.primaryGoal||'Не указана')}</div>
-    <h2>Текущие протоколы</h2>
-    <div class="grid">${activeProtocols().map(p=>`<div class="box"><b>${safeHtml(medName(p.medId))}</b><br>${safeHtml(scheduleText(p))}<br><span class="muted">с ${fmtDate(p.start)}</span></div>`).join('')||'<div class="box">Нет активных протоколов</div>'}</div>
-    <h2>Последний анализ</h2>
-    <div class="box"><b>${last?fmtDate(last.date):'—'}</b>${last?.time?' · '+last.time:''} · ${safeHtml(last?.lab||'—')}<br>
-      <span class="muted">Контекст дозы: ${dc?`${safeHtml(dc.med)} · ${safeHtml(dc.relation)} · соблюдение: ${safeHtml(dc.adherence)}`:'—'}</span></div>
-    <table><thead><tr><th>Показатель</th><th>Результат</th><th>Референс</th><th>Моя цель</th></tr></thead><tbody>${markerRows}</tbody></table>
-    <h2>Пригодность анализа для оценки схемы</h2>
-    <div class="box ${readiness.level}"><b>${safeHtml(readiness.label)}</b><br>${readiness.reasons.map(x=>`• ${safeHtml(x)}`).join('<br>')}</div>
-    <h2>Safety Dashboard</h2>
-    <div class="grid">${safety.map(x=>`<div class="box ${x.level||''}"><b>${safeHtml(x.label)}</b><br>${safeHtml(x.value)}<br><span class="muted">${safeHtml(x.state)}</span></div>`).join('')}</div>
-    <h2>Что программа предлагает обсудить с врачом</h2>
-    <div class="box">${[...a.warnings,...a.actions].map(x=>`• ${safeHtml(x)}`).join('<br>')||'Нет автоматических пунктов.'}</div>
-    <h2>Последние изменения протокола</h2>
-    <table><thead><tr><th>Дата</th><th>Препарат</th><th>Схема</th></tr></thead><tbody>${protocols.map(p=>`<tr><td>${fmtDate(p.start)}</td><td>${safeHtml(medName(p.medId))}</td><td>${safeHtml(scheduleText(p))}</td></tr>`).join('')||'<tr><td colspan="3">Нет данных</td></tr>'}</tbody></table>
-    <h2>Последнее самочувствие</h2>
-    <table><thead><tr><th>Дата</th><th>Энергия</th><th>Либидо</th><th>Сон</th><th>Настроение</th><th>Восстановление</th><th>Вес</th><th>АД</th></tr></thead><tbody>${well.map(w=>`<tr><td>${fmtDate(w.date)}</td><td>${w.energy??'—'}</td><td>${w.libido??'—'}</td><td>${w.sleep??'—'}</td><td>${w.mood??'—'}</td><td>${w.recovery??'—'}</td><td>${w.weight??'—'}</td><td>${safeHtml(w.bp||'—')}</td></tr>`).join('')||'<tr><td colspan="8">Нет данных</td></tr>'}</tbody></table>
-    <p class="small muted" style="margin-top:24px">Отчёт предназначен для обсуждения с врачом. Автоматические оценки программы не являются диагнозом или назначением лечения.</p>
-    </body></html>`;
-  win.document.open();win.document.write(html);win.document.close();
-  setTimeout(()=>{try{win.focus()}catch{}},250);
+  openDoctorReportModal('ru');
 }
+
+const DOCTOR_ANALYTE_FI={
+  testosterone:'Testosteroni',free_testosterone:'Vapaa testosteroni',shbg:'SHBG',estradiol:'Estradioli (E2)',lh:'LH',fsh:'FSH',prolactin:'Prolaktiini',
+  hematocrit:'Hematokriitti',hemoglobin:'Hemoglobiini',leukocytes:'Leukosyytit',erythrocytes:'Erytrosyytit',platelets:'Trombosyytit',mcv:'MCV',mch:'MCH',mchc:'MCHC',rdw:'RDW',
+  hba1c:'HbA1c',insulin:'Insuliini',tsh:'TSH',cortisol:'Kortisoli',igf1:'IGF-1',psa:'PSA',alt:'ALAT (ALT)',ast:'ASAT (AST)',hdl:'HDL',ldl:'LDL',triglycerides:'Triglyseridit',ferritin:'Ferritiini',
+  total_cholesterol:'Kokonaiskolesteroli',non_hdl:'Non-HDL',chol_hdl_ratio:'Kokonaiskolesteroli/HDL-suhde',hs_crp:'Herkkä CRP',creatinine:'Kreatiniini',egfr:'eGFR',
+  b12:'B12-vitamiini',vitamin_d:'D-vitamiini',folate:'Folaatti',progesterone:'Progesteroni',albumin:'Albumiini',potassium:'Kalium',sodium:'Natrium',urate:'Uraatti',
+  alp:'AFOS',ggt:'GT (GGT)',transferrin_receptor:'Liukoinen transferriinireseptori',magnesium:'Magnesium',free_t4:'Vapaa T4',
+  eosinophils:'Eosinofiilit',basophils:'Basofiilit',lymphocytes:'Lymfosyytit',monocytes:'Monosyytit',neutrophils:'Neutrofiilit',
+  basophils_pct:'Basofiilit %',eosinophils_pct:'Eosinofiilit %',lymphocytes_pct:'Lymfosyytit %',monocytes_pct:'Monosyytit %',neutrophils_pct:'Neutrofiilit %',bp:'Verenpaine',weight:'Paino'
+};
+
+const DOCTOR_TEXT={
+  ru:{
+    report:'HRT Health Studio — полный отчёт врачу',period:'Период',generated:'Сформирован',version:'Версия',language:'Язык отчёта',russian:'Русский',finnish:'Финский',
+    overview:'Краткое резюме',goal:'Текущая цель лечения',goalMissing:'Цель не указана',currentTreatment:'Текущая схема лечения',noActiveTreatment:'Нет активных протоколов на конец выбранного периода.',
+    dataQuality:'Пригодность последнего анализа для оценки схемы',safety:'Показатели безопасности и общего риска',doctorDiscussion:'Что обсудить с врачом',observations:'Наблюдения программы',
+    timeline:'История лечения и отклонений',treatmentChanges:'Изменения протокола',deviations:'Зарегистрированные отклонения',noProtocols:'В выбранном периоде нет записанных протоколов.',noDeviations:'В выбранном периоде нет зарегистрированных отклонений.',
+    charts:'Динамика показателей',chartGuide:'Вертикальные метки P — начало/изменение протокола; D — зарегистрированное отклонение. Метка в начале периода может означать протокол, начатый раньше и продолжавшийся в выбранном периоде.',
+    hormoneOverview:'Гормональная динамика — сравнительный индекс',individualLabTrends:'Динамика лабораторных показателей',weight:'Вес',bodyFat:'Жировая масса, %',muscleMass:'Мышечная масса',bloodPressure:'Артериальное давление',
+    labs:'Все лабораторные анализы',lab:'Лаборатория',analyte:'Показатель',result:'Результат',reference:'Референс лаборатории',personalTarget:'Личная цель',protocolAtDate:'Протокол на дату анализа',doseContext:'Контекст дозы',
+    date:'Дата',time:'Время',medicine:'Препарат',scheme:'Схема',periodCol:'Период',type:'Тип',fact:'Факт',comment:'Комментарий',source:'Источник',pulse:'Пульс',
+    wellbeing:'Самочувствие',energy:'Энергия',libido:'Либидо',sleep:'Сон',mood:'Настроение',recovery:'Восстановление',bp:'АД',
+    withings:'Объективные данные Withings',activity:'Активность',steps:'Шаги',distance:'Расстояние',calories:'Ккал',avgHr:'Средний пульс',sleepData:'Сон',deep:'Глубокий сон',rem:'REM',score:'Оценка',workouts:'Тренировки',category:'Категория',duration:'Длительность',
+    noData:'Нет данных за выбранный период.',notSet:'Не задана',unknown:'Не указано',latestValue:'Последнее значение',insideGoal:'В личной цели',belowGoal:'Ниже личной цели',aboveGoal:'Выше личной цели',
+    reportNote:'Отчёт предназначен для обсуждения с врачом. Автоматические оценки программы не являются диагнозом или назначением лечения. Данные о лекарствах отражают записанный базовый протокол и зарегистрированные отклонения; они не подтверждают фактический приём каждой отдельной дозы.',
+    indexNote:'Индексный график: первое доступное значение каждой линии в выбранном периоде = 100. Он показывает относительное направление изменений; точные исходные значения приведены в таблицах и на отдельных графиках.',
+    fullScope:'Отчёт включает все доступные лабораторные анализы, повторные лабораторные показатели с графиками, историю препаратов, отклонения, самочувствие, вес, давление и доступные данные Withings.',
+    lastLab:'Последний анализ',labsCount:'Анализов',protocolsCount:'Протоколов',deviationsCount:'Отклонений',measurementsCount:'Измерений',
+    from:'Период с',to:'Период по',create:'Скачать полный PDF',cancel:'Отмена',chooseLanguage:'Язык',
+    reportDialogTitle:'Полный отчёт врачу',reportDialogHelp:'По умолчанию выбран весь доступный период. В отчёт войдут все доступные медицинские данные за эти даты и графики динамики.',
+    noLabTrends:'Нет лабораторных показателей с двумя или более значениями в выбранном периоде.',
+    protocolStartedEarlier:'начат до выбранного периода',now:'сейчас',adherence:'Соблюдение схемы',lastDose:'Последняя доза',relation:'Точка относительно дозы',
+    reportFile:'HRT_Doctor_Report',page:'стр.'
+  },
+  fi:{
+    report:'HRT Health Studio — kattava lääkäriraportti',period:'Ajanjakso',generated:'Luotu',version:'Versio',language:'Raportin kieli',russian:'Venäjä',finnish:'Suomi',
+    overview:'Yhteenveto',goal:'Hoidon nykyinen tavoite',goalMissing:'Tavoitetta ei ole määritetty',currentTreatment:'Nykyinen lääkitys ja hoito-ohjelma',noActiveTreatment:'Valitun ajanjakson lopussa ei ole aktiivisia kirjattuja protokollia.',
+    dataQuality:'Viimeisimmän laboratoriokokeen soveltuvuus hoito-ohjelman arviointiin',safety:'Turvallisuus- ja yleisen riskin seuranta',doctorDiscussion:'Lääkärin kanssa keskusteltavat asiat',observations:'Ohjelman havainnot',
+    timeline:'Hoidon aikajana ja poikkeamat',treatmentChanges:'Hoitoprotokollan muutokset',deviations:'Kirjatut poikkeamat',noProtocols:'Valitulla ajanjaksolla ei ole kirjattuja protokollia.',noDeviations:'Valitulla ajanjaksolla ei ole kirjattuja poikkeamia.',
+    charts:'Mittausarvojen kehitys',chartGuide:'Pystymerkinnät P = protokollan aloitus/muutos ja D = kirjattu poikkeama. Ajanjakson alussa oleva merkintä voi tarkoittaa protokollaa, joka alkoi ennen valittua ajanjaksoa ja jatkui sen aikana.',
+    hormoneOverview:'Hormonien kehitys — vertailuindeksi',individualLabTrends:'Laboratoriotulosten kehitys',weight:'Paino',bodyFat:'Rasvaprosentti',muscleMass:'Lihasmassa',bloodPressure:'Verenpaine',
+    labs:'Kaikki laboratoriotutkimukset',lab:'Laboratorio',analyte:'Tutkimus',result:'Tulos',reference:'Laboratorion viitealue',personalTarget:'Henkilökohtainen tavoite',protocolAtDate:'Protokolla näytteenottopäivänä',doseContext:'Annoskonteksti',
+    date:'Päivä',time:'Aika',medicine:'Lääke',scheme:'Annostus / ohjelma',periodCol:'Ajanjakso',type:'Tyyppi',fact:'Toteutunut',comment:'Kommentti',source:'Lähde',pulse:'Syke',
+    wellbeing:'Oma vointi',energy:'Energia',libido:'Libido',sleep:'Uni',mood:'Mieliala',recovery:'Palautuminen',bp:'Verenpaine',
+    withings:'Withingsin objektiiviset tiedot',activity:'Aktiivisuus',steps:'Askeleet',distance:'Matka',calories:'kcal',avgHr:'Keskisyke',sleepData:'Uni',deep:'Syvä uni',rem:'REM',score:'Pisteet',workouts:'Harjoitukset',category:'Luokka',duration:'Kesto',
+    noData:'Ei tietoja valitulta ajanjaksolta.',notSet:'Ei määritetty',unknown:'Ei ilmoitettu',latestValue:'Viimeisin arvo',insideGoal:'Henkilökohtaisella tavoitealueella',belowGoal:'Alle henkilökohtaisen tavoitealueen',aboveGoal:'Yli henkilökohtaisen tavoitealueen',
+    reportNote:'Raportti on tarkoitettu lääkärin kanssa käytävää keskustelua varten. Ohjelman automaattiset arviot eivät ole diagnoosi tai hoitomääräys. Lääkitystä koskevat tiedot perustuvat kirjattuun perusprotokollaan ja kirjattuihin poikkeamiin; ne eivät vahvista jokaisen yksittäisen annoksen toteutunutta ottamista.',
+    indexNote:'Indeksikaavio: kunkin sarjan ensimmäinen käytettävissä oleva arvo valitulla ajanjaksolla = 100. Kaavio näyttää muutoksen suunnan suhteellisesti; tarkat alkuperäiset arvot ovat taulukoissa ja erillisissä kaavioissa.',
+    fullScope:'Raportti sisältää kaikki käytettävissä olevat laboratoriotutkimukset, toistettujen laboratoriomittausten trendikaaviot, lääkehistorian, poikkeamat, oman voinnin, painon, verenpaineen ja käytettävissä olevat Withings-tiedot.',
+    lastLab:'Viimeisin laboratoriotutkimus',labsCount:'Laboratoriotutkimuksia',protocolsCount:'Protokollia',deviationsCount:'Poikkeamia',measurementsCount:'Mittauksia',
+    from:'Ajanjakso alkaa',to:'Ajanjakso päättyy',create:'Lataa kattava PDF',cancel:'Peruuta',chooseLanguage:'Kieli',
+    reportDialogTitle:'Kattava lääkäriraportti',reportDialogHelp:'Oletuksena valitaan koko käytettävissä oleva ajanjakso. Raporttiin sisällytetään kaikki käytettävissä olevat terveystiedot valituilta päiviltä ja trendikaaviot.',
+    noLabTrends:'Valitulla ajanjaksolla ei ole laboratoriomittaria, jolla olisi vähintään kaksi tulosta.',
+    protocolStartedEarlier:'alkanut ennen valittua ajanjaksoa',now:'nyt',adherence:'Hoidon toteutuminen',lastDose:'Viimeisin annos',relation:'Suhde viimeiseen annokseen',
+    reportFile:'HRT_Laakariraportti',page:'s.'
+  }
+};
+function doctorText(lang,key){return (DOCTOR_TEXT[lang]||DOCTOR_TEXT.ru)[key]??DOCTOR_TEXT.ru[key]??key}
+function doctorLocale(lang){return lang==='fi'?'fi-FI':'ru-RU'}
+function doctorFmtDate(s,lang='ru'){return s?new Date(s+'T12:00:00').toLocaleDateString(doctorLocale(lang)):'—'}
+function doctorFmtDateTime(x,lang='ru'){if(!x)return '—';const d=new Date(x);return Number.isNaN(d.getTime())?String(x):d.toLocaleString(doctorLocale(lang))}
+function doctorNum(v,d=1,lang='ru'){const n=Number(v);return Number.isFinite(n)?n.toLocaleString(doctorLocale(lang),{maximumFractionDigits:d,minimumFractionDigits:0}):'—'}
+function doctorDuration(sec,lang='ru'){const n=Number(sec);if(!Number.isFinite(n)||n<=0)return '—';const h=Math.floor(n/3600),m=Math.round((n%3600)/60);return lang==='fi'?`${h} h ${m} min`:`${h} ч ${m} мин`}
+function doctorAnalyteLabel(key,fallback='',lang='ru'){return lang==='fi'?(DOCTOR_ANALYTE_FI[key]||fallback||key):analyteLabel(key,fallback||key)}
+function doctorUnit(unit,lang='ru'){
+  if(lang!=='fi')return unit||'';
+  const u=String(unit||'').trim();
+  const map={'нажатий':'painallusta','нажатие':'painallus','таблеток':'tablettia','таблетка':'tabletti','капсул':'kapselia','мл':'ml'};
+  return map[u.toLowerCase()]||u;
+}
+function doctorScheduleText(p,lang='ru'){
+  if(!p)return '—';
+  const dose=`${p.dose??'—'} ${doctorUnit(p.unit,lang)}`.trim();
+  if(lang==='fi'){
+    if(p.frequency==='daily')return `${dose} päivittäin${p.time?' · '+p.time:''}`;
+    if(p.frequency==='every_n_days')return `${dose} ${p.interval||'—'} vrk välein${p.time?' · '+p.time:''}`;
+    if(p.frequency==='weekly'){
+      const days=['su','ma','ti','ke','to','pe','la'];
+      const day=(p.weekday!==''&&p.weekday!=null)?days[Number(p.weekday)]||'':'';return `${dose} kerran viikossa${day?' · '+day:''}${p.time?' · '+p.time:''}`;
+    }
+    return dose;
+  }
+  return scheduleText(p);
+}
+function doctorShortSchedule(p,lang='ru'){
+  if(!p)return '';
+  const dose=`${p.dose??'—'} ${doctorUnit(p.unit,lang)}`.trim();
+  if(lang==='fi'){
+    if(p.frequency==='daily')return `${dose}/vrk`;
+    if(p.frequency==='every_n_days')return `${dose}/${p.interval||'—'} vrk`;
+    if(p.frequency==='weekly')return `${dose}/vko`;
+  }else{
+    if(p.frequency==='daily')return `${dose}/день`;
+    if(p.frequency==='every_n_days')return `${dose}/${p.interval||'—'} дн.`;
+    if(p.frequency==='weekly')return `${dose}/нед.`;
+  }
+  return dose;
+}
+function doctorProtocolSummaryAt(date,lang='ru'){
+  const ps=protocolAtDate(date);
+  if(!ps.length)return lang==='fi'?'Ei kirjattua aktiivista protokollaa':'Нет записанного активного протокола';
+  return ps.map(p=>`${medName(p.medId)} · ${doctorScheduleText(p,lang)}`).join('; ');
+}
+function doctorDeviationType(d,lang='ru'){
+  const x=String(d?.type||'').toLowerCase();
+  const ru={missed:'Пропущена доза',different_dose:'Другая доза',late:'Доза позже',extra:'Дополнительная доза'};
+  const fi={missed:'Annos jäi väliin',different_dose:'Poikkeava annos',late:'Annos myöhemmin',extra:'Ylimääräinen annos'};
+  return (lang==='fi'?fi:ru)[x]||d?.type||'—';
+}
+function doctorDeviationFact(d,lang='ru'){
+  if(String(d?.type||'')==='missed')return lang==='fi'?'Ei annosta':'Доза не принята';
+  const parts=[];if(d?.dose!==null&&d?.dose!==undefined&&d?.dose!=='')parts.push(`${d.dose} ${doctorUnit(d.unit,lang)}`.trim());if(d?.time)parts.push(d.time);return parts.join(' · ')||'—';
+}
+function doctorSource(src,lang='ru'){
+  if(lang!=='fi')return src||'—';
+  if(src==='Самочувствие')return 'Oma vointi';
+  return src||'—';
+}
+function doctorRelationLabel(v,lang='ru'){
+  const ru={unknown:'не указано',trough:'перед следующей дозой / trough',post_dose:'после дозы',peak:'ожидаемый пик',random:'случайное время'};
+  const fi={unknown:'ei ilmoitettu',trough:'ennen seuraavaa annosta / trough',post_dose:'annoksen jälkeen',peak:'odotettu huippu',random:'satunnainen ajankohta'};
+  return (lang==='fi'?fi:ru)[v]||v||doctorText(lang,'unknown');
+}
+function doctorAdherenceLabel(v,lang='ru'){
+  const ru={unknown:'не указано',yes:'без отклонений',minor:'небольшие отклонения',no:'существенные отклонения'};
+  const fi={unknown:'ei ilmoitettu',yes:'ei poikkeamia',minor:'vähäisiä poikkeamia',no:'merkittäviä poikkeamia'};
+  return (lang==='fi'?fi:ru)[v]||v||doctorText(lang,'unknown');
+}
+function doctorDoseContextText(lab,lang='ru'){
+  if(!lab)return '—';const c=lab.doseContext||{};const parts=[];
+  if(c.medId)parts.push(`${lang==='fi'?'Lääke':'Препарат'}: ${medName(c.medId)}`);
+  if(c.lastDoseAt)parts.push(`${doctorText(lang,'lastDose')}: ${doctorFmtDateTime(c.lastDoseAt,lang)}`);
+  if(c.relation)parts.push(`${doctorText(lang,'relation')}: ${doctorRelationLabel(c.relation,lang)}`);
+  if(c.adherence)parts.push(`${doctorText(lang,'adherence')}: ${doctorAdherenceLabel(c.adherence,lang)}`);
+  return parts.join(' · ')||'—';
+}
+function doctorGoalText(key,value,unit,lang='ru'){
+  const g=goalFor(key);if(!g)return doctorText(lang,'notSet');
+  const lo=g.min===null||g.min===''?'—':g.min,hi=g.max===null||g.max===''?'—':g.max;
+  const target=`${lo}–${hi} ${g.unit||unit||''}`.trim();
+  if(!Number.isFinite(Number(value)))return target;
+  const st=goalStatus(key,value).status;
+  const label=st==='ok'?doctorText(lang,'insideGoal'):(st==='low'?doctorText(lang,'belowGoal'):(st==='high'?doctorText(lang,'aboveGoal'):''));
+  return label?`${target} · ${label}`:target;
+}
+function doctorReportBounds(){
+  const dates=[];
+  for(const l of state.labs||[])if(l.date)dates.push(l.date);
+  for(const p of state.protocols||[]){if(p.start)dates.push(p.start);if(p.end)dates.push(p.end)}
+  for(const d of state.deviations||[])if(d.date)dates.push(d.date);
+  for(const w of state.wellbeing||[])if(w.date)dates.push(w.date);
+  for(const g of ensureWithingsState().measurements||[])if(g.date)dates.push(isoDateFromMs(Number(g.date)*1000));
+  for(const a of ensureWithingsState().activity||[])if(a.date)dates.push(a.date);
+  for(const sl of ensureWithingsState().sleep||[]){if(sl.date)dates.push(sl.date);else if(sl.enddate)dates.push(isoDateFromMs(Number(sl.enddate)*1000))}
+  dates.sort();return {min:dates[0]||new Date(Date.now()-365*86400000).toISOString().slice(0,10),max:today()};
+}
+function doctorReportSummaryCounts(from,to){
+  const labs=(state.labs||[]).filter(x=>withinReportPeriod(x.date,from,to));
+  const protocols=(state.protocols||[]).filter(p=>p.start<=to&&(!p.end||p.end>=from));
+  const deviations=(state.deviations||[]).filter(d=>withinReportPeriod(d.date,from,to));
+  const weights=collectReportWeighings(from,to),bps=collectReportBp(from,to);
+  return {labs:labs.length,protocols:protocols.length,deviations:deviations.length,measurements:weights.length+bps.length};
+}
+function openDoctorReportModal(lang='ru'){
+  const b=doctorReportBounds();
+  openModal(`<h3>${doctorText(lang,'reportDialogTitle')}</h3>
+    <div class="note" style="margin-bottom:11px">${doctorText(lang,'reportDialogHelp')}</div>
+    <div class="doctor-report-modal-grid">
+      <label>${doctorText(lang,'from')}<input id="doctorReportFrom" type="date" value="${b.min}"></label>
+      <label>${doctorText(lang,'to')}<input id="doctorReportTo" type="date" value="${b.max}"></label>
+    </div>
+    <div class="doctor-report-lang">
+      <button class="btn ${lang==='ru'?'active':''}" type="button" id="doctorLangRu" onclick="setDoctorReportLang('ru')">Русский</button>
+      <button class="btn ${lang==='fi'?'active':''}" type="button" id="doctorLangFi" onclick="setDoctorReportLang('fi')">Suomi</button>
+    </div>
+    <input type="hidden" id="doctorReportLang" value="${lang}">
+    <div class="doctor-report-scope">${doctorText(lang,'fullScope')}</div>
+    <div class="actions"><button class="btn" onclick="closeModal()">${doctorText(lang,'cancel')}</button><button class="btn primary" onclick="downloadDoctorReportFromModal()">${doctorText(lang,'create')}</button></div>`);
+}
+function setDoctorReportLang(lang){
+  const f=$('doctorReportFrom')?.value||doctorReportBounds().min,t=$('doctorReportTo')?.value||doctorReportBounds().max;
+  openDoctorReportModal(lang);if($('doctorReportFrom'))$('doctorReportFrom').value=f;if($('doctorReportTo'))$('doctorReportTo').value=t;
+}
+function downloadDoctorReportFromModal(){
+  const from=$('doctorReportFrom')?.value||'',to=$('doctorReportTo')?.value||'',lang=$('doctorReportLang')?.value||'ru';
+  if(!from||!to)return alert(lang==='fi'?'Valitse ajanjakson alku ja loppu.':'Укажите начало и конец периода.');
+  if(from>to)return alert(lang==='fi'?'Alkupäivä ei voi olla loppupäivän jälkeen.':'Дата начала не может быть позже даты окончания.');
+  closeModal();downloadDoctorReportPdf(lang,from,to);
+}
+function doctorProtocolRows(from,to){return (state.protocols||[]).filter(p=>p.start<=to&&(!p.end||p.end>=from)).sort((a,b)=>a.start.localeCompare(b.start))}
+function doctorDeviationRows(from,to){return (state.deviations||[]).filter(d=>withinReportPeriod(d.date,from,to)).sort((a,b)=>a.date.localeCompare(b.date)||(a.time||'').localeCompare(b.time||''))}
+function doctorTimelineEvents(from,to,lang='ru'){
+  const events=[];let pi=0,di=0;const startMs=new Date(from+'T12:00:00').getTime();
+  for(const p of doctorProtocolRows(from,to)){
+    pi++;const markerDate=p.start<from?from:p.start;
+    events.push({id:`P${pi}`,kind:'protocol',x:new Date(markerDate+'T12:00:00').getTime(),date:p.start,label:`P${pi} ${medName(p.medId)} · ${doctorShortSchedule(p,lang)}`,full:`${medName(p.medId)} · ${doctorScheduleText(p,lang)}`,protocol:p,startedBefore:p.start<from});
+  }
+  for(const d of doctorDeviationRows(from,to)){
+    di++;events.push({id:`D${di}`,kind:'deviation',x:new Date(d.date+'T12:00:00').getTime(),date:d.date,label:`D${di} ${medName(d.medId)} · ${doctorDeviationType(d,lang)}`,full:`${medName(d.medId)} · ${doctorDeviationType(d,lang)} · ${doctorDeviationFact(d,lang)}`,deviation:d});
+  }
+  return events.filter(e=>Number.isFinite(e.x)&&e.x>=startMs&&e.x<=new Date(to+'T23:59:59').getTime()).sort((a,b)=>a.x-b.x||String(a.date||'').localeCompare(String(b.date||''))||String(a.id||'').localeCompare(String(b.id||''),undefined,{numeric:true}));
+}
+function doctorPdfChartFromSets(sets,from,to,{mode='auto',events=[],lang='ru'}={}){
+  const c=document.createElement('canvas');
+  const start=new Date(from+'T00:00:00').getTime(),end=new Date(to+'T23:59:59').getTime();
+  const filtered=(sets||[]).map((x,i)=>({...x,color:x.color||HRT_SERIES_COLORS[i%HRT_SERIES_COLORS.length],points:(x.points||[]).filter(p=>p.x>=start&&p.x<=end&&Number.isFinite(Number(p.y)))})).filter(x=>x.points.length);
+  const units=[...new Set(filtered.map(x=>x.unit||''))],effective=mode==='auto'?(units.length<=1?'raw':'index'):mode;
+  const transformed=filtered.map(x=>{const base=x.points.find(p=>Number.isFinite(Number(p.y))&&Number(p.y)!==0)?.y;return {...x,plotPoints:x.points.map(p=>({...p,plotY:effective==='index'?(base?Number(p.y)/Number(base)*100:100):Number(p.y)}))}});
+  const protocolEvents=(events||[]).filter(e=>e.kind==='protocol'&&e.protocol),bandRows=protocolEvents.length;
+  c.width=1100;c.height=390+Math.max(0,bandRows-2)*15;const ctx=c.getContext('2d'),w=c.width,h=c.height;ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);
+  if(!transformed.length){ctx.fillStyle='#677788';ctx.font='14px Arial';ctx.textAlign='center';ctx.fillText(doctorText(lang,'noData'),w/2,h/2);return {image:c.toDataURL('image/png'),effective,hasData:false}}
+  const all=transformed.flatMap(x=>x.plotPoints),ys=all.map(p=>p.plotY).filter(Number.isFinite);let ymin=Math.min(...ys),ymax=Math.max(...ys);if(ymin===ymax){ymin-=1;ymax+=1}const yr=(ymax-ymin)||1;ymin-=yr*.12;ymax+=yr*.12;
+  const pad={l:64,r:24,t:76+bandRows*15,b:38},xmin=start,xmax=end,mapX=x=>pad.l+(x-xmin)/(xmax-xmin)*(w-pad.l-pad.r),mapY=y=>pad.t+(ymax-y)/(ymax-ymin)*(h-pad.t-pad.b);
+  ctx.strokeStyle='#dfe5eb';ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){const y=pad.t+(h-pad.t-pad.b)*i/4;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();const val=ymax-(ymax-ymin)*i/4;ctx.fillStyle='#687989';ctx.font='11px Arial';ctx.textAlign='right';ctx.fillText(wNum(val,1),pad.l-8,y+4)}
+  const evs=(events||[]).filter(e=>e.x>=xmin&&e.x<=xmax);
+  ctx.save();ctx.font='10px Arial';
+  protocolEvents.forEach((ev,idx)=>{const p=ev.protocol,ps=Math.max(xmin,new Date(p.start+'T12:00:00').getTime()),pe=Math.min(xmax,p.end?new Date(p.end+'T12:00:00').getTime():xmax);if(pe<ps)return;const x1=mapX(ps),x2=mapX(pe),y=22+idx*15;ctx.fillStyle='rgba(169,134,66,.15)';ctx.fillRect(x1,y-9,Math.max(2,x2-x1),11);ctx.strokeStyle='rgba(169,134,66,.55)';ctx.strokeRect(x1,y-9,Math.max(2,x2-x1),11);ctx.fillStyle='#795b25';ctx.textAlign='left';const raw=`${ev.id} ${medName(p.medId)} · ${doctorShortSchedule(p,lang)}`,label=raw.length>48?raw.slice(0,47)+'…':raw;ctx.fillText(label,Math.min(x1+3,w-pad.r-ctx.measureText(label).width),y)});
+  evs.filter(e=>e.kind==='deviation').forEach((ev,idx)=>{const x=mapX(ev.x);ctx.setLineDash([2,4]);ctx.strokeStyle='#c95a66';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,h-pad.b);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#a43e49';const raw=String(ev.label||ev.id||''),label=raw.length>38?raw.slice(0,37)+'…':raw;ctx.textAlign=x>w*0.76?'right':'left';ctx.fillText(label,x+(ctx.textAlign==='right'?-4:4),60+(idx%2)*13)});ctx.restore();
+  transformed.forEach(set=>{ctx.strokeStyle=set.color;ctx.lineWidth=2.5;ctx.beginPath();set.plotPoints.forEach((p,i)=>{const x=mapX(p.x),y=mapY(p.plotY);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();set.plotPoints.forEach(p=>{ctx.fillStyle=set.color;ctx.beginPath();ctx.arc(mapX(p.x),mapY(p.plotY),3,0,Math.PI*2);ctx.fill()})});
+  ctx.fillStyle='#687989';ctx.font='11px Arial';ctx.textAlign='left';ctx.fillText(doctorFmtDate(from,lang),pad.l,h-11);ctx.textAlign='right';ctx.fillText(doctorFmtDate(to,lang),w-pad.r,h-11);
+  ctx.textAlign='left';let lx=pad.l,ly=59;transformed.forEach(set=>{const label=`${set.label}${set.unit?' ('+set.unit+')':''}`;const need=20+ctx.measureText(label).width+22;if(lx+need>w-pad.r){lx=pad.l;ly+=15}ctx.fillStyle=set.color;ctx.fillRect(lx,ly-4,13,4);ctx.fillStyle='#263746';ctx.fillText(label,lx+18,ly);lx+=need});
+  return {image:c.toDataURL('image/png',0.95),effective,hasData:true};
+}
+function doctorLabTrendSeries(from,to){
+  const priority=['testosterone','free_testosterone','shbg','estradiol','hematocrit','hemoglobin','psa','ldl','hdl','triglycerides','hba1c','creatinine','egfr','alt','ast'];
+  const rows=[];
+  for(const g of markerGroupEntries()){
+    const cs=chartSeriesForKey(g.key),pts=cs.points.filter(p=>withinReportPeriod(p.date,from,to));
+    if(pts.length<2)continue;
+    rows.push({key:g.key,label:g.label,unit:cs.unit||'',points:pts.map(p=>({x:new Date(p.date+'T12:00:00').getTime(),y:Number(p.value),raw:p}))});
+  }
+  return rows.sort((a,b)=>{const ai=priority.indexOf(a.key),bi=priority.indexOf(b.key);if(ai!==-1||bi!==-1)return (ai===-1?999:ai)-(bi===-1?999:bi);return a.label.localeCompare(b.label,'ru')});
+}
+function doctorReadinessSummary(lab,lang='ru'){
+  const a=assessLabReadiness(lab);
+  if(!lab)return {level:a.level,label:lang==='fi'?'Ei laboratoriotutkimusta':'Нет анализа',reasons:[lang==='fi'?'Lisää laboratoriotutkimus.':'Добавьте лабораторный анализ.']};
+  if(!a.protocol)return {level:a.level,label:lang==='fi'?'Heikko arvioitavuus':'Низкая пригодность данных',reasons:[lang==='fi'?'Näytteenottopäivälle ei löytynyt aktiivista testosteroniprotokollaa.':'На дату анализа не найден активный протокол тестостерона.']};
+  const reasons=[],stable=a.stableDays||0,c=lab.doseContext||{};
+  if(lang==='fi'){
+    if(stable>=42)reasons.push(`Protokolla oli muuttumatta ${stable} päivää.`);else if(stable>=21)reasons.push(`Protokolla oli muuttumatta ${stable} päivää; kyseessä on vielä välivaihe.`);else reasons.push(`Protokolla oli ollut käytössä vain ${stable} päivää — tulos voi vielä heijastaa tuoretta muutosta.`);
+    if(c.lastDoseAt||(c.relation&&c.relation!=='unknown'))reasons.push('Viimeisen annoksen ajankohta/suhde näytteenottoon on kirjattu.');else reasons.push('Viimeisen annoksen ajankohtaa tai suhdetta näytteenottoon ei ole ilmoitettu.');
+    if(!(a.deviations||[]).length&&c.adherence!=='no')reasons.push('Edeltävän 14 päivän aikana ei ole kirjattuja poikkeamia tästä protokollasta.');else reasons.push(`Edeltävän 14 päivän aikana kirjattuja poikkeamia: ${(a.deviations||[]).length}${c.adherence==='no'?' · hoidon toteutumisessa on merkitty merkittäviä poikkeamia':''}.`);
+  }else reasons.push(...a.reasons);
+  const label=lang==='fi'?(a.level==='good'?'Hyvä arvioitavuus':a.level==='warn'?'Kohtalainen arvioitavuus':'Heikko arvioitavuus'):a.label;
+  return {level:a.level,label,reasons};
+}
+function doctorLatestMarker(key,from,to){
+  const rows=markerHistory(key).filter(x=>withinReportPeriod(x.date,from,to));
+  return rows.length?rows[rows.length-1]:null;
+}
+function doctorFirstMarker(key,from,to){
+  const rows=markerHistory(key).filter(x=>withinReportPeriod(x.date,from,to));
+  return rows.length?rows[0]:null;
+}
+function doctorSafetySnapshot(from,to){
+  const hct=doctorLatestMarker('hematocrit',from,to),hb=doctorLatestMarker('hemoglobin',from,to),psa=doctorLatestMarker('psa',from,to),psaFirst=doctorFirstMarker('psa',from,to),ldl=doctorLatestMarker('ldl',from,to),hdl=doctorLatestMarker('hdl',from,to),hba1c=doctorLatestMarker('hba1c',from,to);
+  const items=[];
+  if(hct){const v=normalizedHctPercent(hct.marker),level=v===null?'warn':(v>=54?'bad':(v>=50?'warn':'good'));items.push({key:'hematocrit',label:'Гематокрит',value:v===null?`${hct.marker.value} ${hct.marker.unit||''}`:`${v.toFixed(v%1?1:0)} %`,level,date:hct.lab.date,normalized:v})}else items.push({key:'hematocrit',label:'Гематокрит',value:'—',level:'warn',date:''});
+  if(hb)items.push({key:'hemoglobin',label:'Гемоглобин',value:`${hb.marker.value} ${hb.marker.unit||''}`,level:'',date:hb.lab.date});else items.push({key:'hemoglobin',label:'Гемоглобин',value:'—',level:'',date:''});
+  if(psa){const current=psaNgMlValue(psa.marker),first=psaFirst?psaNgMlValue(psaFirst.marker):null;let delta=null,months=null,level='';if(psaFirst&&psaFirst.date!==psa.lab.date&&current!==null&&first!==null){delta=current-first;months=Math.abs(daysBetween(psaFirst.date,psa.lab.date)||0)/30.44;if(months<=12&&delta>1.4)level='warn'}items.push({key:'psa',label:'PSA',value:`${psa.marker.value} ${psa.marker.unit||''}`,level,date:psa.lab.date,psaDelta:delta,psaMonths:months,psaFirstDate:psaFirst?.date||''})}else items.push({key:'psa',label:'PSA',value:'—',level:'',date:''});
+  if(ldl)items.push({key:'ldl',label:'LDL',value:`${ldl.marker.value} ${ldl.marker.unit||''}`,level:'',date:ldl.lab.date});
+  if(hdl)items.push({key:'hdl',label:'HDL',value:`${hdl.marker.value} ${hdl.marker.unit||''}`,level:'',date:hdl.lab.date});
+  if(hba1c)items.push({key:'hba1c',label:'HbA1c',value:`${hba1c.marker.value} ${hba1c.marker.unit||''}`,level:'',date:hba1c.lab.date});
+  const bps=collectReportBp(from,to),weights=collectReportWeighings(from,to),bp=bps.length?bps[bps.length-1]:null,weight=weights.length?weights[weights.length-1]:null;
+  items.push({key:'bp',label:'Давление',value:bp?`${Math.round(bp.sys)}/${Math.round(bp.dia)}`:'—',level:'',date:bp?.date||'',source:bp?.source||''});
+  items.push({key:'weight',label:'Вес',value:weight?`${wNum(weight.weight,2)} kg`:'—',level:'',date:weight?.date||'',source:weight?.source||''});
+  return items;
+}
+function doctorSafetyState(item,lang='ru'){
+  if(item.value==='—')return lang==='fi'?'Ei tietoja':'Нет данных';
+  if(item.key==='hematocrit'){
+    if(lang==='fi')return item.level==='bad'?'≥54 %: hoidon arviointi lääkärin kanssa on tarpeen':item.level==='warn'?'Koholla — seuraa kehitystä':'Ei hälytystä 54 %:n säännön perusteella';
+    return item.level==='bad'?'≥54%: требуется обсудить коррекцию терапии с врачом':item.level==='warn'?'Повышен — следить за динамикой':'Без сигнала по порогу 54%';
+  }
+  if(item.key==='hemoglobin')return lang==='fi'?'Viimeisin arvo':'Последнее значение';
+  if(item.key==='ldl'||item.key==='hdl')return lang==='fi'?'Lipidiprofiili':'Липидный профиль';
+  if(item.key==='hba1c')return lang==='fi'?'Glukoositasapaino':'Гликемический профиль';
+  if(item.key==='bp'||item.key==='weight')return doctorSource(item.source,lang)||doctorText(lang,'latestValue');
+  if(item.key==='psa'){
+    if(item.psaDelta!==null&&item.psaDelta!==undefined){const d=item.psaDelta,flag=item.level==='warn';return lang==='fi'?`Muutos raporttijakson ensimmäisestä PSA-arvosta ${d>=0?'+':''}${d.toFixed(2)} ng/ml${flag?' · keskustele lääkärin kanssa':''}.`:`Δ от первого PSA в выбранном периоде ${d>=0?'+':''}${d.toFixed(2)} ng/ml${flag?' · обсудить с врачом':''}.`}
+    return lang==='fi'?'Viimeisin arvo':'Последнее значение';
+  }
+  return doctorText(lang,'latestValue');
+}
+function doctorClinicalSummary(lang='ru',from=doctorReportBounds().min,to=today()){
+  const T=doctorLatestMarker('testosterone',from,to),FT=doctorLatestMarker('free_testosterone',from,to),Hct=doctorLatestMarker('hematocrit',from,to),PSA=doctorLatestMarker('psa',from,to),E2=doctorLatestMarker('estradiol',from,to);
+  const latestLab=[...(state.labs||[])].filter(l=>withinReportPeriod(l.date,from,to)).sort((a,b)=>b.date.localeCompare(a.date))[0]||null,observations=[],actions=[],warnings=[];
+  const inRange=(key,x)=>x&&goalFor(key)?goalStatus(key,x.marker.value):null;
+  const pushHormone=(key,x,ruName,fiName)=>{if(!x)return;const st=inRange(key,x);if(!st)return;const name=lang==='fi'?fiName:ruName,val=`${x.marker.value} ${x.marker.unit||''}`.trim();
+    if(st.status==='ok')observations.push(lang==='fi'?`${name} on henkilökohtaisella tavoitealueella.`:`${name} находится в вашем целевом диапазоне.`);
+    if(st.status==='low')actions.push(lang==='fi'?`${name} ${val} on henkilökohtaisen tavoitealueen alapuolella. Tulos tulee tulkita suhteessa näytteenottoajankohtaan, annostukseen ja hoidon toteutumiseen ennen hoidon muuttamista.`:`${name} ${val} ниже вашей цели. Перед изменением схемы сопоставьте результат со временем анализа относительно дозы и фактическим соблюдением протокола.`);
+    if(st.status==='high')actions.push(lang==='fi'?`${name} ${val} on henkilökohtaisen tavoitealueen yläpuolella. Keskustele lääkärin kanssa kokonaisaltistuksesta, annoksesta ja annosvälistä.`:`${name} ${val} выше вашей цели. Обсудите с врачом общую экспозицию, дозу и интервал, учитывая время анализа относительно последней дозы.`);
+  };
+  pushHormone('testosterone',T,'Общий тестостерон','Kokonais-testosteroni');pushHormone('free_testosterone',FT,'Свободный тестостерон','Vapaa testosteroni');
+  if(Hct){const v=normalizedHctPercent(Hct.marker);if(v!==null&&v>=54)warnings.push(lang==='fi'?`Hematokriitti ${v.toFixed(v%1?1:0)} % on 54 % tai enemmän. Hoito on syytä arvioida nopeasti lääkärin kanssa.`:`Гематокрит ${v.toFixed(v%1?1:0)}% достиг 54% или выше. Это требует оперативного обсуждения терапии с врачом.`);else if(v!==null&&v>=50)actions.push(lang==='fi'?`Hematokriitti ${v.toFixed(v%1?1:0)} % on koholla. Seuraa kehitystä ja keskustele kontrollivälistä lääkärin kanssa ennen testosteroniannoksen suurentamista.`:`Гематокрит ${v.toFixed(v%1?1:0)}% повышен. Перед повышением тестостерона обсудите с врачом динамику и частоту контроля.`)}else actions.push(lang==='fi'?'Tietokannassa ei ole hematokriittiarvoa nykyiseen turvallisuusarvioon.':'В базе нет гематокрита для текущей оценки безопасности.');
+  if(!PSA)actions.push(lang==='fi'?'PSA-arvoa ei löytynyt tietokannasta. Prostatan seurannan tarve kannattaa arvioida lääkärin kanssa.':'PSA пока не найден в базе. Вопрос мониторинга простаты следует обсудить с врачом.');
+  if(E2&&goalFor('estradiol')){const st=goalStatus('estradiol',E2.marker.value);if(st.status==='high'||st.status==='low')actions.push(lang==='fi'?`Estradioli ${E2.marker.value} ${E2.marker.unit||''} on henkilökohtaisen tavoitealueen ulkopuolella. Arvoa ei pidä tulkita erillään oireista ja koko hoitokokonaisuudesta.`:`Эстрадиол ${E2.marker.value} ${E2.marker.unit||''} вне вашей личной цели. Его не следует интерпретировать изолированно от симптомов и всей схемы.`)}
+  if(!T&&!FT)warnings.push(lang==='fi'?'Kokonais- ja vapaan testosteronin tietoja ei ole riittävästi hoidon päätavoitteen arviointiin.':'Недостаточно данных по общему и свободному тестостерону для оценки основной цели ГЗТ.');
+  if(latestLab){const trt=activeTrtProtocols(latestLab.date);observations.push(trt.length?(lang==='fi'?`Viimeisimmän näytteenottopäivän kirjattu protokolla: ${doctorProtocolSummaryAt(latestLab.date,lang)}.`:`На дату последнего анализа записан протокол: ${doctorProtocolSummaryAt(latestLab.date,lang)}.`):(lang==='fi'?'Viimeisimmän laboratoriokokeen päivälle ei löytynyt aktiivista kirjattua testosteroniprotokollaa.':'К последнему анализу не найден активный протокол тестостерона.'))}
+  return {observations,actions,warnings};
+}
+function doctorLabRowsForReport(lab,lang='ru'){
+  const rows=[];
+  for(const m of lab.markers||[]){const key=m.canonicalKey||state.aliasMap?.[aliasNorm(m.name)]||canonicalMarkerKey(m.name);rows.push([doctorAnalyteLabel(key,m.name||'—',lang),`${markerDisplayValue(m)} ${m.unit||''}`.trim(),pdfRefText(m),doctorGoalText(key,m.value,m.unit,lang)])}
+  return rows;
+}
+function doctorWithingsPeriodData(from,to){
+  const w=ensureWithingsState();
+  const activities=(w.activity||[]).filter(a=>withinReportPeriod(a.date,from,to)).sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  const sleeps=(w.sleep||[]).map(x=>({...x,_date:x.date||(x.enddate?isoDateFromMs(Number(x.enddate)*1000):'')})).filter(x=>withinReportPeriod(x._date,from,to)).sort((a,b)=>xDate(a).localeCompare(xDate(b)));
+  const workouts=(w.workouts||[]).map(x=>({...x,_date:x.date||(x.startdate?isoDateFromMs(Number(x.startdate)*1000):'')})).filter(x=>withinReportPeriod(x._date,from,to)).sort((a,b)=>xDate(a).localeCompare(xDate(b)));
+  function xDate(x){return String(x._date||x.date||'')}
+  return {activities,sleeps,workouts};
+}
+function doctorWellbeingRows(from,to){return (state.wellbeing||[]).filter(w=>withinReportPeriod(w.date,from,to)).sort((a,b)=>a.date.localeCompare(b.date))}
+function doctorPdfSectionTitle(text){return {text,style:'h1',margin:[0,12,0,5]}}
+function doctorPdfMuted(text){return {text,style:'muted'} }
+function doctorEventLegendTable(events,lang='ru'){
+  if(!events.length)return null;
+  const body=[[lang==='fi'?'Merkki':'Метка',doctorText(lang,'date'),doctorText(lang,'medicine'),doctorText(lang,'scheme')]];
+  for(const e of events){
+    if(e.kind==='protocol')body.push([e.id,doctorFmtDate(e.protocol.start,lang),medName(e.protocol.medId),`${doctorScheduleText(e.protocol,lang)}${e.startedBefore?' · '+doctorText(lang,'protocolStartedEarlier'):''}`]);
+    else body.push([e.id,doctorFmtDate(e.deviation.date,lang),medName(e.deviation.medId),`${doctorDeviationType(e.deviation,lang)} · ${doctorDeviationFact(e.deviation,lang)}`]);
+  }
+  return {table:{headerRows:1,widths:[38,62,105,'*'],body},layout:'lightHorizontalLines',fontSize:7.5,margin:[0,3,0,9]};
+}
+function downloadDoctorReportPdf(lang='ru',from='',to=''){
+  if(!window.pdfMake)return alert(lang==='fi'?'PDF-moduulia ei voitu ladata. Tarkista internetyhteys ja lataa sivu uudelleen.':'Модуль PDF не загрузился. Проверьте интернет и перезагрузите страницу.');
+  if(!from||!to){const b=doctorReportBounds();from=from||b.min;to=to||b.max}
+  const labs=[...(state.labs||[])].filter(l=>withinReportPeriod(l.date,from,to)).sort((a,b)=>a.date.localeCompare(b.date));
+  const protocols=doctorProtocolRows(from,to),deviations=doctorDeviationRows(from,to),well=doctorWellbeingRows(from,to),weights=collectReportWeighings(from,to),bps=collectReportBp(from,to),events=doctorTimelineEvents(from,to,lang),counts=doctorReportSummaryCounts(from,to);
+  const clinical=doctorClinicalSummary(lang,from,to),last=[...labs].sort((a,b)=>b.date.localeCompare(a.date))[0]||null,readiness=doctorReadinessSummary(last,lang),safety=doctorSafetySnapshot(from,to);
+  const content=[];
+  content.push({text:doctorText(lang,'report'),style:'title'});
+  content.push({text:`${doctorText(lang,'period')}: ${doctorFmtDate(from,lang)} — ${doctorFmtDate(to,lang)} · ${doctorText(lang,'generated')}: ${new Date().toLocaleString(doctorLocale(lang))} · ${doctorText(lang,'version')} ${APP_VERSION}`,style:'subtitle'});
+  content.push({columns:[
+    {width:'*',stack:[{text:doctorText(lang,'labsCount'),style:'kpiLabel'},{text:String(counts.labs),style:'kpiValue'}]},
+    {width:'*',stack:[{text:doctorText(lang,'protocolsCount'),style:'kpiLabel'},{text:String(counts.protocols),style:'kpiValue'}]},
+    {width:'*',stack:[{text:doctorText(lang,'deviationsCount'),style:'kpiLabel'},{text:String(counts.deviations),style:'kpiValue'}]},
+    {width:'*',stack:[{text:doctorText(lang,'measurementsCount'),style:'kpiLabel'},{text:String(counts.measurements),style:'kpiValue'}]}
+  ],columnGap:8,margin:[0,2,0,10]});
+  content.push(doctorPdfSectionTitle(doctorText(lang,'overview')));
+  content.push({text:doctorText(lang,'goal'),style:'h2'});content.push({text:state.settings.primaryGoal||doctorText(lang,'goalMissing'),style:'box'});
+  content.push({text:doctorText(lang,'currentTreatment'),style:'h2',margin:[0,7,0,3]});
+  const activeAtEnd=activeProtocols(to);if(activeAtEnd.length)content.push({table:{headerRows:1,widths:[120,'*',72],body:[[doctorText(lang,'medicine'),doctorText(lang,'scheme'),doctorText(lang,'date')],...activeAtEnd.map(p=>[medName(p.medId),doctorScheduleText(p,lang),doctorFmtDate(p.start,lang)])]},layout:'lightHorizontalLines',fontSize:8});else content.push(doctorPdfMuted(doctorText(lang,'noActiveTreatment')));
+  if(last){content.push({text:doctorText(lang,'lastLab'),style:'h2',margin:[0,7,0,3]});content.push({text:`${doctorFmtDate(last.date,lang)}${last.time?' · '+last.time:''} · ${last.lab||doctorText(lang,'lab')}\n${doctorText(lang,'protocolAtDate')}: ${doctorProtocolSummaryAt(last.date,lang)}\n${doctorText(lang,'doseContext')}: ${doctorDoseContextText(last,lang)}`,style:'box'});}
+  content.push({text:doctorText(lang,'dataQuality'),style:'h2',margin:[0,7,0,3]});content.push({text:readiness.label,bold:true,fontSize:9});for(const r of readiness.reasons)content.push({text:'• '+r,fontSize:8,margin:[6,1,0,0]});
+  content.push({text:doctorText(lang,'safety'),style:'h2',margin:[0,7,0,3]});
+  content.push({table:{headerRows:1,widths:[105,72,'*',62],body:[[doctorText(lang,'analyte'),doctorText(lang,'result'),lang==='fi'?'Tulkinta':'Оценка',doctorText(lang,'date')],...safety.map(x=>[doctorAnalyteLabel(x.key,x.label,lang),x.value,doctorSafetyState(x,lang),x.date?doctorFmtDate(x.date,lang):'—'])]},layout:'lightHorizontalLines',fontSize:7.5});
+  content.push({text:doctorText(lang,'observations'),style:'h2',margin:[0,7,0,3]});if(clinical.observations.length||clinical.warnings.length)for(const x of [...clinical.warnings.map(v=>'⚠ '+v),...clinical.observations])content.push({text:'• '+x,fontSize:8,margin:[6,1,0,0]});else content.push(doctorPdfMuted(doctorText(lang,'noData')));
+  content.push({text:doctorText(lang,'doctorDiscussion'),style:'h2',margin:[0,7,0,3]});if(clinical.actions.length)for(const x of clinical.actions)content.push({text:'• '+x,fontSize:8,margin:[6,1,0,0]});else content.push(doctorPdfMuted(lang==='fi'?'Nykyisistä tiedoista ei muodostunut automaattista keskustelukohtaa.':'По текущим данным автоматических пунктов для обсуждения не сформировано.'));
+
+  content.push(doctorPdfSectionTitle(doctorText(lang,'timeline')));
+  content.push({text:doctorText(lang,'treatmentChanges'),style:'h2'});
+  if(protocols.length)content.push({table:{headerRows:1,widths:[105,92,'*',95],body:[[doctorText(lang,'medicine'),doctorText(lang,'periodCol'),doctorText(lang,'scheme'),doctorText(lang,'comment')],...protocols.map(p=>[medName(p.medId),`${doctorFmtDate(p.start,lang)} → ${p.end?doctorFmtDate(p.end,lang):doctorText(lang,'now')}`,doctorScheduleText(p,lang),p.comment||'—'])]},layout:'lightHorizontalLines',fontSize:7.5});else content.push(doctorPdfMuted(doctorText(lang,'noProtocols')));
+  content.push({text:doctorText(lang,'deviations'),style:'h2',margin:[0,8,0,3]});
+  if(deviations.length)content.push({table:{headerRows:1,widths:[58,90,90,78,'*'],body:[[doctorText(lang,'date'),doctorText(lang,'medicine'),doctorText(lang,'type'),doctorText(lang,'fact'),doctorText(lang,'comment')],...deviations.map(d=>[doctorFmtDate(d.date,lang)+(d.time?' '+d.time:''),medName(d.medId),doctorDeviationType(d,lang),doctorDeviationFact(d,lang),d.comment||'—'])]},layout:'lightHorizontalLines',fontSize:7.5});else content.push(doctorPdfMuted(doctorText(lang,'noDeviations')));
+
+  content.push(doctorPdfSectionTitle(doctorText(lang,'charts')));content.push({text:doctorText(lang,'chartGuide'),style:'small',margin:[0,0,0,6]});
+  const hormoneKeys=['testosterone','free_testosterone','shbg','estradiol'];const hormoneSets=hormoneKeys.map((k,i)=>{const cs=chartSeriesForKey(k);return {label:doctorAnalyteLabel(k,cs.group?.label||k,lang),unit:cs.unit||'',color:HRT_SERIES_COLORS[i%HRT_SERIES_COLORS.length],points:cs.points.map(p=>({x:new Date(p.date+'T12:00:00').getTime(),y:Number(p.value)}))}}).filter(x=>x.points.some(p=>p.x>=new Date(from+'T00:00:00').getTime()&&p.x<=new Date(to+'T23:59:59').getTime()));
+  if(hormoneSets.length>=2){const ch=doctorPdfChartFromSets(hormoneSets,from,to,{mode:'index',events,lang});if(ch.hasData){content.push({text:doctorText(lang,'hormoneOverview'),style:'h2'});content.push({image:ch.image,width:510,margin:[0,0,0,2]});content.push({text:doctorText(lang,'indexNote'),style:'small',margin:[0,0,0,5]});const lt=doctorEventLegendTable(events,lang);if(lt)content.push(lt)}}
+  if(weights.length>=2){const pts=weights.filter(x=>Number.isFinite(x.weight)).map(x=>({x:new Date(x.date+'T'+(x.time&&x.time!=='—'?x.time:'12:00')+':00').getTime(),y:x.weight}));const ch=doctorPdfChartFromSets([{label:doctorText(lang,'weight'),unit:'kg',points:pts,color:HRT_SERIES_COLORS[0]}],from,to,{mode:'raw',events,lang});if(ch.hasData){content.push({text:doctorText(lang,'weight'),style:'h2'});content.push({image:ch.image,width:510,margin:[0,0,0,6]})}}
+  if(bps.length>=2){const sys=bps.map(x=>({x:new Date(x.date+'T'+(x.time&&x.time!=='—'?x.time:'12:00')+':00').getTime(),y:x.sys})),dia=bps.map(x=>({x:new Date(x.date+'T'+(x.time&&x.time!=='—'?x.time:'12:00')+':00').getTime(),y:x.dia}));const ch=doctorPdfChartFromSets([{label:lang==='fi'?'Systolinen':'Систолическое',unit:'mmHg',points:sys,color:HRT_SERIES_COLORS[1]},{label:lang==='fi'?'Diastolinen':'Диастолическое',unit:'mmHg',points:dia,color:HRT_SERIES_COLORS[4]}],from,to,{mode:'raw',events,lang});if(ch.hasData){content.push({text:doctorText(lang,'bloodPressure'),style:'h2'});content.push({image:ch.image,width:510,margin:[0,0,0,6]})}}
+  const fatPts=metricSeries(6).filter(p=>p.x>=new Date(from+'T00:00:00').getTime()&&p.x<=new Date(to+'T23:59:59').getTime());if(fatPts.length>=2){const ch=doctorPdfChartFromSets([{label:doctorText(lang,'bodyFat'),unit:'%',points:fatPts,color:HRT_SERIES_COLORS[4]}],from,to,{mode:'raw',events,lang});if(ch.hasData){content.push({text:doctorText(lang,'bodyFat'),style:'h2'});content.push({image:ch.image,width:510,margin:[0,0,0,6]})}}
+  const musclePts=metricSeries(76).filter(p=>p.x>=new Date(from+'T00:00:00').getTime()&&p.x<=new Date(to+'T23:59:59').getTime());if(musclePts.length>=2){const ch=doctorPdfChartFromSets([{label:doctorText(lang,'muscleMass'),unit:'kg',points:musclePts,color:HRT_SERIES_COLORS[2]}],from,to,{mode:'raw',events,lang});if(ch.hasData){content.push({text:doctorText(lang,'muscleMass'),style:'h2'});content.push({image:ch.image,width:510,margin:[0,0,0,6]})}}
+  const trendSeries=doctorLabTrendSeries(from,to);content.push({text:doctorText(lang,'individualLabTrends'),style:'h2',margin:[0,9,0,3]});
+  if(!trendSeries.length)content.push(doctorPdfMuted(doctorText(lang,'noLabTrends')));else for(const s of trendSeries){const ch=doctorPdfChartFromSets([{label:doctorAnalyteLabel(s.key,s.label,lang),unit:s.unit,points:s.points,color:HRT_SERIES_COLORS[0]}],from,to,{mode:'raw',events,lang});if(ch.hasData){content.push({text:`${doctorAnalyteLabel(s.key,s.label,lang)}${s.unit?' · '+s.unit:''}`,style:'h3',margin:[0,6,0,2]});content.push({image:ch.image,width:510,margin:[0,0,0,5]})}}
+
+  content.push(doctorPdfSectionTitle(doctorText(lang,'labs')));
+  if(!labs.length)content.push(doctorPdfMuted(doctorText(lang,'noData')));else for(const l of labs){content.push({text:`${doctorFmtDate(l.date,lang)}${l.time?' · '+l.time:''} · ${l.lab||doctorText(lang,'lab')}`,style:'h2',margin:[0,8,0,2]});content.push({text:`${doctorText(lang,'protocolAtDate')}: ${doctorProtocolSummaryAt(l.date,lang)}\n${doctorText(lang,'doseContext')}: ${doctorDoseContextText(l,lang)}`,style:'small',margin:[0,0,0,4]});content.push({table:{headerRows:1,widths:['*',85,105,125],body:[[doctorText(lang,'analyte'),doctorText(lang,'result'),doctorText(lang,'reference'),doctorText(lang,'personalTarget')],...doctorLabRowsForReport(l,lang)]},layout:'lightHorizontalLines',fontSize:7.2})}
+
+  content.push(doctorPdfSectionTitle(doctorText(lang,'withings')));
+  content.push({text:doctorText(lang,'weight'),style:'h2'});if(weights.length)content.push({table:{headerRows:1,widths:[60,38,52,58,'*'],body:[[doctorText(lang,'date'),doctorText(lang,'time'),doctorText(lang,'weight'),doctorText(lang,'source'),doctorText(lang,'protocolAtDate')],...weights.map(x=>[doctorFmtDate(x.date,lang),x.time,`${doctorNum(x.weight,2,lang)} kg`,doctorSource(x.source,lang),doctorProtocolSummaryAt(x.date,lang)])]},layout:'lightHorizontalLines',fontSize:7.3});else content.push(doctorPdfMuted(doctorText(lang,'noData')));
+  content.push({text:doctorText(lang,'bloodPressure'),style:'h2',margin:[0,8,0,3]});if(bps.length)content.push({table:{headerRows:1,widths:[58,36,62,54,58,'*'],body:[[doctorText(lang,'date'),doctorText(lang,'time'),doctorText(lang,'bp'),doctorText(lang,'pulse'),doctorText(lang,'source'),doctorText(lang,'protocolAtDate')],...bps.map(x=>[doctorFmtDate(x.date,lang),x.time,`${Math.round(x.sys)}/${Math.round(x.dia)}`,x.pulse!=null?`${Math.round(x.pulse)} /min`:'—',doctorSource(x.source,lang),doctorProtocolSummaryAt(x.date,lang)])]},layout:'lightHorizontalLines',fontSize:7.1});else content.push(doctorPdfMuted(doctorText(lang,'noData')));
+  const wd=doctorWithingsPeriodData(from,to);
+  content.push({text:doctorText(lang,'activity'),style:'h2',margin:[0,8,0,3]});if(wd.activities.length)content.push({table:{headerRows:1,widths:[60,60,70,60,65],body:[[doctorText(lang,'date'),doctorText(lang,'steps'),doctorText(lang,'distance'),doctorText(lang,'calories'),doctorText(lang,'avgHr')],...wd.activities.map(a=>[doctorFmtDate(a.date,lang),Number(a.steps||0).toLocaleString(doctorLocale(lang)),Number.isFinite(Number(a.distance))?`${doctorNum(Number(a.distance)/1000,2,lang)} km`:'—',doctorNum(a.calories,0,lang),doctorNum(a.hr_average,0,lang)])]},layout:'lightHorizontalLines',fontSize:7.4});else content.push(doctorPdfMuted(doctorText(lang,'noData')));
+  content.push({text:doctorText(lang,'sleepData'),style:'h2',margin:[0,8,0,3]});if(wd.sleeps.length)content.push({table:{headerRows:1,widths:[60,62,62,62,52,58],body:[[doctorText(lang,'date'),doctorText(lang,'sleep'),doctorText(lang,'deep'),doctorText(lang,'rem'),doctorText(lang,'score'),doctorText(lang,'avgHr')],...wd.sleeps.map(x=>{const d=x.data||{};return [doctorFmtDate(x._date,lang),doctorDuration(d.total_sleep_time||d.asleepduration,lang),doctorDuration(d.deepsleepduration,lang),doctorDuration(d.remsleepduration,lang),doctorNum(d.sleep_score,0,lang),doctorNum(d.hr_average,0,lang)]})]},layout:'lightHorizontalLines',fontSize:7.2});else content.push(doctorPdfMuted(doctorText(lang,'noData')));
+  content.push({text:doctorText(lang,'workouts'),style:'h2',margin:[0,8,0,3]});if(wd.workouts.length)content.push({table:{headerRows:1,widths:[60,95,72,55,60],body:[[doctorText(lang,'date'),doctorText(lang,'category'),doctorText(lang,'duration'),doctorText(lang,'calories'),doctorText(lang,'avgHr')],...wd.workouts.map(x=>{const d=x.data||x;return [doctorFmtDate(x._date,lang),String(x.category??x.sport??'—'),doctorDuration(x.enddate&&x.startdate?Number(x.enddate)-Number(x.startdate):d.duration,lang),doctorNum(d.calories,0,lang),doctorNum(d.hr_average,0,lang)]})]},layout:'lightHorizontalLines',fontSize:7.2});else content.push(doctorPdfMuted(doctorText(lang,'noData')));
+
+  content.push(doctorPdfSectionTitle(doctorText(lang,'wellbeing')));
+  if(well.length)content.push({table:{headerRows:1,widths:[58,37,37,37,42,48,50,55],body:[[doctorText(lang,'date'),doctorText(lang,'energy'),doctorText(lang,'libido'),doctorText(lang,'sleep'),doctorText(lang,'mood'),doctorText(lang,'recovery'),doctorText(lang,'weight'),doctorText(lang,'bp')],...well.map(w=>[doctorFmtDate(w.date,lang),w.energy??'—',w.libido??'—',w.sleep??'—',w.mood??'—',w.recovery??'—',w.weight!=null?`${w.weight} kg`:'—',w.bp||'—'])]},layout:'lightHorizontalLines',fontSize:7});else content.push(doctorPdfMuted(doctorText(lang,'noData')));
+  content.push({text:doctorText(lang,'reportNote'),style:'disclaimer',margin:[0,15,0,0]});
+  const doc={
+    pageSize:'A4',pageMargins:[28,34,28,34],info:{title:`${doctorText(lang,'report')} ${from}–${to}`,subject:'HRT Health Studio physician report'},content,
+    styles:{title:{fontSize:19,bold:true,color:'#17212b',margin:[0,0,0,3]},subtitle:{fontSize:8.5,color:'#667788',margin:[0,0,0,8]},h1:{fontSize:13,bold:true,color:'#17212b',margin:[0,10,0,4]},h2:{fontSize:9.5,bold:true,color:'#263746'},h3:{fontSize:8.5,bold:true,color:'#34485a'},small:{fontSize:7.2,color:'#667788',lineHeight:1.2},muted:{fontSize:8,color:'#667788'},box:{fontSize:8.2,color:'#263746',margin:[0,2,0,5]},kpiLabel:{fontSize:6.8,color:'#718095',alignment:'center'},kpiValue:{fontSize:14,bold:true,color:'#17212b',alignment:'center'},disclaimer:{fontSize:7,color:'#778694',italics:true,lineHeight:1.25}},
+    defaultStyle:{font:'Roboto',fontSize:8,color:'#263746'},
+    footer:(current,pageCount)=>({text:`HRT Health Studio · ${doctorText(lang,'page')} ${current}/${pageCount}`,alignment:'center',fontSize:7,color:'#8a98a6',margin:[0,8,0,0]})
+  };
+  const filename=`${doctorText(lang,'reportFile')}_${from}_${to}_${lang.toUpperCase()}.pdf`;
+  window.pdfMake.createPdf(doc).download(filename);
+}
+
+
 function renderAll(){
   ensureWithingsState();
   const aps=activeProtocols();
