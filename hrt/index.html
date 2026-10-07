@@ -3139,7 +3139,7 @@ function renderLatestChanges(){
   }
   box.innerHTML=cards.length?`<div class="change-grid">${cards.join('')}</div>`:`<div class="empty">Пока недостаточно повторных анализов для сравнения.</div>`;
 }
-const APP_VERSION='3.8.0';
+const APP_VERSION='3.8.1';
 
 function normalizedHctPercent(marker){
   if(!marker)return null;
@@ -3309,6 +3309,13 @@ function doctorUnit(unit,lang='ru'){
   const map={'нажатий':'painallusta','нажатие':'painallus','таблеток':'tablettia','таблетка':'tabletti','капсул':'kapselia','мл':'ml'};
   return map[u.toLowerCase()]||u;
 }
+function doctorCompactUnit(unit,lang='ru'){
+  const raw=String(unit||'').trim();
+  const key=raw.toLowerCase();
+  const ru={'нажатий':'наж.','нажатия':'наж.','нажатие':'наж.','таблеток':'табл.','таблетка':'табл.','капсул':'капс.','капсула':'капс.','капсулы':'капс.','миллиграмм':'мг'};
+  const fi={'painallusta':'pain.','painallus':'pain.','tablettia':'tabl.','tabletti':'tabl.','kapselia':'kaps.','kapseli':'kaps.','milligrammaa':'mg'};
+  return (lang==='fi'?(fi[key]||raw):(ru[key]||raw))||raw;
+}
 function doctorScheduleText(p,lang='ru'){
   if(!p)return '—';
   const dose=`${p.dose??'—'} ${doctorUnit(p.unit,lang)}`.trim();
@@ -3327,13 +3334,27 @@ function doctorShortSchedule(p,lang='ru'){
   if(!p)return '';
   const dose=`${p.dose??'—'} ${doctorUnit(p.unit,lang)}`.trim();
   if(lang==='fi'){
-    if(p.frequency==='daily')return `${dose}/vrk`;
+    if(p.frequency==='daily')return `${dose}/pv`;
     if(p.frequency==='every_n_days')return `${dose}/${p.interval||'—'} vrk`;
     if(p.frequency==='weekly')return `${dose}/vko`;
   }else{
     if(p.frequency==='daily')return `${dose}/день`;
     if(p.frequency==='every_n_days')return `${dose}/${p.interval||'—'} дн.`;
     if(p.frequency==='weekly')return `${dose}/нед.`;
+  }
+  return dose;
+}
+function doctorCompactSchedule(p,lang='ru'){
+  if(!p)return '';
+  const dose=`${p.dose??'—'} ${doctorCompactUnit(p.unit,lang)}`.trim();
+  if(lang==='fi'){
+    if(p.frequency==='daily')return `${dose}/pv`;
+    if(p.frequency==='every_n_days')return `${dose}/${p.interval||'—'} vrk`;
+    if(p.frequency==='weekly')return `${dose}/vko`;
+  }else{
+    if(p.frequency==='daily')return `${dose}/д`;
+    if(p.frequency==='every_n_days')return `${dose}/${p.interval||'—'}д`;
+    if(p.frequency==='weekly')return `${dose}/нед`;
   }
   return dose;
 }
@@ -3459,49 +3480,93 @@ function doctorMonthlyBpAverages(rows){
   for(const x of rows||[]){const k=doctorMonthKey(x.date);if(!k)continue;const a=m.get(k)||{month:k,sys:0,sysN:0,dia:0,diaN:0,pulse:0,pulseN:0,n:0};const sy=Number(x.sys),di=Number(x.dia),pu=Number(x.pulse);if(Number.isFinite(sy)){a.sys+=sy;a.sysN++}if(Number.isFinite(di)){a.dia+=di;a.diaN++}if(Number.isFinite(pu)){a.pulse+=pu;a.pulseN++}a.n++;m.set(k,a)}
   return [...m.values()].sort((a,b)=>a.month.localeCompare(b.month)).map(a=>({month:a.month,sys:a.sysN?a.sys/a.sysN:null,dia:a.diaN?a.dia/a.diaN:null,pulse:a.pulseN?a.pulse/a.pulseN:null,n:a.n,x:new Date(a.month+'-15T12:00:00').getTime()}));
 }
-function doctorChartTickDates(from,to){
-  const set=new Set([from,to]);
-  for(const l of state.labs||[])if(withinReportPeriod(l.date,from,to))set.add(l.date);
-  for(const p of doctorProtocolRows(from,to)){const d=p.start<from?from:p.start;if(withinReportPeriod(d,from,to))set.add(d)}
+function doctorAxisDateLabel(date,lang='ru'){
+  const d=new Date(String(date)+'T12:00:00');
+  if(Number.isNaN(d.getTime()))return String(date||'');
+  const day=String(d.getDate()).padStart(2,'0'),month=String(d.getMonth()+1).padStart(2,'0'),year=String(d.getFullYear()).slice(-2);
+  return `${day}.${month}.${year}`;
+}
+function doctorSeriesBounds(sets,from,to,xMode='full',events=[]){
+  const startMs=new Date(from+'T00:00:00').getTime(),endMs=new Date(to+'T23:59:59').getTime();
+  const xs=(sets||[]).flatMap(s=>(s.points||[]).map(p=>Number(p.x))).filter(Number.isFinite);
+  if(!xs.length)return {xmin:startMs,xmax:endMs};
+  let xmin=startMs,xmax=endMs;
+  if(xMode==='tight' || xMode==='series' || xMode==='monthly'){
+    let minX=Math.min(...xs),maxX=Math.max(...xs);
+    const range=Math.max(maxX-minX,14*86400000);
+    const pad=xMode==='tight'?Math.max(18*86400000,range*0.22):Math.max(12*86400000,range*0.15);
+    xmin=Math.max(startMs,minX-pad);xmax=Math.min(endMs,maxX+pad);
+    const near=(events||[]).map(e=>Number(e.x)).filter(Number.isFinite).filter(x=>x>=minX-pad&&x<=maxX+pad);
+    if(near.length){xmin=Math.max(startMs,Math.min(xmin,Math.min(...near)-7*86400000));xmax=Math.min(endMs,Math.max(xmax,Math.max(...near)+7*86400000));}
+  }
+  if(xmin===xmax){xmin-=43200000;xmax+=43200000}
+  return {xmin,xmax};
+}
+function doctorChartTickDates(from,to,{xmin=null,xmax=null,tickMode='labs',series=[]}={}){
+  const start=xmin!=null?isoDateFromMs(xmin):from,end=xmax!=null?isoDateFromMs(xmax):to;
+  const set=new Set([start,end]);
+  if(tickMode==='months'){
+    for(const s of series||[])for(const p of s.points||[]){const d=isoDateFromMs(Number(p.x));if(withinReportPeriod(d,start,end))set.add(d)}
+  }else{
+    for(const l of state.labs||[])if(withinReportPeriod(l.date,start,end))set.add(l.date);
+  }
   return [...set].filter(Boolean).sort();
 }
-function doctorPdfChartFromSets(sets,from,to,{mode='auto',events=[],lang='ru'}={}){
+function doctorChooseRow(rowEnds,left,gap,maxRows){
+  for(let i=0;i<rowEnds.length;i++)if(left>=rowEnds[i]+gap)return i;
+  if(rowEnds.length<maxRows){rowEnds.push(-Infinity);return rowEnds.length-1;}
+  let best=0,min=rowEnds[0];for(let i=1;i<rowEnds.length;i++)if(rowEnds[i]<min){min=rowEnds[i];best=i}
+  return best;
+}
+function doctorPdfChartFromSets(sets,from,to,{mode='auto',events=[],lang='ru',xMode='full',tickMode='labs'}={}){
   const c=document.createElement('canvas');
-  const start=new Date(from+'T00:00:00').getTime(),end=new Date(to+'T23:59:59').getTime();
-  const filtered=(sets||[]).map((x,i)=>({...x,color:x.color||HRT_SERIES_COLORS[i%HRT_SERIES_COLORS.length],points:(x.points||[]).filter(p=>p.x>=start&&p.x<=end&&Number.isFinite(Number(p.y)))})).filter(x=>x.points.length);
+  const reportStart=new Date(from+'T00:00:00').getTime(),reportEnd=new Date(to+'T23:59:59').getTime();
+  const filtered=(sets||[]).map((x,i)=>({...x,color:x.color||HRT_SERIES_COLORS[i%HRT_SERIES_COLORS.length],points:(x.points||[]).filter(p=>p.x>=reportStart&&p.x<=reportEnd&&Number.isFinite(Number(p.y)))})).filter(x=>x.points.length);
   const units=[...new Set(filtered.map(x=>x.unit||''))],effective=mode==='auto'?(units.length<=1?'raw':'index'):mode;
   const transformed=filtered.map(x=>{const base=x.points.find(p=>Number.isFinite(Number(p.y))&&Number(p.y)!==0)?.y;return {...x,plotPoints:x.points.map(p=>({...p,plotY:effective==='index'?(base?Number(p.y)/Number(base)*100:100):Number(p.y)}))}});
-  const protocolEvents=(events||[]).filter(e=>e.kind==='protocol'&&e.protocol&&e.x>=start&&e.x<=end);
-  const deviationEvents=(events||[]).filter(e=>e.kind==='deviation'&&e.x>=start&&e.x<=end);
-  const tickDates=doctorChartTickDates(from,to),tickRows=tickDates.length>6?3:(tickDates.length>4?2:1);
-  c.width=1500;c.height=650;const ctx=c.getContext('2d'),w=c.width,h=c.height;ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);
+  const bounds=doctorSeriesBounds(filtered,from,to,xMode,events),xmin=bounds.xmin,xmax=bounds.xmax;
+  const protocolEvents=(events||[]).filter(e=>e.kind==='protocol'&&e.protocol&&e.x>=xmin&&e.x<=xmax).sort((a,b)=>a.x-b.x);
+  const deviationEvents=(events||[]).filter(e=>e.kind==='deviation'&&e.x>=xmin&&e.x<=xmax).sort((a,b)=>a.x-b.x);
+  const tickDates=doctorChartTickDates(from,to,{xmin,xmax,tickMode,series:filtered});
+  c.width=1500;c.height=680;const ctx=c.getContext('2d'),w=c.width,h=c.height;ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);
   if(!transformed.length){ctx.fillStyle='#677788';ctx.font='26px Arial';ctx.textAlign='center';ctx.fillText(doctorText(lang,'noData'),w/2,h/2);return {image:c.toDataURL('image/png'),effective,hasData:false}}
   const all=transformed.flatMap(x=>x.plotPoints),ys=all.map(p=>p.plotY).filter(Number.isFinite);let ymin=Math.min(...ys),ymax=Math.max(...ys);if(ymin===ymax){ymin-=1;ymax+=1}const yr=(ymax-ymin)||1;ymin-=yr*.13;ymax+=yr*.13;
-  const pad={l:105,r:42,t:150,b:105+(tickRows-1)*28},xmin=start,xmax=end,mapX=x=>pad.l+(x-xmin)/(xmax-xmin)*(w-pad.l-pad.r),mapY=y=>pad.t+(ymax-y)/(ymax-ymin)*(h-pad.t-pad.b);
+  const sameMed=new Set(protocolEvents.map(e=>medName(e.protocol.medId))).size<=1;
+  const topRows=Math.min(4,Math.max(1,protocolEvents.length?Math.ceil(protocolEvents.length/2):1));
+  const tickRows=Math.min(3,Math.max(1,tickDates.length>7?3:(tickDates.length>4?2:1)));
+  const pad={l:105,r:42,t:110+topRows*34,b:82+tickRows*26},mapX=x=>pad.l+(x-xmin)/(xmax-xmin)*(w-pad.l-pad.r),mapY=y=>pad.t+(ymax-y)/(ymax-ymin)*(h-pad.t-pad.b);
   ctx.strokeStyle='#e0e6ec';ctx.lineWidth=2;
   for(let i=0;i<=4;i++){const y=pad.t+(h-pad.t-pad.b)*i/4;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();const val=ymax-(ymax-ymin)*i/4;ctx.fillStyle='#5f7080';ctx.font='27px Arial';ctx.textAlign='right';ctx.fillText(wNum(val,1),pad.l-14,y+8)}
-  // Laboratory/protocol dates on the x-axis and light vertical guides.
+
+  // X-axis guide lines and compact date labels.
   ctx.save();
-  for(let i=0;i<tickDates.length;i++){
-    const d=tickDates[i],x=mapX(new Date(d+'T12:00:00').getTime());
-    ctx.setLineDash([3,9]);ctx.strokeStyle='#d8e0e7';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,h-pad.b);ctx.stroke();ctx.setLineDash([]);
-    ctx.strokeStyle='#9aa8b5';ctx.beginPath();ctx.moveTo(x,h-pad.b);ctx.lineTo(x,h-pad.b+9);ctx.stroke();
-    ctx.fillStyle='#536575';ctx.font='25px Arial';ctx.textAlign='right';ctx.save();ctx.translate(x-3,h-pad.b+25+(i%tickRows)*28);ctx.rotate(-Math.PI/4);ctx.fillText(doctorFmtDate(d,lang),0,0);ctx.restore();
+  const tickRowEnds=[];ctx.font='22px Arial';ctx.textAlign='center';
+  for(const d of tickDates){
+    const x=mapX(new Date(d+'T12:00:00').getTime());
+    ctx.setLineDash([3,9]);ctx.strokeStyle='#dde5ec';ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,h-pad.b);ctx.stroke();ctx.setLineDash([]);
+    ctx.strokeStyle='#9aa8b5';ctx.beginPath();ctx.moveTo(x,h-pad.b);ctx.lineTo(x,h-pad.b+8);ctx.stroke();
+    const label=doctorAxisDateLabel(d,lang),tw=ctx.measureText(label).width,left=Math.max(pad.l,x-tw/2),row=doctorChooseRow(tickRowEnds,left,10,3),drawX=Math.min(Math.max(x,pad.l+tw/2),w-pad.r-tw/2),y=h-pad.b+24+row*24;tickRowEnds[row]=Math.min(w-pad.r,drawX+tw/2);ctx.fillStyle='#556676';ctx.fillText(label,drawX,y);
   }
   ctx.restore();
-  // Protocol changes: dashed gold lines on every chart with the actual drug and dose.
+
+  // Protocol changes with compact non-overlapping labels.
   ctx.save();
-  protocolEvents.forEach((ev,idx)=>{
-    const x=mapX(ev.x),label=`${medName(ev.protocol.medId)} · ${doctorShortSchedule(ev.protocol,lang)}`;
-    ctx.setLineDash([10,9]);ctx.strokeStyle='#a9833c';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,h-pad.b);ctx.stroke();ctx.setLineDash([]);
-    ctx.font='27px Arial';const tw=Math.min(520,ctx.measureText(label).width+28),row=idx%3,y=34+row*34;let bx=x+8;if(bx+tw>w-pad.r)bx=x-tw-8;if(bx<pad.l)bx=pad.l;
-    ctx.fillStyle='rgba(255,250,239,.96)';ctx.strokeStyle='#c7a45f';ctx.lineWidth=1.5;ctx.fillRect(bx,y-29,tw,35);ctx.strokeRect(bx,y-29,tw,35);ctx.fillStyle='#6f5421';ctx.textAlign='left';let shown=label;while(ctx.measureText(shown).width>tw-18&&shown.length>8)shown=shown.slice(0,-2);if(shown!==label)shown=shown.replace(/\s+$/,'')+'…';ctx.fillText(shown,bx+12,y-4);
+  const protocolRowEnds=[];ctx.font='24px Arial';ctx.textAlign='left';
+  protocolEvents.forEach(ev=>{
+    const x=mapX(ev.x),label=sameMed?doctorCompactSchedule(ev.protocol,lang):`${medName(ev.protocol.medId)} · ${doctorCompactSchedule(ev.protocol,lang)}`;
+    ctx.setLineDash([10,9]);ctx.strokeStyle='#b2893f';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,h-pad.b);ctx.stroke();ctx.setLineDash([]);
+    let tw=Math.min(260,ctx.measureText(label).width+22),left=Math.min(Math.max(x-tw/2,pad.l),w-pad.r-tw),row=doctorChooseRow(protocolRowEnds,left,16,4);left=Math.max(left,protocolRowEnds[row]+16);if(left+tw>w-pad.r){left=w-pad.r-tw;}
+    const top=26+row*32;protocolRowEnds[row]=left+tw;
+    ctx.fillStyle='rgba(255,251,241,.98)';ctx.strokeStyle='#d0b071';ctx.lineWidth=1.5;ctx.fillRect(left,top,tw,26);ctx.strokeRect(left,top,tw,26);
+    ctx.strokeStyle='#d0b071';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(left+tw/2,top+26);ctx.lineTo(x,Math.min(pad.t-8,top+42));ctx.stroke();
+    ctx.fillStyle='#6f5421';ctx.fillText(label,left+11,top+18);
   });
-  deviationEvents.forEach((ev,idx)=>{const x=mapX(ev.x);ctx.setLineDash([5,8]);ctx.strokeStyle='#c95a66';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,h-pad.b);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#a43e49';ctx.font='25px Arial';ctx.textAlign=x>w*.78?'right':'left';ctx.fillText(String(ev.id||'D'),x+(ctx.textAlign==='right'?-6:6),pad.t+24+(idx%2)*26)});
+  deviationEvents.forEach((ev,idx)=>{const x=mapX(ev.x);ctx.setLineDash([5,8]);ctx.strokeStyle='#c95a66';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,h-pad.b);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#a43e49';ctx.font='22px Arial';ctx.textAlign=x>w*.78?'right':'left';ctx.fillText(String(ev.id||'D'),x+(ctx.textAlign==='right'?-6:6),pad.t+20+(idx%2)*24)});
   ctx.restore();
+
   transformed.forEach(set=>{ctx.strokeStyle=set.color;ctx.lineWidth=4;ctx.beginPath();set.plotPoints.forEach((p,i)=>{const x=mapX(p.x),y=mapY(p.plotY);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();set.plotPoints.forEach(p=>{ctx.fillStyle='#fff';ctx.strokeStyle=set.color;ctx.lineWidth=3.5;ctx.beginPath();ctx.arc(mapX(p.x),mapY(p.plotY),6,0,Math.PI*2);ctx.fill();ctx.stroke()})});
-  // Legend with larger typography.
-  ctx.textAlign='left';ctx.font='27px Arial';let lx=pad.l,ly=132;transformed.forEach(set=>{const label=`${set.label}${set.unit?' ('+set.unit+')':''}`;const need=30+ctx.measureText(label).width+34;if(lx+need>w-pad.r){lx=pad.l;ly+=30}ctx.fillStyle=set.color;ctx.fillRect(lx,ly-7,20,6);ctx.fillStyle='#263746';ctx.fillText(label,lx+28,ly);lx+=need});
+
+  ctx.textAlign='left';ctx.font='25px Arial';let lx=pad.l,ly=pad.t-18;transformed.forEach(set=>{const label=`${set.label}${set.unit?' ('+set.unit+')':''}`;const need=28+ctx.measureText(label).width+26;if(lx+need>w-pad.r){lx=pad.l;ly-=28}ctx.fillStyle=set.color;ctx.fillRect(lx,ly-6,20,6);ctx.fillStyle='#263746';ctx.fillText(label,lx+28,ly);lx+=need});
   return {image:c.toDataURL('image/png',0.96),effective,hasData:true};
 }
 function doctorLabTrendSeries(from,to){
@@ -3639,13 +3704,13 @@ function downloadDoctorReportPdf(lang='ru',from='',to=''){
 
   content.push(doctorPdfSectionTitle(doctorText(lang,'charts')));content.push({text:doctorText(lang,'chartGuide'),style:'small',margin:[0,0,0,6]});
   const hormoneKeys=['testosterone','free_testosterone','shbg','estradiol'];const hormoneSets=hormoneKeys.map((k,i)=>{const cs=chartSeriesForKey(k);return {label:doctorAnalyteLabel(k,cs.group?.label||k,lang),unit:cs.unit||'',color:HRT_SERIES_COLORS[i%HRT_SERIES_COLORS.length],points:cs.points.map(p=>({x:new Date(p.date+'T12:00:00').getTime(),y:Number(p.value)}))}}).filter(x=>x.points.some(p=>p.x>=new Date(from+'T00:00:00').getTime()&&p.x<=new Date(to+'T23:59:59').getTime()));
-  if(hormoneSets.length>=2){const ch=doctorPdfChartFromSets(hormoneSets,from,to,{mode:'index',events,lang});if(ch.hasData){content.push({text:doctorText(lang,'hormoneOverview'),style:'h2'});content.push({image:ch.image,width:515,margin:[0,0,0,4]});content.push({text:doctorText(lang,'indexNote'),style:'small',margin:[0,0,0,5]});const lt=doctorEventLegendTable(events,lang);if(lt)content.push(lt)}}
-  if(monthlyWeights.length>=2){const pts=monthlyWeights.map(x=>({x:x.x,y:x.avg}));const ch=doctorPdfChartFromSets([{label:doctorText(lang,'avgWeight'),unit:'kg',points:pts,color:HRT_SERIES_COLORS[0]}],from,to,{mode:'raw',events,lang});if(ch.hasData){content.push({text:doctorText(lang,'avgWeight'),style:'h2'});content.push({image:ch.image,width:515,margin:[0,0,0,8]})}}
-  if(monthlyBp.length>=2){const sys=monthlyBp.filter(x=>Number.isFinite(x.sys)).map(x=>({x:x.x,y:x.sys})),dia=monthlyBp.filter(x=>Number.isFinite(x.dia)).map(x=>({x:x.x,y:x.dia}));const ch=doctorPdfChartFromSets([{label:lang==='fi'?'Systolinen ka.':'Систолическое ср.',unit:'mmHg',points:sys,color:HRT_SERIES_COLORS[1]},{label:lang==='fi'?'Diastolinen ka.':'Диастолическое ср.',unit:'mmHg',points:dia,color:HRT_SERIES_COLORS[4]}],from,to,{mode:'raw',events,lang});if(ch.hasData){content.push({text:lang==='fi'?'Verenpaine — kuukausikeskiarvot':'Артериальное давление — среднемесячные значения',style:'h2'});content.push({image:ch.image,width:515,margin:[0,0,0,8]})}const pulse=monthlyBp.filter(x=>Number.isFinite(x.pulse)).map(x=>({x:x.x,y:x.pulse}));if(pulse.length>=2){const ph=doctorPdfChartFromSets([{label:doctorText(lang,'avgPulse'),unit:'/min',points:pulse,color:HRT_SERIES_COLORS[2]}],from,to,{mode:'raw',events,lang});if(ph.hasData){content.push({text:doctorText(lang,'avgPulse'),style:'h2'});content.push({image:ph.image,width:515,margin:[0,0,0,8]})}}}
-  const fatPts=metricSeries(6).filter(p=>p.x>=new Date(from+'T00:00:00').getTime()&&p.x<=new Date(to+'T23:59:59').getTime());if(fatPts.length>=2){const ch=doctorPdfChartFromSets([{label:doctorText(lang,'bodyFat'),unit:'%',points:fatPts,color:HRT_SERIES_COLORS[4]}],from,to,{mode:'raw',events,lang});if(ch.hasData){content.push({text:doctorText(lang,'bodyFat'),style:'h2'});content.push({image:ch.image,width:515,margin:[0,0,0,8]})}}
-  const musclePts=metricSeries(76).filter(p=>p.x>=new Date(from+'T00:00:00').getTime()&&p.x<=new Date(to+'T23:59:59').getTime());if(musclePts.length>=2){const ch=doctorPdfChartFromSets([{label:doctorText(lang,'muscleMass'),unit:'kg',points:musclePts,color:HRT_SERIES_COLORS[2]}],from,to,{mode:'raw',events,lang});if(ch.hasData){content.push({text:doctorText(lang,'muscleMass'),style:'h2'});content.push({image:ch.image,width:515,margin:[0,0,0,8]})}}
+  if(hormoneSets.length>=2){const ch=doctorPdfChartFromSets(hormoneSets,from,to,{mode:'index',events,lang,xMode:'full',tickMode:'labs'});if(ch.hasData){content.push({text:doctorText(lang,'hormoneOverview'),style:'h2'});content.push({image:ch.image,width:515,margin:[0,0,0,4]});content.push({text:doctorText(lang,'indexNote'),style:'small',margin:[0,0,0,5]});const lt=doctorEventLegendTable(events,lang);if(lt)content.push(lt)}}
+  if(monthlyWeights.length>=2){const pts=monthlyWeights.map(x=>({x:x.x,y:x.avg}));const ch=doctorPdfChartFromSets([{label:doctorText(lang,'avgWeight'),unit:'kg',points:pts,color:HRT_SERIES_COLORS[0]}],from,to,{mode:'raw',events,lang,xMode:'series',tickMode:'months'});if(ch.hasData){content.push({text:doctorText(lang,'avgWeight'),style:'h2'});content.push({image:ch.image,width:515,margin:[0,0,0,8]})}}
+  if(monthlyBp.length>=2){const sys=monthlyBp.filter(x=>Number.isFinite(x.sys)).map(x=>({x:x.x,y:x.sys})),dia=monthlyBp.filter(x=>Number.isFinite(x.dia)).map(x=>({x:x.x,y:x.dia}));const ch=doctorPdfChartFromSets([{label:lang==='fi'?'Systolinen ka.':'Систолическое ср.',unit:'mmHg',points:sys,color:HRT_SERIES_COLORS[1]},{label:lang==='fi'?'Diastolinen ka.':'Диастолическое ср.',unit:'mmHg',points:dia,color:HRT_SERIES_COLORS[4]}],from,to,{mode:'raw',events,lang,xMode:'series',tickMode:'months'});if(ch.hasData){content.push({text:lang==='fi'?'Verenpaine — kuukausikeskiarvot':'Артериальное давление — среднемесячные значения',style:'h2'});content.push({image:ch.image,width:515,margin:[0,0,0,8]})}const pulse=monthlyBp.filter(x=>Number.isFinite(x.pulse)).map(x=>({x:x.x,y:x.pulse}));if(pulse.length>=2){const ph=doctorPdfChartFromSets([{label:doctorText(lang,'avgPulse'),unit:'/min',points:pulse,color:HRT_SERIES_COLORS[2]}],from,to,{mode:'raw',events,lang,xMode:'series',tickMode:'months'});if(ph.hasData){content.push({text:doctorText(lang,'avgPulse'),style:'h2'});content.push({image:ph.image,width:515,margin:[0,0,0,8]})}}}
+  const fatPts=metricSeries(6).filter(p=>p.x>=new Date(from+'T00:00:00').getTime()&&p.x<=new Date(to+'T23:59:59').getTime());if(fatPts.length>=2){const ch=doctorPdfChartFromSets([{label:doctorText(lang,'bodyFat'),unit:'%',points:fatPts,color:HRT_SERIES_COLORS[4]}],from,to,{mode:'raw',events,lang,xMode:'series',tickMode:'months'});if(ch.hasData){content.push({text:doctorText(lang,'bodyFat'),style:'h2'});content.push({image:ch.image,width:515,margin:[0,0,0,8]})}}
+  const musclePts=metricSeries(76).filter(p=>p.x>=new Date(from+'T00:00:00').getTime()&&p.x<=new Date(to+'T23:59:59').getTime());if(musclePts.length>=2){const ch=doctorPdfChartFromSets([{label:doctorText(lang,'muscleMass'),unit:'kg',points:musclePts,color:HRT_SERIES_COLORS[2]}],from,to,{mode:'raw',events,lang,xMode:'series',tickMode:'months'});if(ch.hasData){content.push({text:doctorText(lang,'muscleMass'),style:'h2'});content.push({image:ch.image,width:515,margin:[0,0,0,8]})}}
   const trendSeries=doctorLabTrendSeries(from,to);content.push({text:doctorText(lang,'individualLabTrends'),style:'h2',margin:[0,9,0,3]});
-  if(!trendSeries.length)content.push(doctorPdfMuted(doctorText(lang,'noLabTrends')));else for(const s of trendSeries){const ch=doctorPdfChartFromSets([{label:doctorAnalyteLabel(s.key,s.label,lang),unit:s.unit,points:s.points,color:HRT_SERIES_COLORS[0]}],from,to,{mode:'raw',events,lang});if(ch.hasData){content.push({text:`${doctorAnalyteLabel(s.key,s.label,lang)}${s.unit?' · '+s.unit:''}`,style:'h3',margin:[0,6,0,2]});content.push({image:ch.image,width:515,margin:[0,0,0,7]})}}
+  if(!trendSeries.length)content.push(doctorPdfMuted(doctorText(lang,'noLabTrends')));else for(const s of trendSeries){const ch=doctorPdfChartFromSets([{label:doctorAnalyteLabel(s.key,s.label,lang),unit:s.unit,points:s.points,color:HRT_SERIES_COLORS[0]}],from,to,{mode:'raw',events,lang,xMode:'tight',tickMode:'labs'});if(ch.hasData){content.push({text:`${doctorAnalyteLabel(s.key,s.label,lang)}${s.unit?' · '+s.unit:''}`,style:'h3',margin:[0,6,0,2]});content.push({image:ch.image,width:515,margin:[0,0,0,7]})}}
 
   content.push(doctorPdfSectionTitle(doctorText(lang,'labs')));
   if(!labs.length)content.push(doctorPdfMuted(doctorText(lang,'noData')));else for(const l of labs){content.push({text:`${doctorFmtDate(l.date,lang)}${l.time?' · '+l.time:''} · ${l.lab||doctorText(lang,'lab')}`,style:'h2',margin:[0,8,0,2]});content.push({text:`${doctorText(lang,'protocolAtDate')}: ${doctorProtocolSummaryAt(l.date,lang)}\n${doctorText(lang,'doseContext')}: ${doctorDoseContextText(l,lang)}`,style:'small',margin:[0,0,0,4]});content.push({table:{headerRows:1,widths:['*',85,105,125],body:[[doctorText(lang,'analyte'),doctorText(lang,'result'),doctorText(lang,'reference'),doctorText(lang,'personalTarget')],...doctorLabRowsForReport(l,lang)]},layout:'lightHorizontalLines',fontSize:7.2})}
