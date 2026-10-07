@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HRT Health Studio v3.5.4 — Terveystalo PDF Parser Fix</title>
+<title>HRT Health Studio v3.5.5 — Terveystalo PDF Parser Fix</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -264,7 +264,7 @@ aside{display:flex;flex-direction:column}
 <div id="hrtAuthGate">
   <div class="hrt-auth-card">
     <div class="hrt-auth-brand">VM PRIVATE SUITE</div>
-    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.5.4</span></div>
+    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.5.5</span></div>
     <div class="hrt-auth-sub">Используйте тот же аккаунт, что и в Планировании капитала</div>
     <label>Email<input id="hrtGateEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
     <label>Пароль<input id="hrtGatePassword" type="password" autocomplete="current-password" placeholder="Введите пароль"></label>
@@ -276,10 +276,10 @@ aside{display:flex;flex-direction:column}
   </div>
 </div>
 <div id="hrtAppShell" class="auth-hidden">
-<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.5.4</div>
+<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.5.5</div>
 <div class="app">
 <aside>
-  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.5.4</small></div>
+  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.5.5</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Главная</button>
     <button class="nav" data-view="labs">Анализы</button>
@@ -2254,27 +2254,42 @@ function parseMarkersFromPdf(text){
   return out;
 }
 
-function parseTerveystaloItems(items){
+function terveystaloHeadersFromItems(items){
+  const headers={};
+  for(const it of (items||[])){
+    const s=String(it.str||'').trim().toLowerCase();
+    const x=Number(it.transform?.[4]);
+    if(!Number.isFinite(x))continue;
+    if(s==='tulos')headers.result=x;
+    else if(s==='viitearvo')headers.ref=x;
+    else if(s==='yksikkö')headers.unit=x;
+  }
+  return (Number.isFinite(headers.result)&&Number.isFinite(headers.ref)&&Number.isFinite(headers.unit))?headers:null;
+}
+
+function parseTerveystaloItems(items,fallbackHeaders=null){
   // Coordinate-based parser for Terveystalo tables.
   // It uses the physical PDF columns instead of guessing from number order.
   const src=(items||[]).map(it=>({s:String(it.str||'').trim(),x:Number(it.transform?.[4]||0),y:Number(it.transform?.[5]||0)})).filter(z=>z.s);
-  const headers={};
-  for(const z of src){
-    const k=z.s.toLowerCase().trim();
-    if(k==='tulos')headers.result=z.x;
-    else if(k==='viitearvo')headers.ref=z.x;
-    else if(k==='yksikkö')headers.unit=z.x;
-  }
-  if(!Number.isFinite(headers.result)||!Number.isFinite(headers.ref)||!Number.isFinite(headers.unit))return [];
-  const resultLeft=(headers.result+0)/1; // header x is the left edge of the result column
-  const nameCut=(headers.result+headers.ref)/2 - 35; // keep lab code with the name, away from result
-  const resultRefCut=(headers.result+headers.ref)/2;
-  const refUnitCut=(headers.ref+headers.unit)/2;
+  // Some continuation pages (notably page 3 in Terveystalo exports) omit the
+  // table header. In that case reuse column anchors learned from another page
+  // of the SAME PDF instead of falling back to number-order guessing.
+  const detected=terveystaloHeadersFromItems(items);
+  const headers=detected||fallbackHeaders;
+  if(!headers||!Number.isFinite(headers.result)||!Number.isFinite(headers.ref)||!Number.isFinite(headers.unit))return [];
+  // Terveystalo numeric cells are RIGHT-aligned under their headers. Therefore
+  // midpoints between header X positions are unsafe: short values such as 0.82
+  // start to the LEFT of the "Tulos" header and were previously swallowed into
+  // the name column, while <2,5 was then mistaken for the result.
+  // Use guarded starts immediately before each physical header instead.
+  const resultStart=headers.result-40;
+  const refStart=headers.ref-20;
+  const unitStart=headers.unit-20;
 
   // Group PDF text items into visual rows with a small tolerance.
   const sorted=[...src].sort((a,b)=>b.y-a.y||a.x-b.x), rows=[];
   for(const z of sorted){
-    let row=rows.find(r=>Math.abs(r.y-z.y)<=1.6);
+    let row=rows.find(r=>Math.abs(r.y-z.y)<=2.5);
     if(!row){row={y:z.y,items:[]};rows.push(row)}
     row.items.push(z);
   }
@@ -2284,10 +2299,10 @@ function parseTerveystaloItems(items){
   const oneRe=/^([<>≤≥])\s*(-?\d+(?:[.,]\d+)?)$/;
   for(const row of rows){
     const a=[...row.items].sort((x,y)=>x.x-y.x);
-    const name=a.filter(z=>z.x<nameCut).map(z=>z.s).join(' ').replace(/\s+/g,' ').trim();
-    const result=a.filter(z=>z.x>=nameCut&&z.x<resultRefCut).map(z=>z.s).join('').replace(/\s+/g,'').trim();
-    const ref=a.filter(z=>z.x>=resultRefCut&&z.x<refUnitCut).map(z=>z.s).join('').replace(/\s+/g,'').trim();
-    const unit=a.filter(z=>z.x>=refUnitCut).map(z=>z.s).join('').replace(/\s+/g,'').trim();
+    const name=a.filter(z=>z.x<resultStart).map(z=>z.s).join(' ').replace(/\s+/g,' ').trim();
+    const result=a.filter(z=>z.x>=resultStart&&z.x<refStart).map(z=>z.s).join('').replace(/\s+/g,'').trim();
+    const ref=a.filter(z=>z.x>=refStart&&z.x<unitStart).map(z=>z.s).join('').replace(/\s+/g,'').trim();
+    const unit=a.filter(z=>z.x>=unitStart).map(z=>z.s).join('').replace(/\s+/g,'').trim();
     if(!name||!valRe.test(result)||!unit)continue;
     const value=parseNumberLocal(result.replace(/[<>≤≥]/g,''));
     if(value===null)continue;
@@ -2342,8 +2357,16 @@ async function extractPdfPages(file){
       flowText,
       text: visualText || flowText,
       itemCount: tc.items.length,
-      terveystaloMarkers: parseTerveystaloItems(tc.items)
+      _pdfItems: tc.items,
+      terveystaloMarkers: []
     });
+  }
+  // Learn Terveystalo column positions once from any page that contains the
+  // headers, then apply those exact anchors to continuation pages too.
+  const sharedHeaders=pages.map(p=>terveystaloHeadersFromItems(p._pdfItems)).find(Boolean)||null;
+  for(const p of pages){
+    p.terveystaloMarkers=parseTerveystaloItems(p._pdfItems,sharedHeaders);
+    delete p._pdfItems;
   }
   return {pageCount:pdf.numPages,pages};
 }
@@ -3047,7 +3070,7 @@ function renderLatestChanges(){
   }
   box.innerHTML=cards.length?`<div class="change-grid">${cards.join('')}</div>`:`<div class="empty">Пока недостаточно повторных анализов для сравнения.</div>`;
 }
-const APP_VERSION='3.5.4';
+const APP_VERSION='3.5.5';
 
 function normalizedHctPercent(marker){
   if(!marker)return null;
