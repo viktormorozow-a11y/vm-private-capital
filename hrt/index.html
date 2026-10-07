@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HRT Health Studio v3.6.0 — VM Private Suite UI</title>
+<title>HRT Health Studio v3.6.1 — VM Private Suite UI</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -260,7 +260,7 @@ aside{display:flex;flex-direction:column}
 
 
 
-/* v3.6.0 — VM Private Suite visual system + light/dark themes */
+/* v3.6.1 — VM Private Suite visual system + light/dark themes */
 :root{
  --bg:#070a11;--bg2:#0b101a;--panel:rgba(17,23,35,.86);--panel-solid:#111723;--panel2:#171e2b;
  --text:#f3f6fb;--muted:#8f9aae;--line:rgba(255,255,255,.085);--line2:rgba(255,255,255,.14);
@@ -298,7 +298,7 @@ html[data-theme="light"] .note{color:var(--muted)}html[data-theme="light"] .note
 <div id="hrtAuthGate">
   <div class="hrt-auth-card">
     <div class="hrt-auth-brand">VM PRIVATE SUITE</div>
-    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.6.0</span></div>
+    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.6.1</span></div>
     <div class="hrt-auth-sub">Используйте тот же аккаунт, что и в Планировании капитала</div>
     <label>Email<input id="hrtGateEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
     <label>Пароль<input id="hrtGatePassword" type="password" autocomplete="current-password" placeholder="Введите пароль"></label>
@@ -310,7 +310,7 @@ html[data-theme="light"] .note{color:var(--muted)}html[data-theme="light"] .note
   </div>
 </div>
 <div id="hrtAppShell" class="auth-hidden">
-<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.6.0</div>
+<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.6.1</div>
 <div class="app">
 <aside>
   <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.6.0</small></div>
@@ -1089,17 +1089,27 @@ function withingsProtocolLegendHtml(xmin,xmax){
   if(!rows.length)return '<b>Препараты:</b> в этом периоде нет записанных активных протоколов.';
   return '<b>Препараты на периоде:</b> '+rows.map(p=>`${safeHtml(medName(p.medId))} · ${safeHtml(scheduleText(p))} · ${fmtDate(p.start)}${p.end?' → '+fmtDate(p.end):' → сейчас'}`).join('<br>');
 }
+function hrtChartTheme(){
+  const light=document.documentElement.getAttribute('data-theme')==='light';
+  return light?{
+    bg:'#f8fafc',grid:'rgba(28,48,74,.10)',muted:'#69778b',text:'#172234',
+    protocol:'rgba(155,107,24,.48)',protocolText:'#9b6b18',protocolLabel:'#8a6a31'
+  }:{
+    bg:'#08121b',grid:'rgba(255,255,255,.08)',muted:'#8ea0b1',text:'#dbe5ec',
+    protocol:'rgba(214,173,98,.48)',protocolText:'#d6ad62',protocolLabel:'#bfa36e'
+  };
+}
 function drawWithingsChart(canvasId,sets){
   const c=$(canvasId);if(!c)return;const host=c.closest('.withings-chart');let tip=host?.querySelector('.withings-chart-tip');if(host&&!tip){tip=document.createElement('div');tip.className='withings-chart-tip';host.appendChild(tip)}let legend=host?.querySelector('.withings-protocol-legend');if(host&&!legend){legend=document.createElement('div');legend.className='withings-protocol-legend';host.appendChild(legend)}
-  const rect=c.getBoundingClientRect(),dpr=window.devicePixelRatio||1;c.width=Math.max(320,rect.width*dpr);c.height=Math.max(180,220*dpr);const ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);const w=c.width/dpr,h=c.height/dpr;ctx.clearRect(0,0,w,h);
-  const all=sets.flatMap(s=>s.points||[]);if(!all.length){ctx.fillStyle='#8ea0b1';ctx.font='12px sans-serif';ctx.textAlign='center';ctx.fillText('Нет данных',w/2,h/2);if(legend)legend.innerHTML='<b>Препараты:</b> график пока не содержит данных.';return}
+  const rect=c.getBoundingClientRect(),dpr=window.devicePixelRatio||1;c.width=Math.max(320,rect.width*dpr);c.height=Math.max(180,220*dpr);const ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);const w=c.width/dpr,h=c.height/dpr;const theme=hrtChartTheme();ctx.clearRect(0,0,w,h);ctx.fillStyle=theme.bg;ctx.fillRect(0,0,w,h);
+  const all=sets.flatMap(s=>s.points||[]);if(!all.length){ctx.fillStyle=theme.muted;ctx.font='12px sans-serif';ctx.textAlign='center';ctx.fillText('Нет данных',w/2,h/2);if(legend)legend.innerHTML='<b>Препараты:</b> график пока не содержит данных.';return}
   const pad={l:42,r:12,t:18,b:28},xs=all.map(p=>p.x),ys=all.map(p=>p.y);let xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys);if(xmin===xmax){xmin-=86400000;xmax+=86400000}if(ymin===ymax){ymin-=1;ymax+=1}const yr=(ymax-ymin)||1;ymin-=yr*.12;ymax+=yr*.12;
-  ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1;for(let i=0;i<=4;i++){const y=pad.t+(h-pad.t-pad.b)*i/4;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();const val=ymax-(ymax-ymin)*i/4;ctx.fillStyle='#8ea0b1';ctx.font='9px sans-serif';ctx.textAlign='right';ctx.fillText(wNum(val,1),pad.l-5,y+3)}
+  ctx.strokeStyle=theme.grid;ctx.lineWidth=1;for(let i=0;i<=4;i++){const y=pad.t+(h-pad.t-pad.b)*i/4;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();const val=ymax-(ymax-ymin)*i/4;ctx.fillStyle=theme.muted;ctx.font='9px sans-serif';ctx.textAlign='right';ctx.fillText(wNum(val,1),pad.l-5,y+3)}
   const mapX=x=>pad.l+(x-xmin)/(xmax-xmin)*(w-pad.l-pad.r),mapY=y=>pad.t+(ymax-y)/(ymax-ymin)*(h-pad.t-pad.b);const cols=['#d6ad62','#7fc8ff','#73d99a','#df9cff'];
-  const starts=protocolStartsBetween(xmin,xmax);ctx.save();ctx.setLineDash([4,4]);ctx.font='8px sans-serif';starts.forEach((ev,idx)=>{const x=mapX(ev.x);ctx.strokeStyle='rgba(214,173,98,.48)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,h-pad.b);ctx.stroke();ctx.fillStyle='#d6ad62';ctx.textAlign=idx%2?'right':'left';const name=medName(ev.p.medId);ctx.fillText(name.length>16?name.slice(0,15)+'…':name,idx%2?x-3:x+3,pad.t-5)});ctx.restore();
+  const starts=protocolStartsBetween(xmin,xmax);ctx.save();ctx.setLineDash([4,4]);ctx.font='8px sans-serif';starts.forEach((ev,idx)=>{const x=mapX(ev.x);ctx.strokeStyle=theme.protocol;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,h-pad.b);ctx.stroke();ctx.fillStyle=theme.protocolText;ctx.textAlign=idx%2?'right':'left';const name=medName(ev.p.medId);ctx.fillText(name.length>16?name.slice(0,15)+'…':name,idx%2?x-3:x+3,pad.t-5)});ctx.restore();
   sets.forEach((set,idx)=>{const pts=set.points||[];if(!pts.length)return;ctx.strokeStyle=set.color||cols[idx%cols.length];ctx.lineWidth=2;ctx.beginPath();pts.forEach((p,i)=>{const x=mapX(p.x),y=mapY(p.y);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();pts.forEach(p=>{ctx.fillStyle=set.color||cols[idx%cols.length];ctx.beginPath();ctx.arc(mapX(p.x),mapY(p.y),2.2,0,Math.PI*2);ctx.fill()})});
-  ctx.fillStyle='#8ea0b1';ctx.font='9px sans-serif';ctx.textAlign='left';ctx.fillText(new Date(xmin).toLocaleDateString('ru-RU'),pad.l,h-8);ctx.textAlign='right';ctx.fillText(new Date(xmax).toLocaleDateString('ru-RU'),w-pad.r,h-8);
-  let lx=pad.l;ctx.textAlign='left';sets.forEach((set,idx)=>{if(!(set.points||[]).length)return;ctx.fillStyle=set.color||cols[idx%cols.length];ctx.fillRect(lx,2,9,3);ctx.fillStyle='#cfd8df';ctx.fillText(set.label||'',lx+13,7);lx+=13+ctx.measureText(set.label||'').width+14});
+  ctx.fillStyle=theme.muted;ctx.font='9px sans-serif';ctx.textAlign='left';ctx.fillText(new Date(xmin).toLocaleDateString('ru-RU'),pad.l,h-8);ctx.textAlign='right';ctx.fillText(new Date(xmax).toLocaleDateString('ru-RU'),w-pad.r,h-8);
+  let lx=pad.l;ctx.textAlign='left';sets.forEach((set,idx)=>{if(!(set.points||[]).length)return;ctx.fillStyle=set.color||cols[idx%cols.length];ctx.fillRect(lx,2,9,3);ctx.fillStyle=theme.text;ctx.fillText(set.label||'',lx+13,7);lx+=13+ctx.measureText(set.label||'').width+14});
   if(legend)legend.innerHTML=withingsProtocolLegendHtml(xmin,xmax);
   function showAt(clientX,clientY){if(!tip||!host)return;const cr=c.getBoundingClientRect();const px=clientX-cr.left;if(px<pad.l||px>w-pad.r){tip.style.display='none';return}const target=xmin+(px-pad.l)/(w-pad.l-pad.r)*(xmax-xmin);const anchor=all.reduce((best,p)=>Math.abs(p.x-target)<Math.abs(best.x-target)?p:best,all[0]);const dateIso=isoDateFromMs(anchor.x);const vals=sets.map(set=>{if(!(set.points||[]).length)return '';const p=set.points.reduce((best,q)=>Math.abs(q.x-anchor.x)<Math.abs(best.x-anchor.x)?q:best,set.points[0]);return `<div><b>${safeHtml(set.label||'Значение')}:</b> ${wNum(p.y,2)}</div>`}).filter(Boolean).join('');const prot=protocolSummaryAt(dateIso);tip.innerHTML=`<b>${new Date(anchor.x).toLocaleDateString('ru-RU')}</b>${vals}<div class="protocol"><span class="muted">Препараты / протокол:</span><br>${safeHtml(prot)}</div>`;tip.style.display='block';const hr=host.getBoundingClientRect();let left=clientX-hr.left+12,top=clientY-hr.top+12;if(left+tip.offsetWidth>hr.width-8)left=Math.max(8,clientX-hr.left-tip.offsetWidth-12);if(top+tip.offsetHeight>hr.height-8)top=Math.max(8,clientY-hr.top-tip.offsetHeight-12);tip.style.left=left+'px';tip.style.top=top+'px'}
   c.onmousemove=e=>showAt(e.clientX,e.clientY);c.onmouseleave=()=>{if(tip)tip.style.display='none'};c.onclick=e=>showAt(e.clientX,e.clientY);c.ontouchstart=e=>{const t=e.touches?.[0];if(t)showAt(t.clientX,t.clientY)};
@@ -1196,9 +1206,9 @@ function drawComparisonCanvas(canvas,ids,from,to,mode='auto',{pdf=false,protocol
   const cssH=pdf?330:330,dpr=pdf?1:(window.devicePixelRatio||1);
   canvas.width=Math.round(cssW*dpr);canvas.height=Math.round(cssH*dpr);
   const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
-  const w=cssW,h=cssH;
-  ctx.fillStyle=pdf?'#ffffff':'#08121b';ctx.fillRect(0,0,w,h);
-  if(!sets.length){ctx.fillStyle=pdf?'#677788':'#8ea0b1';ctx.font='13px sans-serif';ctx.textAlign='center';ctx.fillText('Нет данных за выбранный период',w/2,h/2);return pack}
+  const w=cssW,h=cssH,theme=hrtChartTheme();
+  ctx.fillStyle=pdf?'#ffffff':theme.bg;ctx.fillRect(0,0,w,h);
+  if(!sets.length){ctx.fillStyle=pdf?'#677788':theme.muted;ctx.font='13px sans-serif';ctx.textAlign='center';ctx.fillText('Нет данных за выбранный период',w/2,h/2);return pack}
   const all=sets.flatMap(s=>s.plotPoints);
   let xmin=new Date(from+'T00:00:00').getTime(),xmax=new Date(to+'T23:59:59').getTime();
   if(xmin===xmax){xmin-=43200000;xmax+=43200000}
@@ -1206,7 +1216,7 @@ function drawComparisonCanvas(canvas,ids,from,to,mode='auto',{pdf=false,protocol
   let ymin=Math.min(...ys),ymax=Math.max(...ys);if(ymin===ymax){ymin-=1;ymax+=1}
   const yr=(ymax-ymin)||1;ymin-=yr*.1;ymax+=yr*.1;
   const pad={l:58,r:18,t:38,b:34};
-  const grid=pdf?'#dde3e8':'rgba(255,255,255,.08)',muted=pdf?'#687989':'#8ea0b1',text=pdf?'#263746':'#dbe5ec';
+  const grid=pdf?'#dde3e8':theme.grid,muted=pdf?'#687989':theme.muted,text=pdf?'#263746':theme.text;
   ctx.strokeStyle=grid;ctx.lineWidth=1;
   for(let i=0;i<=4;i++){
     const y=pad.t+(h-pad.t-pad.b)*i/4;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();
@@ -1215,7 +1225,7 @@ function drawComparisonCanvas(canvas,ids,from,to,mode='auto',{pdf=false,protocol
   const mapX=x=>pad.l+(x-xmin)/(xmax-xmin)*(w-pad.l-pad.r),mapY=y=>pad.t+(ymax-y)/(ymax-ymin)*(h-pad.t-pad.b);
   if(protocolMarkers){
     const starts=protocolStartsBetween(xmin,xmax);ctx.save();ctx.setLineDash([5,4]);ctx.font='9px sans-serif';
-    starts.forEach((ev,idx)=>{const x=mapX(ev.x);ctx.strokeStyle=pdf?'#b99654':'rgba(214,173,98,.48)';ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,h-pad.b);ctx.stroke();ctx.fillStyle=pdf?'#8d6a2f':'#d6ad62';ctx.textAlign=idx%2?'right':'left';const name=medName(ev.p.medId);ctx.fillText(name.length>18?name.slice(0,17)+'…':name,idx%2?x-3:x+3,pad.t-9)});ctx.restore();
+    starts.forEach((ev,idx)=>{const x=mapX(ev.x);ctx.strokeStyle=pdf?'#b99654':theme.protocol;ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,h-pad.b);ctx.stroke();ctx.fillStyle=pdf?'#8d6a2f':theme.protocolText;ctx.textAlign=idx%2?'right':'left';const name=medName(ev.p.medId);ctx.fillText(name.length>18?name.slice(0,17)+'…':name,idx%2?x-3:x+3,pad.t-9)});ctx.restore();
   }
   sets.forEach(set=>{
     const pts=set.plotPoints;if(!pts.length)return;ctx.strokeStyle=set.color;ctx.lineWidth=2.2;ctx.beginPath();
@@ -3105,7 +3115,7 @@ function renderLatestChanges(){
   }
   box.innerHTML=cards.length?`<div class="change-grid">${cards.join('')}</div>`:`<div class="empty">Пока недостаточно повторных анализов для сравнения.</div>`;
 }
-const APP_VERSION='3.6.0';
+const APP_VERSION='3.6.1';
 
 function normalizedHctPercent(marker){
   if(!marker)return null;
@@ -3474,8 +3484,9 @@ function drawMiniMetricChart(canvas,key,index){
   ctx.setTransform(dpr,0,0,dpr,0,0);
 
   const {points,unit}=chartSeriesForKey(key);
+  const theme=hrtChartTheme();
   ctx.clearRect(0,0,cssW,cssH);
-  ctx.fillStyle='#08121b';ctx.fillRect(0,0,cssW,cssH);
+  ctx.fillStyle=theme.bg;ctx.fillRect(0,0,cssW,cssH);
   if(!points.length)return;
 
   const vals=points.map(p=>p.value),min=Math.min(...vals),max=Math.max(...vals);
@@ -3483,8 +3494,8 @@ function drawMiniMetricChart(canvas,key,index){
   const ymin=min-pad,ymax=max+pad;
   const L=48,R=15,T=18,B=38,W=cssW-L-R,H=cssH-T-B;
 
-  ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1;
-  ctx.fillStyle='#8192a3';ctx.font='10px sans-serif';
+  ctx.strokeStyle=theme.grid;ctx.lineWidth=1;
+  ctx.fillStyle=theme.muted;ctx.font='10px sans-serif';
   for(let i=0;i<4;i++){
     const y=T+H*i/3;
     ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(L+W,y);ctx.stroke();
@@ -3502,10 +3513,10 @@ function drawMiniMetricChart(canvas,key,index){
     const tx=new Date(ev.start+'T12:00:00').getTime();
     const x=L+W*((tx-firstDate)/span);
     ctx.save();
-    ctx.setLineDash([5,5]);ctx.strokeStyle='rgba(214,173,98,.55)';ctx.lineWidth=1;
+    ctx.setLineDash([5,5]);ctx.strokeStyle=theme.protocol;ctx.lineWidth=1;
     ctx.beginPath();ctx.moveTo(x,T);ctx.lineTo(x,T+H);ctx.stroke();ctx.restore();
-    ctx.fillStyle='#d6ad62';ctx.beginPath();ctx.moveTo(x-5,T+2);ctx.lineTo(x+5,T+2);ctx.lineTo(x,T+10);ctx.closePath();ctx.fill();
-    ctx.fillStyle='#bfa36e';ctx.font='9px sans-serif';
+    ctx.fillStyle=theme.protocolText;ctx.beginPath();ctx.moveTo(x-5,T+2);ctx.lineTo(x+5,T+2);ctx.lineTo(x,T+10);ctx.closePath();ctx.fill();
+    ctx.fillStyle=theme.protocolLabel;ctx.font='9px sans-serif';
     const short=(medName(ev.medId).replace('Testosterone ','T. ').slice(0,18));
     ctx.fillText(short,x+5,T+11);
     eventHitPoints.push({kind:'event',x,y:T+8,event:ev});
@@ -3523,13 +3534,13 @@ function drawMiniMetricChart(canvas,key,index){
 
   hitPoints.forEach(({x,y,p})=>{
     ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle='#8ea0b1';ctx.font='10px sans-serif';
+    ctx.fillStyle=theme.muted;ctx.font='10px sans-serif';
     const label=p.date.slice(5).split('-').reverse().join('.');
     ctx.fillText(label,x-13,cssH-16);
   });
 
   if(unit){
-    ctx.fillStyle='#8ea0b1';ctx.font='10px sans-serif';ctx.fillText(unit,L,T-5);
+    ctx.fillStyle=theme.muted;ctx.font='10px sans-serif';ctx.fillText(unit,L,T-5);
   }
 
   c.__hrtHitPoints=hitPoints;
@@ -3901,7 +3912,7 @@ window.addEventListener('resize',()=>{clearTimeout(window.__hrtChartResize);wind
 
 
 
-// v3.6.0 theme controller
+// v3.6.1 theme controller
 const HRT_THEME_KEY='hrt-health-studio-theme';
 function getPreferredHrtTheme(){
   const saved=localStorage.getItem(HRT_THEME_KEY);
