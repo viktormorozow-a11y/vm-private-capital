@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HRT Health Studio v3.5.1 — Combined Charts + PDF</title>
+<title>HRT Health Studio v3.5.2 — Lab Import Fix</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -264,7 +264,7 @@ aside{display:flex;flex-direction:column}
 <div id="hrtAuthGate">
   <div class="hrt-auth-card">
     <div class="hrt-auth-brand">VM PRIVATE SUITE</div>
-    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.5.1</span></div>
+    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.5.2</span></div>
     <div class="hrt-auth-sub">Используйте тот же аккаунт, что и в Планировании капитала</div>
     <label>Email<input id="hrtGateEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
     <label>Пароль<input id="hrtGatePassword" type="password" autocomplete="current-password" placeholder="Введите пароль"></label>
@@ -276,10 +276,10 @@ aside{display:flex;flex-direction:column}
   </div>
 </div>
 <div id="hrtAppShell" class="auth-hidden">
-<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.5.1</div>
+<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.5.2</div>
 <div class="app">
 <aside>
-  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.4.1</small></div>
+  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.5.2</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Главная</button>
     <button class="nav" data-view="labs">Анализы</button>
@@ -1855,7 +1855,9 @@ function parseTerveystaloRows(text){
       }
     }
     if(!name || value===null || /^\d/.test(name))continue;
-    const item={name,value,unit,min,max,refText,parser:'table'};
+    const rawValueToken=(raw.match(new RegExp('('+num+')\\s+(?:'+num+'\\s*[-–]\\s*'+num+'|[<>≤≥]\\s*-?\\d+(?:[.,]\\d+)?|'+unitPattern+')\\s*$','i'))||[])[1]||String(value);
+    const qualifier=(String(rawValueToken).match(/^[<>≤≥]/)||[])[0]||'';
+    const item={name,value,unit,min,max,refText,rawValue:String(rawValueToken).replace(',','.'),qualifier,canonicalKey:canonicalMarkerKey(name),parser:'table'};
     const key=markerKey(item); if(seen.has(key))continue; seen.add(key); out.push(item);
   }
   return out;
@@ -1866,7 +1868,7 @@ function looksLikeAnalysisHeading(line){
   if(/^(Tulos|Viitearvot?|Lausunto|Hormonit|Yhteenveto tuloksista|Raportin on tuottanut|Mehiläinen|Testin tulokset|Ajanvaraus)/i.test(x))return false;
   if(/[.!?]$/.test(x))return false;
   if(/^\d+\s*\/\s*\d+$/.test(x))return false;
-  return /[A-Za-zÅÄÖåäö]/.test(x);
+  return /[A-Za-zА-Яа-яЁёÅÄÖåäö]/.test(x);
 }
 function parseBlockResults(text){
   // Puhti / Mehiläinen / Synlab PDFs often store each test as a block:
@@ -2979,7 +2981,7 @@ function renderLatestChanges(){
   }
   box.innerHTML=cards.length?`<div class="change-grid">${cards.join('')}</div>`:`<div class="empty">Пока недостаточно повторных анализов для сравнения.</div>`;
 }
-const APP_VERSION='3.4.1';
+const APP_VERSION='3.5.2';
 
 function normalizedHctPercent(marker){
   if(!marker)return null;
@@ -3185,7 +3187,7 @@ function isPlausibleMarkerName(name){
   // e.g. "<0,09 nmol/l", "220-800 pmol/l", "25.5 nmol/l".
   if(/^[<>≤≥]?\s*-?\d+(?:[.,]\d+)?(?:\s*[-–]\s*-?\d+(?:[.,]\d+)?)?\s*(?:nmol\/l|pmol\/l|mmol\/l|mmol\/mol|µmol\/l|μmol\/l|umol\/l|g\/l|mg\/l|mg\/dl|µg\/l|μg\/l|ug\/l|ng\/l|ng\/ml|mU\/l|U\/l|IU\/l|E9\/l|E12\/l|%|fL|fl|pg)?$/i.test(x)) return false;
   if(/^(tulos|viitearvot?|yksikkö|lausunto)$/i.test(x)) return false;
-  return /[A-Za-zÅÄÖåäö]/.test(x);
+  return /[A-Za-zА-Яа-яЁёÅÄÖåäö]/.test(x);
 }
 function canonicalMarkerKey(name){
   const x=String(name||'').toLowerCase()
@@ -3203,7 +3205,7 @@ function canonicalMarkerKey(name){
   if(/prolak|prl/.test(x)) return 'prolactin';
   if(/hba1c|hemoglobiini-a1c/.test(x)) return 'hba1c';
   if(/(^|[^a-z])psa([^a-z]|$)|prostataspesif/.test(x)) return 'psa';
-  if(/kokonaiskolester|\(kol\)/.test(x)) return 'total_cholesterol';
+  if(/kokonaiskolester|(^|[^a-z])kolesteroli([^a-z]|$)|s\s*-?kol([^a-z]|$)|\(kol\)/.test(x)) return 'total_cholesterol';
   if(/kol\/hdl-suh|kol\/hdlsuh/.test(x)) return 'chol_hdl_ratio';
   if(/non-hdl/.test(x)) return 'non_hdl';
   if(/herkkä\s*crp|hcrp/.test(x)) return 'hs_crp';
