@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HRT Health Studio v3.5.3 — Terveystalo PDF Parser Fix</title>
+<title>HRT Health Studio v3.5.4 — Terveystalo PDF Parser Fix</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -264,7 +264,7 @@ aside{display:flex;flex-direction:column}
 <div id="hrtAuthGate">
   <div class="hrt-auth-card">
     <div class="hrt-auth-brand">VM PRIVATE SUITE</div>
-    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.5.3</span></div>
+    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.5.4</span></div>
     <div class="hrt-auth-sub">Используйте тот же аккаунт, что и в Планировании капитала</div>
     <label>Email<input id="hrtGateEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
     <label>Пароль<input id="hrtGatePassword" type="password" autocomplete="current-password" placeholder="Введите пароль"></label>
@@ -276,10 +276,10 @@ aside{display:flex;flex-direction:column}
   </div>
 </div>
 <div id="hrtAppShell" class="auth-hidden">
-<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.5.3</div>
+<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.5.4</div>
 <div class="app">
 <aside>
-  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.5.3</small></div>
+  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.5.4</small></div>
   <nav>
     <button class="nav active" data-view="dashboard">Главная</button>
     <button class="nav" data-view="labs">Анализы</button>
@@ -2253,6 +2253,57 @@ function parseMarkersFromPdf(text){
   }
   return out;
 }
+
+function parseTerveystaloItems(items){
+  // Coordinate-based parser for Terveystalo tables.
+  // It uses the physical PDF columns instead of guessing from number order.
+  const src=(items||[]).map(it=>({s:String(it.str||'').trim(),x:Number(it.transform?.[4]||0),y:Number(it.transform?.[5]||0)})).filter(z=>z.s);
+  const headers={};
+  for(const z of src){
+    const k=z.s.toLowerCase().trim();
+    if(k==='tulos')headers.result=z.x;
+    else if(k==='viitearvo')headers.ref=z.x;
+    else if(k==='yksikkö')headers.unit=z.x;
+  }
+  if(!Number.isFinite(headers.result)||!Number.isFinite(headers.ref)||!Number.isFinite(headers.unit))return [];
+  const resultLeft=(headers.result+0)/1; // header x is the left edge of the result column
+  const nameCut=(headers.result+headers.ref)/2 - 35; // keep lab code with the name, away from result
+  const resultRefCut=(headers.result+headers.ref)/2;
+  const refUnitCut=(headers.ref+headers.unit)/2;
+
+  // Group PDF text items into visual rows with a small tolerance.
+  const sorted=[...src].sort((a,b)=>b.y-a.y||a.x-b.x), rows=[];
+  for(const z of sorted){
+    let row=rows.find(r=>Math.abs(r.y-z.y)<=1.6);
+    if(!row){row={y:z.y,items:[]};rows.push(row)}
+    row.items.push(z);
+  }
+  const out=[],seen=new Set();
+  const valRe=/^[<>≤≥]?\s*-?\d+(?:[.,]\d+)?$/;
+  const rangeRe=/^(-?\d+(?:[.,]\d+)?)\s*[-–—]\s*(-?\d+(?:[.,]\d+)?)$/;
+  const oneRe=/^([<>≤≥])\s*(-?\d+(?:[.,]\d+)?)$/;
+  for(const row of rows){
+    const a=[...row.items].sort((x,y)=>x.x-y.x);
+    const name=a.filter(z=>z.x<nameCut).map(z=>z.s).join(' ').replace(/\s+/g,' ').trim();
+    const result=a.filter(z=>z.x>=nameCut&&z.x<resultRefCut).map(z=>z.s).join('').replace(/\s+/g,'').trim();
+    const ref=a.filter(z=>z.x>=resultRefCut&&z.x<refUnitCut).map(z=>z.s).join('').replace(/\s+/g,'').trim();
+    const unit=a.filter(z=>z.x>=refUnitCut).map(z=>z.s).join('').replace(/\s+/g,'').trim();
+    if(!name||!valRe.test(result)||!unit)continue;
+    const value=parseNumberLocal(result.replace(/[<>≤≥]/g,''));
+    if(value===null)continue;
+    let min=null,max=null,refText=ref;
+    let m=ref.match(rangeRe);
+    if(m){min=parseNumberLocal(m[1]);max=parseNumberLocal(m[2]);}
+    else if((m=ref.match(oneRe))){const n=parseNumberLocal(m[2]);if(/^[<≤]$/.test(m[1]))max=n;else min=n;}
+    else if(ref && valRe.test(ref)){min=parseNumberLocal(ref.replace(/[<>≤≥]/g,''));}
+    const qualifier=(result.match(/^[<>≤≥]/)||[])[0]||'';
+    const item={name:cleanLabName(name),value,unit,min,max,refText,rawValue:result.replace(',','.'),qualifier,canonicalKey:canonicalMarkerKey(name),parser:'terveystalo-coordinates'};
+    const key=[item.canonicalKey||item.name.toLowerCase(),item.value,item.unit].join('|');
+    if(seen.has(key))continue; seen.add(key); out.push(item);
+  }
+  return out;
+}
+
 async function extractPdfPages(file){
   const pdfjs=await ensurePdfJs();
   const buf=await file.arrayBuffer();
@@ -2290,7 +2341,8 @@ async function extractPdfPages(file){
       visualText,
       flowText,
       text: visualText || flowText,
-      itemCount: tc.items.length
+      itemCount: tc.items.length,
+      terveystaloMarkers: parseTerveystaloItems(tc.items)
     });
   }
   return {pageCount:pdf.numPages,pages};
@@ -2425,36 +2477,40 @@ async function importLabPdf(event){
     const all=[];
     const seen=new Set();
     const pageStats=[];
+    const detectedLab=guessLabFromPdf(fullText);
+    const isTerveystalo=detectedLab==='Terveystalo';
 
-    for(const p of pages){
-      const visual=parseMarkersFromPdf(p.visualText||'');
-      const flow=parseMarkersFromPdf(p.flowText||'');
-      const combined=[...visual,...flow];
-      let added=0;
-      for(const m of combined){
+    if(isTerveystalo){
+      // For Terveystalo, trust ONLY physical PDF columns. Never merge the
+      // generic text parser, because reference limits can look like results.
+      for(const p of pages){
+        const markers=p.terveystaloMarkers||[];
+        let added=0;
+        for(const m of markers){
+          const key=[m.canonicalKey||m.name.toLowerCase(),m.value,String(m.unit||'').toLowerCase()].join('|');
+          if(seen.has(key))continue;
+          seen.add(key); all.push({...m,page:p.page}); added++;
+        }
+        pageStats.push({page:p.page,visual:markers.length,flow:0,added,chars:normalizePdfText((p.visualText||'')+(p.flowText||'')).length,items:p.itemCount||0});
+      }
+    }else{
+      for(const p of pages){
+        const visual=parseMarkersFromPdf(p.visualText||'');
+        const flow=parseMarkersFromPdf(p.flowText||'');
+        const combined=[...visual,...flow];
+        let added=0;
+        for(const m of combined){
+          const key=markerIdentity(m);
+          if(seen.has(key))continue;
+          seen.add(key); all.push({...m,page:p.page}); added++;
+        }
+        pageStats.push({page:p.page,visual:visual.length,flow:flow.length,added,chars:normalizePdfText((p.visualText||'')+(p.flowText||'')).length,items:p.itemCount||0});
+      }
+      for(const m of parseMarkersFromPdf(fullText)){
         const key=markerIdentity(m);
         if(seen.has(key))continue;
-        seen.add(key);
-        all.push({...m,page:p.page});
-        added++;
+        seen.add(key); all.push({...m,page:null});
       }
-      pageStats.push({
-        page:p.page,
-        visual:visual.length,
-        flow:flow.length,
-        added,
-        chars:normalizePdfText((p.visualText||'')+(p.flowText||'')).length,
-        items:p.itemCount||0
-      });
-    }
-
-    // Final pass over the entire document. This catches reports where PDF.js
-    // splits one logical result block across items/visual rows.
-    for(const m of parseMarkersFromPdf(fullText)){
-      const key=markerIdentity(m);
-      if(seen.has(key))continue;
-      seen.add(key);
-      all.push({...m,page:null});
     }
 
     const date=parseDateFromPdf(fullText), lab=guessLabFromPdf(fullText);
@@ -2991,7 +3047,7 @@ function renderLatestChanges(){
   }
   box.innerHTML=cards.length?`<div class="change-grid">${cards.join('')}</div>`:`<div class="empty">Пока недостаточно повторных анализов для сравнения.</div>`;
 }
-const APP_VERSION='3.5.3';
+const APP_VERSION='3.5.4';
 
 function normalizedHctPercent(marker){
   if(!marker)return null;
