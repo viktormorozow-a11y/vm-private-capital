@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v8.0.3</title>
+<title>VM Private Capital — Wealth Studio v8.5.0</title>
 <style>
 
 :root{
@@ -1317,7 +1317,7 @@ body.auth-locked{overflow:hidden}
   .ownership-strip,.metric-grid{grid-template-columns:1fr!important}
 }
 
-/* v8.0.3 — compact Insights, fixed suite footer and light/dark themes */
+/* v8.5.0 — compact Insights, fixed suite footer and light/dark themes */
 .sidebar-bottom{display:grid;gap:8px;flex:0 0 auto;min-width:0}
 .sidebar-bottom .sidebar-card,.sidebar-bottom .suite-switch-card{margin-top:0}
 #view-insights .insight-grid.two-col > .chart-panel{align-self:start;min-height:0}
@@ -1415,7 +1415,7 @@ html[data-theme="light"] #chartHoverTooltip .cht-row span{color:#8b601e}
 html[data-theme="light"] #chartHoverTooltip .cht-row b{color:#2b2c27}
 
 
-/* v8.0.3 — executive-grade light theme polish */
+/* v8.5.0 — executive-grade light theme polish */
 html[data-theme="light"]{
   --bg:#f2efe8;
   --bg2:#e9e4da;
@@ -1589,7 +1589,7 @@ html[data-theme="light"] .history-empty b{color:#2b302d!important}
 html[data-theme="light"] .tax-preview b{color:#303632!important}
 
 
-/* v8.0.3 — professional scenario chart layout and comparison graphs */
+/* v8.5.0 — professional scenario chart layout and comparison graphs */
 #view-forecast .forecast-chart-grid{
   display:grid;
   grid-template-columns:minmax(0,1.45fr) minmax(390px,.75fr);
@@ -1688,6 +1688,65 @@ body.phone-mode .modal-backdrop{z-index:120;padding:0;place-items:stretch}body.p
 .mobile-rule-card .mr-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.mobile-rule-card .mr-head h3{margin:0;font-size:15px}.mobile-rule-card .mr-head b{font-size:15px;white-space:nowrap}.mobile-rule-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.mobile-rule-grid .mobile-mini-stat{min-height:62px}.mobile-rule-card .mr-footer{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:11px;padding-top:10px;border-top:1px solid var(--m-line)}.mobile-rule-card .mr-footer span{font-size:10px;color:var(--m-muted)}
 .mobile-analytics-card .ma-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.mobile-analytics-card .ma-head h3{font-size:15px;margin:0}.mobile-analytics-card .ma-head strong{font-size:14px}.mobile-analytics-kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:11px}.mobile-range{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}.mobile-range button{min-height:42px;border-radius:12px;border:1px solid var(--m-line);background:var(--m-surface2);color:var(--m-muted);font:inherit;font-size:11px;font-weight:750}.mobile-range button.active{color:var(--m-gold);border-color:color-mix(in srgb,var(--m-gold) 35%,var(--m-line));background:color-mix(in srgb,var(--m-gold) 9%,var(--m-surface2))}.mobile-scenario-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.mobile-scenario-kpis .mobile-mini-stat b{font-size:10px}.mobile-scenario-kpis .mobile-mini-stat span{font-size:8px}
 </style>
+<style id="v810Styles">
+/* =========================================================
+   v8.5.0 — Nordea Analytics + unified period controls
+   ========================================================= */
+.period-selector{display:flex;gap:5px;flex-wrap:wrap;align-items:center;padding:5px;border:1px solid var(--line);background:rgba(255,255,255,.025);border-radius:12px}
+.period-selector button{border:0;background:transparent;color:var(--muted);padding:7px 9px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.period-selector button:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.period-selector button.active{color:#f5deb1;background:rgba(212,170,90,.13);box-shadow:inset 0 0 0 1px rgba(212,170,90,.18)}
+.dashboard-period-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px;padding:10px 12px;border:1px solid var(--line);background:var(--panel);border-radius:14px}
+.dashboard-period-meta{font-size:11px;color:var(--muted);text-align:right;line-height:1.45}
+.dashboard-intel-grid{display:grid;grid-template-columns:1.15fr .85fr 1fr;gap:12px;margin-bottom:12px}
+.dashboard-intel-grid .panel{margin:0;padding:15px}
+.change-breakdown{display:grid;gap:8px;margin-top:10px}.change-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}.change-row:first-child{border-top:0}.change-row span{color:var(--muted);font-size:11px}.change-row b{font-size:14px}
+.goal-main{font-size:24px;font-weight:780;letter-spacing:-.035em;margin:8px 0}.goal-track{height:8px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden}.goal-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#d2a54f,#65c99d)}.goal-sub{display:flex;justify-content:space-between;gap:8px;margin-top:7px;color:var(--muted);font-size:10px}
+.fresh-list{display:grid;gap:7px;margin-top:8px}.fresh-row{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--line)}.fresh-row:first-child{border-top:0}.fresh-dot{width:8px;height:8px;border-radius:50%;background:#7d8790}.fresh-dot.today{background:var(--good)}.fresh-dot.recent{background:var(--gold)}.fresh-row b{font-size:11px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fresh-row span{font-size:9px;color:var(--muted);white-space:nowrap}
+
+.nordea-hero{display:flex;justify-content:space-between;gap:20px;align-items:center;background:linear-gradient(135deg,rgba(23,44,63,.94),rgba(8,18,27,.97));border-color:rgba(91,171,224,.20)}
+.nordea-hero h2{font-size:27px;margin:5px 0 6px}.nordea-hero-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}.nordea-import-label{cursor:pointer}.nordea-import-label input{display:none}.nordea-import-status{font-size:10px;color:var(--muted);margin-top:5px}
+.nordea-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}.nordea-filter-group{display:flex;gap:8px;align-items:end;flex-wrap:wrap}.nordea-filter-group label{display:grid;gap:5px;font-size:10px;color:var(--muted)}.nordea-filter-group select{min-width:220px}
+.nordea-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:12px}.nordea-kpi{padding:14px;border:1px solid var(--line);background:var(--panel);border-radius:14px}.nordea-kpi span{display:block;color:var(--muted);font-size:10px}.nordea-kpi b{display:block;margin-top:6px;font-size:20px;letter-spacing:-.03em}.nordea-kpi small{display:block;margin-top:5px;color:var(--muted);font-size:9px}
+.nordea-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr);gap:12px}.nordea-grid .panel{margin-bottom:12px}.nordea-chart-wrap{height:270px}.nordea-chart-wrap canvas{height:270px!important}
+.nordea-account-list{display:grid;gap:8px}.nordea-account-card{border:1px solid var(--line);background:rgba(255,255,255,.02);border-radius:12px;padding:11px;cursor:pointer;text-align:left;color:var(--text)}.nordea-account-card:hover{border-color:rgba(212,170,90,.28)}.nordea-account-card.active{border-color:rgba(212,170,90,.40);background:rgba(212,170,90,.055)}.nordea-account-card span{display:block;color:var(--muted);font-size:9px;margin-top:3px}.nordea-account-card b{display:flex;justify-content:space-between;gap:12px;font-size:12px}.nordea-account-card strong{font-size:12px;white-space:nowrap}
+.nordea-performance-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.nordea-rank-card{border:1px solid var(--line);border-radius:12px;padding:12px;background:rgba(255,255,255,.018)}.nordea-rank-title{font-size:10px;color:var(--muted);margin-bottom:8px}.nordea-rank-row{display:grid;grid-template-columns:1fr auto;gap:8px;padding:7px 0;border-top:1px solid var(--line)}.nordea-rank-row:first-of-type{border-top:0}.nordea-rank-row b{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.nordea-rank-row span{font-size:11px;font-weight:700;white-space:nowrap}
+.nordea-position-row{cursor:pointer}.nordea-position-row:hover td{background:rgba(212,170,90,.035)}.position-status{display:inline-flex;padding:3px 6px;border-radius:999px;font-size:9px;font-weight:700;border:1px solid var(--line)}.position-status.new{color:var(--good);border-color:rgba(120,227,155,.22);background:rgba(120,227,155,.055)}.position-status.closed{color:var(--bad);border-color:rgba(255,123,136,.22);background:rgba(255,123,136,.055)}.position-status.changed{color:var(--gold);border-color:rgba(240,200,120,.22);background:rgba(240,200,120,.055)}
+.nordea-change-log{display:grid;gap:7px}.nordea-log-clickable{cursor:pointer}.nordea-log-clickable:hover{background:rgba(212,170,90,.035)}.nordea-log-row{display:grid;grid-template-columns:92px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}.nordea-log-row:first-child{border-top:0}.nordea-log-row time{font-size:10px;color:var(--muted)}.nordea-log-row b{font-size:11px}.nordea-log-row span{font-size:10px;color:var(--muted)}
+.nordea-empty{padding:24px;text-align:center;color:var(--muted);border:1px dashed var(--line2);border-radius:12px}
+.nordea-preview-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}.nordea-preview-summary>div{padding:10px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.02)}.nordea-preview-summary span{display:block;font-size:10px;color:var(--muted)}.nordea-preview-summary b{display:block;margin-top:4px;font-size:15px}
+.nordea-security-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.nordea-security-head h3{margin:4px 0}.nordea-security-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}.nordea-security-kpis>div{border:1px solid var(--line);border-radius:10px;padding:9px}.nordea-security-kpis span{display:block;color:var(--muted);font-size:9px}.nordea-security-kpis b{display:block;margin-top:4px;font-size:13px}
+
+html[data-theme="light"] .period-selector,html[data-theme="light"] .dashboard-period-bar,html[data-theme="light"] .nordea-kpi,html[data-theme="light"] .nordea-account-card,html[data-theme="light"] .nordea-rank-card{background:rgba(255,255,255,.72)}
+html[data-theme="light"] .nordea-hero{background:linear-gradient(135deg,#f9f6ef,#edf3f3)}
+
+@media(max-width:1250px){.dashboard-intel-grid{grid-template-columns:1fr 1fr}.dashboard-intel-grid>.panel:last-child{grid-column:1/-1}.nordea-kpis{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:930px){.dashboard-period-bar{align-items:flex-start;flex-direction:column}.dashboard-period-meta{text-align:left}.dashboard-intel-grid,.nordea-grid{grid-template-columns:1fr}.dashboard-intel-grid>.panel:last-child{grid-column:auto}.nordea-kpis{grid-template-columns:repeat(2,1fr)}.nordea-hero{align-items:flex-start;flex-direction:column}.nordea-hero-actions{justify-content:flex-start}.nordea-filter-group select{min-width:170px}}
+@media(max-width:650px){.period-selector{width:100%;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}.period-selector::-webkit-scrollbar{display:none}.nordea-kpis{grid-template-columns:1fr 1fr}.nordea-kpi b{font-size:17px}.nordea-performance-grid{grid-template-columns:1fr}.nordea-security-kpis{grid-template-columns:1fr 1fr}.nordea-log-row{grid-template-columns:72px 1fr}.nordea-log-row>span:last-child{grid-column:2}.nordea-preview-summary{grid-template-columns:1fr 1fr}}
+
+.phone-mode .mobile-period-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}.phone-mode .mobile-period-row::-webkit-scrollbar{display:none}.phone-mode .mobile-period-row button{flex:0 0 auto;border:1px solid var(--m-line);background:var(--m-card-2);color:var(--m-muted);padding:7px 10px;border-radius:999px;font-size:10px;font-weight:750}.phone-mode .mobile-period-row button.active{color:var(--m-gold);border-color:color-mix(in srgb,var(--m-gold) 40%,var(--m-line));background:color-mix(in srgb,var(--m-gold) 10%,var(--m-card-2))}.phone-mode .mobile-nordea-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.phone-mode .mobile-nordea-account-btn{appearance:none;text-align:left;color:var(--m-text);font:inherit;cursor:pointer}.phone-mode .mobile-nordea-account-btn.active{border-color:color-mix(in srgb,var(--m-gold) 48%,var(--m-line));background:color-mix(in srgb,var(--m-gold) 9%,var(--m-surface2))}.phone-mode .mobile-nordea-position{display:grid;grid-template-columns:1fr auto;gap:6px;padding:11px 0;border-top:1px solid var(--m-line)}.phone-mode .mobile-nordea-position:first-child{border-top:0}.phone-mode .mobile-nordea-position b{font-size:12px}.phone-mode .mobile-nordea-position span{font-size:10px;color:var(--m-muted)}.phone-mode .mobile-nordea-position strong{font-size:12px;text-align:right}.phone-mode .mobile-nordea-position small{display:block;font-size:9px;margin-top:3px}
+
+
+/* =========================================================
+   v8.5.0 — Aktia Oy + Personal imports and return verification
+   ========================================================= */
+.aktia-hero{display:flex;justify-content:space-between;gap:20px;align-items:center;background:linear-gradient(135deg,rgba(42,64,46,.94),rgba(8,18,20,.97));border-color:rgba(98,199,155,.22)}
+.aktia-hero h2{font-size:27px;margin:5px 0 6px}.aktia-hero-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.aktia-import-label{cursor:pointer}.aktia-import-label input{display:none}.aktia-import-status{font-size:10px;color:var(--muted);margin-top:5px}
+.aktia-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}.aktia-owner-switch{display:flex;gap:6px;padding:4px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.02)}.aktia-owner-switch button{border:0;background:transparent;color:var(--muted);padding:8px 11px;border-radius:8px;font-size:11px;font-weight:750;cursor:pointer}.aktia-owner-switch button.active{color:#dff5ea;background:rgba(98,199,155,.12);box-shadow:inset 0 0 0 1px rgba(98,199,155,.18)}
+.aktia-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:12px}.aktia-kpi{padding:14px;border:1px solid var(--line);background:var(--panel);border-radius:14px}.aktia-kpi span{display:block;color:var(--muted);font-size:10px}.aktia-kpi b{display:block;margin-top:6px;font-size:20px;letter-spacing:-.03em}.aktia-kpi small{display:block;margin-top:5px;color:var(--muted);font-size:9px;line-height:1.35}
+.aktia-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr);gap:12px}.aktia-grid .panel{margin-bottom:12px}.aktia-chart-wrap{height:270px}.aktia-chart-wrap canvas{height:270px!important}
+.aktia-compare{display:grid;gap:7px}.aktia-compare-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}.aktia-compare-row:first-child{border-top:0}.aktia-compare-row span{font-size:10px;color:var(--muted)}.aktia-compare-row b{font-size:12px}.aktia-compare-row strong{font-size:11px;white-space:nowrap}.aktia-primary{border:1px solid rgba(98,199,155,.20);background:rgba(98,199,155,.045);border-radius:11px;padding:10px 11px;margin-bottom:10px}.aktia-primary b{display:block;font-size:12px}.aktia-primary span{display:block;color:var(--muted);font-size:9px;margin-top:4px;line-height:1.4}
+.aktia-allocation{display:grid;gap:9px}.aktia-alloc-row{display:grid;grid-template-columns:1fr auto;gap:8px}.aktia-alloc-row span{font-size:11px}.aktia-alloc-row b{font-size:11px}.aktia-alloc-track{grid-column:1/-1;height:7px;border-radius:99px;background:rgba(255,255,255,.055);overflow:hidden}.aktia-alloc-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#62c79b,#7fb9e8)}
+.aktia-report-metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.aktia-report-metrics>div{border:1px solid var(--line);border-radius:10px;padding:9px;background:rgba(255,255,255,.018)}.aktia-report-metrics span{display:block;color:var(--muted);font-size:9px}.aktia-report-metrics b{display:block;font-size:12px;margin-top:4px}
+.aktia-warning{padding:10px 11px;border-radius:11px;border:1px solid rgba(240,200,120,.18);background:rgba(240,200,120,.05);font-size:10px;color:#b9b1a2;line-height:1.45;margin-top:10px}.aktia-goodnote{border-color:rgba(98,199,155,.20);background:rgba(98,199,155,.05);color:#abcabc}
+.aktia-history{display:grid;gap:7px}.aktia-history-row{display:grid;grid-template-columns:90px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}.aktia-history-row:first-child{border-top:0}.aktia-history-row time{font-size:10px;color:var(--muted)}.aktia-history-row b{font-size:11px}.aktia-history-row span{font-size:10px;color:var(--muted);white-space:nowrap}
+html[data-theme="light"] .aktia-kpi,html[data-theme="light"] .aktia-owner-switch,html[data-theme="light"] .aktia-report-metrics>div{background:rgba(255,255,255,.72)}html[data-theme="light"] .aktia-hero{background:linear-gradient(135deg,#f7fbf8,#edf4f2)}
+@media(max-width:1250px){.aktia-kpis{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:930px){.aktia-grid{grid-template-columns:1fr}.aktia-hero{align-items:flex-start;flex-direction:column}.aktia-hero-actions{justify-content:flex-start}.aktia-kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){.aktia-kpi b{font-size:17px}.aktia-compare-row{grid-template-columns:1fr auto}.aktia-compare-row strong{grid-column:2}.aktia-history-row{grid-template-columns:72px 1fr}.aktia-history-row>span:last-child{grid-column:2}.aktia-report-metrics{grid-template-columns:1fr 1fr}}
+.phone-mode .mobile-aktia-owner-row{display:grid;grid-template-columns:1fr 1fr;gap:7px}.phone-mode .mobile-aktia-owner-btn{appearance:none;text-align:left;color:var(--m-text);font:inherit;cursor:pointer}.phone-mode .mobile-aktia-owner-btn.active{border-color:color-mix(in srgb,var(--m-green) 48%,var(--m-line));background:color-mix(in srgb,var(--m-green) 9%,var(--m-surface2))}
+
+</style>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" sizes="180x180" href="icons/vm-private-capital-180.png">
 <meta name="theme-color" content="#071018">
@@ -1724,6 +1783,8 @@ body.phone-mode .modal-backdrop{z-index:120;padding:0;place-items:stretch}body.p
     <section class="mobile-view" data-mobile-view="portfolio" id="mobile-view-portfolio"></section>
     <section class="mobile-view" data-mobile-view="withdrawals" id="mobile-view-withdrawals"></section>
     <section class="mobile-view" data-mobile-view="analytics" id="mobile-view-analytics"></section>
+    <section class="mobile-view" data-mobile-view="nordea" id="mobile-view-nordea"></section>
+    <section class="mobile-view" data-mobile-view="aktia" id="mobile-view-aktia"></section>
     <section class="mobile-view" data-mobile-view="scenarios" id="mobile-view-scenarios"></section>
     <section class="mobile-view" data-mobile-view="history" id="mobile-view-history"></section>
     <section class="mobile-view" data-mobile-view="portfolioanalytics" id="mobile-view-portfolioanalytics"></section>
@@ -1742,6 +1803,8 @@ body.phone-mode .modal-backdrop{z-index:120;padding:0;place-items:stretch}body.p
     <div class="mobile-sheet-handle"></div>
     <div class="mobile-sheet-head"><div><div class="mobile-kicker">VM PRIVATE CAPITAL</div><h3>Ещё</h3></div><button type="button" class="mobile-icon-btn" id="mobileMoreClose" aria-label="Закрыть">×</button></div>
     <div class="mobile-more-grid">
+      <button type="button" class="mobile-more-item" data-mobile-dest="nordea"><span class="mi">N</span><span><b>Nordea</b><small>Счета, позиции и история</small></span><span class="arrow">›</span></button>
+      <button type="button" class="mobile-more-item" data-mobile-dest="aktia"><span class="mi">A</span><span><b>Aktia</b><small>Oy, Personal и сравнение доходности</small></span><span class="arrow">›</span></button>
       <button type="button" class="mobile-more-item" data-mobile-dest="scenarios"><span class="mi">↗</span><span><b>Сценарии</b><small>Три траектории капитала</small></span><span class="arrow">›</span></button>
       <button type="button" class="mobile-more-item" data-mobile-dest="history"><span class="mi">▤</span><span><b>Источники</b><small>История и денежные события</small></span><span class="arrow">›</span></button>
       <button type="button" class="mobile-more-item" data-mobile-dest="portfolioanalytics"><span class="mi">⌗</span><span><b>Портфели: прогноз</b><small>История и прогноз портфелей</small></span><span class="arrow">›</span></button>
@@ -1750,7 +1813,7 @@ body.phone-mode .modal-backdrop{z-index:120;padding:0;place-items:stretch}body.p
       <a class="mobile-more-item" href="./hrt/"><span class="mi">♥</span><span><b>HRT Health Studio</b><small>Private Suite</small></span><span class="arrow">›</span></a>
       <a class="mobile-more-item" href="./fitness/"><span class="mi">↗</span><span><b>Fitness Studio</b><small>Private Suite</small></span><span class="arrow">›</span></a>
     </div>
-    <div class="mobile-card-sub" style="text-align:center;margin:14px 0 0">VM Wealth Studio <span id="mobileVersionLabel">v8.0.3</span></div>
+    <div class="mobile-card-sub" style="text-align:center;margin:14px 0 0">VM Wealth Studio <span id="mobileVersionLabel">v8.5.0</span></div>
   </aside>
   <div id="mobileChartTooltip" class="mobile-chart-tooltip" role="tooltip"></div>
 </div>
@@ -1778,6 +1841,8 @@ body.phone-mode .modal-backdrop{z-index:120;padding:0;place-items:stretch}body.p
     <nav id="nav">
       <button class="nav-item active" data-view="dashboard"><span>⌂</span> Планирование</button>
       <button class="nav-item" data-view="portfolios"><span>◇</span> Портфель</button>
+      <button class="nav-item" data-view="nordea"><span>N</span> Nordea</button>
+      <button class="nav-item" data-view="aktia"><span>A</span> Aktia</button>
       <button class="nav-item" data-view="history"><span>▤</span> Источники</button>
       <button class="nav-item" data-view="forecast"><span>↗</span> Сценарии</button>
       <button class="nav-item" data-view="withdrawals"><span>⇢</span> План вывода</button>
@@ -1791,7 +1856,7 @@ body.phone-mode .modal-backdrop{z-index:120;padding:0;place-items:stretch}body.p
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v8.0.3</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v8.5.0</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -1815,7 +1880,7 @@ body.phone-mode .modal-backdrop{z-index:120;padding:0;place-items:stretch}body.p
   <main class="main">
     <header class="topbar">
       <div>
-        <div class="eyebrow">PERSONAL CAPITAL CONTROL <span class="app-version-badge">v8.0.3</span></div>
+        <div class="eyebrow">PERSONAL CAPITAL CONTROL <span class="app-version-badge">v8.5.0</span></div>
         <h1 id="viewTitle">Обзор капитала</h1>
         <div id="todayText" class="muted"></div><div class="topbar-subtitle">Планируйте капитал, сравнивайте сценарии и контролируйте будущие выплаты.</div>
       </div>
@@ -1858,6 +1923,14 @@ body.phone-mode .modal-backdrop{z-index:120;padding:0;place-items:stretch}body.p
         </div>
       </div>
 
+      <div class="dashboard-period-bar">
+        <div>
+          <div class="eyebrow">ПЕРИОД АНАЛИЗА</div>
+          <div id="dashboardPeriodSelector" class="period-selector" style="margin-top:6px"></div>
+        </div>
+        <div id="dashboardPeriodMeta" class="dashboard-period-meta"></div>
+      </div>
+
       <div class="ownership-strip">
         <div class="ownership-card personal">
           <div class="ownership-icon">P</div>
@@ -1887,7 +1960,7 @@ body.phone-mode .modal-backdrop{z-index:120;padding:0;place-items:stretch}body.p
 
       <div class="metric-grid">
         <div class="metric-card reveal">
-          <div class="metric-label">Инвестиционный результат YTD</div>
+          <div class="metric-label" id="dashboardResultLabel">Инвестиционный результат за период</div>
           <div id="mYtd" class="metric">€0</div>
           <div id="mYtdPct" class="metric-sub"></div>
         </div>
@@ -1902,9 +1975,24 @@ body.phone-mode .modal-backdrop{z-index:120;padding:0;place-items:stretch}body.p
           <div id="mYearEndSub" class="metric-sub"></div>
         </div>
         <div class="metric-card reveal delay3">
-          <div class="metric-label">Внешние потоки YTD</div>
+          <div class="metric-label" id="dashboardFlowsLabel">Внешние потоки за период</div>
           <div id="mFlows" class="metric">€0</div>
           <div class="metric-sub">пополнения минус снятия</div>
+        </div>
+      </div>
+
+      <div class="dashboard-intel-grid">
+        <div class="panel">
+          <div class="eyebrow">ПОЧЕМУ ИЗМЕНИЛСЯ КАПИТАЛ</div><h2 id="changeBreakdownTitle">Изменение за период</h2>
+          <div id="changeBreakdown" class="change-breakdown"></div>
+        </div>
+        <div class="panel">
+          <div class="eyebrow">ЦЕЛЬ КАПИТАЛА</div><h2>Следующая цель</h2>
+          <div id="wealthGoalCard"></div>
+        </div>
+        <div class="panel">
+          <div class="eyebrow">СВЕЖЕСТЬ ДАННЫХ</div><h2>Последние обновления</h2>
+          <div id="dataFreshness" class="fresh-list"></div>
         </div>
       </div>
 
@@ -1917,12 +2005,7 @@ body.phone-mode .modal-backdrop{z-index:120;padding:0;place-items:stretch}body.p
               <option value="total">Общий</option>
               <option value="split">Personal / Oy</option>
             </select>
-            <div class="segmented">
-              <button data-range="365" class="seg active">1Y</button>
-              <button data-range="1095" class="seg">3Y</button>
-              <button data-range="3650" class="seg">10Y</button>
-              <button data-range="99999" class="seg">MAX</button>
-            </div>
+            <span class="muted small" id="capitalChartPeriodLabel"></span>
             </div>
           </div>
           <canvas id="capitalChart" height="155"></canvas>
@@ -1954,7 +2037,7 @@ body.phone-mode .modal-backdrop{z-index:120;padding:0;place-items:stretch}body.p
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Портфель</th><th>Владелец</th><th>Сейчас</th><th>YTD €</th><th>YTD %</th><th>Вся история %</th><th>Доля</th><th></th></tr></thead>
+            <thead><tr><th>Портфель</th><th>Владелец</th><th>Сейчас</th><th id="periodProfitHeader">Период €</th><th id="periodPctHeader">Период %</th><th>Вся история %</th><th>Доля</th><th></th></tr></thead>
             <tbody id="portfolioSummaryBody"></tbody>
           </table>
         </div>
@@ -2156,6 +2239,121 @@ body.phone-mode .modal-backdrop{z-index:120;padding:0;place-items:stretch}body.p
       </div>
 </section>
 
+    <section id="view-nordea" class="view">
+      <div class="nordea-hero panel">
+        <div>
+          <div class="eyebrow">NORDEA PORTFOLIO ANALYTICS</div>
+          <h2>Nordea</h2>
+          <div class="muted">Счета, акции и фонды с историей по каждому импорту из банка.</div>
+          <div id="nordeaImportStatus" class="nordea-import-status">Файл Nordea ещё не загружен.</div>
+        </div>
+        <div class="nordea-hero-actions">
+          <label class="btn primary nordea-import-label">Импорт Excel Nordea<input type="file" id="nordeaImportFile" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"></label>
+          <button class="btn secondary" id="nordeaImportHistoryBtn">История импортов</button>
+        </div>
+      </div>
+
+      <div class="nordea-toolbar">
+        <div id="nordeaPeriodSelector" class="period-selector"></div>
+        <div class="nordea-filter-group">
+          <label>Счёт<select id="nordeaAccountFilter"><option value="ALL">Все счета</option></select></label>
+        </div>
+      </div>
+
+      <div id="nordeaKpis" class="nordea-kpis"></div>
+
+      <div class="nordea-grid">
+        <div class="panel chart-panel">
+          <div class="panel-head"><div><div class="eyebrow">HISTORY</div><h2 id="nordeaChartTitle">Стоимость Nordea</h2><div id="nordeaChartSub" class="muted small"></div></div></div>
+          <div class="nordea-chart-wrap"><canvas id="nordeaHistoryChart" height="270"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div><div class="eyebrow">ACCOUNTS</div><h2>Счета</h2></div></div>
+          <div id="nordeaAccountList" class="nordea-account-list"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><div><div class="eyebrow">MOVERS</div><h2>Лучшие и худшие позиции</h2><div class="muted small">Если истории пока мало, используется дневное изменение из файла банка.</div></div></div>
+        <div id="nordeaMovers" class="nordea-performance-grid"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div><div class="eyebrow">HOLDINGS</div><h2>Позиции</h2><div id="nordeaPositionsMeta" class="muted small"></div></div>
+          <input id="nordeaSearch" placeholder="Поиск по названию или ISIN" style="min-width:260px">
+        </div>
+        <div class="table-wrap"><table><thead><tr><th>Инструмент</th><th>Счёт</th><th>Количество</th><th>Цена</th><th>Стоимость €</th><th>P/L текущих бумаг</th><th>За период</th><th>Статус</th></tr></thead><tbody id="nordeaPositionsBody"></tbody></table></div>
+      </div>
+
+      <div class="panel" id="nordeaClosedPanel" style="display:none">
+        <div class="panel-head"><div><div class="eyebrow">CLOSED POSITIONS</div><h2>Закрытые позиции</h2><div class="muted small">Проданные бумаги не удаляются. Здесь показан их последний сохранённый снимок.</div></div></div>
+        <div class="table-wrap"><table><thead><tr><th>Инструмент</th><th>Последняя дата</th><th>Количество</th><th>Последняя стоимость €</th><th>Статус</th></tr></thead><tbody id="nordeaClosedBody"></tbody></table></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><div><div class="eyebrow">COMPOSITION HISTORY</div><h2>Что менялось в портфеле</h2><div class="muted small">Новые, увеличенные, уменьшенные и закрытые позиции сохраняются в истории.</div></div></div>
+        <div id="nordeaChangeLog" class="nordea-change-log"></div>
+      </div>
+    </section>
+
+    <section id="view-aktia" class="view">
+      <div class="aktia-hero panel">
+        <div>
+          <div class="eyebrow">AKTIA · VERIFIED IMPORTS</div>
+          <h2>Aktia</h2>
+          <div class="muted small">Oy и Personal хранятся раздельно. Можно загружать Yhteenveto, Salkkuraportti и Tapahtumaraportti. Главная доходность всегда рассчитывается сайтом по оценкам и реальным денежным потокам.</div>
+          <div id="aktiaImportStatus" class="aktia-import-status">Отчёты Aktia ещё не загружены.</div>
+        </div>
+        <div class="aktia-hero-actions">
+          <label class="btn primary aktia-import-label">Загрузить рапорт Aktia<input type="file" id="aktiaImportFile" accept=".pdf,.xlsx,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"></label>
+          <button class="btn secondary" id="aktiaFlowBtn">＋ Внесение / вывод</button>
+          <button class="btn secondary" id="aktiaImportHistoryBtn">История импортов</button>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:12px">
+        <div class="panel-head"><div><div class="eyebrow">AUTO IMPORT · EMAIL</div><h2>Автоматический импорт с почты</h2><div class="muted small">Gmail vm.wealth.reports@gmail.com: проверка писем каждый час через Google Apps Script. Загруженные вложения проверяются штатными парсерами сайта, без смешивания Aktia Personal и Oy. До завершения подключения Gmail автоматический импорт не активен.</div></div><span class="owner-badge oy">ГОТОВО К ПОДКЛЮЧЕНИЮ</span></div>
+        <div id="bankAutoImportStatus" class="note">Gmail пока не подключён: настройте Google Apps Script. Ручная загрузка банковских отчётов работает независимо.</div>
+        <div id="btcAutoDailyStatus" class="note">BTC: серверное обновление раз в сутки будет активно после установки Google Apps Script.</div>
+        <div id="bankAutoImportPending"></div>
+      </div>
+      <div class="aktia-toolbar">
+        <div id="aktiaPeriodSelector" class="period-selector"></div>
+        <div id="aktiaOwnerSwitch" class="aktia-owner-switch">
+          <button type="button" data-aktia-owner="oy">Aktia · Oy</button>
+          <button type="button" data-aktia-owner="personal">Oma Aktia · Personal</button>
+        </div>
+      </div>
+      <div id="aktiaKpis" class="aktia-kpis"></div>
+      <div class="aktia-grid">
+        <div>
+          <div class="panel chart-panel">
+            <div class="panel-head"><div><div class="eyebrow">SITE HISTORY</div><h2 id="aktiaChartTitle">Стоимость Aktia</h2><div id="aktiaChartSub" class="muted small"></div></div></div>
+            <div class="aktia-chart-wrap"><canvas id="aktiaHistoryChart" height="270"></canvas></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div><div class="eyebrow">RETURN CHECK</div><h2>Сайт vs рапорт Aktia</h2><div class="muted small">Расчёт сайта является основным. Показатели рапорта сохраняются только для контроля.</div></div></div>
+            <div id="aktiaComparison" class="aktia-compare"></div>
+          </div>
+        </div>
+        <div>
+          <div class="panel">
+            <div class="panel-head"><div><div class="eyebrow">ALLOCATION</div><h2>Структура последнего рапорта</h2></div></div>
+            <div id="aktiaAllocation" class="aktia-allocation"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div><div class="eyebrow">BANK REFERENCE</div><h2>Показатели рапорта</h2></div></div>
+            <div id="aktiaReportMetrics" class="aktia-report-metrics"></div>
+            <div class="aktia-warning">Эти значения не используются для расчёта капитала или доходности сайта. Они нужны только для проверки расхождений с банком.</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div><div class="eyebrow">IMPORT LOG</div><h2>Последние отчёты</h2></div></div>
+        <div id="aktiaHistory" class="aktia-history"></div>
+      </div>
+    </section>
+
     <section id="view-reports" class="view">
       <div class="report-hero panel">
         <div>
@@ -2185,6 +2383,7 @@ body.phone-mode .modal-backdrop{z-index:120;padding:0;place-items:stretch}body.p
           <div class="form-grid">
             <label>Валюта<input value="EUR (€)" disabled></label>
             <label>Год рождения<input id="birthYear" type="number" min="1900" max="2100" step="1" value="1982"></label>
+            <label>Цели капитала, €<input id="wealthGoalsInput" type="text" placeholder="2000000; 2500000; 3000000"></label>
             <label>Начало финансового года<div class="date-field"><input id="fyStartDisplay" inputmode="numeric" placeholder="ДД.ММ.ГГГГ"><button type="button" class="date-today" data-date-target="fyStartDisplay">Сегодня</button></div></label>
           </div>
           <button class="btn primary" id="saveSettingsBtn">Сохранить</button>
@@ -2237,9 +2436,10 @@ body.phone-mode .modal-backdrop{z-index:120;padding:0;place-items:stretch}body.p
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
 
-const APP_VERSION='v8.0.3';
+const APP_VERSION='v8.5.0';
 const BACKUP_SCHEMA_VERSION=2;
 const SUPABASE_URL='https://hlrvwzqwxqmycuttvzbx.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_RBRKa6zqrw7-CW77RW__QQ_vrqebWCp';
@@ -2260,7 +2460,7 @@ function addMonthsToIso(iso,months){
  return localISODate(new Date(y,m-1+months,Math.min(d,lastTargetDay),12));
 }
 const defaultState=()=>({
- portfolios:[],snapshots:[],flows:[],cryptoTransactions:[],
+ portfolios:[],snapshots:[],flows:[],cryptoTransactions:[],nordea:{imports:[]},aktia:{imports:[],transactionImports:[],sourceMap:{}},
  withdrawalRules:[{id:uid(),start:localISODate(new Date()),end:'',monthly:5000,annualIncrease:2}],
  settings:{
   currency:'EUR',
@@ -2276,7 +2476,11 @@ const defaultState=()=>({
   btcWalletMigrationV712:false,
   portfolioOrder:[],
   analyticsRange:'MAX',
-  analyticsForecastYears:5
+  analyticsForecastYears:5,
+  dashboardRange:'YTD',dashboardCustomFrom:'',dashboardCustomTo:'',
+  nordeaRange:'1M',nordeaCustomFrom:'',nordeaCustomTo:'',nordeaAccount:'ALL',
+  aktiaRange:'1M',aktiaCustomFrom:'',aktiaCustomTo:'',aktiaOwner:'oy',
+  wealthGoals:[2000000,2500000,3000000]
 },
  taxSettings:{companyTaxRate:20,companyTaxRatesByYear:{},dividendThreshold:150000,netAssetRate:8,shareMathValue:2465737.5,shareMathValueByYear:{},dividendTaxableBelow:25,dividendTaxableAbove:85,dividendEarnedTaxablePct:75,earnedIncomeTaxRate:null,capitalTaxLow:30,capitalTaxHigh:34,capitalTaxThreshold:30000,taxLossCarryYears:10},
  forecast:{years:20,inflation:2,conservative:4,base:8,optimistic:12}
@@ -2284,7 +2488,7 @@ const defaultState=()=>({
 let state=normalizeState(loadState()),currentView='dashboard',chartRange=365;
 applyTheme(state.settings.theme,false);
 let saveTimer=null,withdrawalResultsReady=false;
-let cloudSaveTimer=null,cloudPullTimer=null,cloudUser=null,cloudLastSync=null,cloudRevision=null,cloudBusy=false,suppressCloudSave=false,cloudModuleAccess=null,btcSyncTimer=null,btcSyncInFlight=null;
+let cloudSaveTimer=null,cloudPullTimer=null,bankAutoPullTimer=null,cloudUser=null,cloudLastSync=null,cloudRevision=null,cloudBusy=false,bankAutoPullBusy=false,suppressCloudSave=false,cloudModuleAccess=null,btcSyncTimer=null,btcSyncInFlight=null;
 let localStateGeneration=0;
 const supabaseClient=(window.supabase&&window.supabase.createClient)
   ? window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}})
@@ -2300,6 +2504,12 @@ function normalizeState(raw){
    return {...f,flowType:f.flowType||legacyType,transferId:f.transferId||''};
  });
  s.cryptoTransactions=Array.isArray(s.cryptoTransactions)?s.cryptoTransactions:[];
+ s.nordea=(s.nordea&&typeof s.nordea==='object')?s.nordea:{imports:[]};
+ s.nordea.imports=Array.isArray(s.nordea.imports)?s.nordea.imports:[];
+ s.aktia=(s.aktia&&typeof s.aktia==='object')?s.aktia:{imports:[],transactionImports:[],sourceMap:{}};
+ s.aktia.imports=Array.isArray(s.aktia.imports)?s.aktia.imports:[];
+ s.aktia.transactionImports=Array.isArray(s.aktia.transactionImports)?s.aktia.transactionImports:[];
+ s.aktia.sourceMap=(s.aktia.sourceMap&&typeof s.aktia.sourceMap==='object')?s.aktia.sourceMap:{};
  s.cryptoTransactions=s.cryptoTransactions.map(t=>({
    ...t,
    type:t.type||'mining',
@@ -2315,6 +2525,11 @@ function normalizeState(raw){
  s.withdrawalRules=Array.isArray(s.withdrawalRules)?s.withdrawalRules:[];
  s.settings={...d.settings,...(s.settings||{}),currency:'EUR'};
  s.settings.theme=s.settings.theme==='light'?'light':'dark';
+ s.settings.dashboardRange=['1D','1W','1M','3M','6M','YTD','1Y','3Y','5Y','MAX','CUSTOM'].includes(s.settings.dashboardRange)?s.settings.dashboardRange:'YTD';
+ s.settings.nordeaRange=['1D','1W','1M','3M','6M','YTD','1Y','3Y','5Y','MAX','CUSTOM'].includes(s.settings.nordeaRange)?s.settings.nordeaRange:'1M';
+ s.settings.aktiaRange=['1D','1W','1M','3M','6M','YTD','1Y','3Y','5Y','MAX','CUSTOM'].includes(s.settings.aktiaRange)?s.settings.aktiaRange:'1M';
+ s.settings.aktiaOwner=s.settings.aktiaOwner==='personal'?'personal':'oy';
+ s.settings.wealthGoals=(Array.isArray(s.settings.wealthGoals)?s.settings.wealthGoals:[2000000,2500000,3000000]).map(Number).filter(x=>Number.isFinite(x)&&x>0).sort((a,b)=>a-b);
  s.settings.birthYear=Math.max(1900,Math.min(2100,Math.round(Number(s.settings.birthYear||1982))));
  s.taxSettings={...d.taxSettings,...(s.taxSettings||{})};
  s.taxSettings.companyTaxRatesByYear=(s.taxSettings.companyTaxRatesByYear&&typeof s.taxSettings.companyTaxRatesByYear==='object')?s.taxSettings.companyTaxRatesByYear:{};
@@ -2350,6 +2565,7 @@ function normalizeState(raw){
      btcWalletAddress:String(p.btcWalletAddress||''),btcWalletAutoSync:p.type==='Крипто'&&String(p.btcWalletAddress||'').trim()?true:(p.btcWalletAutoSync!==false),
      btcWalletLastSync:p.btcWalletLastSync||'',btcWalletCurrentRate:Number(p.btcWalletCurrentRate||0),
      btcWalletBlockchainBalance:Number(p.btcWalletBlockchainBalance||0),
+     btcWalletLedgerLastSync:p.btcWalletLedgerLastSync||'',
      btcWalletHistoryCursor:/^\d{4}-\d{2}-\d{2}$/.test(String(p.btcWalletHistoryCursor||''))?String(p.btcWalletHistoryCursor):''
    };
  });
@@ -2414,7 +2630,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v8.0.3';
+ if(s)s.textContent=sub||'VM Wealth Studio v8.5.0';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -2464,7 +2680,7 @@ async function loadCloudState({force=false,showToast=true}={}){
    cloudRevision=Number(data.revision||0);cloudLastSync=data.updated_at;
    localStorage.setItem(CLOUD_REVISION_KEY,String(cloudRevision));localStorage.setItem('vm_cloud_last_sync',cloudLastSync||'');localStorage.removeItem(CLOUD_DIRTY_KEY);
    withdrawalResultsReady=false;renderAll();setCloudStatus('ok','Облако синхронизировано',`${cloudUser.email||''} · ${cloudTimeText()}`);
-   if(showToast)toast('Данные загружены из облака');scheduleBtcWalletSync();return true;
+   if(showToast)toast('Данные загружены из облака');scheduleBtcWalletSync();setTimeout(()=>pullBankAutoImports({showToast:false}),180);setTimeout(()=>pullBtcDailyCache(),350);return true;
  }catch(e){
    suppressCloudSave=false;console.error('Cloud load error',e);setCloudStatus('err','Ошибка облачной загрузки',e?.message||'Проверьте интернет');if(showToast)toast('Не удалось загрузить облачные данные');return false;
  }finally{cloudBusy=false}
@@ -2502,6 +2718,153 @@ async function requireWealthAccess(user){
  throw new Error('Для этого аккаунта не разрешён ни один модуль VM Private Suite.');
 }
 
+
+// Incoming raw attachments are parsed by the SAME routines as manual uploads.
+// Never store the raw attachment in the portfolio state (or its cloud backup).
+function vmEmailAttachmentFile(row){
+  const raw=String(row?.payload?.rawBase64||'').replace(/\s/g,'');
+  if(!raw||raw.length>12000000)throw new Error('Некорректный размер вложения');
+  const decoded=atob(raw.replace(/-/g,'+').replace(/_/g,'/'));
+  const bytes=new Uint8Array(decoded.length);
+  for(let i=0;i<decoded.length;i++)bytes[i]=decoded.charCodeAt(i);
+  const fileName=String(row.file_name||row.payload.fileName||'report').slice(0,240);
+  return new File([bytes],fileName,{type:row.payload.mimeType||'application/octet-stream'});
+}
+function vmAutoImportKnownAktiaOwner(imp,requestedOwner){
+  if(requestedOwner==='oy'||requestedOwner==='personal')return requestedOwner;
+  // Only use an explicitly verified contract-to-portfolio link.
+  const mapped=state.aktia?.sourceMap?.[imp.sourceKey],p=mapped?state.portfolios.find(x=>x.id===mapped):null;
+  return p?.owner==='oy'?'oy':p?.owner==='personal'?'personal':'';
+}
+async function pullBankAutoImports({showToast=false}={}){
+  if(!supabaseClient||!cloudUser||cloudBusy||bankAutoPullBusy)return false;
+  bankAutoPullBusy=true;
+  let imported=0,pending=0,failed=0,processed=0;const waiting=[];
+  try{
+    const {data,error}=await supabaseClient.from('bank_auto_imports')
+      .select('id,provider,owner,report_date,source_type,file_name,imported_at,status')
+      .eq('user_id',cloudUser.id)
+      .eq('status','ready')
+      .order('report_date',{ascending:true})
+      .order('imported_at',{ascending:true});
+    if(error){
+      if(String(error.code||'')==='42P01')return false;
+      throw error;
+    }
+    if(!Array.isArray(data)||!data.length)return false;
+    state.settings.bankAutoProcessedIds=Array.isArray(state.settings.bankAutoProcessedIds)?state.settings.bankAutoProcessedIds:[];
+    const handled=new Set(state.settings.bankAutoProcessedIds);
+    const prevSuppress=suppressCloudSave;
+    suppressCloudSave=true;
+    try{
+      for(const row of data){
+        if(handled.has(row.id))continue;
+        try{
+          // Read large file bodies only when a new attachment requires processing.
+          const {data:full,error:payloadError}=await supabaseClient.from('bank_auto_imports')
+            .select('payload').eq('user_id',cloudUser.id).eq('id',row.id).single();
+          if(payloadError||!full)throw payloadError||new Error('Файл недоступен');
+          row.payload=full.payload;
+          let imp;
+          if(row?.payload?.kind==='raw_email_attachment'){
+            const file=vmEmailAttachmentFile(row);
+            if(row.provider==='nordea')imp=await parseNordeaXlsx(file);
+            else if(row.provider==='aktia')imp=await parseAktiaFile(file);
+            else throw new Error('Неизвестный банк');
+          }else if(row?.payload&&typeof row.payload==='object'){
+            imp=JSON.parse(JSON.stringify(row.payload));
+          }else throw new Error('Нет данных рапорта');
+          imp.autoImport=true;imp.autoImportId=row.id;imp.fileName=imp.fileName||row.file_name||'';
+          if(row.provider==='nordea'){
+            const duplicate=(state.nordea?.imports||[]).some(x=>x.fingerprint===imp.fingerprint);
+            if(!duplicate){const r=commitNordeaImport(imp);if(!r.duplicate)imported++}
+          }else if(row.provider==='aktia'){
+            const owner=vmAutoImportKnownAktiaOwner(imp,row.owner);
+            if(!owner){pending++;waiting.push({row,imp});continue}
+            if(imp.kind==='transactions'){
+              const duplicate=(state.aktia?.transactionImports||[]).some(x=>x.owner===owner&&x.fingerprint===imp.fingerprint);
+              if(!duplicate){const r=commitAktiaTransactionImport(imp,owner);if(!r.duplicate)imported++}
+            }else{
+              const exact=(state.aktia?.imports||[]).some(x=>x.owner===owner&&[x.fingerprint,...(x.mergedFingerprints||[])].includes(imp.fingerprint));
+              if(!exact){const r=commitAktiaImport(imp,owner);if(!r.duplicate)imported++}
+            }
+          }
+          handled.add(row.id);processed++;
+        }catch(e){failed++;console.warn('Автоимпорт: файл не распознан',row.file_name,e)}
+      }
+      if(processed){
+        state.settings.bankAutoProcessedIds=[...handled].slice(-6000);
+      }
+    }finally{suppressCloudSave=prevSuppress}
+    if(imported||processed){
+      persistState();withdrawalResultsReady=false;renderAll();scheduleCloudSave(120);
+      if(showToast&&imported)toast(`Автоимпорт банка: ${imported} новых отчётов`);
+    }
+    const el=q('bankAutoImportStatus');
+    if(el){
+      const total=state.settings.bankAutoProcessedIds?.length||0;
+      el.textContent=`Gmail: vm.wealth.reports@gmail.com · загружено ${total} вложений · ожидают выбора Aktia Personal/Oy: ${pending} · ошибок чтения: ${failed}. Проверка почты на стороне Google должна быть настроена отдельно.`;
+    }
+    const queue=q('bankAutoImportPending');
+    if(queue){
+      queue.innerHTML=waiting.length?`<div class="note"><b>Нужно выбрать владельца Aktia: ${waiting.length}</b><div class="muted small">Не удалось доказать, к какому портфелю относится договор. Выбери владельца, это запомнится для следующих отчётов с таким же договором.</div></div>`+waiting.map((x,i)=>`<div class="rule"><b>${esc(x.row.file_name||'Aktia')}</b><div class="muted small">${esc(x.imp.accountName||x.imp.contract||x.imp.sourceKey||'Договор неизвестен')} · ${esc(x.imp.date||'')}</div><div class="row" style="margin-top:9px"><select id="bankOwnerChoice${i}"><option value="">Выбери владельца</option><option value="personal">Aktia Personal</option><option value="oy">Aktia Oy</option></select><button type="button" class="btn secondary compact" id="bankOwnerSave${i}">Подтвердить</button></div></div>`).join(''):'';
+      waiting.forEach(({row,imp},i)=>{
+        const b=q(`bankOwnerSave${i}`);if(!b)return;
+        b.onclick=()=>{
+          const owner=q(`bankOwnerChoice${i}`)?.value;
+          if(!['oy','personal'].includes(owner))return toast('Сначала выбери владельца');
+          if(!confirm(`Сохранить «${row.file_name}» в ${owner==='oy'?'Aktia Oy':'Aktia Personal'}?`))return;
+          if(imp.kind==='transactions')commitAktiaTransactionImport(imp,owner);
+          else commitAktiaImport(imp,owner);
+          const ids=new Set(state.settings.bankAutoProcessedIds||[]);ids.add(row.id);
+          state.settings.bankAutoProcessedIds=[...ids].slice(-6000);
+          persistState();renderAll();scheduleCloudSave(120);
+          toast('Привязка Aktia сохранена. Следующие отчёты этого договора будут определяться автоматически.');
+          pullBankAutoImports({showToast:false});
+        };
+      });
+    }
+    if(showToast&&pending)toast(`Актуальные файлы Aktia (${pending}) требуют привязки к Personal или Oy`);
+    return imported>0;
+  }catch(e){console.warn('Bank auto-import pull failed',e);return false}
+  finally{bankAutoPullBusy=false}
+}
+
+
+let btcDailyCacheBusy=false,btcDailyCacheTimer=null;
+async function pullBtcDailyCache(){
+  if(!supabaseClient||!cloudUser||cloudBusy||btcDailyCacheBusy)return false;
+  btcDailyCacheBusy=true;
+  try{
+    const {data,error}=await supabaseClient.from('btc_wallet_daily_cache')
+      .select('portfolio_id,wallet_address,observed_on,balance_btc,btc_eur_rate,checked_at')
+      .eq('user_id',cloudUser.id).order('checked_at',{ascending:false}).limit(200);
+    if(error){console.warn('BTC daily cache read failed',error);return false}
+    const seen=new Set();let changed=0;
+    for(const rec of data||[]){
+      if(seen.has(rec.portfolio_id))continue;seen.add(rec.portfolio_id);
+      const p=state.portfolios.find(x=>x.id===rec.portfolio_id&&x.type==='Крипто');
+      if(!p||String(p.btcWalletAddress||'').trim()!==String(rec.wallet_address||'').trim())continue;
+      const stamp=Date.parse(rec.checked_at||'');
+      if(!Number.isFinite(stamp)||stamp<=Date.parse(p.btcWalletLastSync||'1970-01-01'))continue;
+      const btc=Number(rec.balance_btc),rate=Number(rec.btc_eur_rate);
+      if(!Number.isFinite(btc)||btc<0||!Number.isFinite(rate)||rate<=0)continue;
+      p.btcWalletLastSync=rec.checked_at;
+      p.btcWalletBlockchainBalance=btc;
+      p.btcWalletCurrentRate=rate;
+      upsertBtcWalletDailySnapshot({portfolioId:p.id,date:rec.observed_on,btc,rate,source:'btc_wallet',capturedAt:rec.checked_at,
+        comment:`Серверное ежедневное обновление BTC: ${btc.toFixed(8)} BTC × ${rate.toFixed(2)} EUR`});
+      changed++;
+    }
+    if(changed){persistState();renderAll();scheduleCloudSave(180)}
+    const el=q('btcAutoDailyStatus');if(el){
+      const latest=(data||[])[0];el.textContent=latest?`Серверное обновление BTC: ${new Date(latest.checked_at).toLocaleString('ru-RU')} · данные ${seen.size} кошельков.`:'Ежедневный серверный снимок BTC ещё не поступал. Запустите настройку Google Apps Script.';
+    }
+    return changed>0;
+  }catch(e){console.warn('BTC daily cache sync failed',e);return false}
+  finally{btcDailyCacheBusy=false}
+}
+
 async function pullCloudIfNewer(){
   if(!supabaseClient||!cloudUser||cloudBusy)return false;
   if(localStorage.getItem(CLOUD_DIRTY_KEY)==='1')return false;
@@ -2512,15 +2875,17 @@ async function pullCloudIfNewer(){
     if(cloudRevision!==null&&remoteRevision<=Number(cloudRevision))return false;
     suppressCloudSave=true;state=normalizeState(data.payload||defaultState());persistState({localOnly:true});suppressCloudSave=false;
     cloudRevision=remoteRevision;cloudLastSync=data.updated_at;localStorage.setItem(CLOUD_REVISION_KEY,String(cloudRevision));localStorage.setItem('vm_cloud_last_sync',cloudLastSync||'');
-    withdrawalResultsReady=false;renderAll();setCloudStatus('ok','Облако синхронизировано',`${cloudUser.email||''} · ${cloudTimeText()}`);scheduleBtcWalletSync();return true;
+    withdrawalResultsReady=false;renderAll();setCloudStatus('ok','Облако синхронизировано',`${cloudUser.email||''} · ${cloudTimeText()}`);scheduleBtcWalletSync();setTimeout(()=>pullBankAutoImports({showToast:false}),180);setTimeout(()=>pullBtcDailyCache(),350);return true;
   }catch(e){suppressCloudSave=false;console.warn('Background cloud pull failed',e);return false}
 }
 function startCloudPulling(){
-  clearInterval(cloudPullTimer);
+  clearInterval(cloudPullTimer);clearInterval(bankAutoPullTimer);
   if(!cloudUser)return;
   cloudPullTimer=setInterval(()=>pullCloudIfNewer(),15000);
+  bankAutoPullTimer=setInterval(()=>pullBankAutoImports({showToast:false}),60000);
+  clearInterval(btcDailyCacheTimer);btcDailyCacheTimer=setInterval(()=>pullBtcDailyCache(),15*60000);
 }
-function stopCloudPulling(){clearInterval(cloudPullTimer);cloudPullTimer=null}
+function stopCloudPulling(){clearInterval(cloudPullTimer);cloudPullTimer=null;clearInterval(bankAutoPullTimer);bankAutoPullTimer=null;clearInterval(btcDailyCacheTimer);btcDailyCacheTimer=null}
 
 async function handleCloudSession(session,{initial=false}={}){
  cloudUser=session?.user||null;
@@ -2551,7 +2916,7 @@ async function handleCloudSession(session,{initial=false}={}){
      cloudRevision=null;localStorage.removeItem(CLOUD_REVISION_KEY);await saveCloudState(false);
    }else{cloudRevision=null;setCloudStatus('ok','Облако подключено',`${cloudUser.email||''} · готово к синхронизации`)}
  }else setCloudStatus('ok','Облако подключено',`${cloudUser.email||''} · ${cloudTimeText()}`);
- startCloudPulling();scheduleBtcWalletSync();return {access:cloudModuleAccess,redirected:false};
+ startCloudPulling();scheduleBtcWalletSync();setTimeout(()=>pullBankAutoImports({showToast:true}),180);setTimeout(()=>pullBtcDailyCache(),350);return {access:cloudModuleAccess,redirected:false};
 }
 
 function gateMessage(text,kind=''){
@@ -3383,7 +3748,7 @@ function openPortfolioOrderModal(){
  });
 }
 
-function sortedPortfolioRows(){
+function sortedPortfolioRows(from=state.settings.fyStart,to=todayISO()){
  const now=totalNow(),sort=q('dashboardSort')?.value||'manual';
  const nordea=nordeaPortfolio(),cash=nordeaCashPortfolio();
 
@@ -3392,7 +3757,7 @@ function sortedPortfolioRows(){
    if(cash&&p.id===cash.id)return;
 
    if(nordea&&cash&&p.id===nordea.id){
-     const r=groupPerf([nordea,cash],state.settings.fyStart,todayISO());
+     const groupFrom=from||groupSnapshotDates([nordea,cash])[0]||to;const r=groupPerf([nordea,cash],groupFrom,to);
      const end=latestValue(nordea.id)+latestValue(cash.id);
      rows.push({
        p:{...p,name:'Nordea',_nordeaGroup:true},
@@ -3406,9 +3771,9 @@ function sortedPortfolioRows(){
 
    const role=portfolioRole(p),latest=latestValue(p.id);
    const r=p.type==='Крипто'
-     ? {...cryptoPricePerf(p.id,state.settings.fyStart,todayISO()),end:latest}
+     ? {...cryptoPricePerf(p.id,from||uniqueSnapshots(p.id)[0]?.date||to,to),end:latest}
      : role==='investable'
-       ? portfolioPerf(p.id,state.settings.fyStart)
+       ? portfolioPerf(p.id,from||uniqueSnapshots(p.id)[0]?.date||to,to)
        : {start:0,end:latest,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:'',endDate:''};
    rows.push({p,r,share:now?100*latest/now:0});
  });
@@ -3425,26 +3790,262 @@ function sortedPortfolioRows(){
  });
  return rows
 }
+
+const VM_PERIOD_CODES=['1D','1W','1M','3M','6M','YTD','1Y','3Y','5Y','MAX','CUSTOM'];
+const VM_PERIOD_LABELS={'1D':'1D','1W':'1W','1M':'1M','3M':'3M','6M':'6M',YTD:'YTD','1Y':'1Y','3Y':'3Y','5Y':'5Y',MAX:'Всё',CUSTOM:'Свой период'};
+function shiftIsoDays(iso,days){const d=isoToDate(iso);if(!d)return iso;d.setDate(d.getDate()+Number(days||0));return localISODate(d)}
+function shiftIsoMonths(iso,months){return addMonthsToIso(iso,Number(months||0))}
+function periodBounds(code,to=todayISO(),customFrom='',customTo=''){
+ code=VM_PERIOD_CODES.includes(code)?code:'YTD';to=/^\d{4}-\d{2}-\d{2}$/.test(String(to||''))?to:todayISO();
+ if(code==='CUSTOM'){const a=/^\d{4}-\d{2}-\d{2}$/.test(String(customFrom||''))?customFrom:to,b=/^\d{4}-\d{2}-\d{2}$/.test(String(customTo||''))?customTo:to;return{from:a<=b?a:b,to:a<=b?b:a,code}}
+ if(code==='MAX')return{from:'',to,code};
+ if(code==='YTD')return{from:`${to.slice(0,4)}-01-01`,to,code};
+ const mapDays={'1D':1,'1W':7};if(mapDays[code])return{from:shiftIsoDays(to,-mapDays[code]),to,code};
+ const mapMonths={'1M':-1,'3M':-3,'6M':-6,'1Y':-12,'3Y':-36,'5Y':-60};if(mapMonths[code])return{from:shiftIsoMonths(to,mapMonths[code]),to,code};
+ return{from:`${to.slice(0,4)}-01-01`,to,code:'YTD'};
+}
+function periodDisplay(bounds){if(bounds.code==='MAX')return'Вся доступная история';if(bounds.code==='CUSTOM')return`${formatDate(bounds.from)} — ${formatDate(bounds.to)}`;return`${VM_PERIOD_LABELS[bounds.code]} · ${formatDate(bounds.from)} — ${formatDate(bounds.to)}`}
+function periodSettingKeys(kind){if(kind==='nordea')return{range:'nordeaRange',from:'nordeaCustomFrom',to:'nordeaCustomTo'};if(kind==='aktia')return{range:'aktiaRange',from:'aktiaCustomFrom',to:'aktiaCustomTo'};return{range:'dashboardRange',from:'dashboardCustomFrom',to:'dashboardCustomTo'}}
+function renderPeriodKind(kind){if(kind==='nordea')renderNordea();else if(kind==='aktia')renderAktia();else renderDashboard()}
+function openPeriodModal(kind){
+ const keys=periodSettingKeys(kind),curFrom=state.settings[keys.from]||shiftIsoMonths(todayISO(),-1),curTo=state.settings[keys.to]||todayISO();
+ openModal('Свой период',`<div class="form-grid"><label>С<input id="vmPeriodFrom" value="${formatDate(curFrom)}" placeholder="ДД.ММ.ГГГГ"></label><label>По<input id="vmPeriodTo" value="${formatDate(curTo)}" placeholder="ДД.ММ.ГГГГ"></label><div class="modal-actions" style="grid-column:1/-1"><button class="btn primary" id="vmPeriodApply">Применить</button></div></div>`,'PERIOD');
+ q('vmPeriodApply').onclick=()=>{const a=parseDate(q('vmPeriodFrom').value),b=parseDate(q('vmPeriodTo').value);if(!a||!b)return toast('Проверьте даты');state.settings[keys.from]=a;state.settings[keys.to]=b;state.settings[keys.range]='CUSTOM';persistState();closeModal();renderPeriodKind(kind);if(mobilePhoneMode)renderMobileApp();};
+}
+function renderPeriodSelector(el,kind){if(!el)return;const keys=periodSettingKeys(kind),active=state.settings[keys.range]||'YTD';el.innerHTML=VM_PERIOD_CODES.map(code=>`<button type="button" data-vm-period="${code}" class="${code===active?'active':''}">${VM_PERIOD_LABELS[code]}</button>`).join('');el.querySelectorAll('[data-vm-period]').forEach(b=>b.onclick=()=>{const code=b.dataset.vmPeriod;if(code==='CUSTOM')return openPeriodModal(kind);state.settings[keys.range]=code;persistState();renderPeriodKind(kind);if(mobilePhoneMode)renderMobileApp();});}
+function dashboardBounds(){return periodBounds(state.settings.dashboardRange||'YTD',todayISO(),state.settings.dashboardCustomFrom,state.settings.dashboardCustomTo)}
+function dashboardSelectedPerf(){const b=dashboardBounds();return b.code==='MAX'?allTimePerf():totalPerf(b.from,b.to)}
+function allPortfolioFlowSummary(from,to){
+ let contributions=0,withdrawals=0;const seenTransfers=new Set();
+ state.flows.filter(f=>(!from||f.date>from)&&f.date<=to).forEach(f=>{const t=flowTypeOf(f),a=Math.abs(Number(f.amount)||0);if(t==='transfer_in'||t==='transfer_out'){const k=f.transferId||'';if(k&&seenTransfers.has(k))return;if(k)seenTransfers.add(k);return}if(t==='contribution')contributions+=a;else if(t==='withdrawal')withdrawals+=a;});
+ return{contributions,withdrawals,net:contributions-withdrawals};
+}
+function totalValueAtNearest(date){if(!date)return state.portfolios.reduce((sum,p)=>sum+firstValue(p.id),0);return totalAtDate(date)}
+function dashboardCapitalBreakdown(bounds){
+ const all=allDates().filter(d=>d<=bounds.to);if(!all.length)return{start:0,end:totalNow(),change:0,netFlow:0,market:0,fromDate:'',toDate:''};
+ const startDate=bounds.code==='MAX'?all[0]:(([...all].reverse().find(d=>d<=bounds.from))||all.find(d=>d>=bounds.from)||all[0]);
+ const endDate=([...all].reverse().find(d=>d<=bounds.to))||all.at(-1);const start=totalAtDate(startDate),end=(bounds.to>=todayISO()?totalNow():totalAtDate(endDate));const fs=allPortfolioFlowSummary(startDate,bounds.to),change=end-start,market=change-fs.net;return{start,end,change,netFlow:fs.net,contributions:fs.contributions,withdrawals:fs.withdrawals,market,fromDate:startDate,toDate:endDate};
+}
+function renderDashboardIntel(bounds){
+ const d=dashboardCapitalBreakdown(bounds),cb=q('changeBreakdown');if(cb){q('changeBreakdownTitle').textContent=`Изменение · ${VM_PERIOD_LABELS[bounds.code]}`;cb.innerHTML=`<div class="change-row"><span>Капитал изменился</span><b class="${d.change>=0?'good':'bad'}">${d.change>=0?'+':''}${money(d.change)}</b></div><div class="change-row"><span>Пополнения</span><b class="good">+${money(d.contributions||0)}</b></div><div class="change-row"><span>Выводы</span><b class="bad">−${money(d.withdrawals||0)}</b></div><div class="change-row"><span>Рынок, переоценка и майнинг</span><b class="${d.market>=0?'good':'bad'}">${d.market>=0?'+':''}${money(d.market)}</b></div>`}
+ const goals=(state.settings.wealthGoals||[]).filter(x=>x>0).sort((a,b)=>a-b),now=totalNow(),next=goals.find(x=>x>now)||goals.at(-1),goal=q('wealthGoalCard');if(goal){if(!next)goal.innerHTML='<div class="muted small">Добавьте цели в настройках.</div>';else{const done=Math.min(100,now/next*100),remaining=Math.max(0,next-now);goal.innerHTML=`<div class="goal-main">${money(next)}</div><div class="goal-track"><i style="width:${done.toFixed(1)}%"></i></div><div class="goal-sub"><span>${done.toFixed(1)}% выполнено</span><span>Осталось ${money(remaining)}</span></div>`}}
+ const fresh=q('dataFreshness');if(fresh){const rows=[];state.portfolios.forEach(p=>{let at=p.type==='Крипто'&&p.btcWalletLastSync?p.btcWalletLastSync:(uniqueSnapshots(p.id).at(-1)?.updatedAt||uniqueSnapshots(p.id).at(-1)?.capturedAt||uniqueSnapshots(p.id).at(-1)?.date||'');rows.push({name:p.name,at})});const ni=nordeaLatestImport();if(ni)rows.push({name:'Nordea Excel',at:ni.importedAt||ni.sourceIso||ni.date});rows.sort((a,b)=>Date.parse(b.at||0)-Date.parse(a.at||0));fresh.innerHTML=rows.slice(0,6).map(x=>{const t=Date.parse(x.at||''),days=Number.isFinite(t)?Math.floor((Date.now()-t)/86400000):999,cl=days<=0?'today':days<=3?'recent':'',txt=Number.isFinite(t)?(days<=0?'сегодня':days===1?'вчера':`${days} дн. назад`):'нет даты';return`<div class="fresh-row"><i class="fresh-dot ${cl}"></i><b>${esc(x.name)}</b><span>${txt}</span></div>`}).join('')||'<div class="muted small">Нет данных.</div>'}
+}
+
+/* Minimal XLSX reader for Nordea exports: local ZIP/XML, no external library. */
+function u16(v,o){return v.getUint16(o,true)}function u32(v,o){return v.getUint32(o,true)}
+async function vmInflateRaw(bytes){if(typeof DecompressionStream==='undefined')throw new Error('Этот браузер не поддерживает локальное чтение XLSX. Обновите Safari/Chrome.');const ds=new DecompressionStream('deflate-raw'),stream=new Blob([bytes]).stream().pipeThrough(ds);return new Uint8Array(await new Response(stream).arrayBuffer())}
+async function vmUnzip(buffer){const v=new DataView(buffer),u=new Uint8Array(buffer),dec=new TextDecoder('utf-8');let eocd=-1;for(let i=Math.max(0,u.length-66000);i<=u.length-22;i++){if(u32(v,i)===0x06054b50)eocd=i}if(eocd<0)throw new Error('Некорректный XLSX: ZIP directory не найден.');const count=u16(v,eocd+10),cdOffset=u32(v,eocd+16),entries=new Map();let p=cdOffset;for(let n=0;n<count;n++){if(u32(v,p)!==0x02014b50)throw new Error('Некорректный XLSX: central directory.');const method=u16(v,p+10),csize=u32(v,p+20),usize=u32(v,p+24),fn=u16(v,p+28),ex=u16(v,p+30),co=u16(v,p+32),local=u32(v,p+42),name=dec.decode(u.slice(p+46,p+46+fn));entries.set(name,{method,csize,usize,local});p+=46+fn+ex+co}const read=async name=>{const e=entries.get(name);if(!e)return null;const lp=e.local;if(u32(v,lp)!==0x04034b50)throw new Error('Некорректный XLSX: local header.');const fn=u16(v,lp+26),ex=u16(v,lp+28),start=lp+30+fn+ex,data=u.slice(start,start+e.csize);if(e.method===0)return data;if(e.method===8)return await vmInflateRaw(data);throw new Error(`Неподдерживаемое сжатие XLSX: ${e.method}`)};return{entries,read,decode:b=>dec.decode(b)}}
+function xlsxColIndex(ref){const m=String(ref||'').match(/^([A-Z]+)/i);if(!m)return 0;let n=0;for(const c of m[1].toUpperCase())n=n*26+c.charCodeAt(0)-64;return n-1}
+function xmlText(el){return[...el.getElementsByTagNameNS('*','t')].map(x=>x.textContent||'').join('')}
+async function parseNordeaXlsx(file){
+ if(!/\.xlsx$/i.test(file?.name||''))throw new Error('Нужен файл Nordea в формате .xlsx');const zip=await vmUnzip(await file.arrayBuffer()),sharedBytes=await zip.read('xl/sharedStrings.xml'),shared=[];if(sharedBytes){const doc=new DOMParser().parseFromString(zip.decode(sharedBytes),'application/xml');doc.getElementsByTagNameNS('*','si');[...doc.getElementsByTagNameNS('*','si')].forEach(si=>shared.push(xmlText(si)))}
+ const sheetNames=[...zip.entries.keys()].filter(x=>/^xl\/worksheets\/sheet\d+\.xml$/i.test(x)).sort();let matrix=null;for(const name of sheetNames){const bytes=await zip.read(name);if(!bytes)continue;const doc=new DOMParser().parseFromString(zip.decode(bytes),'application/xml'),rows=[];for(const row of [...doc.getElementsByTagNameNS('*','row')]){const ri=Math.max(0,Number(row.getAttribute('r')||rows.length+1)-1);rows[ri]=rows[ri]||[];for(const c of [...row.getElementsByTagNameNS('*','c')]){const ci=xlsxColIndex(c.getAttribute('r')),type=c.getAttribute('t')||'',vEl=c.getElementsByTagNameNS('*','v')[0],raw=vEl?vEl.textContent:'';let val=null;if(type==='s')val=shared[Number(raw)]??'';else if(type==='inlineStr')val=xmlText(c);else if(type==='b')val=raw==='1';else if(raw!==''){const num=Number(raw);val=Number.isFinite(num)?num:raw}rows[ri][ci]=val}}
+   const hdr=(rows[1]||[]).map(x=>String(x||''));if(hdr.includes('AccountKey')&&hdr.includes('ISIN')&&hdr.includes('Value in base currency')){matrix=rows;break}}
+ if(!matrix)throw new Error('В файле не найден лист Holdings с ожидаемыми колонками Nordea.');return nordeaSnapshotFromMatrix(matrix,file.name)
+}
+function safeNum(v){const n=Number(v);return Number.isFinite(n)?n:0}
+function nordeaHash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(16).padStart(8,'0')}
+function parseNordeaSourceDate(raw){const m=String(raw||'').match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/);if(!m)return{date:todayISO(),sourceIso:new Date().toISOString()};const d=`${m[3]}-${pad2(m[2])}-${pad2(m[1])}`,iso=new Date(`${d}T${pad2(m[4]||12)}:${pad2(m[5]||0)}:${pad2(m[6]||0)}`).toISOString();return{date:d,sourceIso:iso}}
+function nordeaSnapshotFromMatrix(rows,fileName='Nordea.xlsx'){
+ const headers=(rows[1]||[]).map(x=>String(x??'')),idx={};headers.forEach((h,i)=>idx[h]=i);const req=['Type','AccountKey','Account','Value on account level','ISIN','MIC','CURRENCY','NAME','HOLDINGS','PRICE','PRICETIME','Value change (%)','FX','Average purchase price','A.FX','Purchase value of current holdings','Value in base currency','Value change today'];req.forEach(h=>{if(idx[h]===undefined)throw new Error(`В файле Nordea нет колонки: ${h}`)});const src=parseNordeaSourceDate(rows[0]?.[0]),accounts=new Map(),positions=[];
+ for(const row of rows.slice(2)){const type=String(row?.[idx.Type]||''),key=String(row?.[idx.AccountKey]||'').trim(),account=String(row?.[idx.Account]||'').trim();if(!type||!key)continue;let a=accounts.get(key);if(!a){a={key,name:account,type,total:0};accounts.set(key,a)}const av=Number(row[idx['Value on account level']]);if(Number.isFinite(av)&&av!==0)a.total=av;const isin=String(row[idx.ISIN]||'').trim();if(type==='Custody'&&isin){positions.push({accountKey:key,accountName:account,isin,mic:String(row[idx.MIC]||''),currency:String(row[idx.CURRENCY]||''),name:String(row[idx.NAME]||isin),qty:safeNum(row[idx.HOLDINGS]),price:safeNum(row[idx.PRICE]),priceTime:String(row[idx.PRICETIME]||''),dayPct:safeNum(row[idx['Value change (%)']]),fx:safeNum(row[idx.FX]),avgPrice:safeNum(row[idx['Average purchase price']]),avgFx:safeNum(row[idx['A.FX']]),purchaseValue:safeNum(row[idx['Purchase value of current holdings']]),value:safeNum(row[idx['Value in base currency']]),dayChange:safeNum(row[idx['Value change today']])})}}
+ const posByAcc=new Map();positions.forEach(x=>posByAcc.set(x.accountKey,(posByAcc.get(x.accountKey)||0)+x.value));for(const a of accounts.values()){if(!a.total&&posByAcc.has(a.key))a.total=posByAcc.get(a.key)}const accountArr=[...accounts.values()],total=accountArr.reduce((s,a)=>s+a.total,0),cash=accountArr.filter(a=>a.type==='CashAccount').reduce((s,a)=>s+a.total,0),custody=total-cash,fpBase=[src.sourceIso,...accountArr.map(a=>`${a.key}:${a.total.toFixed(2)}`),...positions.map(x=>`${x.accountKey}:${x.isin}:${x.qty}:${x.value.toFixed(2)}`)].join('|');return{id:uid(),fileName,importedAt:new Date().toISOString(),date:src.date,sourceIso:src.sourceIso,fingerprint:nordeaHash(fpBase),total,cash,custody,accounts:accountArr,positions}
+}
+function nordeaImports(){return(state.nordea?.imports||[]).slice().sort((a,b)=>String(a.sourceIso||a.date).localeCompare(String(b.sourceIso||b.date)))}
+function nordeaLatestImport(){return nordeaImports().at(-1)||null}
+function nordeaAggregatePositions(imp,account='ALL'){
+ const map=new Map();(imp?.positions||[]).filter(p=>account==='ALL'||p.accountKey===account).forEach(p=>{const k=p.isin||`${p.accountKey}:${p.name}`,x=map.get(k)||{isin:p.isin,name:p.name,currency:p.currency,mic:p.mic,qty:0,value:0,purchaseValue:0,dayChange:0,dayPctWeighted:0,price:p.price,priceTime:p.priceTime,accounts:new Set(),rows:[]};x.qty+=safeNum(p.qty);x.value+=safeNum(p.value);x.purchaseValue+=safeNum(p.purchaseValue);x.dayChange+=safeNum(p.dayChange);x.dayPctWeighted+=safeNum(p.dayPct)*Math.max(0,safeNum(p.value));x.price=p.price||x.price;x.priceTime=p.priceTime||x.priceTime;x.accounts.add(p.accountName||p.accountKey);x.rows.push(p);map.set(k,x)});return[...map.values()].map(x=>({...x,accounts:[...x.accounts],dayPct:x.value?x.dayPctWeighted/x.value:0,pl:x.value-x.purchaseValue})).sort((a,b)=>b.value-a.value)
+}
+function nordeaAccountTotal(imp,account='ALL'){if(!imp)return 0;if(account==='ALL')return safeNum(imp.total);return safeNum((imp.accounts||[]).find(a=>a.key===account)?.total)}
+function nordeaValueHistory(account='ALL'){
+ const map=new Map();
+ if(account==='ALL'&&nordeaGroupAvailable()){const a=nordeaPortfolio(),c=nordeaCashPortfolio();groupSnapshotDates([a,c]).forEach(date=>map.set(date,{date,value:groupValueAt([a,c],date),source:'portfolio'}));}
+ nordeaImports().forEach(imp=>map.set(imp.date,{date:imp.date,value:nordeaAccountTotal(imp,account),source:'import'}));
+ return[...map.values()].sort((a,b)=>a.date.localeCompare(b.date));
+}
+function nordeaPeriodValueStats(bounds,account='ALL'){
+ const rows=nordeaValueHistory(account).filter(x=>x.date<=bounds.to);if(!rows.length)return{start:0,end:0,delta:0,pct:null,startDate:'',endDate:''};
+ let a=bounds.code==='MAX'?rows[0]:([...rows].reverse().find(x=>x.date<=bounds.from)||rows.find(x=>x.date>=bounds.from)||rows[0]);const b=[...rows].reverse().find(x=>x.date<=bounds.to)||rows.at(-1),delta=b.value-a.value;return{start:a.value,end:b.value,delta,pct:a.value?delta/a.value*100:null,startDate:a.date,endDate:b.date};
+}
+function nordeaRangeBounds(){const latest=nordeaLatestImport(),to=latest?.date||todayISO();return periodBounds(state.settings.nordeaRange||'1M',to,state.settings.nordeaCustomFrom,state.settings.nordeaCustomTo)}
+function nordeaImportInRange(bounds){const rows=nordeaImports().filter(x=>(!bounds.from||x.date>=bounds.from)&&x.date<=bounds.to);if(bounds.code==='MAX')return nordeaImports().filter(x=>x.date<=bounds.to);return rows}
+function nordeaClosestImport(date,direction='after'){const rows=nordeaImports();if(!rows.length)return null;if(direction==='before')return[...rows].reverse().find(x=>x.date<=date)||rows[0];return rows.find(x=>x.date>=date)||rows.at(-1)}
+function nordeaSecuritySeries(isin,account='ALL',bounds=nordeaRangeBounds()){return nordeaImports().filter(x=>(!bounds.from||x.date>=bounds.from)&&x.date<=bounds.to).map(imp=>{const p=nordeaAggregatePositions(imp,account).find(x=>x.isin===isin);return p?{date:imp.date,sourceIso:imp.sourceIso,price:p.price,qty:p.qty,value:p.value,purchaseValue:p.purchaseValue,pl:p.pl,name:p.name,currency:p.currency}:null}).filter(Boolean)}
+function nordeaClosedPositions(account='ALL'){
+ const latest=nordeaLatestImport();if(!latest)return[];const active=new Set(nordeaAggregatePositions(latest,account).map(x=>x.isin)),out=new Map();const rows=nordeaImports().filter(x=>x.sourceIso<latest.sourceIso).slice().reverse();for(const imp of rows){for(const p of nordeaAggregatePositions(imp,account)){if(!p.isin||active.has(p.isin)||out.has(p.isin))continue;out.set(p.isin,{...p,lastDate:imp.date,lastSourceIso:imp.sourceIso})}}return[...out.values()].sort((a,b)=>String(b.lastDate).localeCompare(String(a.lastDate))||b.value-a.value)
+}
+function nordeaPositionChangeStatus(cur,prev){if(!prev)return'new';if(Math.abs(cur.qty-prev.qty)>1e-10)return'changed';return''}
+function nordeaDiff(cur,prev){const cm=new Map(nordeaAggregatePositions(cur).map(x=>[x.isin,x])),pm=new Map(nordeaAggregatePositions(prev).map(x=>[x.isin,x])),changes=[];for(const [isin,c] of cm){const p=pm.get(isin);if(!p)changes.push({type:'new',isin,name:c.name,delta:c.qty,from:0,to:c.qty});else if(Math.abs(c.qty-p.qty)>1e-10)changes.push({type:c.qty>p.qty?'increase':'decrease',isin,name:c.name,delta:c.qty-p.qty,from:p.qty,to:c.qty})}for(const [isin,p] of pm){if(!cm.has(isin))changes.push({type:'closed',isin,name:p.name,delta:-p.qty,from:p.qty,to:0})}return changes}
+function nordeaImportSummary(cur,prev){const changes=prev?nordeaDiff(cur,prev):nordeaAggregatePositions(cur).map(x=>({type:'new',isin:x.isin,name:x.name,delta:x.qty,from:0,to:x.qty}));const count=t=>changes.filter(x=>x.type===t).length;return{changes,newCount:count('new'),increase:count('increase'),decrease:count('decrease'),closed:count('closed'),delta:cur.total-(prev?.total||0)}}
+function ensureNordeaPortfolios(){let inv=nordeaPortfolio(),cash=nordeaCashPortfolio();if(!inv){inv={id:uid(),name:'Nordea',type:'Инвестиционный',owner:'oy',groupId:'nordea',calcRole:'investable',exitCost:0,exitDate:'',exitTaxable:true,exitMultiple:1,returnAdjustment:0,exitTargetPortfolioId:'',btcWalletAddress:'',btcWalletAutoSync:true,btcWalletLastSync:'',btcWalletCurrentRate:0,btcWalletBlockchainBalance:0,btcWalletHistoryCursor:''};state.portfolios.push(inv)}if(!cash){cash={...inv,id:uid(),name:'Nordea cash',type:'Наличные',calcRole:'excluded'};state.portfolios.push(cash)}return{inv,cash}}
+function upsertNordeaPortfolioSnapshot(pid,date,value,imp){const rows=state.snapshots.filter(x=>x.portfolioId===pid&&x.date===date&&x.source==='nordea_xlsx').sort((a,b)=>snapshotMoment(a)-snapshotMoment(b)),old=rows.at(-1),now=new Date().toISOString(),rec={id:old?.id||uid(),portfolioId:pid,date,value:safeNum(value),comment:`Nordea Excel · ${imp.fileName||''}`,capturedAt:old?.capturedAt||now,updatedAt:now,source:'nordea_xlsx'};if(old)Object.assign(old,rec);else state.snapshots.push(rec)}
+function commitNordeaImport(imp){if(!state.nordea)state.nordea={imports:[]};if(state.nordea.imports.some(x=>x.fingerprint===imp.fingerprint))return{duplicate:true};state.nordea.imports.push(imp);state.nordea.imports.sort((a,b)=>String(a.sourceIso||a.date).localeCompare(String(b.sourceIso||b.date)));const {inv,cash}=ensureNordeaPortfolios();upsertNordeaPortfolioSnapshot(inv.id,imp.date,imp.custody,imp);upsertNordeaPortfolioSnapshot(cash.id,imp.date,imp.cash,imp);persistState();return{duplicate:false}}
+async function handleNordeaFile(file){try{toast('Читаю файл Nordea…');const imp=await parseNordeaXlsx(file),imports=nordeaImports(),prev=imports.filter(x=>x.sourceIso<imp.sourceIso).at(-1)||imports.at(-1)||null;if(imports.some(x=>x.fingerprint===imp.fingerprint)){toast('Этот файл уже импортирован');return}const sum=nordeaImportSummary(imp,prev);openModal('Проверка импорта Nordea',`<div class="muted small">${esc(imp.fileName)} · данные банка ${formatDate(imp.date)}</div><div class="nordea-preview-summary"><div><span>Счетов</span><b>${imp.accounts.length}</b></div><div><span>Позиций</span><b>${nordeaAggregatePositions(imp).length}</b></div><div><span>Общая стоимость</span><b>${money(imp.total)}</b></div><div><span>Изменение к прошлому импорту</span><b class="${sum.delta>=0?'good':'bad'}">${prev?(sum.delta>=0?'+':'')+money(sum.delta):'Первый импорт'}</b></div><div><span>Новых / увеличено</span><b>${sum.newCount} / ${sum.increase}</b></div><div><span>Уменьшено / закрыто</span><b>${sum.decrease} / ${sum.closed}</b></div></div><div class="note">Импорт сохранит исторический снимок. Проданные бумаги не исчезнут из истории. Текущие суммы Nordea и Nordea cash на главной будут обновлены по этому файлу.</div><div class="modal-actions"><button class="btn primary" id="confirmNordeaImport">Подтвердить импорт</button></div>`,'NORDEA IMPORT');q('confirmNordeaImport').onclick=()=>{const r=commitNordeaImport(imp);if(r.duplicate)return toast('Этот файл уже импортирован');closeModal();renderAll();renderNordea();toast('Nordea обновлена')};}catch(e){console.error('Nordea import',e);toast(e?.message||'Не удалось прочитать Nordea Excel')}finally{const input=q('nordeaImportFile');if(input)input.value=''}}
+function nordeaPeriodChangeForPosition(cur,bounds,account){const series=nordeaSecuritySeries(cur.isin,account,bounds);if(series.length>=2){const a=series[0],b=series.at(-1),pctv=a.price?((b.price/a.price)-1)*100:null;return{pct:pctv,source:'period',from:a.date,to:b.date}}return{pct:Number(cur.dayPct||0),source:'day',from:'',to:''}}
+function nordeaCompositionEvents(){
+ const events=[],imports=nordeaImports();for(let i=imports.length-1;i>=0;i--){const cur=imports[i],pr=i>0?imports[i-1]:null,sm=nordeaImportSummary(cur,pr);if(!pr){events.push({date:cur.date,title:'Первый импорт Nordea',text:`${nordeaAggregatePositions(cur).length} позиций · ${cur.accounts.length} счетов`,type:'new',isin:''});continue}sm.changes.forEach(ch=>events.push({date:cur.date,isin:ch.isin,title:ch.name,text:ch.type==='new'?`Новая позиция · ${ch.to}`:ch.type==='closed'?`Позиция закрыта · ${ch.from} → 0`:ch.type==='increase'?`Увеличено · ${ch.from} → ${ch.to}`:`Уменьшено · ${ch.from} → ${ch.to}`,type:ch.type}))}return events
+}
+function renderNordea(){
+ const latest=nordeaLatestImport(),status=q('nordeaImportStatus');renderPeriodSelector(q('nordeaPeriodSelector'),'nordea');if(!latest){if(status)status.textContent='Файл Nordea ещё не загружен.';['nordeaKpis','nordeaAccountList','nordeaMovers','nordeaPositionsBody','nordeaChangeLog'].forEach(id=>{const e=q(id);if(e)e.innerHTML=id==='nordeaPositionsBody'?'':`<div class="nordea-empty">Загрузите Omistukset.xlsx из Nordea.</div>`});drawSeries(q('nordeaHistoryChart'),[],{xMode:'date'});return}
+ if(status)status.textContent=`Последний файл: ${formatDate(latest.date)} · ${new Date(latest.importedAt).toLocaleString('ru-RU')} · ${latest.fileName||''}${latest.autoImport?' · автоматически':''}`;const account=q('nordeaAccountFilter');if(account){const selected=(latest.accounts||[]).some(a=>a.key===state.settings.nordeaAccount)?state.settings.nordeaAccount:'ALL';state.settings.nordeaAccount=selected;account.innerHTML=`<option value="ALL">Все счета</option>${latest.accounts.map(a=>`<option value="${esc(a.key)}" ${a.key===selected?'selected':''}>${esc(a.name)}</option>`).join('')}`;account.onchange=()=>{state.settings.nordeaAccount=account.value;persistState();renderNordea()}}
+ const acc=state.settings.nordeaAccount||'ALL',bounds=nordeaRangeBounds(),rangeImports=nordeaImportInRange(bounds),valueStats=nordeaPeriodValueStats(bounds,acc),delta=valueStats.delta,pctv=valueStats.pct,positions=nordeaAggregatePositions(latest,acc),pl=positions.reduce((s,x)=>s+x.pl,0),day=positions.reduce((s,x)=>s+x.dayChange,0);const kp=q('nordeaKpis');if(kp)kp.innerHTML=`<div class="nordea-kpi"><span>Сейчас</span><b>${money(nordeaAccountTotal(latest,acc))}</b><small>${acc==='ALL'?'Все счета':esc((latest.accounts||[]).find(a=>a.key===acc)?.name||'')}</small></div><div class="nordea-kpi"><span>Изменение · ${VM_PERIOD_LABELS[bounds.code]}</span><b class="${delta>=0?'good':'bad'}">${delta>=0?'+':''}${money(delta)}</b><small>${pctv===null?'Недостаточно истории':fmtReturn(pctv)}</small></div><div class="nordea-kpi"><span>P/L текущих бумаг</span><b class="${pl>=0?'good':'bad'}">${pl>=0?'+':''}${money(pl)}</b><small>Текущая стоимость − стоимость приобретения</small></div><div class="nordea-kpi"><span>Сегодня</span><b class="${day>=0?'good':'bad'}">${day>=0?'+':''}${money(day)}</b><small>Из последнего файла банка</small></div><div class="nordea-kpi"><span>Активных позиций</span><b>${positions.length}</b><small>${latest.accounts.length} счетов в файле</small></div>`;
+ const series=nordeaValueHistory(acc).filter(x=>(!bounds.from||x.date>=bounds.from)&&x.date<=bounds.to).map(x=>({t:new Date(x.date+'T12:00:00').getTime(),v:x.value}));if(q('nordeaChartTitle'))q('nordeaChartTitle').textContent=acc==='ALL'?'Стоимость Nordea':((latest.accounts||[]).find(a=>a.key===acc)?.name||'Счёт');if(q('nordeaChartSub'))q('nordeaChartSub').textContent=periodDisplay(bounds);drawSeries(q('nordeaHistoryChart'),[{name:'Nordea',points:series,ci:0,color:'#d3a342'}],{xMode:'date',sharedTooltip:true,lineWidth:3.2,pointMarkers:true});
+ const al=q('nordeaAccountList');if(al)al.innerHTML=`<button class="nordea-account-card ${acc==='ALL'?'active':''}" data-nacc="ALL"><b><span>Все счета</span><strong>${money(latest.total)}</strong></b><span>${latest.accounts.length} счетов</span></button>`+latest.accounts.map(a=>`<button class="nordea-account-card ${acc===a.key?'active':''}" data-nacc="${esc(a.key)}"><b><span>${esc(a.name)}</span><strong>${money(a.total)}</strong></b><span>${a.type==='CashAccount'?'Денежный счёт':'Инвестиционный счёт'}</span></button>`).join('');al?.querySelectorAll('[data-nacc]').forEach(b=>b.onclick=()=>{state.settings.nordeaAccount=b.dataset.nacc;persistState();renderNordea()});
+ const perfRows=positions.map(p=>({...p,period:nordeaPeriodChangeForPosition(p,bounds,acc)})).filter(x=>Number.isFinite(x.period.pct));perfRows.sort((a,b)=>b.period.pct-a.period.pct);const movers=q('nordeaMovers'),rankHtml=(rows,title,positive)=>`<div class="nordea-rank-card"><div class="nordea-rank-title">${title}</div>${rows.slice(0,5).map(x=>`<div class="nordea-rank-row"><b title="${esc(x.name)}">${esc(x.name)}</b><span class="${x.period.pct>=0?'good':'bad'}">${fmtReturn(x.period.pct)}</span></div>`).join('')||'<div class="muted small">Недостаточно данных.</div>'}</div>`;if(movers)movers.innerHTML=rankHtml(perfRows,'Лучшие',true)+rankHtml([...perfRows].reverse(),'Худшие',false);
+ const prev=nordeaImports().filter(x=>x.sourceIso<latest.sourceIso).at(-1)||null,prevMap=new Map(nordeaAggregatePositions(prev,acc).map(x=>[x.isin,x])),search=String(q('nordeaSearch')?.value||'').toLowerCase(),body=q('nordeaPositionsBody');if(body){const visible=positions.filter(p=>!search||p.name.toLowerCase().includes(search)||p.isin.toLowerCase().includes(search));body.innerHTML=visible.map(p=>{const pc=nordeaPeriodChangeForPosition(p,bounds,acc),st=nordeaPositionChangeStatus(p,prevMap.get(p.isin)),stLabel=st==='new'?'Новая':st==='changed'?'Изменена':'Без изменений';return`<tr class="nordea-position-row" data-nordea-isin="${esc(p.isin)}"><td><b>${esc(p.name)}</b><div class="muted small">${esc(p.isin)} · ${esc(p.currency)}</div></td><td>${p.accounts.length>1?`${p.accounts.length} счета`:esc(p.accounts[0]||'')}</td><td>${p.qty.toLocaleString('ru-RU',{maximumFractionDigits:6})}</td><td>${p.price.toLocaleString('ru-RU',{maximumFractionDigits:4})} ${esc(p.currency)}</td><td>${money(p.value)}</td><td><span class="${p.pl>=0?'good':'bad'}">${p.pl>=0?'+':''}${money(p.pl)}</span></td><td><span class="${pc.pct>=0?'good':'bad'}">${fmtReturn(pc.pct)}</span><div class="muted small">${pc.source==='day'?'день':'период'}</div></td><td>${st?`<span class="position-status ${st}">${stLabel}</span>`:'—'}</td></tr>`}).join('');body.querySelectorAll('[data-nordea-isin]').forEach(r=>r.onclick=()=>openNordeaSecurity(r.dataset.nordeaIsin));if(q('nordeaPositionsMeta'))q('nordeaPositionsMeta').textContent=`${visible.length} из ${positions.length} активных позиций · ${periodDisplay(bounds)}`}
+ const searchEl=q('nordeaSearch');if(searchEl&&!searchEl.dataset.bound){searchEl.dataset.bound='1';searchEl.addEventListener('input',()=>renderNordea())}
+ const closed=nordeaClosedPositions(acc),closedPanel=q('nordeaClosedPanel'),closedBody=q('nordeaClosedBody');if(closedPanel)closedPanel.style.display=closed.length?'':'none';if(closedBody){closedBody.innerHTML=closed.map(p=>`<tr class="nordea-position-row" data-nordea-closed-isin="${esc(p.isin)}"><td><b>${esc(p.name)}</b><div class="muted small">${esc(p.isin)} · ${esc(p.currency)}</div></td><td>${formatDate(p.lastDate)}</td><td>${p.qty.toLocaleString('ru-RU',{maximumFractionDigits:6})}</td><td>${money(p.value)}</td><td><span class="position-status closed">Закрыта</span></td></tr>`).join('');closedBody.querySelectorAll('[data-nordea-closed-isin]').forEach(r=>r.onclick=()=>openNordeaSecurity(r.dataset.nordeaClosedIsin))}
+ const log=q('nordeaChangeLog');if(log){const events=nordeaCompositionEvents();log.innerHTML=events.slice(0,80).map(e=>`<div class="nordea-log-row ${e.isin?'nordea-log-clickable':''}" ${e.isin?`data-nordea-history-isin="${esc(e.isin)}"`:''}><time>${formatDate(e.date)}</time><b>${esc(e.title)}</b><span>${esc(e.text)}</span></div>`).join('')||'<div class="nordea-empty">Изменений пока нет.</div>';log.querySelectorAll('[data-nordea-history-isin]').forEach(r=>r.onclick=()=>openNordeaSecurity(r.dataset.nordeaHistoryIsin))}
+}
+function openNordeaSecurity(isin){
+ const latest=nordeaLatestImport(),bounds=nordeaRangeBounds(),acc=state.settings.nordeaAccount||'ALL';if(!latest)return;const active=nordeaAggregatePositions(latest,acc).find(x=>x.isin===isin)||nordeaAggregatePositions(latest).find(x=>x.isin===isin);let cur=active,lastDate=latest.date;if(!cur){for(const imp of nordeaImports().slice().reverse()){const p=nordeaAggregatePositions(imp,acc).find(x=>x.isin===isin)||nordeaAggregatePositions(imp).find(x=>x.isin===isin);if(p){cur=p;lastDate=imp.date;break}}}if(!cur)return;let ser=nordeaSecuritySeries(isin,acc,bounds);if(!ser.length)ser=nordeaSecuritySeries(isin,acc,periodBounds('MAX',latest.date));const first=ser[0],last=ser.at(-1),pricePct=first&&last&&first.price?((last.price/first.price)-1)*100:null,isClosed=!active;openModal(cur.name,`<div class="nordea-security-head"><div><div class="eyebrow">${esc(cur.isin)} · ${esc(cur.currency)}</div><h3>${esc(cur.name)}</h3><div class="muted small">${cur.accounts.map(esc).join(' · ')}</div></div>${isClosed?'<span class="position-status closed">Закрыта</span>':`<b>${money(cur.value)}</b>`}</div><div class="nordea-security-kpis"><div><span>${isClosed?'Последнее количество':'Количество'}</span><b>${cur.qty.toLocaleString('ru-RU',{maximumFractionDigits:6})}</b></div><div><span>${isClosed?'Последняя цена':'Цена'}</span><b>${cur.price.toLocaleString('ru-RU',{maximumFractionDigits:4})} ${esc(cur.currency)}</b></div><div><span>P/L ${isClosed?'последнего снимка':'текущих бумаг'}</span><b class="${cur.pl>=0?'good':'bad'}">${cur.pl>=0?'+':''}${money(cur.pl)}</b></div><div><span>${isClosed?'Последняя дата':'Цена за период'}</span><b class="${isClosed?'':pricePct===null?'':pricePct>=0?'good':'bad'}">${isClosed?formatDate(lastDate):pricePct===null?'—':fmtReturn(pricePct)}</b></div></div><div style="height:250px"><canvas id="nordeaSecurityChart" height="250"></canvas></div><div class="muted small" style="margin-top:8px">${isClosed?'Позиция закрыта, но её прошлые снимки сохранены. ':''}График показывает стоимость позиции в EUR по импортам Nordea. Изменение количества сохраняется отдельно; точная цена сделки не придумывается.</div>`,'NORDEA SECURITY');requestAnimationFrame(()=>drawSeries(q('nordeaSecurityChart'),[{name:'Стоимость',points:ser.map(x=>({t:new Date(x.date+'T12:00:00').getTime(),v:x.value})),ci:0,color:'#d3a342'}],{xMode:'date',sharedTooltip:true,lineWidth:3,pointMarkers:true}))
+}
+function openNordeaImportHistory(){const rows=nordeaImports().slice().reverse();openModal('История импортов Nordea',rows.length?`<div class="nordea-change-log">${rows.map(x=>`<div class="nordea-log-row"><time>${formatDate(x.date)}</time><b>${esc(x.fileName||'Nordea.xlsx')}</b><span>${money(x.total)} · ${x.accounts.length} счетов · ${nordeaAggregatePositions(x).length} позиций</span></div>`).join('')}</div>`:'<div class="nordea-empty">Импортов пока нет.</div>','NORDEA IMPORTS')}
+
+
+/* Aktia imports: PDF (summary report) and Salkkuraportti Excel. Bank metrics are reference-only. */
+function aktiaImports(owner=''){return(state.aktia?.imports||[]).filter(x=>!owner||x.owner===owner).slice().sort((a,b)=>String(a.sourceIso||a.date).localeCompare(String(b.sourceIso||b.date)))}
+function aktiaLatestImport(owner=state.settings.aktiaOwner||'oy'){return aktiaImports(owner).at(-1)||null}
+function aktiaPortfolioForOwner(owner){const want=owner==='personal'?'personal':'oy';const named=state.portfolios.find(p=>(p.owner||'personal')===want&&((want==='personal'&&normPortfolioName(p.name)==='oma aktia')||(want==='oy'&&normPortfolioName(p.name)==='aktia')));return named||state.portfolios.find(p=>(p.owner||'personal')===want&&normPortfolioName(p.name).includes('aktia'))||null}
+function ensureAktiaPortfolio(owner){let p=aktiaPortfolioForOwner(owner);if(p)return p;p={id:uid(),name:owner==='personal'?'Oma Aktia':'Aktia',type:'Инвестиционный',owner:owner==='personal'?'personal':'oy',groupId:'',calcRole:'investable',exitCost:0,exitDate:'',exitTaxable:true,exitMultiple:1,returnAdjustment:0,exitTargetPortfolioId:'',btcWalletAddress:'',btcWalletAutoSync:true,btcWalletLastSync:'',btcWalletCurrentRate:0,btcWalletBlockchainBalance:0,btcWalletHistoryCursor:''};state.portfolios.push(p);state.settings.portfolioOrder=[...(state.settings.portfolioOrder||[]),p.id];return p}
+function aktiaParseFiNumber(v){const s=String(v??'').replace(/\u00a0/g,' ').trim().replace(/\s+/g,'').replace(/%/g,'').replace(/,/g,'.');const n=Number(s);return Number.isFinite(n)?n:null}
+function aktiaIsoFromFiDate(v){const m=String(v||'').match(/(\d{1,2})\.(\d{1,2})\.(\d{4})/);return m?`${m[3]}-${pad2(m[2])}-${pad2(m[1])}`:''}
+function aktiaMetricAfter(tokens,label,max=8,{percent=false}={}){const rx=label instanceof RegExp?label:new RegExp(`^${String(label).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}$`,'i');for(let i=0;i<tokens.length;i++){if(!rx.test(String(tokens[i]||'').trim()))continue;for(let j=i+1;j<Math.min(tokens.length,i+1+max);j++){const t=String(tokens[j]||'').trim();if(percent&&!/%/.test(t))continue;const n=aktiaParseFiNumber(t);if(n!==null)return n}}return null}
+function aktiaFindMoneyAfter(tokens,label,max=10){return aktiaMetricAfter(tokens,label,max,{percent:false})}
+function aktiaFingerprintBase(imp){const r=imp.reported||{};return[imp.sourceKey,imp.date,Number(imp.marketValue||0).toFixed(2),imp.sourceType,r.totalReturn,r.periods?.['1M'],r.periods?.YTD].join('|')}
+function aktiaNormalizePdfText(v){return String(v||'').replace(/Henkiv\s*akuutus/gi,'Henkivakuutus').replace(/My\s*y\s*nti/gi,'Myynti').replace(/O\s*s\s*to/gi,'Osto').replace(/\s+/g,' ').trim()}
+function aktiaNumbersFromLine(line){const m=String(line||'').match(/[+-]?\d[\d\s\u00a0]*,\d+/g)||[];return m.map(aktiaParseFiNumber).filter(x=>x!==null)}
+async function aktiaPdfExtract(file){
+ if(!window.pdfjsLib)throw new Error('Модуль чтения PDF не загрузился. Проверьте интернет и обновите страницу.');
+ if(window.pdfjsLib.GlobalWorkerOptions)window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+ const data=new Uint8Array(await file.arrayBuffer()),pdf=await window.pdfjsLib.getDocument({data}).promise,pages=[];
+ for(let n=1;n<=pdf.numPages;n++){
+   const page=await pdf.getPage(n),content=await page.getTextContent(),items=content.items.map((it,i)=>({text:String(it.str||'').trim(),x:Number(it.transform?.[4]||0),y:Number(it.transform?.[5]||0),i})).filter(x=>x.text);
+   const groups=[];
+   for(const it of items){let g=groups.find(x=>Math.abs(x.y-it.y)<=1.8);if(!g){g={y:it.y,items:[]};groups.push(g)}g.items.push(it)}
+   groups.sort((a,b)=>b.y-a.y);const lines=groups.map(g=>aktiaNormalizePdfText(g.items.sort((a,b)=>a.x-b.x||a.i-b.i).map(x=>x.text).join(' '))).filter(Boolean);
+   pages.push({tokens:items.map(x=>x.text),lines});
+ }
+ return pages
+}
+async function aktiaPdfPages(file){return(await aktiaPdfExtract(file)).map(p=>p.tokens)}
+function aktiaTransactionPairing(rows){
+ const out=rows.map(x=>({...x,internalTransfer:false,pairId:''}));
+ const used=new Set();
+ for(let i=0;i<out.length;i++){
+   if(used.has(i)||!/^vienti$/i.test(out[i].event)||Math.abs(out[i].net||out[i].total||0)<.01)continue;
+   const amount=Math.abs(out[i].net||out[i].total||0);
+   for(let j=0;j<out.length;j++){
+     if(i===j||used.has(j)||!/^tuonti$/i.test(out[j].event))continue;
+     const other=Math.abs(out[j].net||out[j].total||0);if(Math.abs(amount-other)>.01)continue;
+     const di=Math.abs((new Date(out[i].paymentDate+'T12:00:00')-new Date(out[j].paymentDate+'T12:00:00'))/86400000);if(di>2)continue;
+     const pid=`pair-${nordeaHash(`${out[i].date}|${amount}|${out[i].isin}|${out[j].isin}`)}`;out[i].internalTransfer=out[j].internalTransfer=true;out[i].pairId=out[j].pairId=pid;used.add(i);used.add(j);break
+   }
+ }
+ return out
+}
+function aktiaExternalFlowCandidate(row){
+ if(row.internalTransfer)return null;const e=String(row.event||'').toLowerCase(),amount=Math.abs(Number(row.net||row.total||0));if(!(amount>.01))return null;
+ if(/maksu|talletus|pääoman lisäys|lisäsijoitus/.test(e))return{amount,date:row.paymentDate||row.date,type:'contribution'};
+ if(/nosto|kotiutus|pääomanpalautus|pääoman palautus/.test(e))return{amount:-amount,date:row.paymentDate||row.date,type:'withdrawal'};
+ return null
+}
+function parseAktiaTransactionLines(lines,contract,file){
+ const all=lines.join(' '),rg=all.match(/Tapahtumaluettelo\s+(\d{1,2}\.\d{1,2}\.\d{4})\s*-\s*(\d{1,2}\.\d{1,2}\.\d{4})/i);if(!rg)throw new Error('Не удалось определить период Tapahtumaraportti.');
+ const reportStart=aktiaIsoFromFiDate(rg[1]),reportEnd=aktiaIsoFromFiDate(rg[2]),events=[];
+ const eventRx=/(Myynti|Osto|Tuonti|Vienti|Merkintä|Lunastus|Nosto|Maksu|Siirto|Kotiutus|Pääomanpalautus|Pääoman palautus)/i;
+ for(const raw of lines){const line=aktiaNormalizePdfText(raw);if(!/^\d{1,2}\.\d{1,2}\.\d{4}\s+\d{1,2}\.\d{1,2}\.\d{4}\s+/.test(line))continue;const dm=line.match(/^(\d{1,2}\.\d{1,2}\.\d{4})\s+(\d{1,2}\.\d{1,2}\.\d{4})\s+(.+)$/);if(!dm)continue;const rest=dm[3],em=eventRx.exec(rest);if(!em)continue;const name=rest.slice(0,em.index).trim(),after=rest.slice(em.index+em[0].length).trim(),cm=after.match(/^([A-Z]{3})\s+(.+)$/);if(!cm)continue;const currency=cm[1],tail=cm[2],isin=(tail.match(/([A-Z0-9]{8,})\s*$/i)||[])[1]||'',numText=isin?tail.slice(0,tail.lastIndexOf(isin)).trim():tail,nums=aktiaNumbersFromLine(numText);events.push({date:aktiaIsoFromFiDate(dm[1]),paymentDate:aktiaIsoFromFiDate(dm[2]),name,event:em[0].replace(/\s+/g,''),currency,qty:nums[0]??0,price:nums[1]??0,total:nums[2]??0,feeNet:nums[3]??0,vat:nums[4]??0,feeGross:nums[5]??0,net:nums[6]??0,isin})}
+ const rows=aktiaTransactionPairing(events),externalFlowCandidates=rows.map(aktiaExternalFlowCandidate).filter(Boolean),sourceKey=nordeaHash('aktia:'+contract),imp={id:uid(),kind:'transactions',reportKind:'tapahtuma',fileName:file.name,importedAt:new Date().toISOString(),sourceType:'pdf',date:reportEnd,reportStart,reportEnd,sourceIso:new Date(`${reportEnd}T12:00:00`).toISOString(),sourceKey,contract,transactions:rows,externalFlowCandidates};imp.fingerprint=nordeaHash([sourceKey,'transactions',reportStart,reportEnd,rows.map(r=>`${r.date}:${r.paymentDate}:${r.event}:${r.isin}:${r.qty}:${r.net}:${r.total}`).join('|')].join('|'));return imp
+}
+function parseAktiaSalkkuLines(lines,contract,file){
+ const all=lines.join(' '),dm=all.match(/Salkkuraportti\s+(\d{1,2}\.\d{1,2}\.\d{4})/i);if(!dm)throw new Error('Не удалось определить дату Salkkuraportti.');const date=aktiaIsoFromFiDate(dm[1]);
+ const totalLine=lines.find(x=>/^EUR\s+Salkku\s+yhteensä/i.test(x)),secLine=lines.find(x=>/^EUR\s+Arvopaperit\s+yhteensä/i.test(x)),positionLine=lines.find(x=>/^Sijoituskori\s+/i.test(x));
+ const totalNums=aktiaNumbersFromLine(totalLine||''),secNums=aktiaNumbersFromLine(secLine||''),posNums=aktiaNumbersFromLine(positionLine||'');let marketValue=totalNums[0]??secNums[1]??posNums[4]??null,purchaseValue=secNums[0]??posNums[2]??null,positionPl=secNums[3]??posNums[6]??null,positionPlPct=secNums[4]??posNums[7]??null;
+ if(!(marketValue>0))throw new Error('Не удалось определить стоимость портфеля из Salkkuraportti.');const name=positionLine?positionLine.replace(/[+-]?\d[\d\s\u00a0]*,\d+[\s\S]*$/,'').trim():'';const positions=positionLine?[{name,isin:'',qty:posNums[0]??0,purchasePrice:posNums[1]??null,purchaseValue:posNums[2]??null,price:posNums[3]??null,value:posNums[4]??marketValue,pl:posNums[6]??positionPl,plPct:posNums[7]??positionPlPct,currency:'EUR'}]:[];const sourceKey=nordeaHash('aktia:'+contract),reported={reportStart:'',reportEnd:date,totalReturn:null,benchmarkReturn:null,excessReturn:null,sharpe:null,volatility:null,periodChange:null,periods:{},positionChangePct:positionPlPct};
+ const imp={id:uid(),kind:'valuation',reportKind:'salkku',fileName:file.name,importedAt:new Date().toISOString(),sourceType:'pdf',date,sourceIso:new Date(`${date}T12:00:00`).toISOString(),sourceKey,contract,marketValue:Number(marketValue),purchaseValue,positionPl,positionPlPct,allocation:{},positions,reported};imp.fingerprint=nordeaHash(aktiaFingerprintBase(imp)+positions.map(x=>`${x.name}:${x.qty}:${x.value}`).join('|'));return imp
+}
+async function parseAktiaPdf(file){
+ if(!/\.pdf$/i.test(file?.name||''))throw new Error('Нужен PDF Aktia');const extracted=await aktiaPdfExtract(file),lines=extracted.flatMap(p=>p.lines),pageText=extracted.map(p=>p.lines.join(' ')),p1=pageText[0]||'',all=pageText.join(' ');const contract=(all.match(/Aktia\s+Henkivakuutus\s+(\d+)/i)||[])[1]||'';if(!contract)throw new Error('Это не распознанный отчёт Aktia: не найден договор.');
+ if(/Tapahtumaluettelo/i.test(all))return parseAktiaTransactionLines(lines,contract,file);
+ if(/Salkkuraportti\s+\d/i.test(all)&&!/Tuottohistoria/i.test(all))return parseAktiaSalkkuLines(lines,contract,file);
+ const hist=all.match(/Tuottohistoria\s+(\d{1,2}\.\d{1,2}\.\d{4})\s*-\s*(\d{1,2}\.\d{1,2}\.\d{4})/i),fallbackEnd=(all.match(/Jakauma\s+(\d{1,2}\.\d{1,2}\.\d{4})/i)||[])[1]||'';const reportEnd=hist?aktiaIsoFromFiDate(hist[2]):aktiaIsoFromFiDate(fallbackEnd),reportStart=hist?aktiaIsoFromFiDate(hist[1]):'';if(!reportEnd)throw new Error('Не удалось определить дату отчёта Aktia.');
+ const num=(rx,group=1)=>{const m=p1.match(rx)||all.match(rx);return m?aktiaParseFiNumber(m[group]):null},pct=rx=>num(rx);const marketValue=num(/Markkina-arvo\s*\(EUR\)\s*([\d\s\u00a0]+,\d{2})/i);if(!(marketValue>0))throw new Error('Не удалось определить рыночную стоимость Aktia.');let periodChange=num(/Muutos raportointijaksolla\s*([+-]?[\d\s\u00a0]+,\d{2})/i);if(periodChange===null)periodChange=num(/([+-]?[\d\s\u00a0]+,\d{2})\s*Muutos raportointijaksolla/i);
+ const reported={reportStart,reportEnd,totalReturn:pct(/(?:^|\s)Tuotto\s+([+-]?[\d\s\u00a0]+,\d+)\s*%/i),benchmarkReturn:pct(/Vertailuindeksin tuotto[\s\S]{0,250}?([+-]?[\d\s\u00a0]+,\d+)\s*%/i),excessReturn:pct(/Yli-\/alituotto suhteessa indeksiin\s+([+-]?[\d\s\u00a0]+,\d+)\s*%/i),sharpe:num(/Sharpe\s+([+-]?[\d\s\u00a0]+,\d+)/i),volatility:pct(/Volatiliteetti\s+([+-]?[\d\s\u00a0]+,\d+)\s*%/i),periodChange,periods:{'1M':pct(/1\s*kk\s+([+-]?[\d\s\u00a0]+,\d+)\s*%/i),'3M':pct(/3\s*kk\s+([+-]?[\d\s\u00a0]+,\d+)\s*%/i),'6M':pct(/6\s*kk\s+([+-]?[\d\s\u00a0]+,\d+)\s*%/i),'1Y':pct(/1\s*v\s+([+-]?[\d\s\u00a0]+,\d+)\s*%/i),YTD:pct(/Kuluva vuosi\s+([+-]?[\d\s\u00a0]+,\d+)\s*%/i),PREV:pct(/Edellinen kalenterivuosi\s+([+-]?[\d\s\u00a0]+,\d+)\s*%/i)}};
+ const sm=p1.match(/Osakkeet\s+([\d\s\u00a0]+,\d{2})\s+([\d\s\u00a0]+,\d+)\s*%/i),bm=p1.match(/Pitkät Korot\s+([\d\s\u00a0]+,\d{2})\s+([\d\s\u00a0]+,\d+)\s*%/i),stocksValue=sm?aktiaParseFiNumber(sm[1]):null,stocksPct=sm?aktiaParseFiNumber(sm[2]):null,bondsValue=bm?aktiaParseFiNumber(bm[1]):null,bondsPct=bm?aktiaParseFiNumber(bm[2]):null;const sourceKey=nordeaHash('aktia:'+contract),imp={id:uid(),kind:'valuation',reportKind:'summary',fileName:file.name,importedAt:new Date().toISOString(),sourceType:'pdf',date:reportEnd,sourceIso:new Date(`${reportEnd}T12:00:00`).toISOString(),sourceKey,contract,marketValue:Number(marketValue),purchaseValue:null,positionPl:null,positionPlPct:null,allocation:{stocks:{value:stocksValue,pct:stocksPct},longBonds:{value:bondsValue,pct:bondsPct}},reported};imp.fingerprint=nordeaHash(aktiaFingerprintBase(imp));return imp
+}
+async function vmReadXlsxMatrices(file){const zip=await vmUnzip(await file.arrayBuffer()),sharedBytes=await zip.read('xl/sharedStrings.xml'),shared=[];if(sharedBytes){const doc=new DOMParser().parseFromString(zip.decode(sharedBytes),'application/xml');[...doc.getElementsByTagNameNS('*','si')].forEach(si=>shared.push(xmlText(si)))}const out=[];for(const name of [...zip.entries.keys()].filter(x=>/^xl\/worksheets\/sheet\d+\.xml$/i.test(x)).sort()){const bytes=await zip.read(name);if(!bytes)continue;const doc=new DOMParser().parseFromString(zip.decode(bytes),'application/xml'),rows=[];for(const row of [...doc.getElementsByTagNameNS('*','row')]){const ri=Math.max(0,Number(row.getAttribute('r')||rows.length+1)-1);rows[ri]=rows[ri]||[];for(const c of [...row.getElementsByTagNameNS('*','c')]){const ci=xlsxColIndex(c.getAttribute('r')),type=c.getAttribute('t')||'',vEl=c.getElementsByTagNameNS('*','v')[0],raw=vEl?vEl.textContent:'';let val=null;if(type==='s')val=shared[Number(raw)]??'';else if(type==='inlineStr')val=xmlText(c);else if(type==='b')val=raw==='1';else if(raw!==''){const num=Number(raw);val=Number.isFinite(num)?num:raw}rows[ri][ci]=val}}out.push(rows)}return out}
+async function parseAktiaXlsx(file){
+ if(!/\.xlsx$/i.test(file?.name||''))throw new Error('Нужен Excel Aktia');const sheets=await vmReadXlsxMatrices(file);let rows=null,headerRow=-1;for(const sh of sheets){for(let i=0;i<Math.min(sh.length,15);i++){const hdr=(sh[i]||[]).map(x=>String(x??''));if(hdr.includes('Salkun nimi')&&hdr.includes('Arvopaperin nimi')&&hdr.includes('Markkina-arvo')&&hdr.includes('ISIN')){rows=sh;headerRow=i;break}}if(rows)break}if(!rows)throw new Error('Это не распознанный Salkkuraportti Aktia.');
+ const headers=(rows[headerRow]||[]).map(x=>String(x??'')),firstIndex=n=>headers.indexOf(n),idx={portfolio:firstIndex('Salkun nimi'),name:firstIndex('Arvopaperin nimi'),qty:firstIndex('Määrä'),purchase:firstIndex('Hankinta-arvo'),value:firstIndex('Markkina-arvo'),change:firstIndex('Muutos'),changePct:firstIndex('Muutos %'),currency:firstIndex('Valuutta'),isin:firstIndex('ISIN')};
+ const title=String(rows[0]?.find(x=>/Salkkuraportti/i.test(String(x||'')))||''),date=aktiaIsoFromFiDate(title)||todayISO();let contract='',marketValue=0,purchaseValue=0,positionPl=0,weightedPct=0;const positions=[];for(const row of rows.slice(headerRow+1)){const port=String(row?.[idx.portfolio]||''),m=port.match(/Aktia\s+Henkivakuutus\s+(\d+)/i);if(m&&!contract)contract=m[1];const isin=String(row?.[idx.isin]||'').trim(),name=String(row?.[idx.name]||'').trim();if(!isin&&!name)continue;const value=safeNum(row[idx.value]),purchase=safeNum(row[idx.purchase]),pl=safeNum(row[idx.change]),plPct=safeNum(row[idx.changePct]);marketValue+=value;purchaseValue+=purchase;positionPl+=pl;weightedPct+=plPct*Math.max(0,value);positions.push({name,isin,qty:safeNum(row[idx.qty]),value,purchaseValue:purchase,pl,plPct,currency:String(row?.[idx.currency]||'EUR')})}if(!contract)throw new Error('В Excel Aktia не найден договор.');if(!(marketValue>0))throw new Error('В Excel Aktia нет рыночной стоимости.');const sourceKey=nordeaHash('aktia:'+contract),imp={id:uid(),kind:'valuation',reportKind:'salkku',fileName:file.name,importedAt:new Date().toISOString(),sourceType:'xlsx',date,sourceIso:new Date(`${date}T12:00:00`).toISOString(),sourceKey,contract,marketValue,purchaseValue,positionPl,positionPlPct:marketValue?weightedPct/marketValue*100:null,allocation:{},positions,reported:{reportStart:'',reportEnd:date,totalReturn:null,benchmarkReturn:null,excessReturn:null,sharpe:null,volatility:null,periodChange:null,periods:{}}};imp.fingerprint=nordeaHash(aktiaFingerprintBase(imp)+positions.map(x=>`${x.isin}:${x.qty}:${x.value}`).join('|'));return imp
+}
+async function parseAktiaFile(file){if(/\.pdf$/i.test(file?.name||''))return parseAktiaPdf(file);if(/\.xlsx$/i.test(file?.name||''))return parseAktiaXlsx(file);throw new Error('Aktia: поддерживаются PDF и XLSX')}
+function aktiaInferOwner(imp){const mapped=state.aktia?.sourceMap?.[imp.sourceKey],mp=mapped?state.portfolios.find(p=>p.id===mapped):null;if(mp)return mp.owner==='personal'?'personal':'oy';if(/VM\s+Private\s+Capital\s+Oy/i.test(String(imp?.accountName||'')))return'oy';if(!(Number(imp?.marketValue)>0))return'';const candidates=['oy','personal'].map(owner=>({owner,p:aktiaPortfolioForOwner(owner)})).filter(x=>x.p).map(x=>({...x,value:latestValue(x.p.id),gap:Math.abs(latestValue(x.p.id)-imp.marketValue)/Math.max(1,imp.marketValue)})).sort((a,b)=>a.gap-b.gap);if(candidates.length===1)return candidates[0].owner;if(candidates.length>=2&&candidates[0].gap<0.35&&candidates[0].gap<candidates[1].gap*.65)return candidates[0].owner;return''}
+function aktiaTransactionImports(owner=''){return(state.aktia?.transactionImports||[]).filter(x=>!owner||x.owner===owner).slice().sort((a,b)=>String(a.sourceIso||a.date).localeCompare(String(b.sourceIso||b.date)))}
+function commitAktiaTransactionImport(imp,owner){if(!state.aktia)state.aktia={imports:[],transactionImports:[],sourceMap:{}};state.aktia.transactionImports=Array.isArray(state.aktia.transactionImports)?state.aktia.transactionImports:[];if(state.aktia.transactionImports.some(x=>x.fingerprint===imp.fingerprint))return{duplicate:true};const p=ensureAktiaPortfolio(owner),saved={...imp,owner,portfolioId:p.id};state.aktia.transactionImports.push(saved);state.aktia.transactionImports.sort((a,b)=>String(a.sourceIso||a.date).localeCompare(String(b.sourceIso||b.date)));state.aktia.sourceMap[imp.sourceKey]=p.id;let addedFlows=0;for(const c of imp.externalFlowCandidates||[]){const exists=state.flows.some(f=>f.portfolioId===p.id&&f.source==='aktia_transaction_report'&&f.externalId===`${imp.fingerprint}:${c.date}:${c.amount}`);if(exists)continue;state.flows.push({id:uid(),portfolioId:p.id,date:c.date,amount:Number(c.amount),flowType:c.type,source:'aktia_transaction_report',externalId:`${imp.fingerprint}:${c.date}:${c.amount}`,comment:`Aktia Tapahtumaraportti · ${c.type==='contribution'?'внешнее внесение':'внешний вывод'}`});addedFlows++}persistState();return{duplicate:false,portfolio:p,import:saved,addedFlows}}
+function aktiaTransactionStats(owner){const rows=aktiaTransactionImports(owner).flatMap(x=>x.transactions||[]),internal=rows.filter(x=>x.internalTransfer).length/2,external=aktiaTransactionImports(owner).reduce((n,x)=>n+(x.externalFlowCandidates||[]).length,0);return{reports:aktiaTransactionImports(owner).length,rows:rows.length,internalPairs:Math.floor(internal),external}}
+function aktiaUpsertSnapshot(pid,imp){const rows=state.snapshots.filter(x=>x.portfolioId===pid&&x.date===imp.date&&x.source==='aktia_report').sort((a,b)=>snapshotMoment(a)-snapshotMoment(b)),old=rows.at(-1),now=new Date().toISOString(),rec={id:old?.id||uid(),portfolioId:pid,date:imp.date,value:safeNum(imp.marketValue),comment:`Aktia ${imp.sourceType.toUpperCase()} · ${imp.fileName||''}`,capturedAt:old?.capturedAt||now,updatedAt:now,source:'aktia_report'};if(old)Object.assign(old,rec);else state.snapshots.push(rec)}
+function commitAktiaImport(imp,owner){if(!state.aktia)state.aktia={imports:[],transactionImports:[],sourceMap:{}};const p=ensureAktiaPortfolio(owner);if(state.aktia.imports.some(x=>x.owner===owner&&x.fingerprint===imp.fingerprint))return{duplicate:true,portfolio:p};const semantic=state.aktia.imports.find(x=>x.owner===owner&&x.date===imp.date&&Math.abs(Number(x.marketValue)-Number(imp.marketValue))<.01);if(semantic){const mergeObj=(a,b)=>{const out={...(a||{})};for(const [k,v] of Object.entries(b||{})){if(v===null||v===undefined||v===''||(typeof v==='number'&&!Number.isFinite(v)))continue;if(v&&typeof v==='object'&&!Array.isArray(v))out[k]=mergeObj(out[k],v);else out[k]=v}return out};semantic.reported=mergeObj(semantic.reported,imp.reported);semantic.allocation=mergeObj(semantic.allocation,imp.allocation);if((imp.positions||[]).length)semantic.positions=imp.positions;if(Number.isFinite(Number(imp.purchaseValue)))semantic.purchaseValue=Number(imp.purchaseValue);if(Number.isFinite(Number(imp.positionPl)))semantic.positionPl=Number(imp.positionPl);if(Number.isFinite(Number(imp.positionPlPct)))semantic.positionPlPct=Number(imp.positionPlPct);semantic.reportKinds=[...new Set([...(semantic.reportKinds||[semantic.reportKind]).filter(Boolean),imp.reportKind].filter(Boolean))];semantic.fileNames=[...new Set([...(semantic.fileNames||[semantic.fileName]).filter(Boolean),imp.fileName].filter(Boolean))];semantic.mergedFingerprints=[...new Set([...(semantic.mergedFingerprints||[semantic.fingerprint]).filter(Boolean),imp.fingerprint].filter(Boolean))];semantic.importedAt=new Date().toISOString();state.aktia.sourceMap[imp.sourceKey]=p.id;aktiaUpsertSnapshot(p.id,semantic);persistState();return{duplicate:false,merged:true,portfolio:p,import:semantic}}const saved={...imp,owner,portfolioId:p.id,reportKinds:imp.reportKind?[imp.reportKind]:[],fileNames:imp.fileName?[imp.fileName]:[],mergedFingerprints:imp.fingerprint?[imp.fingerprint]:[]};state.aktia.imports.push(saved);state.aktia.imports.sort((a,b)=>String(a.sourceIso||a.date).localeCompare(String(b.sourceIso||b.date)));state.aktia.sourceMap[imp.sourceKey]=p.id;aktiaUpsertSnapshot(p.id,saved);persistState();return{duplicate:false,merged:false,portfolio:p,import:saved}}
+function aktiaOwnerLabel(owner){return owner==='personal'?'Oma Aktia · Personal':'Aktia · VM Private Capital Oy'}
+function aktiaReferenceMetric(imp,bounds){if(!imp?.reported)return null;const map={'1M':'1M','3M':'3M','6M':'6M',YTD:'YTD','1Y':'1Y'},k=map[bounds.code];if(k&&Number.isFinite(Number(imp.reported.periods?.[k])))return{value:Number(imp.reported.periods[k]),label:k,comparable:true};if(bounds.code==='MAX'&&Number.isFinite(Number(imp.reported.totalReturn)))return{value:Number(imp.reported.totalReturn),label:'весь период рапорта',comparable:false};return null}
+function aktiaRangeBounds(owner=state.settings.aktiaOwner||'oy'){const latest=aktiaLatestImport(owner),p=aktiaPortfolioForOwner(owner),to=latest?.date||uniqueSnapshots(p?.id).at(-1)?.date||todayISO();return periodBounds(state.settings.aktiaRange||'1M',to,state.settings.aktiaCustomFrom,state.settings.aktiaCustomTo)}
+function aktiaSitePerf(owner,bounds=aktiaRangeBounds(owner)){const p=aktiaPortfolioForOwner(owner);if(!p)return null;if(bounds.code==='MAX')return portfolioAllTimePerf(p.id);return portfolioPerf(p.id,bounds.from,bounds.to)}
+function aktiaAnalyticsStats(owner,bounds=aktiaRangeBounds(owner)){const p=aktiaPortfolioForOwner(owner);if(!p)return null;const entity={id:`portfolio:${p.id}`,kind:'portfolio',p,members:[p]};return analyticsTimeWeightedStats(entity,bounds.code==='MAX'?'':bounds.from,bounds.to)}
+function aktiaImportPreviewComparison(imp,owner){const p=aktiaPortfolioForOwner(owner),old=p?latestValue(p.id):0,delta=imp.marketValue-old;return{old,delta}}
+async function handleAktiaFile(file){try{toast('Читаю файл Aktia…');const imp=await parseAktiaFile(file);if(imp.kind==='transactions'){
+   if((state.aktia?.transactionImports||[]).some(x=>x.fingerprint===imp.fingerprint)){toast('Этот Tapahtumaraportti уже импортирован');return}
+   const inferred=aktiaInferOwner(imp)||state.settings.aktiaOwner||'oy',internalPairs=Math.floor((imp.transactions||[]).filter(x=>x.internalTransfer).length/2),ext=(imp.externalFlowCandidates||[]).length;
+   openModal('Проверка Tapahtumaraportti Aktia',`<div class="muted small">${esc(imp.fileName)} · ${formatDate(imp.reportStart)} — ${formatDate(imp.reportEnd)}</div><div class="form-grid" style="margin-top:12px"><label>Куда сохранить<select id="aktiaImportOwner"><option value="oy" ${inferred==='oy'?'selected':''}>Aktia · VM Private Capital Oy</option><option value="personal" ${inferred==='personal'?'selected':''}>Oma Aktia · Personal</option></select></label></div><div class="nordea-preview-summary"><div><span>Операций</span><b>${(imp.transactions||[]).length}</b></div><div><span>Внутренних переводов</span><b>${internalPairs}</b></div><div><span>Внешних потоков распознано</span><b>${ext}</b></div><div><span>Период</span><b>${formatDate(imp.reportStart)} — ${formatDate(imp.reportEnd)}</b></div></div><div class="note">Tuonti/Vienti одинаковой суммы внутри Aktia распознаются как внутренний перевод и не влияют на доходность. Внешний денежный поток создаётся автоматически только для однозначных типов вроде внесения/вывода. Покупки, продажи и переключение фондов не считаются доходом или внесением капитала.</div><div class="modal-actions"><button class="btn primary" id="confirmAktiaTransactionImport">Подтвердить импорт</button></div>`,'AKTIA TRANSACTIONS');q('confirmAktiaTransactionImport').onclick=()=>{const owner=q('aktiaImportOwner').value,r=commitAktiaTransactionImport(imp,owner);if(r.duplicate)return toast('Этот Tapahtumaraportti уже импортирован');state.settings.aktiaOwner=owner;persistState();closeModal();renderAll();renderAktia();toast(`Операции Aktia сохранены · ${r.addedFlows||0} внешних потоков`)}}
+ else{
+   if((state.aktia?.imports||[]).some(x=>x.fingerprint===imp.fingerprint)){toast('Этот файл Aktia уже импортирован');return}const inferred=aktiaInferOwner(imp)||state.settings.aktiaOwner||'oy',cmp=aktiaImportPreviewComparison(imp,inferred),rep=imp.reported||{},metric=Number.isFinite(Number(rep.periods?.YTD))?fmtReturn(Number(rep.periods.YTD)):'—';openModal('Проверка импорта Aktia',`<div class="muted small">${esc(imp.fileName)} · данные банка ${formatDate(imp.date)} · ${imp.sourceType.toUpperCase()} · ${esc(imp.reportKind||'valuation')}</div><div class="form-grid" style="margin-top:12px"><label>Куда сохранить<select id="aktiaImportOwner"><option value="oy" ${inferred==='oy'?'selected':''}>Aktia · VM Private Capital Oy</option><option value="personal" ${inferred==='personal'?'selected':''}>Oma Aktia · Personal</option></select></label></div><div class="nordea-preview-summary"><div><span>Стоимость из файла</span><b>${money(imp.marketValue)}</b></div><div><span>Сейчас на сайте</span><b id="aktiaPreviewOld">${money(cmp.old)}</b></div><div><span>Изменение оценки</span><b id="aktiaPreviewDelta" class="${cmp.delta>=0?'good':'bad'}">${cmp.delta>=0?'+':''}${money(cmp.delta)}</b></div><div><span>YTD в рапорте</span><b>${metric}</b></div></div><div class="note">После подтверждения сайт сохранит стоимость на дату рапорта. Доходность Wealth Studio считается самостоятельно по оценкам и реальным денежным потокам. Банковские проценты сохраняются только для сравнения.</div><div class="modal-actions"><button class="btn primary" id="confirmAktiaImport">Подтвердить импорт</button></div>`,'AKTIA IMPORT');const sel=q('aktiaImportOwner'),refresh=()=>{const c=aktiaImportPreviewComparison(imp,sel.value);q('aktiaPreviewOld').textContent=money(c.old);q('aktiaPreviewDelta').textContent=`${c.delta>=0?'+':''}${money(c.delta)}`;q('aktiaPreviewDelta').className=c.delta>=0?'good':'bad'};sel.onchange=refresh;q('confirmAktiaImport').onclick=()=>{const owner=sel.value,r=commitAktiaImport(imp,owner);if(r.duplicate)return toast('Такая оценка Aktia уже сохранена');state.settings.aktiaOwner=owner;persistState();closeModal();renderAll();renderAktia();toast(r.merged?`${aktiaOwnerLabel(owner)} · рапорты объединены`:`${aktiaOwnerLabel(owner)} обновлена`)}}
+ }catch(e){console.error('Aktia import',e);toast(e?.message||'Не удалось прочитать Aktia')}finally{const input=q('aktiaImportFile');if(input)input.value=''}}
+function aktiaReportComparisons(owner,imp){
+ const p=aktiaPortfolioForOwner(owner);if(!p||!imp?.reported)return[];
+ const map=[['1M','1M'],['3M','3M'],['6M','6M'],['YTD','YTD'],['1Y','1Y']];
+ const dayGap=(a,b)=>Math.abs((new Date(a+'T12:00:00')-new Date(b+'T12:00:00'))/86400000);
+ return map.map(([code,key])=>{const bank=Number(imp.reported.periods?.[key]);if(!Number.isFinite(bank))return null;const b=periodBounds(code,imp.date,'',''),r=portfolioPerf(p.id,b.from,b.to),startGap=r?.sufficient?dayGap(r.startDate,b.from):null,endGap=r?.sufficient?dayGap(r.endDate,b.to):null,aligned=!!(r?.sufficient&&startGap<=3&&endGap<=1),site=r?.sufficient?r.pct:null,diff=site===null?null:site-bank;return{code,bank,site,diff,aligned,startDate:r?.startDate||'',endDate:r?.endDate||'',requestedFrom:b.from,requestedTo:b.to}}).filter(Boolean)
+}
+function aktiaFlowCount(owner,from='',to=todayISO()){const p=aktiaPortfolioForOwner(owner);if(!p)return 0;return state.flows.filter(f=>f.portfolioId===p.id&&(!from||f.date>from)&&f.date<=to).length}
+function renderAktia(){
+ const owner=state.settings.aktiaOwner==='personal'?'personal':'oy',latest=aktiaLatestImport(owner),p=aktiaPortfolioForOwner(owner),bounds=aktiaRangeBounds(owner),perf=aktiaSitePerf(owner,bounds),stats=aktiaAnalyticsStats(owner,bounds);renderPeriodSelector(q('aktiaPeriodSelector'),'aktia');q('aktiaOwnerSwitch')?.querySelectorAll('[data-aktia-owner]').forEach(b=>{b.classList.toggle('active',b.dataset.aktiaOwner===owner);b.onclick=()=>{state.settings.aktiaOwner=b.dataset.aktiaOwner;persistState();renderAktia();if(mobilePhoneMode)renderMobileAktia()}});const status=q('aktiaImportStatus');if(status)status.textContent=latest?`${aktiaOwnerLabel(owner)} · последний рапорт ${formatDate(latest.date)} · ${latest.fileName}${latest.autoImport?' · автоматически':''}`:`${aktiaOwnerLabel(owner)} · рапорт ещё не загружен`;const txStats=aktiaTransactionStats(owner);const autoStatus=q('bankAutoImportStatus');if(autoStatus)autoStatus.textContent=`Автоимпорт: ${nordeaImports().filter(x=>x.autoImport).length+(state.aktia?.imports||[]).filter(x=>x.autoImport).length+(state.aktia?.transactionImports||[]).filter(x=>x.autoImport).length} обработанных отчётов. Проверка почты запускается отдельно Google Apps Script (после настройки). ${aktiaOwnerLabel(owner)}: ${txStats.reports} Tapahtumaraportti, ${txStats.rows} операций.`;
+ const current=p?latestValue(p.id):0,ref=aktiaReferenceMetric(latest,bounds),flow=perf?.sufficient?Number(perf.flow||0):0,profit=perf?.sufficient?Number(perf.profit||0):null,pctv=perf?.sufficient?perf.pct:null,k=q('aktiaKpis');if(k)k.innerHTML=`<div class="aktia-kpi"><span>Сейчас</span><b>${money(current)}</b><small>${aktiaOwnerLabel(owner)}</small></div><div class="aktia-kpi"><span>Реальный результат · ${VM_PERIOD_LABELS[bounds.code]}</span><b class="${profit===null?'':profit>=0?'good':'bad'}">${profit===null?'—':`${profit>=0?'+':''}${money(profit)}`}</b><small>Стоимость − старт − чистые внесения + доходные события</small></div><div class="aktia-kpi"><span>Доходность сайта</span><b class="${pctv===null?'':pctv>=0?'good':'bad'}">${fmtReturn(pctv)}</b><small>Modified Dietz · денежные потоки учитываются по датам</small></div><div class="aktia-kpi"><span>Внешние потоки</span><b class="${flow===0?'':flow>0?'good':'bad'}">${flow>=0?'+':''}${money(flow)}</b><small>Только события, сохранённые в Wealth Studio</small></div><div class="aktia-kpi"><span>Рапорт Aktia</span><b>${ref?fmtReturn(ref.value):'—'}</b><small>${ref?`${ref.label} · только контроль`:'Нет показателя для этого периода'}</small></div>`;
+ const rows=p?uniqueSnapshots(p.id).filter(x=>(!bounds.from||bounds.code==='MAX'||x.date>=bounds.from)&&x.date<=bounds.to):[];if(q('aktiaChartTitle'))q('aktiaChartTitle').textContent=aktiaOwnerLabel(owner);if(q('aktiaChartSub'))q('aktiaChartSub').textContent=`${periodDisplay(bounds)} · расчёт сайта`;drawSeries(q('aktiaHistoryChart'),[{name:'Стоимость',points:rows.map(x=>({t:new Date(x.date+'T12:00:00').getTime(),v:Number(x.value)})),ci:1,color:'#62c79b'}],{xMode:'date',sharedTooltip:true,lineWidth:3.2,pointMarkers:true});
+ const comp=q('aktiaComparison');if(comp){
+  const diff=ref&&ref.comparable&&pctv!==null?pctv-ref.value:null,coverage=perf?.sufficient?`${formatDate(perf.startDate)} → ${formatDate(perf.endDate)}`:'Недостаточно двух оценок',cmpRows=aktiaReportComparisons(owner,latest),flowCount=perf?.sufficient?aktiaFlowCount(owner,perf.startDate,perf.endDate):0;
+  const rowsHtml=cmpRows.map(x=>`<div class="aktia-compare-row"><span>${x.code} · сайт ${x.startDate?`${formatDate(x.startDate)} → ${formatDate(x.endDate)}`:'нет истории'}</span><b>${fmtReturn(x.site)} / ${fmtReturn(x.bank)}</b><strong class="${x.aligned&&x.diff!==null?(Math.abs(x.diff)<=.25?'good':'bad'):''}">${x.site===null?'нет расчёта':!x.aligned?'даты не совпадают':`${x.diff>=0?'+':''}${x.diff.toFixed(2)} п.п.`}</strong></div>`).join('');
+  comp.innerHTML=`<div class="aktia-primary"><b>Основной результат: ${fmtReturn(pctv)} · ${profit===null?'—':`${profit>=0?'+':''}${money(profit)}`}</b><span>Wealth Studio считает по фактическим сохранённым оценкам и денежным событиям: ${coverage}. Цифры Aktia никогда не подставляются в формулу сайта.</span></div><div class="aktia-compare-row"><span>Выбранный период · Wealth Studio</span><b class="${pctv===null?'':pctv>=0?'good':'bad'}">${fmtReturn(pctv)}</b><strong>основная</strong></div><div class="aktia-compare-row"><span>Рапорт Aktia · ${ref?ref.label:'нет совпадающего периода'}</span><b>${ref?fmtReturn(ref.value):'—'}</b><strong>только контроль</strong></div>${rowsHtml}<div class="aktia-compare-row"><span>Волатильность сайта</span><b>${stats?.volatility===null||stats?.volatility===undefined?'—':(stats.volatility*100).toFixed(2)+'%'}</b><strong>${latest?.reported&&Number.isFinite(Number(latest.reported.volatility))?`Aktia ${Number(latest.reported.volatility).toFixed(2)}%`:'банк —'}</strong></div>${perf?.sufficient&&flowCount===0?`<div class="aktia-warning">За выбранный период в Wealth Studio нет внесений/выводов для этого портфеля. Если их действительно не было — расчёт корректен. Если деньги вносились или выводились, добавьте денежное событие, иначе изменение капитала будет ошибочно принято за инвестиционный результат.</div>`:''}`
+ }
+ const a=q('aktiaAllocation');if(a){const al=latest?.allocation||{},parts=[['Акции',al.stocks],['Длинные облигации',al.longBonds]].filter(x=>x[1]&&Number.isFinite(Number(x[1].pct)));a.innerHTML=parts.length?parts.map(([name,x])=>`<div class="aktia-alloc-row"><span>${name}</span><b>${Number(x.pct).toFixed(1)}% · ${Number.isFinite(Number(x.value))?money(Number(x.value)):'—'}</b><div class="aktia-alloc-track"><i style="width:${Math.max(0,Math.min(100,Number(x.pct)))}%"></i></div></div>`).join(''):'<div class="nordea-empty">В этом файле нет структуры активов.</div>'}
+ const rm=q('aktiaReportMetrics'),r=latest?.reported||{};if(rm)rm.innerHTML=`<div><span>Tuotto · весь период рапорта</span><b>${Number.isFinite(Number(r.totalReturn))?fmtReturn(Number(r.totalReturn)):'—'}</b></div><div><span>YTD рапорта</span><b>${Number.isFinite(Number(r.periods?.YTD))?fmtReturn(Number(r.periods.YTD)):'—'}</b></div><div><span>Volatiliteetti</span><b>${Number.isFinite(Number(r.volatility))?Number(r.volatility).toFixed(2)+'%':'—'}</b></div><div><span>Sharpe</span><b>${Number.isFinite(Number(r.sharpe))?Number(r.sharpe).toFixed(2):'—'}</b></div><div><span>1M / 3M</span><b>${Number.isFinite(Number(r.periods?.['1M']))?fmtReturn(Number(r.periods['1M'])):'—'} / ${Number.isFinite(Number(r.periods?.['3M']))?fmtReturn(Number(r.periods['3M'])):'—'}</b></div><div><span>6M / 1Y</span><b>${Number.isFinite(Number(r.periods?.['6M']))?fmtReturn(Number(r.periods['6M'])):'—'} / ${Number.isFinite(Number(r.periods?.['1Y']))?fmtReturn(Number(r.periods['1Y'])):'—'}</b></div>`;
+ const h=q('aktiaHistory'),imports=aktiaImports(owner).slice().reverse(),txImports=aktiaTransactionImports(owner).slice().reverse();if(h){const rows=[...imports.map(x=>({date:x.date,html:`<div class="aktia-history-row"><time>${formatDate(x.date)}</time><b>${esc(x.fileName)}<div class="muted small">${x.sourceType.toUpperCase()} · ${esc(x.reportKind||'valuation')}</div></b><span>${money(x.marketValue)}</span></div>`})),...txImports.map(x=>({date:x.date,html:`<div class="aktia-history-row"><time>${formatDate(x.date)}</time><b>${esc(x.fileName)}<div class="muted small">PDF · Tapahtumaraportti · ${(x.transactions||[]).length} операций</div></b><span>${Math.floor((x.transactions||[]).filter(t=>t.internalTransfer).length/2)} внутр. переводов</span></div>`}))].sort((a,b)=>String(b.date).localeCompare(String(a.date)));h.innerHTML=rows.length?rows.slice(0,30).map(x=>x.html).join(''):'<div class="nordea-empty">Импортов пока нет.</div>'}
+}
+function openAktiaImportHistory(){const rows=[...aktiaImports().map(x=>({date:x.date,html:`<div class="aktia-history-row"><time>${formatDate(x.date)}</time><b>${esc(aktiaOwnerLabel(x.owner))}<div class="muted small">${esc(x.fileName)} · ${x.sourceType.toUpperCase()} · ${esc(x.reportKind||'valuation')}</div></b><span>${money(x.marketValue)}</span></div>`})),...aktiaTransactionImports().map(x=>({date:x.date,html:`<div class="aktia-history-row"><time>${formatDate(x.date)}</time><b>${esc(aktiaOwnerLabel(x.owner))}<div class="muted small">${esc(x.fileName)} · Tapahtumaraportti</div></b><span>${(x.transactions||[]).length} операций</span></div>`}))].sort((a,b)=>String(b.date).localeCompare(String(a.date)));openModal('История импортов Aktia',rows.length?`<div class="aktia-history">${rows.map(x=>x.html).join('')}</div>`:'<div class="nordea-empty">Импортов пока нет.</div>','AKTIA IMPORTS')}
+
 function renderDashboard(){
  setReturnSummary();
- const now=totalNow(),ytd=totalPerf(state.settings.fyStart),all=allTimePerf();
+ const bounds=dashboardBounds(),now=totalNow(),selected=dashboardSelectedPerf(),all=allTimePerf(),ytd=totalPerf(`${todayISO().slice(0,4)}-01-01`);
+ renderPeriodSelector(q('dashboardPeriodSelector'),'dashboard');if(q('dashboardPeriodMeta'))q('dashboardPeriodMeta').innerHTML=`${periodDisplay(bounds)}<br>YTD ${fmtReturn(ytd.pct)} · Вся история ${fmtReturn(all.pct)}`;
  if(q('heroTotal'))q('heroTotal').textContent=money(now);q('personalCapital').textContent=money(ownerTotal('personal'));q('companyCapital').textContent=money(ownerTotal('oy'));
  q('planningCapital').textContent=money(planningTotal());q('excludedCapital').textContent=money(excludedTotal());q('exitAssetsCapital').textContent=money(exitAssetsTotal());
- q('companyTaxLabel').textContent=`${companyTaxRateForYear(new Date().getFullYear()).toFixed(1)}%`;if(q('heroYtd')){q('heroYtd').textContent=`YTD ${fmtReturn(ytd.pct)}`;q('heroYtd').className='chip '+(ytd.pct!==null&&ytd.pct<0?'bad':'')}
+ q('companyTaxLabel').textContent=`${companyTaxRateForYear(new Date().getFullYear()).toFixed(1)}%`;if(q('heroYtd')){q('heroYtd').textContent=`${VM_PERIOD_LABELS[bounds.code]} ${fmtReturn(selected.pct)}`;q('heroYtd').className='chip '+(selected.pct!==null&&selected.pct<0?'bad':'')}
  q('heroPortfolios').textContent=`${state.portfolios.length} ${state.portfolios.length===1?'портфель':'портфелей'}`;
- q('mYtd').textContent=`${ytd.profit>=0?'+':''}${money(ytd.profit)}`;q('mYtd').className='metric '+(ytd.profit>=0?'good':'bad');q('mYtdPct').textContent=`${fmtReturn(ytd.pct)} с начала года · ${ytd.covered}/${ytd.total} портф. с данными`;
+ if(q('dashboardResultLabel'))q('dashboardResultLabel').textContent=`Инвестиционный результат · ${VM_PERIOD_LABELS[bounds.code]}`;if(q('dashboardFlowsLabel'))q('dashboardFlowsLabel').textContent=`Внешние потоки · ${VM_PERIOD_LABELS[bounds.code]}`;
+ q('mYtd').textContent=`${selected.profit>=0?'+':''}${money(selected.profit)}`;q('mYtd').className='metric '+(selected.profit>=0?'good':'bad');q('mYtdPct').textContent=`${fmtReturn(selected.pct)} · ${selected.covered}/${selected.total} портф. с данными`;
  q('mAll').textContent=`${all.profit>=0?'+':''}${money(all.profit)}`;q('mAll').className='metric '+(all.profit>=0?'good':'bad');q('mAllPct').textContent=`${fmtReturn(all.pct)} агрегировано по доступной истории портфелей`;
  q('mYearEnd').textContent=money(yearEndForecast());q('mYearEndSub').innerHTML=`если текущий темп сохранится · ${new Date().getFullYear()} <span class="age-tag">${ageTextByYear(new Date().getFullYear())}</span>`;
- q('mFlows').textContent=`${ytd.flow>=0?'+':''}${money(ytd.flow)}`;q('mFlows').className='metric '+(ytd.flow>=0?'good':'bad');
+ q('mFlows').textContent=`${selected.flow>=0?'+':''}${money(selected.flow)}`;q('mFlows').className='metric '+(selected.flow>=0?'good':'bad');
+ renderDashboardIntel(bounds);
+ if(q('periodProfitHeader'))q('periodProfitHeader').textContent=`${VM_PERIOD_LABELS[bounds.code]} €`;if(q('periodPctHeader'))q('periodPctHeader').textContent=`${VM_PERIOD_LABELS[bounds.code]} %`;
 
  const body=q('portfolioSummaryBody');body.innerHTML='';
- sortedPortfolioRows().forEach(({p,r,share,invValue,cashValue})=>{
+ sortedPortfolioRows(bounds.code==='MAX'?'':bounds.from,bounds.to).forEach(({p,r,share,invValue,cashValue})=>{
    const isNordea=!!p._nordeaGroup;
    const role=portfolioRole(p);
    const isCrypto=p.type==='Крипто';
    const allRow=allTimePerfForDashboardRow(p,isNordea);
-   const miningYtd=isCrypto&&r?.sufficient?cryptoMiningSummaryStrict(p.id,r.startDate||state.settings.fyStart,r.endDate||todayISO()):{btc:0,eur:0,count:0};
-   const walletYtd=isCrypto?cryptoWalletGrowth(p.id,state.settings.fyStart,todayISO()):null;
+   const miningYtd=isCrypto&&r?.sufficient?cryptoMiningSummaryStrict(p.id,r.startDate||(bounds.from||state.settings.fyStart),r.endDate||bounds.to):{btc:0,eur:0,count:0};
+   const walletYtd=isCrypto?cryptoWalletGrowth(p.id,bounds.from||state.settings.fyStart,bounds.to):null;
    const walletAll=isCrypto?cryptoAllTimeWalletGrowth(p.id):null;
    const ytdProfit = isCrypto
      ? (r.sufficient?`<span class="${r.profit>=0?'good':'bad'}">${r.profit>=0?'+':''}${money(r.profit)}</span>`:'—')
@@ -3473,10 +4074,10 @@ function renderDashboard(){
    const cryptoHover=isCrypto?`<div class="crypto-hover-card">
       <div class="crypto-hover-title"><b>Детали Crypto · ${esc(p.owner==='oy'?'VMPC Oy':'Personal')}</b><span>Дополнительная информация</span></div>
       <div class="crypto-hover-grid">
-        <div class="crypto-hover-item"><span>Эффект цены BTC · YTD</span><b class="${r?.profit>=0?'good':'bad'}">${r?.sufficient?(r.profit>=0?'+':'')+money(r.profit):'—'}</b><small>${r?.sufficient?fmtReturn(r.pct):'Недостаточно истории'}</small></div>
+        <div class="crypto-hover-item"><span>Эффект цены BTC · период</span><b class="${r?.profit>=0?'good':'bad'}">${r?.sufficient?(r.profit>=0?'+':'')+money(r.profit):'—'}</b><small>${r?.sufficient?fmtReturn(r.pct):'Недостаточно истории'}</small></div>
         <div class="crypto-hover-item"><span>Чистый поток BTC</span><b class="${Number(r?.quantityChangeBtc||0)>=0?'good':'bad'}">${Number(r?.quantityChangeBtc||0)>=0?'+':''}${Number(r?.quantityChangeBtc||0).toFixed(8)} BTC</b><small class="${Number(r?.quantityEffect||0)>=0?'good':'bad'}">${Number(r?.quantityEffect||0)>=0?'+':''}${money(Number(r?.quantityEffect||0))}</small></div>
         <div class="crypto-hover-item"><span>Майнинг между оценками</span><b class="good">+${Number(miningYtd.btc||0).toFixed(8)} BTC</b><small>${money(Number(miningYtd.eur||0))}</small></div>
-        <div class="crypto-hover-item"><span>Изменение кошелька · YTD</span><b class="${Number(walletYtd?.change||0)>=0?'good':'bad'}">${walletYtd?.sufficient?(Number(walletYtd.change)>=0?'+':'')+money(Number(walletYtd.change||0)):'—'}</b><small>${walletYtd?.sufficient?fmtReturn(walletYtd.pct):'—'}</small></div>
+        <div class="crypto-hover-item"><span>Изменение кошелька · период</span><b class="${Number(walletYtd?.change||0)>=0?'good':'bad'}">${walletYtd?.sufficient?(Number(walletYtd.change)>=0?'+':'')+money(Number(walletYtd.change||0)):'—'}</b><small>${walletYtd?.sufficient?fmtReturn(walletYtd.pct):'—'}</small></div>
       </div>
       <div class="crypto-hover-foot"><span>Вся история · цена BTC: <b>${allRow?.sufficient?fmtReturn(allRow.pct):'—'}</b></span><span>Вся история · кошелёк: <b>${walletAll?.sufficient?fmtReturn(walletAll.pct):'—'}</b></span></div>
     </div>`:'';
@@ -3505,6 +4106,7 @@ function renderDashboard(){
 
  const alloc=q('allocationList');alloc.innerHTML='';
  sortedPortfolioRows().forEach(({p,r,share})=>alloc.insertAdjacentHTML('beforeend',`<div class="allocation-item"><div class="alloc-name">${esc(p.name)}</div><div class="alloc-value">${money(r.end)} · ${pct(share)}</div><div class="alloc-track"><div class="alloc-fill" style="width:${Math.min(100,Math.max(0,share))}%"></div></div></div>`));
+ if(q('capitalChartPeriodLabel'))q('capitalChartPeriodLabel').textContent=VM_PERIOD_LABELS[bounds.code];
  renderCapitalChart()
 }
 
@@ -3640,18 +4242,26 @@ async function syncDirectBtcWallet(options={}){
    }
    const history=await backfillBtcWalletDailyHistory(p);
    if(currentRate>0){const today=todayISO(),capturedAt=new Date().toISOString(),timeText=new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',second:'2-digit'}),comment=`Автооценка BTC wallet: ${blockchainBalance.toFixed(8)} BTC × ${currentRate.toFixed(2)} EUR · ${timeText}`;upsertBtcWalletDailySnapshot({portfolioId:p.id,date:today,btc:blockchainBalance,rate:currentRate,source:'btc_wallet',capturedAt,comment})}
-   p.btcWalletAddress=address;p.btcWalletLastSync=new Date().toISOString();p.btcWalletCurrentRate=currentRate||Number(p.btcWalletCurrentRate||0);p.btcWalletBlockchainBalance=blockchainBalance;
+   p.btcWalletAddress=address;p.btcWalletLastSync=new Date().toISOString();p.btcWalletLedgerLastSync=p.btcWalletLastSync;p.btcWalletCurrentRate=currentRate||Number(p.btcWalletCurrentRate||0);p.btcWalletBlockchainBalance=blockchainBalance;
    persistState();renderAll();if(cloudUser)await saveCloudState(false);
    const msg=`Готово. Баланс: ${blockchainBalance.toFixed(8)} BTC`+(currentRate?` · BTC/EUR ${money(currentRate)} · стоимость ${money(blockchainBalance*currentRate)}`:'')+` · новых входящих ${addedIn} · новых исходящих ${addedOut}`+(updated?` · обновлено ${updated}`:'')+(history.processed?` · история +${history.processed} дн.`:'')+(history.pending?` · история ожидает цен: ${history.pending} дн.`:'')+(pendingPrices?` · цена транзакций ожидает уточнения: ${pendingPrices}`:'')+'.';
    const refreshedStatus=btcWalletStatusEl(p.id);if(refreshedStatus){refreshedStatus.className=pendingPrices?'btc-wallet-status warn':'btc-wallet-status ok';refreshedStatus.textContent=msg}if(!silent)toast(`${p.name}: BTC-кошелёк обновлён`);
  }catch(e){console.error(e);const refreshedStatus=btcWalletStatusEl(p.id)||status;if(refreshedStatus){refreshedStatus.className='btc-wallet-status warn';refreshedStatus.textContent='Ошибка: '+e.message}if(!silent)toast(`${p.name}: не удалось обновить BTC-кошелёк`)}
 }
-function scheduleBtcWalletSync(){clearTimeout(btcSyncTimer);if(!cloudUser)return;btcSyncTimer=setTimeout(()=>syncConfiguredBtcWallets({silent:true}).catch(e=>console.warn('BTC wallets auto-sync failed',e)),150)}
+function scheduleBtcWalletSync(){
+  clearTimeout(btcSyncTimer);if(!cloudUser)return;
+  const stale=state.portfolios.some(p=>p.type==='Крипто'&&String(p.btcWalletAddress||'').trim()&&(
+    !p.btcWalletLedgerLastSync||!Number.isFinite(Date.parse(p.btcWalletLedgerLastSync))||Date.now()-Date.parse(p.btcWalletLedgerLastSync)>=24*60*60*1000
+  ));
+  // The offline server job updates the value daily. Full transaction history remains
+  // available on the manual refresh button; this browser fallback runs only if stale.
+  if(stale)btcSyncTimer=setTimeout(()=>syncConfiguredBtcWallets({silent:true,onlyStale:true}).catch(e=>console.warn('BTC wallets auto-sync failed',e)),500);
+}
 
 async function syncConfiguredBtcWallets(options={}){
   if(btcSyncInFlight)return btcSyncInFlight;
   btcSyncInFlight=(async()=>{
-    const wallets=state.portfolios.filter(p=>p.type==='Крипто'&&String(p.btcWalletAddress||'').trim());
+    const wallets=state.portfolios.filter(p=>p.type==='Крипто'&&String(p.btcWalletAddress||'').trim()&&(!options.onlyStale||!p.btcWalletLedgerLastSync||!Number.isFinite(Date.parse(p.btcWalletLedgerLastSync))||Date.now()-Date.parse(p.btcWalletLedgerLastSync)>=86400000));
     if(!wallets.length)return;
     const sharedRate=await currentBtcEurRate().catch(()=>0);
     for(const p of wallets){
@@ -4585,10 +5195,10 @@ function renderAll(){
  updateThemeToggle();
  syncAgeHorizon('withdrawYears','withdrawTargetAge','withdrawHorizonDate','years');
  q('todayText').innerHTML=`${new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} · <span class="age-tag">${ageTextByYear(new Date().getFullYear())}</span><div class="age-note">Возраст рассчитан по году рождения ${birthYear()}. Без точной даты рождения возможна разница в 1 год до дня рождения.</div>`;
- if(q('birthYear'))q('birthYear').value=birthYear();q('fyStartDisplay').value=formatDate(state.settings.fyStart);const t=state.taxSettings;
+ if(q('birthYear'))q('birthYear').value=birthYear();if(q('wealthGoalsInput'))q('wealthGoalsInput').value=(state.settings.wealthGoals||[]).join('; ');q('fyStartDisplay').value=formatDate(state.settings.fyStart);const t=state.taxSettings;
  ['companyTaxRate','dividendThreshold','netAssetRate','shareMathValue','dividendTaxableBelow','dividendTaxableAbove','capitalTaxLow','capitalTaxHigh','capitalTaxThreshold','dividendEarnedTaxablePct','taxLossCarryYears'].forEach(id=>{if(q(id))q(id).value=t[id]??''});
  if(q('earnedIncomeTaxRate'))q('earnedIncomeTaxRate').value=t.earnedIncomeTaxRate??'';if(q('companyTaxSchedule'))q('companyTaxSchedule').value=yearScheduleText(t.companyTaxRatesByYear);if(q('shareMathValueSchedule'))q('shareMathValueSchedule').value=yearScheduleText(t.shareMathValueByYear);
- renderTaxPreview();renderDashboard();renderPortfolios();renderHistory();renderForecast();renderWithdrawalRules();renderInsights();renderPortfolioAnalytics();
+ renderTaxPreview();renderDashboard();renderPortfolios();renderHistory();renderForecast();renderWithdrawalRules();renderInsights();renderPortfolioAnalytics();if(currentView==='nordea')renderNordea();if(currentView==='aktia')renderAktia();
  if(typeof mobilePhoneMode!=='undefined'&&mobilePhoneMode&&typeof renderMobileApp==='function')renderMobileApp();
 }
 
@@ -4786,7 +5396,7 @@ function renderPortfolioAnalytics(){
 }
 
 function renderCapitalChart(){
- const cutoff=localISODate(new Date(Date.now()-chartRange*86400000)),dates=allDates().filter(d=>chartRange>=99999||d>=cutoff),mode=q('capitalChartMode')?.value||'total';
+ const bounds=dashboardBounds(),dates=allDates().filter(d=>(!bounds.from||d>=bounds.from)&&d<=bounds.to),mode=q('capitalChartMode')?.value||'total';
  const tx=d=>new Date(d+'T12:00:00').getTime();
  if(mode==='split'){
    const personal=dates.map(d=>({t:tx(d),v:ownerAtDate('personal',d)})),oy=dates.map(d=>({t:tx(d),v:ownerAtDate('oy',d)}));
@@ -4805,9 +5415,11 @@ function renderForecastChart(){
 function chartColor(ci){return['#d7ab57','#64cda1','#7fb9e8','#ff7c8b'][ci%4]}
 function seriesColor(s,si){return s?.color||chartColor(s?.ci??si)}
 const MONTHS_RU_SHORT=['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
-function seriesXLabel(v,mode){
+function seriesXLabel(v,mode,span=0){
  if(mode==='date'){
    const d=new Date(Number(v));if(!Number.isFinite(d.getTime()))return '';
+   const days=Math.abs(Number(span)||0)/86400000;
+   if(days<=62)return `${d.getDate()} ${MONTHS_RU_SHORT[d.getMonth()]}`;
    return `${MONTHS_RU_SHORT[d.getMonth()]} ${String(d.getFullYear()).slice(-2)}`;
  }
  if(mode==='year')return Number(v)===0?'сейчас':`+${Math.round(Number(v))} г.`;
@@ -4882,7 +5494,7 @@ function drawSeries(canvas,series,options={}){
  c.font='600 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
  scale.ticks.forEach(v=>{const y=pad.t+plotH*(1-(v-scale.min)/(scale.max-scale.min));c.strokeStyle=ui.grid;c.lineWidth=1;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();c.fillStyle=ui.axis;c.textAlign='right';c.fillText(formatChartValue(v),pad.l-12,y+4)});
  const targetXTicks=isMobileChart?(w<=375?2:3):(w<560?4:w<1050?6:7),xStep=xspan/targetXTicks;
- for(let i=0;i<=targetXTicks;i++){const xv=xmin+xStep*i,x=pad.l+plotW*i/targetXTicks;c.strokeStyle=ui.gridSoft;c.lineWidth=1;c.beginPath();c.moveTo(x,pad.t);c.lineTo(x,pad.t+plotH);c.stroke();c.fillStyle=ui.label;c.font='600 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.textAlign=i===0?'left':i===targetXTicks?'right':'center';c.fillText(seriesXLabel(xv,options.xMode||'year'),x,pad.t+plotH+22)}
+ for(let i=0;i<=targetXTicks;i++){const xv=xmin+xStep*i,x=pad.l+plotW*i/targetXTicks;c.strokeStyle=ui.gridSoft;c.lineWidth=1;c.beginPath();c.moveTo(x,pad.t);c.lineTo(x,pad.t+plotH);c.stroke();c.fillStyle=ui.label;c.font='600 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';c.textAlign=i===0?'left':i===targetXTicks?'right':'center';c.fillText(seriesXLabel(xv,options.xMode||'year',xspan),x,pad.t+plotH+22)}
  const requestedWidth=Number(options.lineWidth||2.6);
  valid.forEach((s,si)=>{const color=seriesColor(s,si),points=s.points;
    if(valid.length===1&&options.fill!==false){c.beginPath();points.forEach((p,i)=>{const x=pad.l+plotW*(Number(p.t)-xmin)/xspan,y=pad.t+plotH*(1-(Number(p.v)-scale.min)/(scale.max-scale.min));i?c.lineTo(x,y):c.moveTo(x,y)});const last=points[points.length-1],lx=pad.l+plotW*(Number(last.t)-xmin)/xspan;c.lineTo(lx,pad.t+plotH);c.lineTo(pad.l,pad.t+plotH);c.closePath();const g=c.createLinearGradient(0,pad.t,0,pad.t+plotH);g.addColorStop(0,color+'2f');g.addColorStop(1,color+'03');c.fillStyle=g;c.fill()}
@@ -5027,6 +5639,7 @@ function openPortfolioModal(id=null){
      exitTargetPortfolioId:role==='exit'?q('pExitTarget').value:'',
      btcWalletAddress:walletAddress,
      btcWalletAutoSync:type==='Крипто'&&!!walletAddress,
+     btcWalletLedgerLastSync:type==='Крипто'&&walletAddress&&walletAddress===String(p?.btcWalletAddress||'').trim()?String(p?.btcWalletLedgerLastSync||''):'',
      btcWalletLastSync:type==='Крипто'&&walletAddress&&walletAddress===String(p?.btcWalletAddress||'').trim()?(p?.btcWalletLastSync||''):'',
      btcWalletCurrentRate:type==='Крипто'&&walletAddress&&walletAddress===String(p?.btcWalletAddress||'').trim()?Number(p?.btcWalletCurrentRate||0):0,
      btcWalletBlockchainBalance:type==='Крипто'&&walletAddress&&walletAddress===String(p?.btcWalletAddress||'').trim()?Number(p?.btcWalletBlockchainBalance||0):0,
@@ -5112,7 +5725,6 @@ function renderTaxPreview(){
 }
 function buildBackupEnvelope(){return{schemaVersion:BACKUP_SCHEMA_VERSION,appVersion:APP_VERSION,exportedAt:new Date().toISOString(),payload:JSON.parse(JSON.stringify(state))}}
 function exportJSON(){const blob=new Blob([JSON.stringify(buildBackupEnvelope(),null,2)],{type:'application/json'});downloadBlob(blob,`capital-studio-backup-${todayISO()}.json`);toast('Резервная копия создана')}
-function exportJSON(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});downloadBlob(blob,`capital-studio-backup-${todayISO()}.json`);toast('Резервная копия создана')}
 function downloadBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function xmlEsc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function excelReport(){
@@ -5128,7 +5740,9 @@ function pdfReport(){
  const table=rows.map(({p,r,share})=>`<tr><td>${esc(p.name)}</td><td>${money(r.end)}</td><td>${r.sufficient?`${r.profit>=0?'+':''}${money(r.profit)}`:'—'}</td><td>${r.sufficient?fmtReturn(r.pct):'—'}</td><td>${pct(share)}</td></tr>`).join('');
  const scenarios=[['Консервативный',+f.conservative],['Базовый',+f.base],['Оптимистичный',+f.optimistic]].map(([n,r])=>{const m=runGrowthModel(r,years);return`<tr><td>${n}</td><td>${r.toFixed(1)}%</td><td>${money(m.cap)}</td></tr>`}).join('');
  const w=window.open('','_blank');w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Capital Studio Report</title><style>
-  body{font-family:Arial,sans-serif;color:#151820;margin:42px}header{border-bottom:2px solid #151820;padding-bottom:18px;margin-bottom:26px}.ey{font-size:10px;letter-spacing:2px;color:#718096}.title{font-size:28px;font-weight:700;margin:5px 0}.big{font-size:36px;font-weight:700}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0}.m{border:1px solid #dfe3e8;border-radius:10px;padding:14px}.l{font-size:10px;color:#718096;text-transform:uppercase}.v{font-size:19px;font-weight:700;margin-top:6px}h2{margin-top:28px;font-size:16px}table{width:100%;border-collapse:collapse;font-size:11px}th,td{border-bottom:1px solid #e5e7eb;padding:9px 7px;text-align:right}th:first-child,td:first-child{text-align:left}th{color:#718096;text-transform:uppercase;font-size:9px}footer{margin-top:36px;color:#8490a0;font-size:9px}.note{padding:10px;background:#f5f7f9;border-radius:8px;color:#5d6877;font-size:10px}@media print{button{display:none}body{margin:20mm}}</style></head><body>
+  body{font-family:Arial,sans-serif;color:#151820;margin:42px}header{border-bottom:2px solid #151820;padding-bottom:18px;margin-bottom:26px}.ey{font-size:10px;letter-spacing:2px;color:#718096}.title{font-size:28px;font-weight:700;margin:5px 0}.big{font-size:36px;font-weight:700}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0}.m{border:1px solid #dfe3e8;border-radius:10px;padding:14px}.l{font-size:10px;color:#718096;text-transform:uppercase}.v{font-size:19px;font-weight:700;margin-top:6px}h2{margin-top:28px;font-size:16px}table{width:100%;border-collapse:collapse;font-size:11px}th,td{border-bottom:1px solid #e5e7eb;padding:9px 7px;text-align:right}th:first-child,td:first-child{text-align:left}th{color:#718096;text-transform:uppercase;font-size:9px}footer{margin-top:36px;color:#8490a0;font-size:9px}.note{padding:10px;background:#f5f7f9;border-radius:8px;color:#5d6877;font-size:10px}@media print{button{display:none}body{margin:20mm}}
+
+</style></head><body>
   <header><div class="ey">CAPITAL STUDIO · PRIVATE WEALTH REPORT</div><div class="title">Executive Capital Report</div><div>${formatDate(todayISO())} · ${ageTextForIso(todayISO())}</div></header>
   <div class="ey">СОВОКУПНЫЙ КАПИТАЛ</div><div class="big">${money(now)}</div>
   <div class="metrics"><div class="m"><div class="l">YTD результат</div><div class="v">${ytd.profit>=0?'+':''}${money(ytd.profit)}</div></div><div class="m"><div class="l">YTD доходность</div><div class="v">${ytd.pct===null?'—':`${ytd.pct>=0?'+':''}${pct(ytd.pct)}`}</div></div><div class="m"><div class="l">Портфелей</div><div class="v">${state.portfolios.length}</div></div></div>
@@ -5168,12 +5782,12 @@ function applyDeviceMode(){
  if(mobilePhoneMode)renderMobileApp();
  return mobilePhoneMode;
 }
-function mobileTitleFor(view){return({home:'PRIVATE WEALTH',portfolio:'ПОРТФЕЛЬ',withdrawals:'ПЛАН ВЫВОДА',analytics:'АНАЛИТИКА',scenarios:'СЦЕНАРИИ',history:'ИСТОЧНИКИ',portfolioanalytics:'ПОРТФЕЛИ · ПРОГНОЗ',insights:'ДОПОЛНИТЕЛЬНО',settings:'НАСТРОЙКИ'})[view]||'PRIVATE WEALTH'}
+function mobileTitleFor(view){return({home:'PRIVATE WEALTH',portfolio:'ПОРТФЕЛЬ',withdrawals:'ПЛАН ВЫВОДА',analytics:'АНАЛИТИКА',scenarios:'СЦЕНАРИИ',history:'ИСТОЧНИКИ',portfolioanalytics:'ПОРТФЕЛИ · ПРОГНОЗ',insights:'ДОПОЛНИТЕЛЬНО',nordea:'NORDEA',aktia:'AKTIA',settings:'НАСТРОЙКИ'})[view]||'PRIVATE WEALTH'}
 function mobileNavigate(view){
  if(!q('mobile-view-'+view))view='home';
  mobileCurrentView=view;
  document.querySelectorAll('#mobileAppShell .mobile-view').forEach(x=>x.classList.toggle('active',x.dataset.mobileView===view));
- const mobileNavTarget=['scenarios','history','portfolioanalytics','insights','settings'].includes(view)?'more':view;
+ const mobileNavTarget=['nordea','aktia','scenarios','history','portfolioanalytics','insights','settings'].includes(view)?'more':view;
  document.querySelectorAll('#mobileAppShell .mobile-nav-item').forEach(x=>x.classList.toggle('active',x.dataset.mobileNav===mobileNavTarget));
  if(q('mobileHeaderTitle'))q('mobileHeaderTitle').textContent=mobileTitleFor(view);
  closeMobileMoreSheet();
@@ -5200,6 +5814,8 @@ function renderMobileApp(view=mobileCurrentView){
  else if(view==='portfolio')renderMobilePortfolio();
  else if(view==='withdrawals')renderMobileWithdrawals();
  else if(view==='analytics')renderMobileAnalytics();
+ else if(view==='nordea')renderMobileNordea();
+ else if(view==='aktia')renderMobileAktia();
  else if(view==='scenarios')renderMobileScenarios();
  else if(view==='history')renderMobileHistory();
  else if(view==='portfolioanalytics')renderMobilePortfolioForecast();
@@ -5211,7 +5827,7 @@ function renderMobileApp(view=mobileCurrentView){
 }
 function renderMobileHome(){
  const el=q('mobile-view-home');if(!el)return;
- const total=totalNow(),ytd=totalPerf(state.settings.fyStart),personal=ownerTotal('personal'),oy=ownerTotal('oy'),rows=sortedPortfolioRows();
+ const bounds=dashboardBounds(),total=totalNow(),ytd=dashboardSelectedPerf(),personal=ownerTotal('personal'),oy=ownerTotal('oy'),rows=sortedPortfolioRows(bounds.code==='MAX'?'':bounds.from,bounds.to),change=dashboardCapitalBreakdown(bounds);const goals=(state.settings.wealthGoals||[]).filter(x=>x>0).sort((a,b)=>a-b),nextGoal=goals.find(x=>x>total)||goals.at(-1)||null,goalPct=nextGoal?Math.min(100,total/nextGoal*100):0;const freshRows=state.portfolios.map(p=>({name:p.name,at:p.type==='Крипто'&&p.btcWalletLastSync?p.btcWalletLastSync:(uniqueSnapshots(p.id).at(-1)?.updatedAt||uniqueSnapshots(p.id).at(-1)?.capturedAt||uniqueSnapshots(p.id).at(-1)?.date||'')}));const niFresh=nordeaLatestImport();if(niFresh)freshRows.push({name:'Nordea Excel',at:niFresh.importedAt||niFresh.sourceIso||niFresh.date});freshRows.sort((a,b)=>Date.parse(b.at||0)-Date.parse(a.at||0));
  const cryptoPortfolios=state.portfolios.filter(p=>p.type==='Крипто');
  const cryptoByOwner=['personal','oy'].map(owner=>{const ps=cryptoPortfolios.filter(p=>(p.owner||'personal')===owner);const stats=ps.map(p=>({p,s:cryptoStats(p.id)}));return{owner,btc:stats.reduce((a,x)=>a+Number(x.s.btc||0),0),value:stats.reduce((a,x)=>a+Number(x.s.currentValue||0),0),count:ps.length}}).filter(x=>x.count);
  const rules=(state.withdrawalRules||[]).slice().sort((a,b)=>String(a.start||'9999').localeCompare(String(b.start||'9999')));
@@ -5219,20 +5835,24 @@ function renderMobileHome(){
  const recent=historyRows().slice(0,5);
  el.innerHTML=`${mobileViewHeader('Главная','Капитал, структура и ближайшие действия')}
  <div class="mobile-stack">
-  <section class="mobile-card mobile-hero"><div class="mobile-kicker">СОВОКУПНЫЙ КАПИТАЛ</div><div class="mobile-value">${money(total)}</div><div class="mobile-hero-meta"><span class="mobile-chip ${ytd.profit>=0?'mobile-good':'mobile-bad'}">YTD ${mobileSignedMoney(ytd.profit)}</span><span class="mobile-chip ${ytd.pct!==null&&ytd.pct<0?'mobile-bad':'mobile-good'}">${fmtReturn(ytd.pct)}</span><span class="mobile-chip">${formatDate(todayISO())}</span></div></section>
+  ${renderMobilePeriodButtons('dashboard')}
+  <section class="mobile-card mobile-hero"><div class="mobile-kicker">СОВОКУПНЫЙ КАПИТАЛ</div><div class="mobile-value">${money(total)}</div><div class="mobile-hero-meta"><span class="mobile-chip ${ytd.profit>=0?'mobile-good':'mobile-bad'}">${VM_PERIOD_LABELS[bounds.code]} ${mobileSignedMoney(ytd.profit)}</span><span class="mobile-chip ${ytd.pct!==null&&ytd.pct<0?'mobile-bad':'mobile-good'}">${fmtReturn(ytd.pct)}</span><span class="mobile-chip">${formatDate(todayISO())}</span></div></section>
   <div class="mobile-two"><section class="mobile-card"><div class="mobile-card-label">Personal</div><div class="mobile-value small">${money(personal)}</div><div class="mobile-card-sub">${total?pct(personal/total*100):'0%'} капитала</div></section><section class="mobile-card"><div class="mobile-card-label">VM Private Capital Oy</div><div class="mobile-value small">${money(oy)}</div><div class="mobile-card-sub">${total?pct(oy/total*100):'0%'} капитала</div></section></div>
+  <section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">CHANGE</div><h2>Почему изменился капитал</h2></div><span>${VM_PERIOD_LABELS[bounds.code]}</span></div><div class="mobile-detail-grid"><div class="mobile-mini-stat"><span>Всего</span><b class="${change.change>=0?'mobile-good':'mobile-bad'}">${mobileSignedMoney(change.change)}</b></div><div class="mobile-mini-stat"><span>Пополнения</span><b class="mobile-good">+${money(change.contributions||0)}</b></div><div class="mobile-mini-stat"><span>Выводы</span><b class="mobile-bad">−${money(change.withdrawals||0)}</b></div><div class="mobile-mini-stat"><span>Рынок / майнинг</span><b class="${change.market>=0?'mobile-good':'mobile-bad'}">${mobileSignedMoney(change.market)}</b></div></div></section>
+  ${nextGoal?`<section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">GOAL</div><h2>Цель капитала</h2></div><span>${goalPct.toFixed(1)}%</span></div><div class="mobile-value small">${money(nextGoal)}</div><div class="mobile-progress" style="margin-top:12px"><i style="width:${goalPct.toFixed(1)}%"></i></div><div class="mobile-card-sub">Осталось ${money(Math.max(0,nextGoal-total))}</div></section>`:''}
+  <section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">DATA</div><h2>Свежесть данных</h2></div></div><div class="mobile-list">${freshRows.slice(0,4).map(x=>{const t=Date.parse(x.at||''),days=Number.isFinite(t)?Math.floor((Date.now()-t)/86400000):999,txt=Number.isFinite(t)?(days<=0?'сегодня':days===1?'вчера':`${days} дн. назад`):'нет даты';return`<div class="mobile-list-item"><div class="mobile-list-icon">●</div><div class="mobile-list-main"><b>${esc(x.name)}</b><span>${txt}</span></div></div>`}).join('')||'<div class="mobile-empty">Нет данных.</div>'}</div></section>
   ${cryptoByOwner.length?`<section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">BITCOIN</div><h2>BTC</h2></div><span>${cryptoByOwner.length} источник(а)</span></div><div class="mobile-two">${cryptoByOwner.map(x=>`<div><div class="mobile-card-label">${mobileOwnerLabel(x.owner)}</div><div class="mobile-value small">${x.btc.toFixed(8)} BTC</div><div class="mobile-card-sub">${money(x.value)}</div></div>`).join('')}</div></section>`:''}
   <section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">ALLOCATION</div><h2>Структура</h2></div><button class="mobile-secondary-btn" type="button" data-mobile-go="portfolio">Все</button></div><div class="mobile-list">${rows.slice(0,6).map(({p,r,share})=>`<div class="mobile-list-item"><div class="mobile-list-icon">${p.owner==='oy'?'Oy':'P'}</div><div class="mobile-list-main"><b>${esc(p.name)}</b><span>${esc(p.type||'Актив')} · ${share.toFixed(1)}%</span><div class="mobile-progress"><i style="width:${Math.max(0,Math.min(100,share))}%"></i></div></div><div class="mobile-list-value">${money(r.end)}</div></div>`).join('')||'<div class="mobile-empty">Портфелей пока нет.</div>'}</div></section>
   <section class="mobile-card"><div class="mobile-kicker">NEXT WITHDRAWAL</div><div class="mobile-section-title" style="margin-top:6px"><div><h2>Следующий этап вывода</h2></div><button class="mobile-secondary-btn" type="button" data-mobile-go="withdrawals">Открыть</button></div>${nextRule?`<div class="mobile-list-item"><div class="mobile-list-icon">⇢</div><div class="mobile-list-main"><b>${nextRule.source==='oy_dividend'?'Oy → дивиденд':'Personal'}</b><span>${nextRule.start?formatDate(nextRule.start):'без даты'}${nextRule.end?' — '+formatDate(nextRule.end):' · бессрочно'}</span></div><div class="mobile-list-value">${money(Number(nextRule.monthly||0))}<small class="mobile-muted" style="display:block;font-weight:500">/ мес.</small></div></div>`:'<div class="mobile-empty">Этапы вывода ещё не созданы.</div>'}</section>
-  <section class="mobile-card mobile-chart-card"><div class="mobile-section-title"><div><div class="mobile-kicker">TREND</div><h2>Капитал</h2></div><span>1 год</span></div><div class="mobile-chart-wrap"><canvas id="mobileHomeCapitalChart" height="280"></canvas></div><div class="mobile-chart-note">Коснись графика, чтобы увидеть точное значение.</div></section>
+  <section class="mobile-card mobile-chart-card"><div class="mobile-section-title"><div><div class="mobile-kicker">TREND</div><h2>Капитал</h2></div><span>${VM_PERIOD_LABELS[bounds.code]}</span></div><div class="mobile-chart-wrap"><canvas id="mobileHomeCapitalChart" height="280"></canvas></div><div class="mobile-chart-note">Коснись графика, чтобы увидеть точное значение.</div></section>
   <section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">ACTIVITY</div><h2>Последние изменения</h2></div><button class="mobile-secondary-btn" type="button" data-mobile-go="history">Все</button></div><div class="mobile-list">${recent.map(x=>`<div class="mobile-list-item"><div class="mobile-list-icon">${x.kindKey==='snap'?'◇':'↔'}</div><div class="mobile-list-main"><b>${esc(portfolioName(x.portfolioId))}</b><span>${formatDate(x.date)} · ${esc(x.kind||'')}</span></div><div class="mobile-list-value">${money(Number(x.displayAmount??x.amount??0))}</div></div>`).join('')||'<div class="mobile-empty">Истории пока нет.</div>'}</div></section>
  </div>`;
- el.querySelectorAll('[data-mobile-go]').forEach(b=>b.onclick=()=>mobileNavigate(b.dataset.mobileGo));
+ el.querySelectorAll('[data-mobile-go]').forEach(b=>b.onclick=()=>mobileNavigate(b.dataset.mobileGo));bindMobilePeriodButtons(el);
  requestAnimationFrame(renderMobileCapitalChart);
 }
 function renderMobileCapitalChart(){
  const canvas=q('mobileHomeCapitalChart');if(!canvas||!mobilePhoneMode)return;
- const cutoff=localISODate(new Date(Date.now()-365*86400000));let dates=allDates().filter(d=>d>=cutoff);if(dates.length<2)dates=allDates().slice(-24);
+ const bounds=dashboardBounds();let dates=allDates().filter(d=>(!bounds.from||d>=bounds.from)&&d<=bounds.to);if(dates.length<2)dates=allDates().slice(-24);
  const points=dates.map(d=>({t:new Date(d+'T12:00:00').getTime(),v:totalAtDate(d)}));
  drawSeries(canvas,[{name:'Общий капитал',points,ci:1,color:'#d4aa5a'}],{xMode:'date',sharedTooltip:true,lineWidth:3.2,pointMarkers:false});
 }
@@ -5266,6 +5886,22 @@ function renderMobileAnalytics(){
  requestAnimationFrame(()=>entities.forEach((entity,idx)=>{const canvas=el.querySelector(`[data-mobile-analytics-canvas="${idx}"]`);if(!canvas)return;const all=analyticsEntityRows(entity);if(!all.length)return drawSeries(canvas,[],{xMode:'date'});const lastDate=all.at(-1).date,start=analyticsRangeStart(range,lastDate),visible=start?all.filter(x=>x.date>=start):all,stats=analyticsTimeWeightedStats(entity,start,lastDate),rates=analyticsForecastRates(stats),series=[{name:'Факт',points:visible.map(x=>({t:new Date(x.date+'T12:00:00').getTime(),v:Number(x.value)})),ci:0,color:'#d3a342'}];if(rates&&all.at(-1)){const last=all.at(-1),yrs=Math.max(1,Number(state.settings.analyticsForecastYears||5));series.push({name:'Консервативный',points:analyticsForecastPoints(last.value,last.date,rates.conservative,yrs),ci:3,dash:true},{name:'Базовый',points:analyticsForecastPoints(last.value,last.date,rates.base,yrs),ci:1,dash:true},{name:'Оптимистичный',points:analyticsForecastPoints(last.value,last.date,rates.optimistic,yrs),ci:2,dash:true})}drawSeries(canvas,series,{xMode:'date',sharedTooltip:true,lineWidth:3,pointMarkers:false})}));
 }
 
+
+function renderMobilePeriodButtons(kind){const key=periodSettingKeys(kind).range,active=state.settings[key];return`<div class="mobile-period-row">${VM_PERIOD_CODES.map(c=>`<button type="button" data-mobile-period="${c}" data-mobile-period-kind="${kind}" class="${c===active?'active':''}">${VM_PERIOD_LABELS[c]}</button>`).join('')}</div>`}
+function bindMobilePeriodButtons(root){root?.querySelectorAll('[data-mobile-period]').forEach(b=>b.onclick=()=>{const kind=b.dataset.mobilePeriodKind,code=b.dataset.mobilePeriod;if(code==='CUSTOM')return openPeriodModal(kind);state.settings[periodSettingKeys(kind).range]=code;persistState();renderMobileApp();if(!mobilePhoneMode)renderPeriodKind(kind)})}
+function renderMobileNordea(){
+ const el=q('mobile-view-nordea');if(!el)return;const latest=nordeaLatestImport();if(!latest){el.innerHTML=`${mobileViewHeader('Nordea','Импорт и аналитика')}<div class="mobile-stack"><section class="mobile-card mobile-empty">Файл Nordea ещё не загружен. Загрузите Omistukset.xlsx в версии для компьютера или здесь ниже.</section><label class="mobile-primary-btn" style="text-align:center">Импорт Excel<input id="mobileNordeaImport" type="file" accept=".xlsx" style="display:none"></label></div>`;q('mobileNordeaImport')&&(q('mobileNordeaImport').onchange=e=>e.target.files[0]&&handleNordeaFile(e.target.files[0]));return}
+ const selected=(latest.accounts||[]).some(a=>a.key===state.settings.nordeaAccount)?state.settings.nordeaAccount:'ALL';state.settings.nordeaAccount=selected;const acc=selected,bounds=nordeaRangeBounds(),positions=nordeaAggregatePositions(latest,acc),valueStats=nordeaPeriodValueStats(bounds,acc),delta=valueStats.delta,pctv=valueStats.pct,perf=positions.map(p=>({...p,pc:nordeaPeriodChangeForPosition(p,bounds,acc)})).sort((a,b)=>b.pc.pct-a.pc.pct),closed=nordeaClosedPositions(acc),events=nordeaCompositionEvents();const accName=acc==='ALL'?'Все счета':((latest.accounts||[]).find(a=>a.key===acc)?.name||'Счёт'),current=nordeaAccountTotal(latest,acc);const accountButtons=[{key:'ALL',name:'Все счета',total:latest.total},...latest.accounts.map(a=>({key:a.key,name:a.name,total:a.total}))];
+ el.innerHTML=`${mobileViewHeader('Nordea',`Обновлено ${formatDate(latest.date)}`)}<div class="mobile-stack">${renderMobilePeriodButtons('nordea')}<section class="mobile-card mobile-hero"><div class="mobile-kicker">NORDEA · ${esc(accName)}</div><div class="mobile-value">${money(current)}</div><div class="mobile-hero-meta"><span class="mobile-chip ${delta>=0?'mobile-good':'mobile-bad'}">${delta>=0?'+':''}${money(delta)}</span><span class="mobile-chip ${pctv!==null&&pctv<0?'mobile-bad':'mobile-good'}">${pctv===null?'—':fmtReturn(pctv)}</span></div></section><section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">ACCOUNTS</div><h2>Счета</h2></div><span>${latest.accounts.length}</span></div><div class="mobile-nordea-grid">${accountButtons.map(a=>`<button type="button" class="mobile-mini-stat mobile-nordea-account-btn ${a.key===acc?'active':''}" data-mobile-nordea-account="${esc(a.key)}"><span>${esc(a.name)}</span><b>${money(a.total)}</b></button>`).join('')}</div></section><section class="mobile-card mobile-chart-card"><div class="mobile-section-title"><div><div class="mobile-kicker">HISTORY</div><h2>Стоимость</h2></div><span>${VM_PERIOD_LABELS[bounds.code]}</span></div><div class="mobile-chart-wrap"><canvas id="mobileNordeaChart" height="280"></canvas></div></section><section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">MOVERS</div><h2>Лучшие / худшие</h2></div></div><div class="mobile-two"><div>${perf.slice(0,3).map(x=>`<div class="mobile-nordea-position"><div><b>${esc(x.name)}</b><span>${esc(x.currency)}</span></div><strong class="${x.pc.pct>=0?'mobile-good':'mobile-bad'}">${fmtReturn(x.pc.pct)}</strong></div>`).join('')}</div><div>${[...perf].reverse().slice(0,3).map(x=>`<div class="mobile-nordea-position"><div><b>${esc(x.name)}</b><span>${esc(x.currency)}</span></div><strong class="${x.pc.pct>=0?'mobile-good':'mobile-bad'}">${fmtReturn(x.pc.pct)}</strong></div>`).join('')}</div></div></section><section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">HOLDINGS</div><h2>Позиции</h2></div><span>${positions.length}</span></div>${positions.map(p=>`<button type="button" class="mobile-nordea-position" data-mobile-nordea-isin="${esc(p.isin)}" style="width:100%;border-left:0;border-right:0;border-bottom:0;background:transparent;color:inherit;text-align:left"><div><b>${esc(p.name)}</b><span>${p.qty.toLocaleString('ru-RU',{maximumFractionDigits:5})} · ${esc(p.currency)}</span></div><strong>${money(p.value)}<small class="${p.pl>=0?'mobile-good':'mobile-bad'}">${p.pl>=0?'+':''}${money(p.pl)}</small></strong></button>`).join('')}</section>${closed.length?`<section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">CLOSED</div><h2>Закрытые позиции</h2></div><span>${closed.length}</span></div>${closed.map(p=>`<button type="button" class="mobile-nordea-position" data-mobile-nordea-isin="${esc(p.isin)}" style="width:100%;border-left:0;border-right:0;border-bottom:0;background:transparent;color:inherit;text-align:left"><div><b>${esc(p.name)}</b><span>закрыта · ${formatDate(p.lastDate)}</span></div><strong><small class="mobile-muted">последнее ${money(p.value)}</small></strong></button>`).join('')}</section>`:''}<section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">COMPOSITION</div><h2>Изменения состава</h2></div><span>${events.length}</span></div>${events.slice(0,20).map(e=>`<button type="button" class="mobile-nordea-position" ${e.isin?`data-mobile-nordea-isin="${esc(e.isin)}"`:''} style="width:100%;border-left:0;border-right:0;border-bottom:0;background:transparent;color:inherit;text-align:left"><div><b>${esc(e.title)}</b><span>${formatDate(e.date)} · ${esc(e.text)}</span></div></button>`).join('')||'<div class="mobile-empty">Изменений пока нет.</div>'}</section><label class="mobile-secondary-btn" style="text-align:center">Импорт нового Excel<input id="mobileNordeaImport" type="file" accept=".xlsx" style="display:none"></label></div>`;
+ bindMobilePeriodButtons(el);q('mobileNordeaImport')&&(q('mobileNordeaImport').onchange=e=>e.target.files[0]&&handleNordeaFile(e.target.files[0]));el.querySelectorAll('[data-mobile-nordea-isin]').forEach(b=>b.onclick=()=>openNordeaSecurity(b.dataset.mobileNordeaIsin));el.querySelectorAll('[data-mobile-nordea-account]').forEach(b=>b.onclick=()=>{state.settings.nordeaAccount=b.dataset.mobileNordeaAccount;persistState();renderMobileNordea()});requestAnimationFrame(()=>{const points=nordeaValueHistory(acc).filter(x=>(!bounds.from||x.date>=bounds.from)&&x.date<=bounds.to).map(x=>({t:new Date(x.date+'T12:00:00').getTime(),v:x.value}));drawSeries(q('mobileNordeaChart'),[{name:'Nordea',points,ci:0,color:'#d3a342'}],{xMode:'date',sharedTooltip:true,lineWidth:3.2,pointMarkers:true})})
+}
+
+function renderMobileAktia(){
+ const el=q('mobile-view-aktia');if(!el)return;const owner=state.settings.aktiaOwner==='personal'?'personal':'oy',latest=aktiaLatestImport(owner),p=aktiaPortfolioForOwner(owner),bounds=aktiaRangeBounds(owner),perf=aktiaSitePerf(owner,bounds),ref=aktiaReferenceMetric(latest,bounds),stats=aktiaAnalyticsStats(owner,bounds),current=p?latestValue(p.id):0,profit=perf?.sufficient?Number(perf.profit||0):null,pctv=perf?.sufficient?perf.pct:null;
+ el.innerHTML=`${mobileViewHeader('Aktia',latest?`Данные ${formatDate(latest.date)}`:'Импорт PDF / Excel')}<div class="mobile-stack">${renderMobilePeriodButtons('aktia')}<div class="mobile-aktia-owner-row"><button type="button" class="mobile-mini-stat mobile-aktia-owner-btn ${owner==='oy'?'active':''}" data-mobile-aktia-owner="oy"><span>VM Private Capital Oy</span><b>${money(aktiaPortfolioForOwner('oy')?latestValue(aktiaPortfolioForOwner('oy').id):0)}</b></button><button type="button" class="mobile-mini-stat mobile-aktia-owner-btn ${owner==='personal'?'active':''}" data-mobile-aktia-owner="personal"><span>Personal</span><b>${money(aktiaPortfolioForOwner('personal')?latestValue(aktiaPortfolioForOwner('personal').id):0)}</b></button></div><section class="mobile-card mobile-hero"><div class="mobile-kicker">${esc(aktiaOwnerLabel(owner))}</div><div class="mobile-value">${money(current)}</div><div class="mobile-hero-meta"><span class="mobile-chip ${profit===null?'':profit>=0?'mobile-good':'mobile-bad'}">${profit===null?'—':mobileSignedMoney(profit)}</span><span class="mobile-chip ${pctv===null?'':pctv>=0?'mobile-good':'mobile-bad'}">${fmtReturn(pctv)}</span></div></section><section class="mobile-card mobile-chart-card"><div class="mobile-section-title"><div><div class="mobile-kicker">SITE HISTORY</div><h2>Стоимость</h2></div><span>${VM_PERIOD_LABELS[bounds.code]}</span></div><div class="mobile-chart-wrap"><canvas id="mobileAktiaChart" height="270"></canvas></div></section><section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">RETURN CHECK</div><h2>Сайт vs рапорт</h2></div></div><div class="mobile-detail-grid"><div class="mobile-mini-stat"><span>Доходность сайта</span><b class="${pctv===null?'':pctv>=0?'mobile-good':'mobile-bad'}">${fmtReturn(pctv)}</b></div><div class="mobile-mini-stat"><span>Рапорт Aktia</span><b>${ref?fmtReturn(ref.value):'—'}</b></div><div class="mobile-mini-stat"><span>Волатильность сайта</span><b>${stats?.volatility===null||stats?.volatility===undefined?'—':(stats.volatility*100).toFixed(1)+'%'}</b></div><div class="mobile-mini-stat"><span>Рапорт · волатильность</span><b>${latest?.reported&&Number.isFinite(Number(latest.reported.volatility))?Number(latest.reported.volatility).toFixed(1)+'%':'—'}</b></div></div><div class="mobile-callout">Главным считается расчёт Wealth Studio. Показатели банка сохранены только для сравнения.</div></section>${latest?.allocation?.stocks&&Number.isFinite(Number(latest.allocation.stocks.pct))?`<section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">ALLOCATION</div><h2>Структура</h2></div></div><div class="mobile-detail-grid"><div class="mobile-mini-stat"><span>Акции</span><b>${Number(latest.allocation.stocks.pct).toFixed(1)}%</b></div><div class="mobile-mini-stat"><span>Длинные облигации</span><b>${Number(latest.allocation.longBonds?.pct||0).toFixed(1)}%</b></div></div></section>`:''}<button type="button" class="mobile-secondary-btn" id="mobileAktiaFlow" style="text-align:center">＋ Внесение / вывод</button><label class="mobile-primary-btn" style="text-align:center">Загрузить рапорт Aktia<input id="mobileAktiaImport" type="file" accept=".pdf,.xlsx" style="display:none"></label></div>`;
+ bindMobilePeriodButtons(el);el.querySelectorAll('[data-mobile-aktia-owner]').forEach(b=>b.onclick=()=>{state.settings.aktiaOwner=b.dataset.mobileAktiaOwner;persistState();renderMobileAktia()});q('mobileAktiaFlow')&&(q('mobileAktiaFlow').onclick=()=>{const p=aktiaPortfolioForOwner(state.settings.aktiaOwner||'oy');if(!p)return toast('Сначала импортируйте отчёт Aktia');openFlowModal(null,p.id)});q('mobileAktiaImport')&&(q('mobileAktiaImport').onchange=e=>e.target.files[0]&&handleAktiaFile(e.target.files[0]));requestAnimationFrame(()=>{const rows=p?uniqueSnapshots(p.id).filter(x=>(!bounds.from||bounds.code==='MAX'||x.date>=bounds.from)&&x.date<=bounds.to):[];drawSeries(q('mobileAktiaChart'),[{name:'Aktia',points:rows.map(x=>({t:new Date(x.date+'T12:00:00').getTime(),v:Number(x.value)})),ci:1,color:'#62c79b'}],{xMode:'date',sharedTooltip:true,lineWidth:3.2,pointMarkers:true})})
+}
+
 function renderMobilePortfolio(){
  const el=q('mobile-view-portfolio');if(!el)return;
  const total=totalNow(),rows=sortedPortfolioRows();
@@ -5295,8 +5931,8 @@ function renderMobileInsights(){
 }
 function renderMobileSettings(){
  const el=q('mobile-view-settings');if(!el)return;const t=state.taxSettings;
- el.innerHTML=`${mobileViewHeader('Настройки','Общие и налоговые параметры',true)}<div class="mobile-stack"><section class="mobile-card"><h3 class="mobile-group-title">Основные</h3><div class="mobile-settings-grid"><label>Год рождения<input id="mobileBirthYear" type="number" value="${birthYear()}"></label><label>Начало YTD<input id="mobileFyStart" value="${formatDate(state.settings.fyStart)}"></label><button type="button" class="mobile-primary-btn" id="mobileSaveGeneral">Сохранить основные</button></div></section><section class="mobile-card"><h3 class="mobile-group-title">Налоги VM Private Capital Oy</h3><div class="mobile-settings-grid"><label>Налог Oy, %<input id="mobileCompanyTaxRate" type="number" step="0.1" value="${Number(t.companyTaxRate||20)}"></label><label>Ставки Oy по годам<textarea id="mobileCompanyTaxSchedule" rows="3">${esc(yearScheduleText(t.companyTaxRatesByYear))}</textarea></label><label>Математическая стоимость акций<input id="mobileShareMathValue" type="number" value="${Number(t.shareMathValue||0)}"></label><label>Стоимость акций по годам<textarea id="mobileShareMathValueSchedule" rows="3">${esc(yearScheduleText(t.shareMathValueByYear))}</textarea></label><label>Earned-income tax, % (если известен)<input id="mobileEarnedIncomeTaxRate" inputmode="decimal" value="${t.earnedIncomeTaxRate??''}"></label><label>Перенос убытков, лет<input id="mobileTaxLossCarryYears" type="number" value="${Number(t.taxLossCarryYears||10)}"></label><button type="button" class="mobile-primary-btn" id="mobileSaveTax">Сохранить налоги</button></div></section><section class="mobile-card"><h3 class="mobile-group-title">Данные</h3><div class="mobile-actions"><button type="button" class="mobile-secondary-btn" id="mobileBackup">Резервная копия JSON</button><button type="button" class="mobile-secondary-btn" id="mobileImport">Импорт JSON</button><button type="button" class="mobile-secondary-btn" id="mobileCloud">Облако</button></div></section></div>`;
- q('mobileSaveGeneral').onclick=()=>{q('birthYear').value=q('mobileBirthYear').value;q('fyStartDisplay').value=q('mobileFyStart').value;q('saveSettingsBtn').click();renderMobileSettings()};
+ el.innerHTML=`${mobileViewHeader('Настройки','Общие и налоговые параметры',true)}<div class="mobile-stack"><section class="mobile-card"><h3 class="mobile-group-title">Основные</h3><div class="mobile-settings-grid"><label>Год рождения<input id="mobileBirthYear" type="number" value="${birthYear()}"></label><label>Начало YTD<input id="mobileFyStart" value="${formatDate(state.settings.fyStart)}"></label><label>Цели капитала, €<input id="mobileWealthGoals" value="${esc((state.settings.wealthGoals||[]).join('; '))}"></label><button type="button" class="mobile-primary-btn" id="mobileSaveGeneral">Сохранить основные</button></div></section><section class="mobile-card"><h3 class="mobile-group-title">Налоги VM Private Capital Oy</h3><div class="mobile-settings-grid"><label>Налог Oy, %<input id="mobileCompanyTaxRate" type="number" step="0.1" value="${Number(t.companyTaxRate||20)}"></label><label>Ставки Oy по годам<textarea id="mobileCompanyTaxSchedule" rows="3">${esc(yearScheduleText(t.companyTaxRatesByYear))}</textarea></label><label>Математическая стоимость акций<input id="mobileShareMathValue" type="number" value="${Number(t.shareMathValue||0)}"></label><label>Стоимость акций по годам<textarea id="mobileShareMathValueSchedule" rows="3">${esc(yearScheduleText(t.shareMathValueByYear))}</textarea></label><label>Earned-income tax, % (если известен)<input id="mobileEarnedIncomeTaxRate" inputmode="decimal" value="${t.earnedIncomeTaxRate??''}"></label><label>Перенос убытков, лет<input id="mobileTaxLossCarryYears" type="number" value="${Number(t.taxLossCarryYears||10)}"></label><button type="button" class="mobile-primary-btn" id="mobileSaveTax">Сохранить налоги</button></div></section><section class="mobile-card"><h3 class="mobile-group-title">Данные</h3><div class="mobile-actions"><button type="button" class="mobile-secondary-btn" id="mobileBackup">Резервная копия JSON</button><button type="button" class="mobile-secondary-btn" id="mobileImport">Импорт JSON</button><button type="button" class="mobile-secondary-btn" id="mobileCloud">Облако</button></div></section></div>`;
+ q('mobileSaveGeneral').onclick=()=>{q('birthYear').value=q('mobileBirthYear').value;q('fyStartDisplay').value=q('mobileFyStart').value;if(q('wealthGoalsInput'))q('wealthGoalsInput').value=q('mobileWealthGoals').value;q('saveSettingsBtn').click();renderMobileSettings()};
  q('mobileSaveTax').onclick=()=>{q('companyTaxRate').value=q('mobileCompanyTaxRate').value;q('companyTaxSchedule').value=q('mobileCompanyTaxSchedule').value;q('shareMathValue').value=q('mobileShareMathValue').value;q('shareMathValueSchedule').value=q('mobileShareMathValueSchedule').value;q('earnedIncomeTaxRate').value=q('mobileEarnedIncomeTaxRate').value;q('taxLossCarryYears').value=q('mobileTaxLossCarryYears').value;q('saveTaxSettingsBtn').click();renderMobileSettings()};
  q('mobileBackup').onclick=()=>q('exportBtn').click();q('mobileImport').onclick=()=>q('importFile').click();q('mobileCloud').onclick=()=>q('cloudAccountBtn').click();
 }
@@ -5305,7 +5941,7 @@ function renderMobileRecentActivity(){if(mobilePhoneMode&&mobileCurrentView==='h
 
 
 document.querySelectorAll('.nav-item').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
-function switchView(v){currentView=v;document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.view===v));document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));q('view-'+v).classList.add('active');const t={dashboard:'Планирование капитала',portfolios:'Портфель',history:'Источники и история',forecast:'Сценарии',withdrawals:'План вывода средств',reports:'Аналитика и отчёты',portfolioanalytics:'Портфели: история и прогноз',insights:'Дополнительная информация',settings:'Настройки'};q('viewTitle').textContent=t[v];if(v==='history')renderHistory();if(v==='withdrawals'){renderWithdrawalRules();if(!withdrawalResultsReady)markWithdrawalDirty();else{renderWithdrawalExitChart();const yrs=Math.max(1,Number(q('withdrawYears')?.value||30)),f=state.forecast,out=[['Консервативный',+f.conservative,0],['Базовый',+f.base,1],['Оптимистичный',+f.optimistic,2]].map(([name,r,ci])=>{const m=runWithdrawalModel(r,yrs);return{name,points:m.ptsTotal,ci,color:['#c85a66','#d3a342','#278f66'][ci]}});drawSeries(q('withdrawalChart'),out,{xMode:'year',sharedTooltip:true,lineWidth:3.2,pointMarkers:true})}}if(v==='dashboard')renderCapitalChart();if(v==='forecast'){renderForecastChart();renderForecastOwnerChart()}if(v==='portfolioanalytics')renderPortfolioAnalytics();if(v==='insights')renderInsights()}
+function switchView(v){currentView=v;document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.view===v));document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));q('view-'+v).classList.add('active');const t={dashboard:'Планирование капитала',portfolios:'Портфель',nordea:'Nordea Analytics',aktia:'Aktia Analytics',history:'Источники и история',forecast:'Сценарии',withdrawals:'План вывода средств',reports:'Аналитика и отчёты',portfolioanalytics:'Портфели: история и прогноз',insights:'Дополнительная информация',settings:'Настройки'};q('viewTitle').textContent=t[v];if(v==='history')renderHistory();if(v==='nordea')renderNordea();if(v==='aktia')renderAktia();if(v==='withdrawals'){renderWithdrawalRules();if(!withdrawalResultsReady)markWithdrawalDirty();else{renderWithdrawalExitChart();const yrs=Math.max(1,Number(q('withdrawYears')?.value||30)),f=state.forecast,out=[['Консервативный',+f.conservative,0],['Базовый',+f.base,1],['Оптимистичный',+f.optimistic,2]].map(([name,r,ci])=>{const m=runWithdrawalModel(r,yrs);return{name,points:m.ptsTotal,ci,color:['#c85a66','#d3a342','#278f66'][ci]}});drawSeries(q('withdrawalChart'),out,{xMode:'year',sharedTooltip:true,lineWidth:3.2,pointMarkers:true})}}if(v==='dashboard')renderCapitalChart();if(v==='forecast'){renderForecastChart();renderForecastOwnerChart()}if(v==='portfolioanalytics')renderPortfolioAnalytics();if(v==='insights')renderInsights()}
 q('closeModalBtn').addEventListener('click',closeModal);q('modalBackdrop').addEventListener('click',e=>{if(e.target===q('modalBackdrop'))closeModal()});
 q('quickAddBtn').addEventListener('click',()=>openSnapshotModal());q('addSnapshotBtn').addEventListener('click',()=>openSnapshotModal());q('addFlowBtn').addEventListener('click',()=>openFlowModal());q('addPortfolioBtn').addEventListener('click',()=>openPortfolioModal());q('addPortfolioBtn2').addEventListener('click',()=>openPortfolioModal());q('portfolioOrderBtn').addEventListener('click',openPortfolioOrderModal);q('portfolioOrderBtn2').addEventListener('click',openPortfolioOrderModal);
 
@@ -5386,11 +6022,16 @@ q('saveTaxSettingsBtn').addEventListener('click',()=>{
   state.taxSettings.companyTaxRatesByYear=parseYearNumberSchedule(q('companyTaxSchedule').value,{percent:true});state.taxSettings.shareMathValueByYear=parseYearNumberSchedule(q('shareMathValueSchedule').value);saveState();toast('Налоговые параметры сохранены')
  }catch(e){toast(e.message||'Проверьте налоговые параметры')}
 });
-q('saveSettingsBtn').addEventListener('click',()=>{const iso=parseDate(q('fyStartDisplay').value),by=Math.round(Number(q('birthYear').value));if(!iso)return toast('Дата должна быть ДД.ММ.ГГГГ');if(!Number.isFinite(by)||by<1900||by>new Date().getFullYear())return toast('Проверьте год рождения');state.settings.currency='EUR';state.settings.birthYear=by;state.settings.fyStart=iso;saveState();toast('Настройки сохранены')});
+q('saveSettingsBtn').addEventListener('click',()=>{const iso=parseDate(q('fyStartDisplay').value),by=Math.round(Number(q('birthYear').value));if(!iso)return toast('Дата должна быть ДД.ММ.ГГГГ');if(!Number.isFinite(by)||by<1900||by>new Date().getFullYear())return toast('Проверьте год рождения');state.settings.currency='EUR';state.settings.birthYear=by;state.settings.fyStart=iso;state.settings.wealthGoals=String(q('wealthGoalsInput')?.value||'').split(/[;,\s]+/).map(flexNumber).filter(x=>x>0).sort((a,b)=>a-b);saveState();toast('Настройки сохранены')});
 q('exportBtn').addEventListener('click',exportJSON);q('jsonReportBtn').addEventListener('click',exportJSON);q('excelReportBtn').addEventListener('click',excelReport);q('pdfReportBtn').addEventListener('click',pdfReport);q('reportsQuickBtn').addEventListener('click',()=>switchView('reports'));
+q('nordeaImportFile')?.addEventListener('change',e=>{const f=e.target.files?.[0];if(f)handleNordeaFile(f)});
+q('nordeaImportHistoryBtn')?.addEventListener('click',openNordeaImportHistory);
+q('aktiaImportFile')?.addEventListener('change',e=>{const f=e.target.files?.[0];if(f)handleAktiaFile(f)});
+q('aktiaImportHistoryBtn')?.addEventListener('click',openAktiaImportHistory);
+q('aktiaFlowBtn')?.addEventListener('click',()=>{const p=aktiaPortfolioForOwner(state.settings.aktiaOwner||'oy');if(!p)return toast('Сначала импортируйте отчёт Aktia');openFlowModal(null,p.id)});
 q('importFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const obj=JSON.parse(await f.text()),payload=(obj&&obj.payload&&obj.schemaVersion)?obj.payload:obj;if(obj?.schemaVersion&&Number(obj.schemaVersion)>BACKUP_SCHEMA_VERSION)throw new Error('Резервная копия создана более новой версией программы');if(!confirm('Импорт заменит текущие данные. Продолжить?'))return;state=normalizeState(payload);persistState();renderAll();withdrawalResultsReady=false;toast('Данные импортированы')}catch(err){toast('Не удалось прочитать файл')}e.target.value=''});
 q('resetBtn').addEventListener('click',()=>{if(confirm('Удалить текущие данные? Если вы вошли в облако, пустое состояние также будет синхронизировано. Сначала рекомендуется сделать резервную копию.')){state=normalizeState(defaultState());persistState();renderAll();withdrawalResultsReady=false;toast('Данные удалены')}});
-let resizeTimer=null;function rerenderVisibleCharts(){if(currentView==='dashboard')renderCapitalChart();if(currentView==='forecast'){renderForecastChart();renderForecastOwnerChart()}if(currentView==='withdrawals'&&withdrawalResultsReady){renderWithdrawalExitChart();const yrs=Math.max(1,Number(q('withdrawYears')?.value||30)),f=state.forecast,out=[['Консервативный',+f.conservative,0],['Базовый',+f.base,1],['Оптимистичный',+f.optimistic,2]].map(([name,r,ci])=>{const m=runWithdrawalModel(r,yrs);return{name,points:m.ptsTotal,ci,color:['#c85a66','#d3a342','#278f66'][ci]}});drawSeries(q('withdrawalChart'),out,{xMode:'year',sharedTooltip:true,lineWidth:3.2,pointMarkers:true})}if(currentView==='portfolioanalytics')renderPortfolioAnalytics();if(currentView==='insights')renderInsights()}
+let resizeTimer=null;function rerenderVisibleCharts(){if(currentView==='dashboard')renderCapitalChart();if(currentView==='forecast'){renderForecastChart();renderForecastOwnerChart()}if(currentView==='withdrawals'&&withdrawalResultsReady){renderWithdrawalExitChart();const yrs=Math.max(1,Number(q('withdrawYears')?.value||30)),f=state.forecast,out=[['Консервативный',+f.conservative,0],['Базовый',+f.base,1],['Оптимистичный',+f.optimistic,2]].map(([name,r,ci])=>{const m=runWithdrawalModel(r,yrs);return{name,points:m.ptsTotal,ci,color:['#c85a66','#d3a342','#278f66'][ci]}});drawSeries(q('withdrawalChart'),out,{xMode:'year',sharedTooltip:true,lineWidth:3.2,pointMarkers:true})}if(currentView==='portfolioanalytics')renderPortfolioAnalytics();if(currentView==='insights')renderInsights();if(currentView==='nordea')renderNordea();if(currentView==='aktia')renderAktia()}
 function applyResponsiveCanvasHeights(){
  const c=q('capitalChart');
  if(c)c.setAttribute('height',window.innerWidth<=1120?'205':'155');
@@ -5407,7 +6048,7 @@ renderAll();
 bindMobileShellEvents();
 applyDeviceMode();
 window.addEventListener('focus',()=>pullCloudIfNewer());
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pullCloudIfNewer()});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){pullCloudIfNewer();pullBankAutoImports({showToast:false});scheduleBtcWalletSync();pullBtcDailyCache()}});
 initCloud();
 window.addEventListener('online',()=>{if(cloudUser&&localStorage.getItem(CLOUD_DIRTY_KEY)==='1')saveCloudState(false)});
 setInterval(()=>{if(cloudUser&&localStorage.getItem(CLOUD_DIRTY_KEY)==='1'&&!cloudBusy)saveCloudState(false)},30000);
