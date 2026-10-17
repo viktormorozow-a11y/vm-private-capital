@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v8.5.0</title>
+<title>VM Private Capital — Wealth Studio v8.6.0</title>
 <style>
 
 :root{
@@ -1317,7 +1317,7 @@ body.auth-locked{overflow:hidden}
   .ownership-strip,.metric-grid{grid-template-columns:1fr!important}
 }
 
-/* v8.5.0 — compact Insights, fixed suite footer and light/dark themes */
+/* v8.6.0 — compact Insights, fixed suite footer and light/dark themes */
 .sidebar-bottom{display:grid;gap:8px;flex:0 0 auto;min-width:0}
 .sidebar-bottom .sidebar-card,.sidebar-bottom .suite-switch-card{margin-top:0}
 #view-insights .insight-grid.two-col > .chart-panel{align-self:start;min-height:0}
@@ -1415,7 +1415,7 @@ html[data-theme="light"] #chartHoverTooltip .cht-row span{color:#8b601e}
 html[data-theme="light"] #chartHoverTooltip .cht-row b{color:#2b2c27}
 
 
-/* v8.5.0 — executive-grade light theme polish */
+/* v8.6.0 — executive-grade light theme polish */
 html[data-theme="light"]{
   --bg:#f2efe8;
   --bg2:#e9e4da;
@@ -1589,7 +1589,7 @@ html[data-theme="light"] .history-empty b{color:#2b302d!important}
 html[data-theme="light"] .tax-preview b{color:#303632!important}
 
 
-/* v8.5.0 — professional scenario chart layout and comparison graphs */
+/* v8.6.0 — professional scenario chart layout and comparison graphs */
 #view-forecast .forecast-chart-grid{
   display:grid;
   grid-template-columns:minmax(0,1.45fr) minmax(390px,.75fr);
@@ -1635,6 +1635,26 @@ html[data-theme="light"] .tax-preview b{color:#303632!important}
 }
 html[data-theme="light"] #view-forecast .forecast-main-chart,
 html[data-theme="light"] #view-withdrawals .withdrawal-main-chart{box-shadow:0 18px 42px rgba(83,65,36,.09)}
+
+/* v8.6.0 BTC hub, role switches and explanatory controls */
+.vm-info-btn{border:1px solid rgba(194,145,66,.45);border-radius:50%;width:20px;height:20px;display:inline-grid;place-items:center;vertical-align:middle;line-height:1;font-size:12px;color:var(--accent);background:rgba(185,131,44,.06);cursor:pointer;margin-left:5px;font-weight:700;padding:0;flex-shrink:0}
+.vm-info-btn:hover,.vm-info-btn:focus-visible{background:rgba(185,131,44,.17);outline:2px solid transparent;border-color:var(--accent)}
+.vm-info-popover{position:fixed;z-index:160;width:min(380px,calc(100vw - 20px));padding:16px 17px;border:1px solid var(--line2);border-radius:14px;box-shadow:0 22px 62px rgba(0,0,0,.37);background:#18232e;color:#eef3f6;line-height:1.5;font-size:12px;display:none}
+.vm-info-popover.active{display:block}.vm-info-popover strong{display:block;color:#e9c888;font-size:14px;margin-bottom:7px}.vm-info-popover p{margin:0 0 8px}.vm-info-popover p:last-child{margin-bottom:0}
+.vm-kpi-title{display:inline-flex!important;align-items:center;gap:3px;flex-wrap:wrap}
+.crypto-hub-hero{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(120deg,rgba(37,33,24,.9),rgba(11,20,30,.96));border-color:rgba(201,156,72,.2)}.crypto-hub-hero h2{font-size:27px;margin:5px 0}.crypto-hub-hero p{max-width:670px;line-height:1.5}
+.crypto-hub-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin:14px 0}
+.crypto-hub-kpi,.crypto-hub-wallet{border:1px solid var(--line);background:var(--panel);border-radius:15px;padding:17px;min-width:0}
+.crypto-hub-kpi span,.crypto-hub-field span{display:block;color:var(--muted);font-size:11px}.crypto-hub-kpi b{font-size:23px;display:block;margin-top:9px;letter-spacing:-.02em}.crypto-hub-kpi small{display:block;font-size:10px;color:var(--muted);margin-top:6px}
+.crypto-hub-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:13px}.crypto-hub-wallet h3{font-size:18px;margin:3px 0 13px}.crypto-hub-wallet header{display:flex;align-items:start;justify-content:space-between;gap:14px}.crypto-hub-wallet .crypto-owner-label{letter-spacing:.1em;font-size:10px;color:var(--accent);font-weight:700}.crypto-hub-value{font-size:27px;letter-spacing:-.03em;font-weight:750}
+.crypto-hub-data{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}.crypto-hub-field{border:1px solid var(--line);background:rgba(255,255,255,.018);border-radius:10px;padding:10px;min-width:0}.crypto-hub-field b{display:block;margin-top:4px;font-size:13px;overflow-wrap:anywhere}
+.crypto-hub-wallet code{font-size:10px;display:block;overflow-wrap:anywhere;margin:7px 0 8px;opacity:.7}
+.crypto-hub-wallet .port-actions{margin-top:13px}.crypto-role-inline,.crypto-hub-toggle{display:flex;align-items:center;gap:8px;font-size:11px;line-height:1.45;cursor:pointer;margin-top:12px;color:var(--text)}
+.crypto-hub-toggle{padding:12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.018)}.crypto-hub-toggle input,.crypto-role-inline input{width:17px;height:17px;accent-color:#b98b3e;flex-shrink:0}
+.crypto-hub-chart{margin-top:12px}.crypto-hub-chart canvas{height:270px!important}.crypto-hub-empty{font-size:12px;color:var(--muted);padding:12px}
+html[data-theme="light"] .crypto-hub-hero{background:linear-gradient(125deg,#f8f5ef,#fdfcf9)}html[data-theme="light"] .vm-info-popover{background:#fffdf8;color:#262b31;border-color:rgba(79,65,43,.2);box-shadow:0 22px 55px rgba(66,53,35,.19)}html[data-theme="light"] .vm-info-popover strong{color:#875e24}
+@media(max-width:1100px){.crypto-hub-kpis{grid-template-columns:repeat(2,1fr)}}@media(max-width:750px){.crypto-hub-grid{grid-template-columns:1fr}.crypto-hub-hero{flex-direction:column;align-items:flex-start}.crypto-hub-hero .row{width:100%}.crypto-hub-kpi b{font-size:19px}}
+@media(max-width:450px){.crypto-hub-kpis,.crypto-hub-data{grid-template-columns:1fr}.crypto-hub-wallet{padding:13px}}
 </style>
 <style id="calcTooltipStyles">
 .calc-tooltip-target{cursor:help!important}
@@ -1690,7 +1710,7 @@ body.phone-mode .modal-backdrop{z-index:120;padding:0;place-items:stretch}body.p
 </style>
 <style id="v810Styles">
 /* =========================================================
-   v8.5.0 — Nordea Analytics + unified period controls
+   v8.6.0 — Nordea Analytics + unified period controls
    ========================================================= */
 .period-selector{display:flex;gap:5px;flex-wrap:wrap;align-items:center;padding:5px;border:1px solid var(--line);background:rgba(255,255,255,.025);border-radius:12px}
 .period-selector button{border:0;background:transparent;color:var(--muted);padding:7px 9px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
@@ -1728,7 +1748,7 @@ html[data-theme="light"] .nordea-hero{background:linear-gradient(135deg,#f9f6ef,
 
 
 /* =========================================================
-   v8.5.0 — Aktia Oy + Personal imports and return verification
+   v8.6.0 — Aktia Oy + Personal imports and return verification
    ========================================================= */
 .aktia-hero{display:flex;justify-content:space-between;gap:20px;align-items:center;background:linear-gradient(135deg,rgba(42,64,46,.94),rgba(8,18,20,.97));border-color:rgba(98,199,155,.22)}
 .aktia-hero h2{font-size:27px;margin:5px 0 6px}.aktia-hero-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.aktia-import-label{cursor:pointer}.aktia-import-label input{display:none}.aktia-import-status{font-size:10px;color:var(--muted);margin-top:5px}
@@ -1785,6 +1805,7 @@ html[data-theme="light"] .aktia-kpi,html[data-theme="light"] .aktia-owner-switch
     <section class="mobile-view" data-mobile-view="analytics" id="mobile-view-analytics"></section>
     <section class="mobile-view" data-mobile-view="nordea" id="mobile-view-nordea"></section>
     <section class="mobile-view" data-mobile-view="aktia" id="mobile-view-aktia"></section>
+    <section class="mobile-view" data-mobile-view="crypto" id="mobile-view-crypto"></section>
     <section class="mobile-view" data-mobile-view="scenarios" id="mobile-view-scenarios"></section>
     <section class="mobile-view" data-mobile-view="history" id="mobile-view-history"></section>
     <section class="mobile-view" data-mobile-view="portfolioanalytics" id="mobile-view-portfolioanalytics"></section>
@@ -1805,6 +1826,7 @@ html[data-theme="light"] .aktia-kpi,html[data-theme="light"] .aktia-owner-switch
     <div class="mobile-more-grid">
       <button type="button" class="mobile-more-item" data-mobile-dest="nordea"><span class="mi">N</span><span><b>Nordea</b><small>Счета, позиции и история</small></span><span class="arrow">›</span></button>
       <button type="button" class="mobile-more-item" data-mobile-dest="aktia"><span class="mi">A</span><span><b>Aktia</b><small>Oy, Personal и сравнение доходности</small></span><span class="arrow">›</span></button>
+      <button type="button" class="mobile-more-item" data-mobile-dest="crypto"><span class="mi">₿</span><span><b>BTC / Crypto</b><small>Кошельки, история и расчёты</small></span><span class="arrow">›</span></button>
       <button type="button" class="mobile-more-item" data-mobile-dest="scenarios"><span class="mi">↗</span><span><b>Сценарии</b><small>Три траектории капитала</small></span><span class="arrow">›</span></button>
       <button type="button" class="mobile-more-item" data-mobile-dest="history"><span class="mi">▤</span><span><b>Источники</b><small>История и денежные события</small></span><span class="arrow">›</span></button>
       <button type="button" class="mobile-more-item" data-mobile-dest="portfolioanalytics"><span class="mi">⌗</span><span><b>Портфели: прогноз</b><small>История и прогноз портфелей</small></span><span class="arrow">›</span></button>
@@ -1813,7 +1835,7 @@ html[data-theme="light"] .aktia-kpi,html[data-theme="light"] .aktia-owner-switch
       <a class="mobile-more-item" href="./hrt/"><span class="mi">♥</span><span><b>HRT Health Studio</b><small>Private Suite</small></span><span class="arrow">›</span></a>
       <a class="mobile-more-item" href="./fitness/"><span class="mi">↗</span><span><b>Fitness Studio</b><small>Private Suite</small></span><span class="arrow">›</span></a>
     </div>
-    <div class="mobile-card-sub" style="text-align:center;margin:14px 0 0">VM Wealth Studio <span id="mobileVersionLabel">v8.5.0</span></div>
+    <div class="mobile-card-sub" style="text-align:center;margin:14px 0 0">VM Wealth Studio <span id="mobileVersionLabel">v8.6.0</span></div>
   </aside>
   <div id="mobileChartTooltip" class="mobile-chart-tooltip" role="tooltip"></div>
 </div>
@@ -1843,6 +1865,7 @@ html[data-theme="light"] .aktia-kpi,html[data-theme="light"] .aktia-owner-switch
       <button class="nav-item" data-view="portfolios"><span>◇</span> Портфель</button>
       <button class="nav-item" data-view="nordea"><span>N</span> Nordea</button>
       <button class="nav-item" data-view="aktia"><span>A</span> Aktia</button>
+      <button class="nav-item" data-view="crypto"><span>₿</span> BTC / Crypto</button>
       <button class="nav-item" data-view="history"><span>▤</span> Источники</button>
       <button class="nav-item" data-view="forecast"><span>↗</span> Сценарии</button>
       <button class="nav-item" data-view="withdrawals"><span>⇢</span> План вывода</button>
@@ -1856,7 +1879,7 @@ html[data-theme="light"] .aktia-kpi,html[data-theme="light"] .aktia-owner-switch
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v8.5.0</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v8.6.0</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -1880,7 +1903,7 @@ html[data-theme="light"] .aktia-kpi,html[data-theme="light"] .aktia-owner-switch
   <main class="main">
     <header class="topbar">
       <div>
-        <div class="eyebrow">PERSONAL CAPITAL CONTROL <span class="app-version-badge">v8.5.0</span></div>
+        <div class="eyebrow">PERSONAL CAPITAL CONTROL <span class="app-version-badge">v8.6.0</span></div>
         <h1 id="viewTitle">Обзор капитала</h1>
         <div id="todayText" class="muted"></div><div class="topbar-subtitle">Планируйте капитал, сравнивайте сценарии и контролируйте будущие выплаты.</div>
       </div>
@@ -2243,7 +2266,7 @@ html[data-theme="light"] .aktia-kpi,html[data-theme="light"] .aktia-owner-switch
       <div class="nordea-hero panel">
         <div>
           <div class="eyebrow">NORDEA PORTFOLIO ANALYTICS</div>
-          <h2>Nordea</h2>
+          <h2>Nordea <button type="button" class="vm-info-btn" data-vm-info="nordea_overview" aria-label="Пояснение">?</button></h2>
           <div class="muted">Счета, акции и фонды с историей по каждому импорту из банка.</div>
           <div id="nordeaImportStatus" class="nordea-import-status">Файл Nordea ещё не загружен.</div>
         </div>
@@ -2287,12 +2310,12 @@ html[data-theme="light"] .aktia-kpi,html[data-theme="light"] .aktia-owner-switch
       </div>
 
       <div class="panel" id="nordeaClosedPanel" style="display:none">
-        <div class="panel-head"><div><div class="eyebrow">CLOSED POSITIONS</div><h2>Закрытые позиции</h2><div class="muted small">Проданные бумаги не удаляются. Здесь показан их последний сохранённый снимок.</div></div></div>
+        <div class="panel-head"><div><div class="eyebrow">CLOSED POSITIONS</div><h2>Закрытые позиции <button type="button" class="vm-info-btn" data-vm-info="nordea_closed" aria-label="Пояснение">?</button></h2><div class="muted small">Проданные бумаги не удаляются. Здесь показан их последний сохранённый снимок.</div></div></div>
         <div class="table-wrap"><table><thead><tr><th>Инструмент</th><th>Последняя дата</th><th>Количество</th><th>Последняя стоимость €</th><th>Статус</th></tr></thead><tbody id="nordeaClosedBody"></tbody></table></div>
       </div>
 
       <div class="panel">
-        <div class="panel-head"><div><div class="eyebrow">COMPOSITION HISTORY</div><h2>Что менялось в портфеле</h2><div class="muted small">Новые, увеличенные, уменьшенные и закрытые позиции сохраняются в истории.</div></div></div>
+        <div class="panel-head"><div><div class="eyebrow">COMPOSITION HISTORY</div><h2>Что менялось в портфеле <button type="button" class="vm-info-btn" data-vm-info="nordea_changes" aria-label="Пояснение">?</button></h2><div class="muted small">Новые, увеличенные, уменьшенные и закрытые позиции сохраняются в истории.</div></div></div>
         <div id="nordeaChangeLog" class="nordea-change-log"></div>
       </div>
     </section>
@@ -2301,7 +2324,7 @@ html[data-theme="light"] .aktia-kpi,html[data-theme="light"] .aktia-owner-switch
       <div class="aktia-hero panel">
         <div>
           <div class="eyebrow">AKTIA · VERIFIED IMPORTS</div>
-          <h2>Aktia</h2>
+          <h2>Aktia <button type="button" class="vm-info-btn" data-vm-info="aktia_overview" aria-label="Пояснение">?</button></h2>
           <div class="muted small">Oy и Personal хранятся раздельно. Можно загружать Yhteenveto, Salkkuraportti и Tapahtumaraportti. Главная доходность всегда рассчитывается сайтом по оценкам и реальным денежным потокам.</div>
           <div id="aktiaImportStatus" class="aktia-import-status">Отчёты Aktia ещё не загружены.</div>
         </div>
@@ -2312,9 +2335,8 @@ html[data-theme="light"] .aktia-kpi,html[data-theme="light"] .aktia-owner-switch
         </div>
       </div>
       <div class="panel" style="margin-top:12px">
-        <div class="panel-head"><div><div class="eyebrow">AUTO IMPORT · EMAIL</div><h2>Автоматический импорт с почты</h2><div class="muted small">Gmail vm.wealth.reports@gmail.com: проверка писем каждый час через Google Apps Script. Загруженные вложения проверяются штатными парсерами сайта, без смешивания Aktia Personal и Oy. До завершения подключения Gmail автоматический импорт не активен.</div></div><span class="owner-badge oy">ГОТОВО К ПОДКЛЮЧЕНИЮ</span></div>
+        <div class="panel-head"><div><div class="eyebrow">AUTO IMPORT · EMAIL</div><h2>Автоматический импорт с почты <button type="button" class="vm-info-btn" data-vm-info="bank_auto" aria-label="Пояснение">?</button></h2><div class="muted small">Gmail vm.wealth.reports@gmail.com: проверка писем каждый час через Google Apps Script. Загруженные вложения проверяются штатными парсерами сайта, без смешивания Aktia Personal и Oy. До завершения подключения Gmail автоматический импорт не активен.</div></div><span class="owner-badge oy">ГОТОВО К ПОДКЛЮЧЕНИЮ</span></div>
         <div id="bankAutoImportStatus" class="note">Gmail пока не подключён: настройте Google Apps Script. Ручная загрузка банковских отчётов работает независимо.</div>
-        <div id="btcAutoDailyStatus" class="note">BTC: серверное обновление раз в сутки будет активно после установки Google Apps Script.</div>
         <div id="bankAutoImportPending"></div>
       </div>
       <div class="aktia-toolbar">
@@ -2332,17 +2354,17 @@ html[data-theme="light"] .aktia-kpi,html[data-theme="light"] .aktia-owner-switch
             <div class="aktia-chart-wrap"><canvas id="aktiaHistoryChart" height="270"></canvas></div>
           </div>
           <div class="panel">
-            <div class="panel-head"><div><div class="eyebrow">RETURN CHECK</div><h2>Сайт vs рапорт Aktia</h2><div class="muted small">Расчёт сайта является основным. Показатели рапорта сохраняются только для контроля.</div></div></div>
+            <div class="panel-head"><div><div class="eyebrow">RETURN CHECK</div><h2>Сайт vs рапорт Aktia <button type="button" class="vm-info-btn" data-vm-info="aktia_comparison" aria-label="Пояснение">?</button></h2><div class="muted small">Расчёт сайта является основным. Показатели рапорта сохраняются только для контроля.</div></div></div>
             <div id="aktiaComparison" class="aktia-compare"></div>
           </div>
         </div>
         <div>
           <div class="panel">
-            <div class="panel-head"><div><div class="eyebrow">ALLOCATION</div><h2>Структура последнего рапорта</h2></div></div>
+            <div class="panel-head"><div><div class="eyebrow">ALLOCATION</div><h2>Структура последнего рапорта <button type="button" class="vm-info-btn" data-vm-info="aktia_allocation" aria-label="Пояснение">?</button></h2></div></div>
             <div id="aktiaAllocation" class="aktia-allocation"></div>
           </div>
           <div class="panel">
-            <div class="panel-head"><div><div class="eyebrow">BANK REFERENCE</div><h2>Показатели рапорта</h2></div></div>
+            <div class="panel-head"><div><div class="eyebrow">BANK REFERENCE</div><h2>Показатели рапорта <button type="button" class="vm-info-btn" data-vm-info="aktia_report" aria-label="Пояснение">?</button></h2></div></div>
             <div id="aktiaReportMetrics" class="aktia-report-metrics"></div>
             <div class="aktia-warning">Эти значения не используются для расчёта капитала или доходности сайта. Они нужны только для проверки расхождений с банком.</div>
           </div>
@@ -2352,6 +2374,22 @@ html[data-theme="light"] .aktia-kpi,html[data-theme="light"] .aktia-owner-switch
         <div class="panel-head"><div><div class="eyebrow">IMPORT LOG</div><h2>Последние отчёты</h2></div></div>
         <div id="aktiaHistory" class="aktia-history"></div>
       </div>
+    </section>
+
+    <section id="view-crypto" class="view">
+      <div class="panel crypto-hub-hero">
+        <div><div class="eyebrow">BITCOIN · SEPARATE OWNER ACCOUNTING</div><h2>BTC / Crypto <button type="button" class="vm-info-btn" data-vm-info="crypto_overview" aria-label="О разделе BTC">?</button></h2>
+          <p class="muted small">Криптоактивы Personal и VM Private Capital Oy отдельно. Публичные адреса доступны только для чтения, ключи и seed-фразы не нужны.</p></div>
+        <div class="row"><button class="btn secondary compact" id="cryptoPullDailyBtn">Проверить серверные данные</button><button class="btn primary compact" id="cryptoSyncAllBtn">↻ Обновить кошельки</button></div>
+      </div>
+      <div id="btcAutoDailyStatus" class="note">Ежедневный серверный снимок BTC ещё не поступал.</div>
+      <div class="crypto-hub-kpis" id="cryptoHubKpis"></div>
+      <div class="crypto-hub-grid" id="cryptoHubWallets"></div>
+      <div class="panel chart-panel crypto-hub-chart">
+        <div class="panel-head"><div><div class="eyebrow">HISTORY · EUR</div><h2>Стоимость BTC-кошельков <button type="button" class="vm-info-btn" data-vm-info="crypto_history" aria-label="Как строится история BTC">?</button></h2><div class="muted small">Последние ежедневные и исторические оценки каждого портфеля</div></div></div>
+        <div style="min-height:250px"><canvas id="cryptoHubChart" height="270"></canvas></div>
+      </div>
+      <div class="panel"><div class="panel-head"><div><div class="eyebrow">BLOCKCHAIN LEDGER</div><h2>Последние BTC-транзакции <button type="button" class="vm-info-btn" data-vm-info="crypto_transactions" aria-label="О транзакциях">?</button></h2><div class="muted small">Из сохранённого реестра — независимо от банковских переводов.</div></div></div><div class="table-wrap"><table><thead><tr><th>Дата</th><th>Владелец</th><th>Тип</th><th>BTC</th><th>Стоимость, €</th><th>Статус</th></tr></thead><tbody id="cryptoHubTransactions"></tbody></table></div></div>
     </section>
 
     <section id="view-reports" class="view">
@@ -2439,7 +2477,7 @@ html[data-theme="light"] .aktia-kpi,html[data-theme="light"] .aktia-owner-switch
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
 
-const APP_VERSION='v8.5.0';
+const APP_VERSION='v8.6.0';
 const BACKUP_SCHEMA_VERSION=2;
 const SUPABASE_URL='https://hlrvwzqwxqmycuttvzbx.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_RBRKa6zqrw7-CW77RW__QQ_vrqebWCp';
@@ -2630,7 +2668,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v8.5.0';
+ if(s)s.textContent=sub||'VM Wealth Studio v8.6.0';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -3365,7 +3403,7 @@ function portfolioAllTimePerf(pid){
  return portfolioPerf(pid,rows[0].date,rows.at(-1).date);
 }
 
-function totalNow(){return state.portfolios.reduce((s,p)=>s+latestValue(p.id),0)}
+function totalNow(){return state.portfolios.filter(countsInCapital).reduce((s,p)=>s+latestValue(p.id),0)}
 
 function returnEntities({includeNonInvestable=false}={}){
  const nordea=nordeaPortfolio(),cash=nordeaCashPortfolio();
@@ -3382,14 +3420,14 @@ function returnEntities({includeNonInvestable=false}={}){
  });
  return entities;
 }
-function entityPerf(entity,from,to=todayISO()){return entity.kind==='group'?groupPerf(entity.members,from,to):portfolioPerf(entity.p.id,from,to)}
+function entityPerf(entity,from,to=todayISO()){return entity.kind==='group'?groupPerf(entity.members,from,to):entity.p.type==='Крипто'?cryptoPricePerf(entity.p.id,from,to):portfolioPerf(entity.p.id,from,to)}
 function entityAllTimePerf(entity){
  if(entity.kind==='group'){
    const dates=groupSnapshotDates(entity.members);
    if(dates.length<2)return{start:dates.length?groupValueAt(entity.members,dates[0]):0,end:dates.length?groupValueAt(entity.members,dates.at(-1)):0,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:dates[0]||'',endDate:dates.at(-1)||'',withdrawals:0,contributions:0};
    return groupPerf(entity.members,dates[0],dates.at(-1));
  }
- return portfolioAllTimePerf(entity.p.id);
+ return entity.p.type==='Крипто'?cryptoAllTimePerf(entity.p.id):portfolioAllTimePerf(entity.p.id);
 }
 function aggregateEntityReturns(results,totalCount){
  let start=0,end=0,flow=0,profit=0,denominator=0,incomeEvents=0,covered=0;
@@ -3403,7 +3441,7 @@ function allTimePerf(){
  return{...aggregateEntityReturns(results,entities.length),earliest,latest};
 }
 function allDates(){return[...new Set(state.snapshots.map(x=>x.date))].sort()}
-function totalAtDate(date){return state.portfolios.reduce((s,p)=>s+latestValue(p.id,date),0)}
+function totalAtDate(date){return state.portfolios.filter(countsInCapital).reduce((s,p)=>s+latestValue(p.id,date),0)}
 function annualizedFromYtd(){
  const s=new Date(state.settings.fyStart+'T12:00:00'),n=new Date(),days=Math.max(1,(n-s)/86400000),p=totalPerf(state.settings.fyStart).pct;
  if(p===null||!Number.isFinite(p))return 0;
@@ -3423,11 +3461,12 @@ function portfolioName(id){
 }
 
 
-function portfolioRole(p){if((p?.type||'')==='Крипто')return'excluded';return p?.calcRole||'investable'}
+function portfolioRole(p){return p?.calcRole||(p?.type==='Крипто'?'excluded':'investable')}
+function countsInCapital(p){return p?.type!=='Крипто'||portfolioRole(p)==='investable'}
 function isInvestablePortfolio(p){return portfolioRole(p)==='investable'}
 function isExcludedPortfolio(p){return portfolioRole(p)==='excluded'}
 function isExitPortfolio(p){return portfolioRole(p)==='exit'}
-function ownerTotal(owner){return state.portfolios.filter(p=>(p.owner||'personal')===owner).reduce((s,p)=>s+latestValue(p.id),0)}
+function ownerTotal(owner){return state.portfolios.filter(p=>(p.owner||'personal')===owner&&countsInCapital(p)).reduce((s,p)=>s+latestValue(p.id),0)}
 function ownerPlanningTotal(owner){return state.portfolios.filter(p=>(p.owner||'personal')===owner&&isInvestablePortfolio(p)).reduce((s,p)=>s+latestValue(p.id),0)}
 function planningTotal(){return ownerPlanningTotal('personal')+ownerPlanningTotal('oy')}
 function excludedTotal(){return state.portfolios.filter(isExcludedPortfolio).reduce((s,p)=>s+latestValue(p.id),0)}
@@ -3526,7 +3565,7 @@ function exitDiagnostics(years,scenarioAnnual){
  });
 }
 
-function ownerAtDate(owner,date){return state.portfolios.filter(p=>(p.owner||'personal')===owner).reduce((sum,p)=>sum+latestValue(p.id,date),0)}
+function ownerAtDate(owner,date){return state.portfolios.filter(p=>(p.owner||'personal')===owner&&countsInCapital(p)).reduce((sum,p)=>sum+latestValue(p.id,date),0)}
 function parseYearNumberSchedule(v,{percent=false}={}){
  const out={};String(v??'').split(/[;\n]+/).map(x=>x.trim()).filter(Boolean).forEach(part=>{
    const m=part.match(/^(\d{4})\s*[=:]\s*([0-9\s.,]+)$/);if(!m)throw new Error(`Неверный формат: ${part}`);
@@ -3775,7 +3814,7 @@ function sortedPortfolioRows(from=state.settings.fyStart,to=todayISO()){
      : role==='investable'
        ? portfolioPerf(p.id,from||uniqueSnapshots(p.id)[0]?.date||to,to)
        : {start:0,end:latest,flow:0,profit:0,pct:null,denominator:null,sufficient:false,startDate:'',endDate:''};
-   rows.push({p,r,share:now?100*latest/now:0});
+   rows.push({p,r,share:now&&countsInCapital(p)?100*latest/now:0});
  });
 
  if(sort==='manual'){
@@ -3820,7 +3859,7 @@ function allPortfolioFlowSummary(from,to){
  state.flows.filter(f=>(!from||f.date>from)&&f.date<=to).forEach(f=>{const t=flowTypeOf(f),a=Math.abs(Number(f.amount)||0);if(t==='transfer_in'||t==='transfer_out'){const k=f.transferId||'';if(k&&seenTransfers.has(k))return;if(k)seenTransfers.add(k);return}if(t==='contribution')contributions+=a;else if(t==='withdrawal')withdrawals+=a;});
  return{contributions,withdrawals,net:contributions-withdrawals};
 }
-function totalValueAtNearest(date){if(!date)return state.portfolios.reduce((sum,p)=>sum+firstValue(p.id),0);return totalAtDate(date)}
+function totalValueAtNearest(date){if(!date)return state.portfolios.filter(countsInCapital).reduce((sum,p)=>sum+firstValue(p.id),0);return totalAtDate(date)}
 function dashboardCapitalBreakdown(bounds){
  const all=allDates().filter(d=>d<=bounds.to);if(!all.length)return{start:0,end:totalNow(),change:0,netFlow:0,market:0,fromDate:'',toDate:''};
  const startDate=bounds.code==='MAX'?all[0]:(([...all].reverse().find(d=>d<=bounds.from))||all.find(d=>d>=bounds.from)||all[0]);
@@ -3889,7 +3928,7 @@ function nordeaCompositionEvents(){
 function renderNordea(){
  const latest=nordeaLatestImport(),status=q('nordeaImportStatus');renderPeriodSelector(q('nordeaPeriodSelector'),'nordea');if(!latest){if(status)status.textContent='Файл Nordea ещё не загружен.';['nordeaKpis','nordeaAccountList','nordeaMovers','nordeaPositionsBody','nordeaChangeLog'].forEach(id=>{const e=q(id);if(e)e.innerHTML=id==='nordeaPositionsBody'?'':`<div class="nordea-empty">Загрузите Omistukset.xlsx из Nordea.</div>`});drawSeries(q('nordeaHistoryChart'),[],{xMode:'date'});return}
  if(status)status.textContent=`Последний файл: ${formatDate(latest.date)} · ${new Date(latest.importedAt).toLocaleString('ru-RU')} · ${latest.fileName||''}${latest.autoImport?' · автоматически':''}`;const account=q('nordeaAccountFilter');if(account){const selected=(latest.accounts||[]).some(a=>a.key===state.settings.nordeaAccount)?state.settings.nordeaAccount:'ALL';state.settings.nordeaAccount=selected;account.innerHTML=`<option value="ALL">Все счета</option>${latest.accounts.map(a=>`<option value="${esc(a.key)}" ${a.key===selected?'selected':''}>${esc(a.name)}</option>`).join('')}`;account.onchange=()=>{state.settings.nordeaAccount=account.value;persistState();renderNordea()}}
- const acc=state.settings.nordeaAccount||'ALL',bounds=nordeaRangeBounds(),rangeImports=nordeaImportInRange(bounds),valueStats=nordeaPeriodValueStats(bounds,acc),delta=valueStats.delta,pctv=valueStats.pct,positions=nordeaAggregatePositions(latest,acc),pl=positions.reduce((s,x)=>s+x.pl,0),day=positions.reduce((s,x)=>s+x.dayChange,0);const kp=q('nordeaKpis');if(kp)kp.innerHTML=`<div class="nordea-kpi"><span>Сейчас</span><b>${money(nordeaAccountTotal(latest,acc))}</b><small>${acc==='ALL'?'Все счета':esc((latest.accounts||[]).find(a=>a.key===acc)?.name||'')}</small></div><div class="nordea-kpi"><span>Изменение · ${VM_PERIOD_LABELS[bounds.code]}</span><b class="${delta>=0?'good':'bad'}">${delta>=0?'+':''}${money(delta)}</b><small>${pctv===null?'Недостаточно истории':fmtReturn(pctv)}</small></div><div class="nordea-kpi"><span>P/L текущих бумаг</span><b class="${pl>=0?'good':'bad'}">${pl>=0?'+':''}${money(pl)}</b><small>Текущая стоимость − стоимость приобретения</small></div><div class="nordea-kpi"><span>Сегодня</span><b class="${day>=0?'good':'bad'}">${day>=0?'+':''}${money(day)}</b><small>Из последнего файла банка</small></div><div class="nordea-kpi"><span>Активных позиций</span><b>${positions.length}</b><small>${latest.accounts.length} счетов в файле</small></div>`;
+ const acc=state.settings.nordeaAccount||'ALL',bounds=nordeaRangeBounds(),rangeImports=nordeaImportInRange(bounds),valueStats=nordeaPeriodValueStats(bounds,acc),delta=valueStats.delta,pctv=valueStats.pct,positions=nordeaAggregatePositions(latest,acc),pl=positions.reduce((s,x)=>s+x.pl,0),day=positions.reduce((s,x)=>s+x.dayChange,0);const kp=q('nordeaKpis');if(kp)kp.innerHTML=`<div class="nordea-kpi"><span>Сейчас</span><b>${money(nordeaAccountTotal(latest,acc))}</b><small>${acc==='ALL'?'Все счета':esc((latest.accounts||[]).find(a=>a.key===acc)?.name||'')}</small></div><div class="nordea-kpi"><span>Изменение · ${VM_PERIOD_LABELS[bounds.code]}</span><b class="${delta>=0?'good':'bad'}">${delta>=0?'+':''}${money(delta)}</b><small>${pctv===null?'Недостаточно истории':fmtReturn(pctv)}</small></div><div class="nordea-kpi"><span>P/L текущих бумаг</span><b class="${pl>=0?'good':'bad'}">${pl>=0?'+':''}${money(pl)}</b><small>Текущая стоимость − стоимость приобретения</small></div><div class="nordea-kpi"><span>Сегодня</span><b class="${day>=0?'good':'bad'}">${day>=0?'+':''}${money(day)}</b><small>Из последнего файла банка</small></div><div class="nordea-kpi"><span>Активных позиций</span><b>${positions.length}</b><small>${latest.accounts.length} счетов в файле</small></div>`;if(kp)kp.querySelectorAll('.nordea-kpi > span').forEach((sp,i)=>{sp.classList.add('vm-kpi-title');sp.insertAdjacentHTML('beforeend',vmInfoBtn('nordea_'+i));});
  const series=nordeaValueHistory(acc).filter(x=>(!bounds.from||x.date>=bounds.from)&&x.date<=bounds.to).map(x=>({t:new Date(x.date+'T12:00:00').getTime(),v:x.value}));if(q('nordeaChartTitle'))q('nordeaChartTitle').textContent=acc==='ALL'?'Стоимость Nordea':((latest.accounts||[]).find(a=>a.key===acc)?.name||'Счёт');if(q('nordeaChartSub'))q('nordeaChartSub').textContent=periodDisplay(bounds);drawSeries(q('nordeaHistoryChart'),[{name:'Nordea',points:series,ci:0,color:'#d3a342'}],{xMode:'date',sharedTooltip:true,lineWidth:3.2,pointMarkers:true});
  const al=q('nordeaAccountList');if(al)al.innerHTML=`<button class="nordea-account-card ${acc==='ALL'?'active':''}" data-nacc="ALL"><b><span>Все счета</span><strong>${money(latest.total)}</strong></b><span>${latest.accounts.length} счетов</span></button>`+latest.accounts.map(a=>`<button class="nordea-account-card ${acc===a.key?'active':''}" data-nacc="${esc(a.key)}"><b><span>${esc(a.name)}</span><strong>${money(a.total)}</strong></b><span>${a.type==='CashAccount'?'Денежный счёт':'Инвестиционный счёт'}</span></button>`).join('');al?.querySelectorAll('[data-nacc]').forEach(b=>b.onclick=()=>{state.settings.nordeaAccount=b.dataset.nacc;persistState();renderNordea()});
  const perfRows=positions.map(p=>({...p,period:nordeaPeriodChangeForPosition(p,bounds,acc)})).filter(x=>Number.isFinite(x.period.pct));perfRows.sort((a,b)=>b.period.pct-a.period.pct);const movers=q('nordeaMovers'),rankHtml=(rows,title,positive)=>`<div class="nordea-rank-card"><div class="nordea-rank-title">${title}</div>${rows.slice(0,5).map(x=>`<div class="nordea-rank-row"><b title="${esc(x.name)}">${esc(x.name)}</b><span class="${x.period.pct>=0?'good':'bad'}">${fmtReturn(x.period.pct)}</span></div>`).join('')||'<div class="muted small">Недостаточно данных.</div>'}</div>`;if(movers)movers.innerHTML=rankHtml(perfRows,'Лучшие',true)+rankHtml([...perfRows].reverse(),'Худшие',false);
@@ -4009,7 +4048,7 @@ function aktiaReportComparisons(owner,imp){
 function aktiaFlowCount(owner,from='',to=todayISO()){const p=aktiaPortfolioForOwner(owner);if(!p)return 0;return state.flows.filter(f=>f.portfolioId===p.id&&(!from||f.date>from)&&f.date<=to).length}
 function renderAktia(){
  const owner=state.settings.aktiaOwner==='personal'?'personal':'oy',latest=aktiaLatestImport(owner),p=aktiaPortfolioForOwner(owner),bounds=aktiaRangeBounds(owner),perf=aktiaSitePerf(owner,bounds),stats=aktiaAnalyticsStats(owner,bounds);renderPeriodSelector(q('aktiaPeriodSelector'),'aktia');q('aktiaOwnerSwitch')?.querySelectorAll('[data-aktia-owner]').forEach(b=>{b.classList.toggle('active',b.dataset.aktiaOwner===owner);b.onclick=()=>{state.settings.aktiaOwner=b.dataset.aktiaOwner;persistState();renderAktia();if(mobilePhoneMode)renderMobileAktia()}});const status=q('aktiaImportStatus');if(status)status.textContent=latest?`${aktiaOwnerLabel(owner)} · последний рапорт ${formatDate(latest.date)} · ${latest.fileName}${latest.autoImport?' · автоматически':''}`:`${aktiaOwnerLabel(owner)} · рапорт ещё не загружен`;const txStats=aktiaTransactionStats(owner);const autoStatus=q('bankAutoImportStatus');if(autoStatus)autoStatus.textContent=`Автоимпорт: ${nordeaImports().filter(x=>x.autoImport).length+(state.aktia?.imports||[]).filter(x=>x.autoImport).length+(state.aktia?.transactionImports||[]).filter(x=>x.autoImport).length} обработанных отчётов. Проверка почты запускается отдельно Google Apps Script (после настройки). ${aktiaOwnerLabel(owner)}: ${txStats.reports} Tapahtumaraportti, ${txStats.rows} операций.`;
- const current=p?latestValue(p.id):0,ref=aktiaReferenceMetric(latest,bounds),flow=perf?.sufficient?Number(perf.flow||0):0,profit=perf?.sufficient?Number(perf.profit||0):null,pctv=perf?.sufficient?perf.pct:null,k=q('aktiaKpis');if(k)k.innerHTML=`<div class="aktia-kpi"><span>Сейчас</span><b>${money(current)}</b><small>${aktiaOwnerLabel(owner)}</small></div><div class="aktia-kpi"><span>Реальный результат · ${VM_PERIOD_LABELS[bounds.code]}</span><b class="${profit===null?'':profit>=0?'good':'bad'}">${profit===null?'—':`${profit>=0?'+':''}${money(profit)}`}</b><small>Стоимость − старт − чистые внесения + доходные события</small></div><div class="aktia-kpi"><span>Доходность сайта</span><b class="${pctv===null?'':pctv>=0?'good':'bad'}">${fmtReturn(pctv)}</b><small>Modified Dietz · денежные потоки учитываются по датам</small></div><div class="aktia-kpi"><span>Внешние потоки</span><b class="${flow===0?'':flow>0?'good':'bad'}">${flow>=0?'+':''}${money(flow)}</b><small>Только события, сохранённые в Wealth Studio</small></div><div class="aktia-kpi"><span>Рапорт Aktia</span><b>${ref?fmtReturn(ref.value):'—'}</b><small>${ref?`${ref.label} · только контроль`:'Нет показателя для этого периода'}</small></div>`;
+ const current=p?latestValue(p.id):0,ref=aktiaReferenceMetric(latest,bounds),flow=perf?.sufficient?Number(perf.flow||0):0,profit=perf?.sufficient?Number(perf.profit||0):null,pctv=perf?.sufficient?perf.pct:null,k=q('aktiaKpis');if(k)k.innerHTML=`<div class="aktia-kpi"><span>Сейчас</span><b>${money(current)}</b><small>${aktiaOwnerLabel(owner)}</small></div><div class="aktia-kpi"><span>Реальный результат · ${VM_PERIOD_LABELS[bounds.code]}</span><b class="${profit===null?'':profit>=0?'good':'bad'}">${profit===null?'—':`${profit>=0?'+':''}${money(profit)}`}</b><small>Стоимость − старт − чистые внесения + доходные события</small></div><div class="aktia-kpi"><span>Доходность сайта</span><b class="${pctv===null?'':pctv>=0?'good':'bad'}">${fmtReturn(pctv)}</b><small>Modified Dietz · денежные потоки учитываются по датам</small></div><div class="aktia-kpi"><span>Внешние потоки</span><b class="${flow===0?'':flow>0?'good':'bad'}">${flow>=0?'+':''}${money(flow)}</b><small>Только события, сохранённые в Wealth Studio</small></div><div class="aktia-kpi"><span>Рапорт Aktia</span><b>${ref?fmtReturn(ref.value):'—'}</b><small>${ref?`${ref.label} · только контроль`:'Нет показателя для этого периода'}</small></div>`;if(k)k.querySelectorAll('.aktia-kpi > span').forEach((sp,i)=>{sp.classList.add('vm-kpi-title');sp.insertAdjacentHTML('beforeend',vmInfoBtn('aktia_'+i));});
  const rows=p?uniqueSnapshots(p.id).filter(x=>(!bounds.from||bounds.code==='MAX'||x.date>=bounds.from)&&x.date<=bounds.to):[];if(q('aktiaChartTitle'))q('aktiaChartTitle').textContent=aktiaOwnerLabel(owner);if(q('aktiaChartSub'))q('aktiaChartSub').textContent=`${periodDisplay(bounds)} · расчёт сайта`;drawSeries(q('aktiaHistoryChart'),[{name:'Стоимость',points:rows.map(x=>({t:new Date(x.date+'T12:00:00').getTime(),v:Number(x.value)})),ci:1,color:'#62c79b'}],{xMode:'date',sharedTooltip:true,lineWidth:3.2,pointMarkers:true});
  const comp=q('aktiaComparison');if(comp){
   const diff=ref&&ref.comparable&&pctv!==null?pctv-ref.value:null,coverage=perf?.sufficient?`${formatDate(perf.startDate)} → ${formatDate(perf.endDate)}`:'Недостаточно двух оценок',cmpRows=aktiaReportComparisons(owner,latest),flowCount=perf?.sufficient?aktiaFlowCount(owner,perf.startDate,perf.endDate):0;
@@ -4354,6 +4393,54 @@ function openCryptoPriceModal(pid){
   });
 }
 
+function setCryptoCalculationRole(portfolioId,enabled){
+ const p=state.portfolios.find(x=>x.id===portfolioId&&x.type==='Крипто');if(!p)return;
+ const next=enabled?'investable':'excluded';if(portfolioRole(p)===next)return;
+ p.calcRole=next;
+ // State is persisted with the existing cloud revision workflow.
+ saveState();markWithdrawalDirty();
+ if(mobilePhoneMode)renderMobileApp();
+ toast(`${p.owner==='oy'?'VMPC Oy':'Personal'}: BTC ${enabled?'включён в':'исключён из'} расчётов`);
+}
+function btcOwnerText(p){return p.owner==='oy'?'VM Private Capital Oy':'Personal'}
+function btcHubFields(p){
+ const rate=Number(p.btcWalletCurrentRate||0),balance=Number(p.btcWalletBlockchainBalance||0),sync=p.btcWalletLastSync?new Date(p.btcWalletLastSync).toLocaleString('ru-RU'):'Нет данных';
+ const enabled=portfolioRole(p)==='investable',value=latestValue(p.id),n=(state.cryptoTransactions||[]).filter(t=>t.portfolioId===p.id).length;
+ return `<div class="crypto-hub-wallet"><header><div><div class="crypto-owner-label">${p.owner==='oy'?'CORPORATE · OY':'PERSONAL'}</div><h3>BTC — ${esc(btcOwnerText(p))}</h3></div><button class="btn secondary compact" data-crypto-edit="${p.id}">Настройки</button></header>
+ <div class="crypto-hub-value">${money(value)}</div>
+ <div class="crypto-hub-data"><div class="crypto-hub-field"><span>Баланс</span><b>${balance.toFixed(8)} BTC</b></div><div class="crypto-hub-field"><span>Курс BTC/EUR</span><b>${rate>0?money(rate):'—'}</b></div><div class="crypto-hub-field"><span>Последнее обновление</span><b>${esc(sync)}</b></div><div class="crypto-hub-field"><span>Транзакций в реестре</span><b>${n}</b></div></div>
+ ${p.btcWalletAddress?`<code title="${esc(p.btcWalletAddress)}">${esc(p.btcWalletAddress)}</code>`:'<div class="crypto-hub-empty">Публичный Bitcoin-адрес не задан.</div>'}
+ <label class="crypto-hub-toggle"><input type="checkbox" data-crypto-role="${p.id}" ${enabled?'checked':''}><span><b>${enabled?'Включён в расчёты':'Вне расчётов'}</b><br>Учитывать стоимость BTC в общем капитале, доходности и финансовых сценариях</span></label>
+ <div class="port-actions"><button class="btn secondary compact" data-crypto-wallet-sync="${p.id}">↻ Обновить и сверить транзакции</button><button class="btn secondary compact" data-crypto-tx="${p.id}">＋ BTC приход</button></div></div>`
+}
+function renderCryptoHub(){
+ const wallets=state.portfolios.filter(p=>p.type==='Крипто');
+ const active=wallets.filter(p=>portfolioRole(p)==='investable');
+ const totalBtc=wallets.reduce((a,p)=>a+Number(p.btcWalletBlockchainBalance||0),0);
+ const totalEur=wallets.reduce((a,p)=>a+latestValue(p.id),0);
+ const includedEur=active.reduce((a,p)=>a+latestValue(p.id),0);
+ const latest=wallets.map(p=>p.btcWalletLastSync).filter(Boolean).sort().at(-1);
+ const k=q('cryptoHubKpis');if(k)k.innerHTML=`
+ <div class="crypto-hub-kpi"><span>BTC всех кошельков ${vmInfoBtn('crypto_balance')}</span><b>${totalBtc.toFixed(8)} BTC</b><small>Оба владельца · только публичные адреса</small></div>
+ <div class="crypto-hub-kpi"><span>Стоимость всех BTC ${vmInfoBtn('crypto_value')}</span><b>${money(totalEur)}</b><small>Включённые и выключенные</small></div>
+ <div class="crypto-hub-kpi"><span>Учитывается в капитале ${vmInfoBtn('crypto_include')}</span><b>${money(includedEur)}</b><small>${active.length} из ${wallets.length} портфелей</small></div>
+ <div class="crypto-hub-kpi"><span>Последнее обновление ${vmInfoBtn('crypto_daily')}</span><b style="font-size:15px">${latest?new Date(latest).toLocaleString('ru-RU'):'—'}</b><small>Снимок сервера — ежедневно; реестр обновляется отдельно</small></div>`;
+ const box=q('cryptoHubWallets');if(box){box.innerHTML=wallets.length?wallets.map(btcHubFields).join(''):'<div class="crypto-hub-empty">Пока нет криптопортфелей. Создай портфель типа «Крипто».</div>';
+ box.querySelectorAll('[data-crypto-role]').forEach(b=>b.addEventListener('change',()=>setCryptoCalculationRole(b.dataset.cryptoRole,b.checked)));
+ box.querySelectorAll('[data-crypto-edit]').forEach(b=>b.addEventListener('click',()=>openPortfolioModal(b.dataset.cryptoEdit)));
+ box.querySelectorAll('[data-crypto-wallet-sync]').forEach(b=>b.addEventListener('click',()=>syncDirectBtcWallet({portfolioId:b.dataset.cryptoWalletSync})));
+ box.querySelectorAll('[data-crypto-tx]').forEach(b=>b.addEventListener('click',()=>openCryptoTransactionModal(b.dataset.cryptoTx)));
+ }
+ const transactions=q('cryptoHubTransactions');if(transactions){const set=new Set(wallets.map(p=>p.id));const tx=(state.cryptoTransactions||[]).filter(t=>set.has(t.portfolioId)).slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||String(b.updatedAt||'').localeCompare(String(a.updatedAt||''))).slice(0,35);
+ transactions.innerHTML=tx.length?tx.map(t=>{const p=wallets.find(x=>x.id===t.portfolioId),v=Number(t.btc||0);return `<tr><td>${formatDate(t.date)}</td><td>${esc(p?btcOwnerText(p):'—')}</td><td>${esc(cryptoTypeLabel(t.type))}</td><td>${v.toFixed(8)}</td><td>${money(Number(t.eurValue)||0)}</td><td>${t.confirmed===false?'Ожидает подтверждения':Number(t.eurRate||0)>0?'Подтверждена':'Курс не определён'}</td></tr>`}).join(''):'<tr><td colspan="6">Транзакции ещё не загружены. Используй «Обновить и сверить транзакции».</td></tr>';
+ }
+ const chart=q('cryptoHubChart');if(chart&&currentView==='crypto'){
+  const series=wallets.map((p,i)=>({name:btcOwnerText(p),points:uniqueSnapshots(p.id).map(x=>({t:new Date(x.date+'T12:00:00').getTime(),v:Number(x.value)})),ci:i,color:i===0?'#d3a342':'#62c79b'}));
+  drawSeries(chart,series,{xMode:'date',sharedTooltip:true,lineWidth:3,pointMarkers:true});
+ }
+}
+function vmInfoBtn(key){return `<button type="button" class="vm-info-btn" data-vm-info="${key}" aria-label="Пояснение к показателю" title="Как рассчитано?">?</button>`}
+
 function renderPortfolios(){
  const box=q('portfolioCards');if(!box)return;
  const nordea=nordeaPortfolio(),cash=nordeaCashPortfolio();
@@ -4440,6 +4527,7 @@ function renderPortfolios(){
      <div class="port-type">${esc(p.type||'Портфель')}</div>
      <div class="port-name">${esc(isNordea?'Nordea':p.name)}</div>
      <div class="muted small" style="margin-top:5px">${ownerLabel} · ${roleLabel}</div>
+     ${isCrypto?`<label class="crypto-role-inline"><input type="checkbox" data-crypto-role="${p.id}" ${role==='investable'?'checked':''}> Учитывать в общем капитале и прогнозах</label>`:''}
      <div class="port-value">${money(value)}</div>
      ${breakdown}
      <div class="${returnClass}" style="margin-top:9px;font-size:12px">${returnText}</div>
@@ -4450,6 +4538,7 @@ function renderPortfolios(){
    </div>`;
  }).join('');
 
+ box.querySelectorAll('[data-crypto-role]').forEach(b=>b.addEventListener('change',()=>setCryptoCalculationRole(b.dataset.cryptoRole,b.checked)));
  box.querySelectorAll('[data-editport-card]').forEach(b=>b.addEventListener('click',()=>openPortfolioModal(b.dataset.editportCard)));
  box.querySelectorAll('[data-crypto-tx]').forEach(b=>b.addEventListener('click',()=>openCryptoTransactionModal(b.dataset.cryptoTx)));
  box.querySelectorAll('[data-crypto-price]').forEach(b=>b.addEventListener('click',()=>openCryptoPriceModal(b.dataset.cryptoPrice)));
@@ -5198,7 +5287,7 @@ function renderAll(){
  if(q('birthYear'))q('birthYear').value=birthYear();if(q('wealthGoalsInput'))q('wealthGoalsInput').value=(state.settings.wealthGoals||[]).join('; ');q('fyStartDisplay').value=formatDate(state.settings.fyStart);const t=state.taxSettings;
  ['companyTaxRate','dividendThreshold','netAssetRate','shareMathValue','dividendTaxableBelow','dividendTaxableAbove','capitalTaxLow','capitalTaxHigh','capitalTaxThreshold','dividendEarnedTaxablePct','taxLossCarryYears'].forEach(id=>{if(q(id))q(id).value=t[id]??''});
  if(q('earnedIncomeTaxRate'))q('earnedIncomeTaxRate').value=t.earnedIncomeTaxRate??'';if(q('companyTaxSchedule'))q('companyTaxSchedule').value=yearScheduleText(t.companyTaxRatesByYear);if(q('shareMathValueSchedule'))q('shareMathValueSchedule').value=yearScheduleText(t.shareMathValueByYear);
- renderTaxPreview();renderDashboard();renderPortfolios();renderHistory();renderForecast();renderWithdrawalRules();renderInsights();renderPortfolioAnalytics();if(currentView==='nordea')renderNordea();if(currentView==='aktia')renderAktia();
+ renderTaxPreview();renderDashboard();renderPortfolios();renderHistory();renderForecast();renderWithdrawalRules();renderInsights();renderPortfolioAnalytics();if(currentView==='nordea')renderNordea();if(currentView==='aktia')renderAktia();if(currentView==='crypto')renderCryptoHub();
  if(typeof mobilePhoneMode!=='undefined'&&mobilePhoneMode&&typeof renderMobileApp==='function')renderMobileApp();
 }
 
@@ -5529,7 +5618,7 @@ function openPortfolioModal(id=null){
     <option value="investable" ${role==='investable'?'selected':''}>Инвестируемый — участвует в доходности и снятиях</option>
     <option value="excluded" ${role==='excluded'?'selected':''}>Отдельный актив — показывать, но не использовать в расчётах</option>
     <option value="exit" ${role==='exit'?'selected':''}>Exit-инвестиция — без доходности до продажи</option>
-  </select><small>Для типа «Крипто» программа всегда использует «Вне расчёта». Exit-активы доступны только для VM Private Capital Oy.</small></label>
+  </select><small>Для Crypto можно выбрать «В расчёте» или «Вне расчёта». Выключенный BTC виден отдельно, но не входит в общий капитал, суммарную доходность и сценарии. Exit-активы доступны только для VM Private Capital Oy.</small></label>
   ${p?'':`<label>Дата первой оценки${dateControl('pDate')}</label><label>Начальная стоимость<input id="pValue" type="number" step="0.01"></label>`}
 
   <div id="cryptoWalletFields" class="crypto-wallet-fields ${p?.type==='Крипто'?'':'hidden'}">
@@ -5569,11 +5658,12 @@ function openPortfolioModal(id=null){
  const roleSel=q('pCalcRole'),ownerSel=q('pOwner'),typeSel=q('pType'),exitFields=q('exitAssetFields'),investFields=q('investableAssetFields'),cryptoWalletFields=q('cryptoWalletFields');
  const updateVisibility=()=>{
    const isCrypto=typeSel.value==='Крипто';
-   if(isCrypto)roleSel.value='excluded';
-   roleSel.disabled=isCrypto;
+   if(isCrypto&&roleSel.value==='exit')roleSel.value='excluded';
+   roleSel.querySelector('option[value="exit"]').disabled=isCrypto;
+   roleSel.disabled=false;
    cryptoWalletFields.classList.toggle('hidden',!isCrypto);
    exitFields.classList.toggle('hidden',isCrypto||roleSel.value!=='exit');
-   investFields.classList.toggle('hidden',isCrypto||roleSel.value!=='investable');
+   investFields.classList.toggle('hidden',roleSel.value!=='investable');
    refreshTargets();
  };
  roleSel.addEventListener('change',updateVisibility);
@@ -5620,7 +5710,7 @@ function openPortfolioModal(id=null){
  q('savePortfolio').addEventListener('click',()=>{
    const name=q('pName').value.trim();if(!name)return toast('Введите название');
    const type=q('pType').value;
-   const role=type==='Крипто'?'excluded':q('pCalcRole').value;
+   const role=q('pCalcRole').value==='exit'&&type==='Крипто'?'excluded':q('pCalcRole').value;
     if(role==='exit')q('pOwner').value='oy';
    const walletAddress=type==='Крипто'?String(q('pBtcWalletAddress')?.value||'').trim():'';
    if(walletAddress&&!validateBtcWalletAddress(walletAddress))return toast('Проверь Bitcoin-адрес');
@@ -5782,12 +5872,12 @@ function applyDeviceMode(){
  if(mobilePhoneMode)renderMobileApp();
  return mobilePhoneMode;
 }
-function mobileTitleFor(view){return({home:'PRIVATE WEALTH',portfolio:'ПОРТФЕЛЬ',withdrawals:'ПЛАН ВЫВОДА',analytics:'АНАЛИТИКА',scenarios:'СЦЕНАРИИ',history:'ИСТОЧНИКИ',portfolioanalytics:'ПОРТФЕЛИ · ПРОГНОЗ',insights:'ДОПОЛНИТЕЛЬНО',nordea:'NORDEA',aktia:'AKTIA',settings:'НАСТРОЙКИ'})[view]||'PRIVATE WEALTH'}
+function mobileTitleFor(view){return({home:'PRIVATE WEALTH',portfolio:'ПОРТФЕЛЬ',withdrawals:'ПЛАН ВЫВОДА',analytics:'АНАЛИТИКА',scenarios:'СЦЕНАРИИ',history:'ИСТОЧНИКИ',portfolioanalytics:'ПОРТФЕЛИ · ПРОГНОЗ',insights:'ДОПОЛНИТЕЛЬНО',nordea:'NORDEA',aktia:'AKTIA',crypto:'BTC / CRYPTO',settings:'НАСТРОЙКИ'})[view]||'PRIVATE WEALTH'}
 function mobileNavigate(view){
  if(!q('mobile-view-'+view))view='home';
  mobileCurrentView=view;
  document.querySelectorAll('#mobileAppShell .mobile-view').forEach(x=>x.classList.toggle('active',x.dataset.mobileView===view));
- const mobileNavTarget=['nordea','aktia','scenarios','history','portfolioanalytics','insights','settings'].includes(view)?'more':view;
+ const mobileNavTarget=['nordea','aktia','crypto','scenarios','history','portfolioanalytics','insights','settings'].includes(view)?'more':view;
  document.querySelectorAll('#mobileAppShell .mobile-nav-item').forEach(x=>x.classList.toggle('active',x.dataset.mobileNav===mobileNavTarget));
  if(q('mobileHeaderTitle'))q('mobileHeaderTitle').textContent=mobileTitleFor(view);
  closeMobileMoreSheet();
@@ -5816,12 +5906,14 @@ function renderMobileApp(view=mobileCurrentView){
  else if(view==='analytics')renderMobileAnalytics();
  else if(view==='nordea')renderMobileNordea();
  else if(view==='aktia')renderMobileAktia();
+ else if(view==='crypto')renderMobileCrypto();
  else if(view==='scenarios')renderMobileScenarios();
  else if(view==='history')renderMobileHistory();
  else if(view==='portfolioanalytics')renderMobilePortfolioForecast();
  else if(view==='insights')renderMobileInsights();
  else if(view==='settings')renderMobileSettings();
  else renderMobileHome();
+ if(view==='nordea'||view==='aktia')enhanceMobileBankHelp(view);
  q('mobileVersionLabel')&&(q('mobileVersionLabel').textContent=APP_VERSION);
  document.querySelectorAll('#mobileAppShell [data-mobile-back]').forEach(b=>b.onclick=()=>mobileNavigate(b.dataset.mobileBack||'home'));
 }
@@ -5892,7 +5984,7 @@ function bindMobilePeriodButtons(root){root?.querySelectorAll('[data-mobile-peri
 function renderMobileNordea(){
  const el=q('mobile-view-nordea');if(!el)return;const latest=nordeaLatestImport();if(!latest){el.innerHTML=`${mobileViewHeader('Nordea','Импорт и аналитика')}<div class="mobile-stack"><section class="mobile-card mobile-empty">Файл Nordea ещё не загружен. Загрузите Omistukset.xlsx в версии для компьютера или здесь ниже.</section><label class="mobile-primary-btn" style="text-align:center">Импорт Excel<input id="mobileNordeaImport" type="file" accept=".xlsx" style="display:none"></label></div>`;q('mobileNordeaImport')&&(q('mobileNordeaImport').onchange=e=>e.target.files[0]&&handleNordeaFile(e.target.files[0]));return}
  const selected=(latest.accounts||[]).some(a=>a.key===state.settings.nordeaAccount)?state.settings.nordeaAccount:'ALL';state.settings.nordeaAccount=selected;const acc=selected,bounds=nordeaRangeBounds(),positions=nordeaAggregatePositions(latest,acc),valueStats=nordeaPeriodValueStats(bounds,acc),delta=valueStats.delta,pctv=valueStats.pct,perf=positions.map(p=>({...p,pc:nordeaPeriodChangeForPosition(p,bounds,acc)})).sort((a,b)=>b.pc.pct-a.pc.pct),closed=nordeaClosedPositions(acc),events=nordeaCompositionEvents();const accName=acc==='ALL'?'Все счета':((latest.accounts||[]).find(a=>a.key===acc)?.name||'Счёт'),current=nordeaAccountTotal(latest,acc);const accountButtons=[{key:'ALL',name:'Все счета',total:latest.total},...latest.accounts.map(a=>({key:a.key,name:a.name,total:a.total}))];
- el.innerHTML=`${mobileViewHeader('Nordea',`Обновлено ${formatDate(latest.date)}`)}<div class="mobile-stack">${renderMobilePeriodButtons('nordea')}<section class="mobile-card mobile-hero"><div class="mobile-kicker">NORDEA · ${esc(accName)}</div><div class="mobile-value">${money(current)}</div><div class="mobile-hero-meta"><span class="mobile-chip ${delta>=0?'mobile-good':'mobile-bad'}">${delta>=0?'+':''}${money(delta)}</span><span class="mobile-chip ${pctv!==null&&pctv<0?'mobile-bad':'mobile-good'}">${pctv===null?'—':fmtReturn(pctv)}</span></div></section><section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">ACCOUNTS</div><h2>Счета</h2></div><span>${latest.accounts.length}</span></div><div class="mobile-nordea-grid">${accountButtons.map(a=>`<button type="button" class="mobile-mini-stat mobile-nordea-account-btn ${a.key===acc?'active':''}" data-mobile-nordea-account="${esc(a.key)}"><span>${esc(a.name)}</span><b>${money(a.total)}</b></button>`).join('')}</div></section><section class="mobile-card mobile-chart-card"><div class="mobile-section-title"><div><div class="mobile-kicker">HISTORY</div><h2>Стоимость</h2></div><span>${VM_PERIOD_LABELS[bounds.code]}</span></div><div class="mobile-chart-wrap"><canvas id="mobileNordeaChart" height="280"></canvas></div></section><section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">MOVERS</div><h2>Лучшие / худшие</h2></div></div><div class="mobile-two"><div>${perf.slice(0,3).map(x=>`<div class="mobile-nordea-position"><div><b>${esc(x.name)}</b><span>${esc(x.currency)}</span></div><strong class="${x.pc.pct>=0?'mobile-good':'mobile-bad'}">${fmtReturn(x.pc.pct)}</strong></div>`).join('')}</div><div>${[...perf].reverse().slice(0,3).map(x=>`<div class="mobile-nordea-position"><div><b>${esc(x.name)}</b><span>${esc(x.currency)}</span></div><strong class="${x.pc.pct>=0?'mobile-good':'mobile-bad'}">${fmtReturn(x.pc.pct)}</strong></div>`).join('')}</div></div></section><section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">HOLDINGS</div><h2>Позиции</h2></div><span>${positions.length}</span></div>${positions.map(p=>`<button type="button" class="mobile-nordea-position" data-mobile-nordea-isin="${esc(p.isin)}" style="width:100%;border-left:0;border-right:0;border-bottom:0;background:transparent;color:inherit;text-align:left"><div><b>${esc(p.name)}</b><span>${p.qty.toLocaleString('ru-RU',{maximumFractionDigits:5})} · ${esc(p.currency)}</span></div><strong>${money(p.value)}<small class="${p.pl>=0?'mobile-good':'mobile-bad'}">${p.pl>=0?'+':''}${money(p.pl)}</small></strong></button>`).join('')}</section>${closed.length?`<section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">CLOSED</div><h2>Закрытые позиции</h2></div><span>${closed.length}</span></div>${closed.map(p=>`<button type="button" class="mobile-nordea-position" data-mobile-nordea-isin="${esc(p.isin)}" style="width:100%;border-left:0;border-right:0;border-bottom:0;background:transparent;color:inherit;text-align:left"><div><b>${esc(p.name)}</b><span>закрыта · ${formatDate(p.lastDate)}</span></div><strong><small class="mobile-muted">последнее ${money(p.value)}</small></strong></button>`).join('')}</section>`:''}<section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">COMPOSITION</div><h2>Изменения состава</h2></div><span>${events.length}</span></div>${events.slice(0,20).map(e=>`<button type="button" class="mobile-nordea-position" ${e.isin?`data-mobile-nordea-isin="${esc(e.isin)}"`:''} style="width:100%;border-left:0;border-right:0;border-bottom:0;background:transparent;color:inherit;text-align:left"><div><b>${esc(e.title)}</b><span>${formatDate(e.date)} · ${esc(e.text)}</span></div></button>`).join('')||'<div class="mobile-empty">Изменений пока нет.</div>'}</section><label class="mobile-secondary-btn" style="text-align:center">Импорт нового Excel<input id="mobileNordeaImport" type="file" accept=".xlsx" style="display:none"></label></div>`;
+ el.innerHTML=`${mobileViewHeader('Nordea',`Обновлено ${formatDate(latest.date)}`)}<div class="mobile-stack">${renderMobilePeriodButtons('nordea')}<section class="mobile-card mobile-hero"><div class="mobile-kicker">NORDEA · ${esc(accName)}</div><div class="mobile-value">${money(current)}</div><div class="mobile-hero-meta"><span class="mobile-chip ${delta>=0?'mobile-good':'mobile-bad'}">${delta>=0?'+':''}${money(delta)}</span><span class="mobile-chip ${pctv!==null&&pctv<0?'mobile-bad':'mobile-good'}">${pctv===null?'—':fmtReturn(pctv)}</span></div></section><section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">ACCOUNTS</div><h2>Счета</h2></div><span>${latest.accounts.length}</span></div><div class="mobile-nordea-grid">${accountButtons.map(a=>`<button type="button" class="mobile-mini-stat mobile-nordea-account-btn ${a.key===acc?'active':''}" data-mobile-nordea-account="${esc(a.key)}"><span>${esc(a.name)}</span><b>${money(a.total)}</b></button>`).join('')}</div></section><section class="mobile-card mobile-chart-card"><div class="mobile-section-title"><div><div class="mobile-kicker">HISTORY</div><h2>Стоимость</h2></div><span>${VM_PERIOD_LABELS[bounds.code]}</span></div><div class="mobile-chart-wrap"><canvas id="mobileNordeaChart" height="280"></canvas></div></section><section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">MOVERS</div><h2>Лучшие / худшие</h2></div></div><div class="mobile-two"><div>${perf.slice(0,3).map(x=>`<div class="mobile-nordea-position"><div><b>${esc(x.name)}</b><span>${esc(x.currency)}</span></div><strong class="${x.pc.pct>=0?'mobile-good':'mobile-bad'}">${fmtReturn(x.pc.pct)}</strong></div>`).join('')}</div><div>${[...perf].reverse().slice(0,3).map(x=>`<div class="mobile-nordea-position"><div><b>${esc(x.name)}</b><span>${esc(x.currency)}</span></div><strong class="${x.pc.pct>=0?'mobile-good':'mobile-bad'}">${fmtReturn(x.pc.pct)}</strong></div>`).join('')}</div></div></section><section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">HOLDINGS</div><h2>Позиции</h2></div><span>${positions.length}</span></div>${positions.map(p=>`<button type="button" class="mobile-nordea-position" data-mobile-nordea-isin="${esc(p.isin)}" style="width:100%;border-left:0;border-right:0;border-bottom:0;background:transparent;color:inherit;text-align:left"><div><b>${esc(p.name)}</b><span>${p.qty.toLocaleString('ru-RU',{maximumFractionDigits:5})} · ${esc(p.currency)}</span></div><strong>${money(p.value)}<small class="${p.pl>=0?'mobile-good':'mobile-bad'}">${p.pl>=0?'+':''}${money(p.pl)}</small></strong></button>`).join('')}</section>${closed.length?`<section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">CLOSED</div><h2>Закрытые позиции <button type="button" class="vm-info-btn" data-vm-info="nordea_closed" aria-label="Пояснение">?</button></h2></div><span>${closed.length}</span></div>${closed.map(p=>`<button type="button" class="mobile-nordea-position" data-mobile-nordea-isin="${esc(p.isin)}" style="width:100%;border-left:0;border-right:0;border-bottom:0;background:transparent;color:inherit;text-align:left"><div><b>${esc(p.name)}</b><span>закрыта · ${formatDate(p.lastDate)}</span></div><strong><small class="mobile-muted">последнее ${money(p.value)}</small></strong></button>`).join('')}</section>`:''}<section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">COMPOSITION</div><h2>Изменения состава</h2></div><span>${events.length}</span></div>${events.slice(0,20).map(e=>`<button type="button" class="mobile-nordea-position" ${e.isin?`data-mobile-nordea-isin="${esc(e.isin)}"`:''} style="width:100%;border-left:0;border-right:0;border-bottom:0;background:transparent;color:inherit;text-align:left"><div><b>${esc(e.title)}</b><span>${formatDate(e.date)} · ${esc(e.text)}</span></div></button>`).join('')||'<div class="mobile-empty">Изменений пока нет.</div>'}</section><label class="mobile-secondary-btn" style="text-align:center">Импорт нового Excel<input id="mobileNordeaImport" type="file" accept=".xlsx" style="display:none"></label></div>`;
  bindMobilePeriodButtons(el);q('mobileNordeaImport')&&(q('mobileNordeaImport').onchange=e=>e.target.files[0]&&handleNordeaFile(e.target.files[0]));el.querySelectorAll('[data-mobile-nordea-isin]').forEach(b=>b.onclick=()=>openNordeaSecurity(b.dataset.mobileNordeaIsin));el.querySelectorAll('[data-mobile-nordea-account]').forEach(b=>b.onclick=()=>{state.settings.nordeaAccount=b.dataset.mobileNordeaAccount;persistState();renderMobileNordea()});requestAnimationFrame(()=>{const points=nordeaValueHistory(acc).filter(x=>(!bounds.from||x.date>=bounds.from)&&x.date<=bounds.to).map(x=>({t:new Date(x.date+'T12:00:00').getTime(),v:x.value}));drawSeries(q('mobileNordeaChart'),[{name:'Nordea',points,ci:0,color:'#d3a342'}],{xMode:'date',sharedTooltip:true,lineWidth:3.2,pointMarkers:true})})
 }
 
@@ -5900,6 +5992,34 @@ function renderMobileAktia(){
  const el=q('mobile-view-aktia');if(!el)return;const owner=state.settings.aktiaOwner==='personal'?'personal':'oy',latest=aktiaLatestImport(owner),p=aktiaPortfolioForOwner(owner),bounds=aktiaRangeBounds(owner),perf=aktiaSitePerf(owner,bounds),ref=aktiaReferenceMetric(latest,bounds),stats=aktiaAnalyticsStats(owner,bounds),current=p?latestValue(p.id):0,profit=perf?.sufficient?Number(perf.profit||0):null,pctv=perf?.sufficient?perf.pct:null;
  el.innerHTML=`${mobileViewHeader('Aktia',latest?`Данные ${formatDate(latest.date)}`:'Импорт PDF / Excel')}<div class="mobile-stack">${renderMobilePeriodButtons('aktia')}<div class="mobile-aktia-owner-row"><button type="button" class="mobile-mini-stat mobile-aktia-owner-btn ${owner==='oy'?'active':''}" data-mobile-aktia-owner="oy"><span>VM Private Capital Oy</span><b>${money(aktiaPortfolioForOwner('oy')?latestValue(aktiaPortfolioForOwner('oy').id):0)}</b></button><button type="button" class="mobile-mini-stat mobile-aktia-owner-btn ${owner==='personal'?'active':''}" data-mobile-aktia-owner="personal"><span>Personal</span><b>${money(aktiaPortfolioForOwner('personal')?latestValue(aktiaPortfolioForOwner('personal').id):0)}</b></button></div><section class="mobile-card mobile-hero"><div class="mobile-kicker">${esc(aktiaOwnerLabel(owner))}</div><div class="mobile-value">${money(current)}</div><div class="mobile-hero-meta"><span class="mobile-chip ${profit===null?'':profit>=0?'mobile-good':'mobile-bad'}">${profit===null?'—':mobileSignedMoney(profit)}</span><span class="mobile-chip ${pctv===null?'':pctv>=0?'mobile-good':'mobile-bad'}">${fmtReturn(pctv)}</span></div></section><section class="mobile-card mobile-chart-card"><div class="mobile-section-title"><div><div class="mobile-kicker">SITE HISTORY</div><h2>Стоимость</h2></div><span>${VM_PERIOD_LABELS[bounds.code]}</span></div><div class="mobile-chart-wrap"><canvas id="mobileAktiaChart" height="270"></canvas></div></section><section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">RETURN CHECK</div><h2>Сайт vs рапорт</h2></div></div><div class="mobile-detail-grid"><div class="mobile-mini-stat"><span>Доходность сайта</span><b class="${pctv===null?'':pctv>=0?'mobile-good':'mobile-bad'}">${fmtReturn(pctv)}</b></div><div class="mobile-mini-stat"><span>Рапорт Aktia</span><b>${ref?fmtReturn(ref.value):'—'}</b></div><div class="mobile-mini-stat"><span>Волатильность сайта</span><b>${stats?.volatility===null||stats?.volatility===undefined?'—':(stats.volatility*100).toFixed(1)+'%'}</b></div><div class="mobile-mini-stat"><span>Рапорт · волатильность</span><b>${latest?.reported&&Number.isFinite(Number(latest.reported.volatility))?Number(latest.reported.volatility).toFixed(1)+'%':'—'}</b></div></div><div class="mobile-callout">Главным считается расчёт Wealth Studio. Показатели банка сохранены только для сравнения.</div></section>${latest?.allocation?.stocks&&Number.isFinite(Number(latest.allocation.stocks.pct))?`<section class="mobile-card"><div class="mobile-section-title"><div><div class="mobile-kicker">ALLOCATION</div><h2>Структура</h2></div></div><div class="mobile-detail-grid"><div class="mobile-mini-stat"><span>Акции</span><b>${Number(latest.allocation.stocks.pct).toFixed(1)}%</b></div><div class="mobile-mini-stat"><span>Длинные облигации</span><b>${Number(latest.allocation.longBonds?.pct||0).toFixed(1)}%</b></div></div></section>`:''}<button type="button" class="mobile-secondary-btn" id="mobileAktiaFlow" style="text-align:center">＋ Внесение / вывод</button><label class="mobile-primary-btn" style="text-align:center">Загрузить рапорт Aktia<input id="mobileAktiaImport" type="file" accept=".pdf,.xlsx" style="display:none"></label></div>`;
  bindMobilePeriodButtons(el);el.querySelectorAll('[data-mobile-aktia-owner]').forEach(b=>b.onclick=()=>{state.settings.aktiaOwner=b.dataset.mobileAktiaOwner;persistState();renderMobileAktia()});q('mobileAktiaFlow')&&(q('mobileAktiaFlow').onclick=()=>{const p=aktiaPortfolioForOwner(state.settings.aktiaOwner||'oy');if(!p)return toast('Сначала импортируйте отчёт Aktia');openFlowModal(null,p.id)});q('mobileAktiaImport')&&(q('mobileAktiaImport').onchange=e=>e.target.files[0]&&handleAktiaFile(e.target.files[0]));requestAnimationFrame(()=>{const rows=p?uniqueSnapshots(p.id).filter(x=>(!bounds.from||bounds.code==='MAX'||x.date>=bounds.from)&&x.date<=bounds.to):[];drawSeries(q('mobileAktiaChart'),[{name:'Aktia',points:rows.map(x=>({t:new Date(x.date+'T12:00:00').getTime(),v:Number(x.value)})),ci:1,color:'#62c79b'}],{xMode:'date',sharedTooltip:true,lineWidth:3.2,pointMarkers:true})})
+}
+
+function renderMobileCrypto(){
+ const el=q('mobile-view-crypto');if(!el)return;
+ const wallets=state.portfolios.filter(p=>p.type==='Крипто');
+ el.innerHTML=`${mobileViewHeader('BTC / Crypto','Personal и VM Private Capital Oy — раздельно')}
+ <div class="mobile-stack">${wallets.map(p=>`<section class="mobile-card"><div class="mobile-kicker">${p.owner==='oy'?'VM PRIVATE CAPITAL OY':'PERSONAL'}</div>
+ <div class="mobile-value">${money(latestValue(p.id))}</div><div class="mobile-detail-grid">
+ <div class="mobile-mini-stat"><span>Баланс</span><b>${Number(p.btcWalletBlockchainBalance||0).toFixed(8)} BTC</b></div><div class="mobile-mini-stat"><span>Курс BTC/EUR</span><b>${money(Number(p.btcWalletCurrentRate||0))}</b></div></div>
+ <p class="mobile-muted" style="font-size:11px">${p.btcWalletLastSync?'Снимок: '+new Date(p.btcWalletLastSync).toLocaleString('ru-RU'):'Ожидается первый снимок'}</p>
+ <label class="crypto-hub-toggle"><input type="checkbox" data-mobile-crypto-role="${p.id}" ${portfolioRole(p)==='investable'?'checked':''}> Включать в общий капитал, доходность и сценарии</label>
+ <button class="mobile-secondary-btn" data-mobile-crypto-sync="${p.id}" type="button">↻ Обновить BTC и транзакции</button></section>`).join('')||'<div class="mobile-empty">Кошельков пока нет.</div>'}
+ <div class="mobile-callout">Вне расчёта — портфель виден здесь, но не влияет на общий капитал и финансовые прогнозы.</div></div>`;
+ el.querySelectorAll('[data-mobile-crypto-role]').forEach(b=>b.onchange=()=>setCryptoCalculationRole(b.dataset.mobileCryptoRole,b.checked));
+ el.querySelectorAll('[data-mobile-crypto-sync]').forEach(b=>b.onclick=()=>syncDirectBtcWallet({portfolioId:b.dataset.mobileCryptoSync}));
+}
+function enhanceMobileBankHelp(view){
+ const container=q('mobile-view-'+view);if(!container)return;
+ const title=container.querySelector('.mobile-view-header h1');
+ if(title&&!title.querySelector('[data-vm-info]'))title.insertAdjacentHTML('beforeend',' '+vmInfoBtn(view+'_overview'));
+ const mapping=view==='aktia'?[
+ [/Доходность сайта/i,'aktia_2'],[/Рапорт Aktia/i,'aktia_4'],[/Внешние потоки/i,'aktia_3'],[/Результат/i,'aktia_1'],[/Сейчас/i,'aktia_0']
+ ]:[[/P\/L/i,'nordea_2'],[/Сегодня/i,'nordea_3'],[/Активн|Позици/i,'nordea_4'],[/Изменение/i,'nordea_1'],[/Сейчас/i,'nordea_0']];
+ container.querySelectorAll('.mobile-mini-stat > span').forEach(el=>{
+  if(el.querySelector('[data-vm-info]'))return;
+  const found=mapping.find(([re])=>re.test(el.textContent||''));
+  if(found)el.insertAdjacentHTML('beforeend',' '+vmInfoBtn(found[1]));
+ });
 }
 
 function renderMobilePortfolio(){
@@ -5941,7 +6061,7 @@ function renderMobileRecentActivity(){if(mobilePhoneMode&&mobileCurrentView==='h
 
 
 document.querySelectorAll('.nav-item').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
-function switchView(v){currentView=v;document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.view===v));document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));q('view-'+v).classList.add('active');const t={dashboard:'Планирование капитала',portfolios:'Портфель',nordea:'Nordea Analytics',aktia:'Aktia Analytics',history:'Источники и история',forecast:'Сценарии',withdrawals:'План вывода средств',reports:'Аналитика и отчёты',portfolioanalytics:'Портфели: история и прогноз',insights:'Дополнительная информация',settings:'Настройки'};q('viewTitle').textContent=t[v];if(v==='history')renderHistory();if(v==='nordea')renderNordea();if(v==='aktia')renderAktia();if(v==='withdrawals'){renderWithdrawalRules();if(!withdrawalResultsReady)markWithdrawalDirty();else{renderWithdrawalExitChart();const yrs=Math.max(1,Number(q('withdrawYears')?.value||30)),f=state.forecast,out=[['Консервативный',+f.conservative,0],['Базовый',+f.base,1],['Оптимистичный',+f.optimistic,2]].map(([name,r,ci])=>{const m=runWithdrawalModel(r,yrs);return{name,points:m.ptsTotal,ci,color:['#c85a66','#d3a342','#278f66'][ci]}});drawSeries(q('withdrawalChart'),out,{xMode:'year',sharedTooltip:true,lineWidth:3.2,pointMarkers:true})}}if(v==='dashboard')renderCapitalChart();if(v==='forecast'){renderForecastChart();renderForecastOwnerChart()}if(v==='portfolioanalytics')renderPortfolioAnalytics();if(v==='insights')renderInsights()}
+function switchView(v){currentView=v;document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.view===v));document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));q('view-'+v).classList.add('active');const t={dashboard:'Планирование капитала',portfolios:'Портфель',nordea:'Nordea Analytics',aktia:'Aktia Analytics',crypto:'BTC / Crypto',history:'Источники и история',forecast:'Сценарии',withdrawals:'План вывода средств',reports:'Аналитика и отчёты',portfolioanalytics:'Портфели: история и прогноз',insights:'Дополнительная информация',settings:'Настройки'};q('viewTitle').textContent=t[v];if(v==='history')renderHistory();if(v==='nordea')renderNordea();if(v==='aktia')renderAktia();if(v==='crypto')renderCryptoHub();if(v==='withdrawals'){renderWithdrawalRules();if(!withdrawalResultsReady)markWithdrawalDirty();else{renderWithdrawalExitChart();const yrs=Math.max(1,Number(q('withdrawYears')?.value||30)),f=state.forecast,out=[['Консервативный',+f.conservative,0],['Базовый',+f.base,1],['Оптимистичный',+f.optimistic,2]].map(([name,r,ci])=>{const m=runWithdrawalModel(r,yrs);return{name,points:m.ptsTotal,ci,color:['#c85a66','#d3a342','#278f66'][ci]}});drawSeries(q('withdrawalChart'),out,{xMode:'year',sharedTooltip:true,lineWidth:3.2,pointMarkers:true})}}if(v==='dashboard')renderCapitalChart();if(v==='forecast'){renderForecastChart();renderForecastOwnerChart()}if(v==='portfolioanalytics')renderPortfolioAnalytics();if(v==='insights')renderInsights()}
 q('closeModalBtn').addEventListener('click',closeModal);q('modalBackdrop').addEventListener('click',e=>{if(e.target===q('modalBackdrop'))closeModal()});
 q('quickAddBtn').addEventListener('click',()=>openSnapshotModal());q('addSnapshotBtn').addEventListener('click',()=>openSnapshotModal());q('addFlowBtn').addEventListener('click',()=>openFlowModal());q('addPortfolioBtn').addEventListener('click',()=>openPortfolioModal());q('addPortfolioBtn2').addEventListener('click',()=>openPortfolioModal());q('portfolioOrderBtn').addEventListener('click',openPortfolioOrderModal);q('portfolioOrderBtn2').addEventListener('click',openPortfolioOrderModal);
 
@@ -6024,6 +6144,8 @@ q('saveTaxSettingsBtn').addEventListener('click',()=>{
 });
 q('saveSettingsBtn').addEventListener('click',()=>{const iso=parseDate(q('fyStartDisplay').value),by=Math.round(Number(q('birthYear').value));if(!iso)return toast('Дата должна быть ДД.ММ.ГГГГ');if(!Number.isFinite(by)||by<1900||by>new Date().getFullYear())return toast('Проверьте год рождения');state.settings.currency='EUR';state.settings.birthYear=by;state.settings.fyStart=iso;state.settings.wealthGoals=String(q('wealthGoalsInput')?.value||'').split(/[;,\s]+/).map(flexNumber).filter(x=>x>0).sort((a,b)=>a-b);saveState();toast('Настройки сохранены')});
 q('exportBtn').addEventListener('click',exportJSON);q('jsonReportBtn').addEventListener('click',exportJSON);q('excelReportBtn').addEventListener('click',excelReport);q('pdfReportBtn').addEventListener('click',pdfReport);q('reportsQuickBtn').addEventListener('click',()=>switchView('reports'));
+q('cryptoPullDailyBtn')?.addEventListener('click',async()=>{await pullBtcDailyCache();renderCryptoHub();toast('Последние серверные данные проверены');});
+q('cryptoSyncAllBtn')?.addEventListener('click',async()=>{await syncConfiguredBtcWallets({silent:false,onlyStale:false});renderCryptoHub();});
 q('nordeaImportFile')?.addEventListener('change',e=>{const f=e.target.files?.[0];if(f)handleNordeaFile(f)});
 q('nordeaImportHistoryBtn')?.addEventListener('click',openNordeaImportHistory);
 q('aktiaImportFile')?.addEventListener('change',e=>{const f=e.target.files?.[0];if(f)handleAktiaFile(f)});
@@ -6076,11 +6198,11 @@ setInterval(()=>{if(cloudUser&&localStorage.getItem(CLOUD_DIRTY_KEY)==='1'&&!clo
   }
   function topMetric(el){
     const id=el.id;
-    if(id==='heroTotal') return box('Общий капитал', [['Сейчас',el.textContent.trim()],['Источник','Последняя оценка каждого портфеля']], 'Общий капитал = сумма последних известных стоимостей всех портфелей.');
-    if(id==='personalCapital') return box('Личный капитал (Personal)', [['Сейчас',el.textContent.trim()],['Владелец','Personal']], 'Сумма последних оценок всех активов с владельцем Personal.');
-    if(id==='companyCapital') return box('Капитал VM Private Capital Oy', [['Сейчас',el.textContent.trim()],['Владелец','VM Private Capital Oy']], 'Сумма последних оценок всех активов, принадлежащих Oy.');
+    if(id==='heroTotal') return box('Общий капитал', [['Сейчас',el.textContent.trim()],['Источник','Последняя оценка каждого портфеля']], 'Общий капитал = сумма последних известных оценок, кроме BTC-кошельков с выключенным участием в расчётах.');
+    if(id==='personalCapital') return box('Личный капитал (Personal)', [['Сейчас',el.textContent.trim()],['Владелец','Personal']], 'Сумма последних оценок активов Personal. Исключённые BTC в общий капитал не входят.');
+    if(id==='companyCapital') return box('Капитал VM Private Capital Oy', [['Сейчас',el.textContent.trim()],['Владелец','VM Private Capital Oy']], 'Сумма последних оценок активов Oy. Исключённые BTC в общий капитал не входят.');
     if(id==='planningCapital') return box('Капитал, участвующий в сценариях', [['Сейчас',el.textContent.trim()]], 'Суммируются только активы с ролью «Инвестируемый». Активы «Вне расчёта» и Exit до даты продажи сюда не входят.');
-    if(id==='excludedCapital') return box('Активы вне расчёта', [['Сейчас',el.textContent.trim()]], 'Сумма активов с ролью «Отдельный актив / вне расчёта». Они показываются в общем капитале, но не растут в сценариях.');
+    if(id==='excludedCapital') return box('Активы вне расчёта', [['Сейчас',el.textContent.trim()]], 'Вне расчёта: портфели показываются отдельно и не участвуют в прогнозах. BTC с выключенным переключателем также исключены из общего капитала.');
     if(id==='exitAssetsCapital') return box('Exit-активы', [['Текущая стоимость',el.textContent.trim()]], 'Сумма текущих оценок активов с ролью Exit. В прогнозный капитал они подключаются только в дату продажи.');
     if(id==='companyTaxLabel') return box('Ставка налога Oy', [['Ставка',el.textContent.trim()]], 'Используется для расчёта налога с положительной налогооблагаемой прибыли VM Private Capital Oy в модели.');
     if(id==='mYtd'){
@@ -6109,7 +6231,7 @@ setInterval(()=>{if(cloudUser&&localStorage.getItem(CLOUD_DIRTY_KEY)==='1'&&!clo
     if(i===3)return box(`${name}: YTD €`,[['Результат',val]], name==='Crypto'?'€-результат цены BTC = конечная стоимость − начальная стоимость − стоимость входящих BTC на даты получения + стоимость исходящих BTC на даты вывода. Майнинг показывается отдельно.':'Результат = конечная оценка − начальная оценка − чистые внешние потоки + доходные события.');
     if(i===4)return box(`${name}: YTD %`,[['Доходность',val]], name==='Crypto'?'Процент цены BTC = (BTC/EUR в конце / BTC/EUR в начале − 1) × 100%. Количество BTC и майнинг на этот процент не влияют. «Кошелёк» показывает простое изменение общей стоимости кошелька.':'Доходность рассчитывается методом Modified Dietz: инвестиционный результат делится на капитал, скорректированный по времени внешних денежных потоков.');
     if(i===5)return box(`${name}: вся история %`,[['Доходность',val]], name==='Crypto'?'Показаны два показателя за всю доступную историю: доходность цены BTC с исключением потоков и простое изменение стоимости всего кошелька.':'Доходность за всю измеримую историю портфеля.');
-    if(i===6)return box(`${name}: доля`,[['Доля',val]],'Доля = текущая стоимость этого портфеля / общий текущий капитал × 100%.');
+    if(i===6)return box(`${name}: доля`,[['Доля',val]],'Доля = стоимость портфеля / текущий капитал × 100%. Выключенный из расчётов BTC показан отдельно, его доля равна 0%.');
     return null;
   }
 
@@ -6222,6 +6344,44 @@ setInterval(()=>{if(cloudUser&&localStorage.getItem(CLOUD_DIRTY_KEY)==='1'&&!clo
   const secure = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
   if(!secure) return;
   window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch(err=>console.warn('PWA service worker registration failed',err));},{once:true});
+})();
+</script>
+<script id="bankCryptoHelpV860">
+(function(){
+const help={
+ nordea_overview:['Nordea: источник данных','Раздел строится по загруженным банковским XLSX. Отчёт банка — исходные данные; собственная доходность Wealth Studio зависит от сохранённых оценок и денежных потоков.','Значения портфеля и денежных средств Nordea объединяются при общей оценке.'],
+ aktia_overview:['Aktia: Oy и Personal','Импорт Yhteenveto, Salkkuraportti и Tapahtumaraportti. Каждый номер договора связывается с владельцем после подтверждения.','Переводы между инвестиционными корзинами одного договора не считаются внешними взносами.'],
+ bank_auto:['Автоматический импорт Gmail','Google Apps Script проверяет почту ежечасно и передаёт PDF/XLSX в Supabase. Сайт разбирает файл тем же алгоритмом, что и ручную загрузку.','Неопределённый владелец Aktia выбирается вручную. Дубли распознаются по отпечатку файла.'],
+ nordea_0:['Текущая стоимость Nordea','Сумма стоимости позиций и денежных средств из выбранных счетов последнего загруженного отчёта.','Выбор «Все счета» включает все счета из этого файла.'],
+ nordea_1:['Изменение стоимости за период','Стоимость Nordea в конце выбранного диапазона минус стоимость на его старте.','Изменение стоимости — не то же самое, что доходность после внесений и снятий.'],
+ nordea_2:['Нереализованный P/L текущих бумаг','Текущая рыночная стоимость оставшихся бумаг минус их указанная в отчёте стоимость приобретения.','Закрытые позиции сюда не входят.'],
+ nordea_3:['Изменение за сегодня','Однодневное изменение, записанное в последнем XLSX Nordea.','Не является самостоятельной оценкой BTC или Aktia.'],
+ nordea_4:['Активные позиции','Количество активных инструментов в выбранных счетах текущего отчёта.','Закрытые позиции показываются отдельно.'],
+ nordea_closed:['Закрытые позиции','Бумаги, которые в текущем отчёте отсутствуют, но присутствовали в предыдущем.','Используются сохранённые последние оценки и даты; не следует считать их активными.'],
+ nordea_changes:['История состава Nordea','По последовательным отчётам отслеживаются добавленные, увеличенные, уменьшенные и исчезнувшие позиции.','Это сравнение состава, не точный журнал брокерских сделок.'],
+ aktia_0:['Текущая стоимость Aktia','Последняя сохранённая рыночная оценка выбранного договора Aktia Personal или Oy.','Дата отчёта может отличаться от сегодняшней.'],
+ aktia_1:['Реальный инвестиционный результат','Результат = стоимость в конце − стоимость в начале − чистый внешний поток + отдельно учитываемые доходные события.','Нужны оценки на границах периода и корректно записанные внесения и выводы.'],
+ aktia_2:['Доходность Wealth Studio','Процент рассчитывается методом Modified Dietz с учётом дат внешних денежных потоков.','Банковский процент используется отдельно только для проверки, если его период сопоставим.'],
+ aktia_3:['Внешние потоки','Пополнения и снятия, сохранённые в Wealth Studio для выбранного владельца и периода.','Внутренний перевод между инвестиционными корзинами Aktia не является внешним потоком.'],
+ aktia_4:['Доходность из рапорта Aktia','Показатель доходности в исходном документе Aktia, если он есть и относится к выбранному периоду.','Показатель служит контролем, а основной расчёт проводится сайтом.'],
+ aktia_allocation:['Структура Aktia','Доли акций, облигаций и других классов активов из последнего рапорта.','Показывает состав в дату рапорта, не является текущей котировкой.'],
+ aktia_comparison:['Сайт и банк: сравнение','Рядом показываются доходность Wealth Studio и показатели отчёта Aktia.','Если периоды не совпадают, разница процентных пунктов не интерпретируется как ошибка.'],
+ aktia_report:['Справочные показатели Aktia','Показатели, прочитанные непосредственно из PDF/XLSX банка.','Не подменяют денежные потоки, капитал и доходность, вычисляемые сайтом.'],
+ crypto_overview:['Отдельный учёт Bitcoin','Personal и VM Private Capital Oy имеют отдельные публичные адреса и сохраняются раздельно.','Ежедневные остатки поступают через Supabase; расширенная синхронизация считывает транзакции.'],
+ crypto_balance:['Баланс в BTC','Сумма последних известных BTC-остатков двух настроенных адресов.','Неизвестные адреса и средства на других площадках автоматически не добавляются.'],
+ crypto_value:['Стоимость в EUR','Последняя оценка каждого криптопортфеля, полученная как BTC × BTC/EUR на дату оценки.','При отсутствии свежих данных оценка может быть устаревшей.'],
+ crypto_include:['Переключатель участия в расчётах','Включён: этот BTC входит в общий капитал, совокупную доходность и финансовые сценарии своего владельца.','Выключен: BTC остаётся видимым в отдельном разделе, обновления и история не удаляются.'],
+ crypto_daily:['Ежедневный серверный снимок','Google Apps Script запускает Edge Function примерно раз в сутки. Функция сохраняет отдельную запись о балансе и курсе.','Кнопка синхронизации кошелька может отдельно загружать транзакции и исторические цены.'],
+ crypto_history:['История стоимости BTC','Каждая точка строится по ранее сохранённой оценке: количество BTC × курс EUR соответствующей даты.','Это стоимость кошелька, не чистая инвестиционная доходность; майнинговые поступления меняют число BTC.'],
+ crypto_transactions:['Сохранённые BTC-транзакции','Входящие и исходящие операции берутся из публичного блокчейна и сохранённого журнала Wealth Studio.','Неподтверждённые транзакции и отсутствующие исторические курсы отмечаются отдельно.']
+};
+let tip=null,anchor=null;
+function ensure(){if(tip)return tip;tip=document.createElement('div');tip.id='vmInfoPopover';tip.className='vm-info-popover';tip.setAttribute('role','dialog');tip.setAttribute('aria-label','Пояснение показателя');document.body.appendChild(tip);return tip}
+function close(){if(tip)tip.classList.remove('active');if(anchor)anchor.setAttribute('aria-expanded','false');anchor=null}
+function open(b){const k=b.getAttribute('data-vm-info'),item=help[k];if(!item)return;const pop=ensure();if(anchor===b&&pop.classList.contains('active')){close();return}close();anchor=b;b.setAttribute('aria-expanded','true');pop.innerHTML=`<strong>${item[0]}</strong><p>${item[1]}</p><p>${item[2]||''}</p>`;pop.classList.add('active');const r=b.getBoundingClientRect(),w=pop.offsetWidth,h=pop.offsetHeight;pop.style.left=Math.max(10,Math.min(window.innerWidth-w-10,r.left))+'px';pop.style.top=(r.bottom+8+h<window.innerHeight?r.bottom+8:Math.max(10,r.top-h-8))+'px'}
+document.addEventListener('click',e=>{const b=e.target.closest?.('[data-vm-info]');if(b){e.preventDefault();e.stopPropagation();open(b)}else if(!e.target.closest?.('#vmInfoPopover'))close()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+document.addEventListener('scroll',()=>close(),{capture:true,passive:true});
 })();
 </script>
 </body>
