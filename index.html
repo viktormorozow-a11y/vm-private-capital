@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VM Private Capital — Wealth Studio v8.6.4</title>
+<title>VM Private Capital — Wealth Studio v8.6.5</title>
 <style>
 
 :root{
@@ -1656,7 +1656,7 @@ html[data-theme="light"] .crypto-hub-hero{background:linear-gradient(125deg,#f8f
 @media(max-width:1100px){.crypto-hub-kpis{grid-template-columns:repeat(2,1fr)}}@media(max-width:750px){.crypto-hub-grid{grid-template-columns:1fr}.crypto-hub-hero{flex-direction:column;align-items:flex-start}.crypto-hub-hero .row{width:100%}.crypto-hub-kpi b{font-size:19px}}
 @media(max-width:450px){.crypto-hub-kpis,.crypto-hub-data{grid-template-columns:1fr}.crypto-hub-wallet{padding:13px}}
 
-/* v8.6.4 — Dedicated source scenario labs and source-quality explanations */
+/* v8.6.5 — Dedicated source scenario labs and source-quality explanations */
 .vm-source-forecast{margin:17px 0 22px;min-width:0}
 .vm-forecast-shell{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:20px;min-width:0}
 .vm-forecast-heading{display:flex;justify-content:space-between;gap:16px;align-items:start;flex-wrap:wrap;margin-bottom:14px}
@@ -1715,7 +1715,7 @@ html[data-theme="light"] #calcTooltip .ct-val{color:#34332e}
 html[data-theme="light"] #calcTooltip .ct-formula{background:rgba(176,128,47,.075);border-color:rgba(176,128,47,.14);color:#6f5225}
 
 
-/* v8.6.4: historical and manual forecasting coexist; modes never overwrite each other */
+/* v8.6.5: historical and manual forecasting coexist; modes never overwrite each other */
 .vm-forecast-mode-tabs{display:flex;gap:7px;padding:5px;margin:0 0 11px;border:1px solid var(--line);border-radius:13px;background:var(--panel);flex-wrap:wrap}
 .vm-forecast-mode-tabs button{flex:1 1 190px;min-height:40px;border:1px solid transparent;border-radius:10px;padding:10px 12px;background:transparent;color:var(--muted);font:inherit;font-size:12px;font-weight:750;cursor:pointer}
 .vm-forecast-mode-tabs button.active{background:rgba(212,170,90,.12);border-color:rgba(212,170,90,.28);color:var(--text)}
@@ -1893,7 +1893,7 @@ html[data-theme="light"] .aktia-kpi,html[data-theme="light"] .aktia-owner-switch
       <a class="mobile-more-item" href="./hrt/"><span class="mi">♥</span><span><b>HRT Health Studio</b><small>Private Suite</small></span><span class="arrow">›</span></a>
       <a class="mobile-more-item" href="./fitness/"><span class="mi">↗</span><span><b>Fitness Studio</b><small>Private Suite</small></span><span class="arrow">›</span></a>
     </div>
-    <div class="mobile-card-sub" style="text-align:center;margin:14px 0 0">VM Wealth Studio <span id="mobileVersionLabel">v8.6.4</span></div>
+    <div class="mobile-card-sub" style="text-align:center;margin:14px 0 0">VM Wealth Studio <span id="mobileVersionLabel">v8.6.5</span></div>
   </aside>
   <div id="mobileChartTooltip" class="mobile-chart-tooltip" role="tooltip"></div>
 </div>
@@ -1937,7 +1937,7 @@ html[data-theme="light"] .aktia-kpi,html[data-theme="light"] .aktia-owner-switch
       <div class="eyebrow">CLOUD SYNC</div>
       <div class="shield-row">
         <div class="shield-icon" id="cloudShieldIcon">○</div>
-        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v8.6.4</div></div>
+        <div class="cloud-card-copy"><b id="cloudSidebarTitle">Проверяю облако…</b><div class="muted small" id="cloudSidebarSub">VM Wealth Studio v8.6.5</div></div>
       </div>
       <button class="btn secondary cloud-account-btn" id="cloudAccountBtn">Вход и синхронизация</button>
     </div>
@@ -1961,7 +1961,7 @@ html[data-theme="light"] .aktia-kpi,html[data-theme="light"] .aktia-owner-switch
   <main class="main">
     <header class="topbar">
       <div>
-        <div class="eyebrow">PERSONAL CAPITAL CONTROL <span class="app-version-badge">v8.6.4</span></div>
+        <div class="eyebrow">PERSONAL CAPITAL CONTROL <span class="app-version-badge">v8.6.5</span></div>
         <h1 id="viewTitle">Обзор капитала</h1>
         <div id="todayText" class="muted"></div><div class="topbar-subtitle">Планируйте капитал, сравнивайте сценарии и контролируйте будущие выплаты.</div>
       </div>
@@ -2541,7 +2541,7 @@ html[data-theme="light"] .aktia-kpi,html[data-theme="light"] .aktia-owner-switch
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
 
-const APP_VERSION='v8.6.4';
+const APP_VERSION='v8.6.5';
 const BACKUP_SCHEMA_VERSION=2;
 const SUPABASE_URL='https://hlrvwzqwxqmycuttvzbx.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_RBRKa6zqrw7-CW77RW__QQ_vrqebWCp';
@@ -2732,7 +2732,7 @@ function setCloudStatus(kind,title,sub=''){
  const icon=q('cloudShieldIcon'),t=q('cloudSidebarTitle'),s=q('cloudSidebarSub'),mode=q('modeStripText');
  if(icon){icon.textContent=kind==='ok'?'✓':kind==='busy'?'↻':kind==='err'?'!':'○';icon.className='shield-icon '+(kind==='ok'?'cloud-ok':kind==='err'?'cloud-err':kind==='busy'?'cloud-busy':'')}
  if(t)t.textContent=title;
- if(s)s.textContent=sub||'VM Wealth Studio v8.6.4';
+ if(s)s.textContent=sub||'VM Wealth Studio v8.6.5';
  if(mode)mode.textContent=cloudUser?'Облако + локальная копия':'Локальная копия';
 }
 function cloudTimeText(){
@@ -2782,7 +2782,7 @@ async function loadCloudState({force=false,showToast=true}={}){
    cloudRevision=Number(data.revision||0);cloudLastSync=data.updated_at;
    localStorage.setItem(CLOUD_REVISION_KEY,String(cloudRevision));localStorage.setItem('vm_cloud_last_sync',cloudLastSync||'');localStorage.removeItem(CLOUD_DIRTY_KEY);
    withdrawalResultsReady=false;renderAll();setCloudStatus('ok','Облако синхронизировано',`${cloudUser.email||''} · ${cloudTimeText()}`);
-   if(showToast)toast('Данные загружены из облака');scheduleBtcWalletSync();setTimeout(()=>pullBankAutoImports({showToast:false}),180);setTimeout(()=>pullBtcDailyCache(),350);return true;
+   if(showToast)toast('Данные загружены из облака');scheduleBtcWalletSync();setTimeout(()=>pullBankAutoImports({showToast:false}),180);setTimeout(()=>pullBtcDailyCache(),350);setTimeout(()=>pullServerBtcLedger({silent:true}),650);return true;
  }catch(e){
    suppressCloudSave=false;console.error('Cloud load error',e);setCloudStatus('err','Ошибка облачной загрузки',e?.message||'Проверьте интернет');if(showToast)toast('Не удалось загрузить облачные данные');return false;
  }finally{cloudBusy=false}
@@ -2960,12 +2960,136 @@ async function pullBtcDailyCache(){
       changed++;
     }
     if(changed){persistState();renderAll();scheduleCloudSave(180)}
+    setTimeout(()=>pullServerBtcLedger({silent:true}),200);
     const el=q('btcAutoDailyStatus');if(el){
       const latest=(data||[])[0];el.textContent=latest?`Серверное обновление BTC: ${new Date(latest.checked_at).toLocaleString('ru-RU')} · данные ${seen.size} кошельков.`:'Серверный снимок BTC ещё не поступал. Запустите настройку Google Apps Script.';
     }
     return changed>0;
   }catch(e){console.warn('BTC daily cache sync failed',e);return false}
   finally{btcDailyCacheBusy=false}
+}
+
+
+// v8.6.5: Independent server-side BTC ledger. Each row is keyed by portfolio + TXID.
+// Historical EUR rates are intentionally not invented from the current spot price.
+let btcLedgerPullBusy=false,btcLedgerPullTimer=null;
+function mergeBtcLedgerRecords(records, p){
+ const address=String(p.btcWalletAddress||'').trim();
+ const byTxid=new Map((state.cryptoTransactions||[]).filter(t=>t.portfolioId===p.id&&t.txid)
+   .map(t=>[String(t.txid),t]));
+ let added=0,changed=0;
+ for(const tx of records){
+   if(tx.portfolio_id!==p.id||String(tx.wallet_address||'').trim()!==address)continue;
+   const txid=String(tx.txid||'');
+   if(!/^[a-f0-9]{64}$/i.test(txid))continue;
+   const btc=Number(tx.btc_amount||0);
+   if(!(btc>0&&Number.isFinite(btc)))continue;
+   const type=tx.direction==='out'?'transfer_out':'mining';
+   const timestamp=tx.block_time?Math.floor(Date.parse(tx.block_time)/1000):0;
+   const date=timestamp?new Date(timestamp*1000).toISOString().slice(0,10):todayISO();
+   const old=byTxid.get(txid),confirmed=tx.confirmed===true;
+   if(old){
+     // Never overwrite real historical rates, notes or existing manual corrections.
+     if((confirmed&&!old.confirmed) || (timestamp&&Number(old.blockchainTimestamp||0)!==timestamp)){
+       old.confirmed=confirmed||old.confirmed;if(timestamp){old.blockchainTimestamp=timestamp;old.date=date}old.updatedAt=new Date().toISOString();changed++;
+     }
+     continue;
+   }
+   const rec={id:uid(),portfolioId:p.id,date,type,btc,eurRate:0,eurValue:0,
+     source:'Bitcoin wallet · server',txid,walletAddress:address,confirmed,pricingStatus:'pending',
+     comment:'Из публичного блокчейна; исторический курс BTC/EUR пока не определён',
+     blockchainSync:true,blockchainTimestamp:timestamp,capturedAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
+   state.cryptoTransactions.push(rec);byTxid.set(txid,rec);added++;
+ }
+ return {added,changed};
+}
+async function pullServerBtcLedger({silent=true}={}){
+ if(!supabaseClient||!cloudUser||cloudBusy||btcLedgerPullBusy)return false;
+ btcLedgerPullBusy=true;
+ try{
+   let records=[];
+   for(let offset=0;offset<5000;offset+=500){
+     const {data,error}=await supabaseClient.from('btc_wallet_ledger')
+       .select('portfolio_id,wallet_address,txid,direction,btc_amount,confirmed,block_time')
+       .eq('user_id',cloudUser.id).order('last_seen_at',{ascending:false})
+       .range(offset,offset+499);
+     if(error)throw error;
+     records.push(...(data||[]));if((data||[]).length<500)break;
+   }
+   const {data:statuses,error:statusError}=await supabaseClient.from('btc_wallet_ledger_sync')
+     .select('portfolio_id,wallet_address,checked_at,last_success_at,last_error,rows_seen,new_rows')
+     .eq('user_id',cloudUser.id);
+   if(statusError)throw statusError;
+   let changed=0,added=0;
+   for(const p of state.portfolios){
+     if(p.type!=='Крипто'||!p.btcWalletAddress)continue;
+     const matches=records.filter(t=>t.portfolio_id===p.id);
+     const result=mergeBtcLedgerRecords(matches,p);added+=result.added;changed+=result.added+result.changed;
+     const st=(statuses||[]).find(x=>x.portfolio_id===p.id&&String(x.wallet_address||'').trim()===String(p.btcWalletAddress||'').trim());
+     if(st){
+       p.btcWalletLedgerServerStatus={checkedAt:st.checked_at||'',successAt:st.last_success_at||'',error:st.last_error||'',seen:st.rows_seen||0,newRows:st.new_rows||0};
+       if(st.last_success_at&&Date.parse(st.last_success_at)>Date.parse(p.btcWalletLedgerLastSync||'1970-01-01')){
+         p.btcWalletLedgerLastSync=st.last_success_at;changed++;
+       }
+     }
+   }
+   if(changed){persistState();renderAll();scheduleCloudSave(150)}
+   else if(currentView==='crypto')renderCryptoHub();
+   if(!silent)toast(`BTC: получено ${added} новых операций с сервера`);
+   return true;
+ }catch(e){console.warn('Не удалось прочитать серверный BTC-реестр',e);if(!silent)toast('BTC: серверный реестр временно недоступен');return false}
+ finally{btcLedgerPullBusy=false}
+}
+
+// Manual button fetches recent TXIDs first and saves them before any expensive pricing/history calls.
+async function syncRecentBtcLedgerForWallet({portfolioId}={}){
+ const p=btcWalletPortfolio(portfolioId);
+ if(!p)return toast('BTC-портфель не найден');
+ const address=String(p.btcWalletAddress||'').trim();
+ if(!validateBtcWalletAddress(address))return toast('Укажи корректный публичный BTC-адрес');
+ const status=btcWalletStatusEl(p.id);
+ if(status){status.className='btc-wallet-status';status.textContent='Сверяю последние TXID блокчейна…'}
+ try{
+   const base='/address/'+encodeURIComponent(address);
+   const responses=await Promise.allSettled([btcMempoolJson(base+'/txs'),btcMempoolJson(base+'/txs/chain')]);
+   const successful=responses.filter(r=>r.status==='fulfilled'&&Array.isArray(r.value));
+   if(!successful.length)throw new Error('Оба Bitcoin API запроса завершились ошибкой');
+   const page=successful.flatMap(r=>r.value);
+   const raw=new Map();for(const tx of page){if(/^[a-f0-9]{64}$/i.test(String(tx?.txid||'')))raw.set(tx.txid,tx)}
+   const rows=[];
+   for(const [txid,tx] of raw){
+     const sat=btcWalletTxAmounts(tx,address).netSat;
+     if(!Number.isSafeInteger(sat)||sat===0)continue;
+     const confirmed=tx.status?.confirmed===true,blockTime=Number(tx.status?.block_time||0);
+     rows.push({portfolio_id:p.id,wallet_address:address,txid,direction:sat>0?'in':'out',
+       btc_amount:Math.abs(sat/1e8).toFixed(8),confirmed,
+       block_time:confirmed&&blockTime?new Date(blockTime*1000).toISOString():null});
+   }
+   const result=mergeBtcLedgerRecords(rows,p);
+   p.btcWalletLedgerLastSync=new Date().toISOString();
+   persistState();renderAll();scheduleCloudSave(120);
+   const target=btcWalletStatusEl(p.id);
+   if(target){target.className='btc-wallet-status ok';target.textContent=`Сверка TXID завершена: ${result.added} новых операций, ${result.changed} обновлено. Дата и сумма BTC сохранены; исторический курс EUR может уточняться.`}
+   toast(`BTC: ${result.added} новых транзакций`);
+   if(result.added)setTimeout(()=>enrichRecentBtcPrices(p.id).catch(e=>console.warn('BTC historical rate',e)),250);
+   return result;
+ }catch(e){console.warn('BTC ledger manual sync failed',e);const target=btcWalletStatusEl(p.id)||status;if(target){target.className='btc-wallet-status warn';target.textContent='Сверка не выполнена: '+String(e?.message||e)}toast('BTC: не удалось сверить транзакции');return null}
+}
+async function enrichRecentBtcPrices(portfolioId){
+ const pending=(state.cryptoTransactions||[]).filter(t=>t.portfolioId===portfolioId&&t.confirmed!==false&&
+   !(Number(t.eurRate)>0)&&Number(t.blockchainTimestamp)>0);
+ if(!pending.length)return;
+ const months=new Map();
+ for(const tx of pending){const d=new Date(tx.blockchainTimestamp*1000),key=d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0');if(!months.has(key))months.set(key,[]);months.get(key).push(tx)}
+ let updated=0;
+ for(const [key,items] of months){
+   const [year,month]=key.split('-').map(Number);
+   let rates=[];try{rates=await btcHistoricalMonthPrices(year,month)}catch(e){continue}
+   for(const tx of items){const rate=nearestBtcPrice(rates,tx.blockchainTimestamp*1000);
+     if(Number.isFinite(rate)&&rate>0){tx.eurRate=rate;tx.eurValue=Number(tx.btc||0)*rate;tx.pricingStatus='ok';tx.updatedAt=new Date().toISOString();updated++}
+   }
+ }
+ if(updated){persistState();renderAll();scheduleCloudSave(150)}
 }
 
 async function pullCloudIfNewer(){
@@ -4480,9 +4604,9 @@ function scheduleBtcWalletSync(){
   const stale=state.portfolios.some(p=>p.type==='Крипто'&&String(p.btcWalletAddress||'').trim()&&(
     !p.btcWalletLedgerLastSync||!Number.isFinite(Date.parse(p.btcWalletLedgerLastSync))||Date.now()-Date.parse(p.btcWalletLedgerLastSync)>=24*60*60*1000
   ));
-  // The offline server job updates the value daily. Full transaction history remains
-  // available on the manual refresh button; this browser fallback runs only if stale.
-  if(stale)btcSyncTimer=setTimeout(()=>syncConfiguredBtcWallets({silent:true,onlyStale:true}).catch(e=>console.warn('BTC wallets auto-sync failed',e)),500);
+  // Server refreshes balance and TXID ledger while the site is closed.
+  // Reading recent ledger rows does not trigger full-history or FX backfill requests.
+  if(stale)btcSyncTimer=setTimeout(()=>pullServerBtcLedger({silent:true}).catch(e=>console.warn('BTC ledger read failed',e)),500);
 }
 
 async function syncConfiguredBtcWallets(options={}){
@@ -4490,10 +4614,11 @@ async function syncConfiguredBtcWallets(options={}){
   btcSyncInFlight=(async()=>{
     const wallets=state.portfolios.filter(p=>p.type==='Крипто'&&String(p.btcWalletAddress||'').trim()&&(!options.onlyStale||!p.btcWalletLedgerLastSync||!Number.isFinite(Date.parse(p.btcWalletLedgerLastSync))||Date.now()-Date.parse(p.btcWalletLedgerLastSync)>=86400000));
     if(!wallets.length)return;
-    const sharedRate=await currentBtcEurRate().catch(()=>0);
     for(const p of wallets){
-      try{await syncDirectBtcWallet({portfolioId:p.id,silent:options.silent!==false,currentRate:sharedRate})}
-      catch(e){console.warn('BTC wallet auto-sync failed',p.name,e)}
+      try{
+        await syncBtcWalletBalanceFast({portfolioId:p.id});
+        await syncRecentBtcLedgerForWallet({portfolioId:p.id});
+      }catch(e){console.warn('BTC wallet refresh failed',p.name,e)}
     }
   })();
   try{return await btcSyncInFlight}finally{btcSyncInFlight=null}
@@ -4599,6 +4724,7 @@ function btcHubFields(p){
  <div class="crypto-hub-data"><div class="crypto-hub-field"><span>Баланс</span><b>${balance.toFixed(8)} BTC</b></div><div class="crypto-hub-field"><span>Курс BTC/EUR</span><b>${rate>0?money(rate):'—'}</b></div><div class="crypto-hub-field"><span>Последнее обновление</span><b>${esc(sync)}</b></div><div class="crypto-hub-field"><span>Транзакций в реестре</span><b>${n}</b></div></div>
  ${p.btcWalletAddress?`<code title="${esc(p.btcWalletAddress)}">${esc(p.btcWalletAddress)}</code>`:'<div class="crypto-hub-empty">Публичный Bitcoin-адрес не задан.</div>'}
  <label class="crypto-hub-toggle"><input type="checkbox" data-crypto-role="${p.id}" ${enabled?'checked':''}><span><b>${enabled?'Включён в расчёты':'Вне расчётов'}</b><br>Учитывать стоимость BTC в общем капитале, доходности и финансовых сценариях</span></label>
+ <div class="muted small" style="margin:8px 0">${p.btcWalletLedgerServerStatus?.error?'Ошибка серверной сверки: '+esc(p.btcWalletLedgerServerStatus.error):p.btcWalletLedgerServerStatus?.successAt?'Реестр проверен сервером: '+new Date(p.btcWalletLedgerServerStatus.successAt).toLocaleString('ru-RU'):'Ожидается первая серверная сверка транзакций'}</div>
  <div class="port-actions"><button class="btn primary compact" data-crypto-balance-sync="${p.id}">↻ Обновить баланс BTC</button><button class="btn secondary compact" data-crypto-wallet-sync="${p.id}">↻ Сверить транзакции</button><button class="btn secondary compact" data-crypto-tx="${p.id}">＋ BTC приход</button></div></div>`
 }
 function renderCryptoHub(){
@@ -4612,16 +4738,16 @@ function renderCryptoHub(){
  <div class="crypto-hub-kpi"><span>BTC всех кошельков ${vmInfoBtn('crypto_balance')}</span><b>${totalBtc.toFixed(8)} BTC</b><small>Оба владельца · только публичные адреса</small></div>
  <div class="crypto-hub-kpi"><span>Стоимость всех BTC ${vmInfoBtn('crypto_value')}</span><b>${money(totalEur)}</b><small>Включённые и выключенные</small></div>
  <div class="crypto-hub-kpi"><span>Учитывается в капитале ${vmInfoBtn('crypto_include')}</span><b>${money(includedEur)}</b><small>${active.length} из ${wallets.length} портфелей</small></div>
- <div class="crypto-hub-kpi"><span>Последнее обновление ${vmInfoBtn('crypto_daily')}</span><b style="font-size:15px">${latest?new Date(latest).toLocaleString('ru-RU'):'—'}</b><small>Снимок сервера — ежедневно; реестр обновляется отдельно</small></div>`;
+ <div class="crypto-hub-kpi"><span>Последнее обновление ${vmInfoBtn('crypto_daily')}</span><b style="font-size:15px">${latest?new Date(latest).toLocaleString('ru-RU'):'—'}</b><small>Баланс и новые TXID проверяются сервером по расписанию</small></div>`;
  const box=q('cryptoHubWallets');if(box){box.innerHTML=wallets.length?wallets.map(btcHubFields).join(''):'<div class="crypto-hub-empty">Пока нет криптопортфелей. Создай портфель типа «Крипто».</div>';
  box.querySelectorAll('[data-crypto-role]').forEach(b=>b.addEventListener('change',()=>setCryptoCalculationRole(b.dataset.cryptoRole,b.checked)));
  box.querySelectorAll('[data-crypto-edit]').forEach(b=>b.addEventListener('click',()=>openPortfolioModal(b.dataset.cryptoEdit)));
  box.querySelectorAll('[data-crypto-balance-sync]').forEach(b=>b.addEventListener('click',()=>syncBtcWalletBalanceFast({portfolioId:b.dataset.cryptoBalanceSync})));
- box.querySelectorAll('[data-crypto-wallet-sync]').forEach(b=>b.addEventListener('click',()=>syncDirectBtcWallet({portfolioId:b.dataset.cryptoWalletSync})));
+ box.querySelectorAll('[data-crypto-wallet-sync]').forEach(b=>b.addEventListener('click',()=>syncRecentBtcLedgerForWallet({portfolioId:b.dataset.cryptoWalletSync})));
  box.querySelectorAll('[data-crypto-tx]').forEach(b=>b.addEventListener('click',()=>openCryptoTransactionModal(b.dataset.cryptoTx)));
  }
  const transactions=q('cryptoHubTransactions');if(transactions){const set=new Set(wallets.map(p=>p.id));const tx=(state.cryptoTransactions||[]).filter(t=>set.has(t.portfolioId)).slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||String(b.updatedAt||'').localeCompare(String(a.updatedAt||''))).slice(0,35);
- transactions.innerHTML=tx.length?tx.map(t=>{const p=wallets.find(x=>x.id===t.portfolioId),v=Number(t.btc||0);return `<tr><td>${formatDate(t.date)}</td><td>${esc(p?btcOwnerText(p):'—')}</td><td>${esc(cryptoTypeLabel(t.type))}</td><td>${v.toFixed(8)}</td><td>${money(Number(t.eurValue)||0)}</td><td>${t.confirmed===false?'Ожидает подтверждения':Number(t.eurRate||0)>0?'Подтверждена':'Курс не определён'}</td></tr>`}).join(''):'<tr><td colspan="6">Транзакции ещё не загружены. Используй «Обновить и сверить транзакции».</td></tr>';
+ transactions.innerHTML=tx.length?tx.map(t=>{const p=wallets.find(x=>x.id===t.portfolioId),v=Number(t.btc||0);return `<tr><td>${formatDate(t.date)}</td><td>${esc(p?btcOwnerText(p):'—')}</td><td>${esc(cryptoTypeLabel(t.type))}</td><td>${v.toFixed(8)}</td><td>${Number(t.eurRate||0)>0?money(Number(t.eurValue)||0):'—'}</td><td>${t.confirmed===false?'Ожидает подтверждения':Number(t.eurRate||0)>0?'Подтверждена':'Подтверждена · курс уточняется'}</td></tr>`}).join(''):'<tr><td colspan="6">Транзакции ещё не загружены. Нажми «Сверить транзакции» или дождись серверной проверки.</td></tr>';
  }
  renderSourceForecastPanel('btc');
  const chart=q('cryptoHubChart');if(chart&&currentView==='crypto'){
@@ -4734,7 +4860,7 @@ function renderPortfolios(){
  box.querySelectorAll('[data-crypto-price]').forEach(b=>b.addEventListener('click',()=>openCryptoPriceModal(b.dataset.cryptoPrice)));
  box.querySelectorAll('[data-btc-balance-sync]').forEach(b=>b.addEventListener('click',()=>syncBtcWalletBalanceFast({portfolioId:b.dataset.btcBalanceSync})));
  box.querySelectorAll('[data-btc-wallet-sync]').forEach(b=>b.addEventListener('click',async()=>{
-   await syncDirectBtcWallet({portfolioId:b.dataset.btcWalletSync});
+   await syncRecentBtcLedgerForWallet({portfolioId:b.dataset.btcWalletSync});
  }));
  box.querySelectorAll('[data-wallet-edit]').forEach(b=>b.addEventListener('click',()=>openPortfolioModal(b.dataset.walletEdit)));
  box.querySelectorAll('[data-snap-pre]').forEach(b=>b.addEventListener('click',()=>openSnapshotModal(null,b.dataset.snapPre)));
@@ -5472,7 +5598,7 @@ function renderInsights(){
 }
 
 
-// v8.6.4: source-specific deterministic scenarios. No forecasts are presented as market predictions.
+// v8.6.5: source-specific deterministic scenarios. No forecasts are presented as market predictions.
 const VM_SOURCE_PROJECTION_DEFAULTS = Object.freeze({
  nordea: {years:5,inflation:2,monthlyEur:0,low:-5,base:3,high:8},
  aktia_oy: {years:5,inflation:2,monthlyEur:0,low:-5,base:3,high:8},
@@ -5689,7 +5815,7 @@ function analyticsTimeWeightedStats(entity,from='',to=''){
  if(!periods||!totalDays)return{rows,periods:0,days:0,totalReturn:null,annualized:null,volatility:null,maxDrawdown:null,confidence:'none',wealthPoints};const totalReturn=wealth-1,annualized=Math.pow(Math.max(0.000001,wealth),365.25/totalDays)-1,meanDaily=weightedLogSum/totalDays,variance=Math.max(0,weightedSq/totalDays-meanDaily*meanDaily),volatility=Math.sqrt(variance)*Math.sqrt(365.25),confidence=rows.length>=12&&totalDays>=730?'good':rows.length>=5&&totalDays>=180?'medium':'low';return{rows,periods,totalDays,days:totalDays,totalReturn,annualized,volatility,maxDrawdown:maxDd,confidence,wealthPoints};
 }
 
-// v8.6.4 · Historical forecasts: bank returns exclude recorded external flows,
+// v8.6.5 · Historical forecasts: bank returns exclude recorded external flows,
 // while crypto uses the price per BTC, not the growth of the wallet quantity.
 const VM_HISTORY_WINDOWS=[3,6,12,24];
 function vmHistoryRows(entity){
@@ -6510,7 +6636,7 @@ function renderMobileCrypto(){
  <button class="mobile-secondary-btn" data-mobile-crypto-sync="${p.id}" type="button">↻ Обновить BTC и транзакции</button></section>`).join('')||'<div class="mobile-empty">Кошельков пока нет.</div>'}
  <div class="mobile-callout">Вне расчёта — портфель виден здесь, но не влияет на общий капитал и финансовые прогнозы.</div></div>`;
  el.querySelectorAll('[data-mobile-crypto-role]').forEach(b=>b.onchange=()=>setCryptoCalculationRole(b.dataset.mobileCryptoRole,b.checked));
- el.querySelectorAll('[data-mobile-crypto-sync]').forEach(b=>b.onclick=()=>syncDirectBtcWallet({portfolioId:b.dataset.mobileCryptoSync}));
+ el.querySelectorAll('[data-mobile-crypto-sync]').forEach(b=>b.onclick=()=>(async()=>{await syncBtcWalletBalanceFast({portfolioId:b.dataset.mobileCryptoSync});await syncRecentBtcLedgerForWallet({portfolioId:b.dataset.mobileCryptoSync})})());
  const forecastHost=document.createElement('section');forecastHost.className='vm-source-forecast';el.querySelector('.mobile-stack')?.appendChild(forecastHost);renderSourceForecastPanel('btc',forecastHost,true);
 }
 function enhanceMobileBankHelp(view){
@@ -6566,7 +6692,7 @@ function renderMobileRecentActivity(){if(mobilePhoneMode&&mobileCurrentView==='h
 
 
 document.querySelectorAll('.nav-item').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
-function switchView(v){currentView=v;document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.view===v));document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));q('view-'+v).classList.add('active');const t={dashboard:'Планирование капитала',portfolios:'Портфель',nordea:'Nordea Analytics',aktia:'Aktia Analytics',crypto:'BTC / Crypto',history:'Источники и история',forecast:'Сценарии',withdrawals:'План вывода средств',reports:'Аналитика и отчёты',portfolioanalytics:'Портфели: история и прогноз',insights:'Дополнительная информация',settings:'Настройки'};q('viewTitle').textContent=t[v];if(v==='history')renderHistory();if(v==='nordea')renderNordea();if(v==='aktia')renderAktia();if(v==='crypto')renderCryptoHub();if(['nordea','aktia','crypto'].includes(v))renderSourceForecastPanel(v==='crypto'?'btc':v);if(v==='withdrawals'){renderWithdrawalRules();if(!withdrawalResultsReady)markWithdrawalDirty();else{renderWithdrawalExitChart();const yrs=Math.max(1,Number(q('withdrawYears')?.value||30)),f=state.forecast,out=[['Консервативный',+f.conservative,0],['Базовый',+f.base,1],['Оптимистичный',+f.optimistic,2]].map(([name,r,ci])=>{const m=runWithdrawalModel(r,yrs);return{name,points:m.ptsTotal,ci,color:['#c85a66','#d3a342','#278f66'][ci]}});drawSeries(q('withdrawalChart'),out,{xMode:'year',sharedTooltip:true,lineWidth:3.2,pointMarkers:true})}}if(v==='dashboard')renderCapitalChart();if(v==='forecast'){renderForecastChart();renderForecastOwnerChart()}if(v==='portfolioanalytics')renderPortfolioAnalytics();if(v==='insights')renderInsights()}
+function switchView(v){currentView=v;document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.view===v));document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));q('view-'+v).classList.add('active');const t={dashboard:'Планирование капитала',portfolios:'Портфель',nordea:'Nordea Analytics',aktia:'Aktia Analytics',crypto:'BTC / Crypto',history:'Источники и история',forecast:'Сценарии',withdrawals:'План вывода средств',reports:'Аналитика и отчёты',portfolioanalytics:'Портфели: история и прогноз',insights:'Дополнительная информация',settings:'Настройки'};q('viewTitle').textContent=t[v];if(v==='history')renderHistory();if(v==='nordea')renderNordea();if(v==='aktia')renderAktia();if(v==='crypto'){renderCryptoHub();setTimeout(()=>pullServerBtcLedger({silent:true}),100)}if(['nordea','aktia','crypto'].includes(v))renderSourceForecastPanel(v==='crypto'?'btc':v);if(v==='withdrawals'){renderWithdrawalRules();if(!withdrawalResultsReady)markWithdrawalDirty();else{renderWithdrawalExitChart();const yrs=Math.max(1,Number(q('withdrawYears')?.value||30)),f=state.forecast,out=[['Консервативный',+f.conservative,0],['Базовый',+f.base,1],['Оптимистичный',+f.optimistic,2]].map(([name,r,ci])=>{const m=runWithdrawalModel(r,yrs);return{name,points:m.ptsTotal,ci,color:['#c85a66','#d3a342','#278f66'][ci]}});drawSeries(q('withdrawalChart'),out,{xMode:'year',sharedTooltip:true,lineWidth:3.2,pointMarkers:true})}}if(v==='dashboard')renderCapitalChart();if(v==='forecast'){renderForecastChart();renderForecastOwnerChart()}if(v==='portfolioanalytics')renderPortfolioAnalytics();if(v==='insights')renderInsights()}
 q('closeModalBtn').addEventListener('click',closeModal);q('modalBackdrop').addEventListener('click',e=>{if(e.target===q('modalBackdrop'))closeModal()});
 q('quickAddBtn').addEventListener('click',()=>openSnapshotModal());q('addSnapshotBtn').addEventListener('click',()=>openSnapshotModal());q('addFlowBtn').addEventListener('click',()=>openFlowModal());q('addPortfolioBtn').addEventListener('click',()=>openPortfolioModal());q('addPortfolioBtn2').addEventListener('click',()=>openPortfolioModal());q('portfolioOrderBtn').addEventListener('click',openPortfolioOrderModal);q('portfolioOrderBtn2').addEventListener('click',openPortfolioOrderModal);
 
