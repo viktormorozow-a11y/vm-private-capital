@@ -1737,6 +1737,26 @@ html[data-theme="light"] #calcTooltip .ct-formula{background:rgba(176,128,47,.07
 
 /* === VM Private Capital v8 phone app layer (desktop rules above remain frozen) === */
 #mobileAppShell{display:none}
+/* Switch back to the mobile presentation when viewing the complete site on a phone. */
+.phone-return-mobile{display:none}
+body.phone-full-mode .phone-return-mobile{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  position:fixed;left:calc(12px + env(safe-area-inset-left));
+  top:calc(12px + env(safe-area-inset-top));z-index:45;
+  min-height:48px;padding:11px 16px;border-radius:14px;
+  border:1px solid rgba(212,170,90,.48);background:#11202b;
+  color:#f6eee0;box-shadow:0 10px 36px rgba(0,0,0,.35);
+  font:700 13px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+body.phone-full-mode #appShell>.app{padding-top:66px}
+body.phone-full-mode .phone-return-mobile:focus-visible,
+#mobileFullModeBtn:focus-visible,
+#mobileFullModeMoreBtn:focus-visible{outline:2px solid #d4aa5a;outline-offset:3px}
+html[data-theme="light"] body.phone-full-mode .phone-return-mobile{
+  background:#fffdf9;color:#573c18;border-color:rgba(168,116,37,.45);
+  box-shadow:0 10px 32px rgba(72,57,37,.18);
+}
 .mobile-app{--m-bg:#071018;--m-surface:#0d1722;--m-surface2:#111e2a;--m-card:#101b26;--m-text:#eef3f6;--m-muted:#8798a6;--m-line:rgba(255,255,255,.09);--m-gold:#d4aa5a;--m-green:#63c99d;--m-red:#da6e7b;--m-blue:#79a9ca;position:fixed;inset:0;z-index:30;background:var(--m-bg);color:var(--m-text);font-family:Inter,"SF Pro Display","Segoe UI",system-ui,-apple-system,sans-serif;overflow:hidden}
 html[data-theme="light"] .mobile-app{--m-bg:#f2eee6;--m-surface:#fffdf8;--m-surface2:#f8f3e9;--m-card:#fffdf9;--m-text:#282b28;--m-muted:#706b62;--m-line:rgba(73,61,45,.13);--m-gold:#a87325;--m-green:#287b5c;--m-red:#b84d5b;--m-blue:#4c7898}
 body.phone-mode{overflow:hidden;overscroll-behavior:none;background:var(--m-bg,#071018)}
@@ -1854,7 +1874,7 @@ html[data-theme="light"] .aktia-kpi,html[data-theme="light"] .aktia-owner-switch
 <div id="mobileAppShell" class="mobile-app" aria-hidden="true">
   <header class="mobile-header">
     <div class="mobile-brand"><div class="mobile-brand-mark">VM</div><div class="mobile-brand-copy"><b>VM PRIVATE CAPITAL</b><span id="mobileHeaderTitle">PRIVATE WEALTH</span></div></div>
-    <div class="mobile-header-actions"><button type="button" class="mobile-icon-btn" id="mobileThemeBtn" aria-label="Сменить тему">◐</button></div>
+    <div class="mobile-header-actions"><button type="button" class="mobile-icon-btn" id="mobileFullModeBtn" aria-label="Открыть полную версию сайта" title="Полная версия">▣</button><button type="button" class="mobile-icon-btn" id="mobileThemeBtn" aria-label="Сменить тему">◐</button></div>
   </header>
   <main class="mobile-content" id="mobileContent">
     <section class="mobile-view active" data-mobile-view="home" id="mobile-view-home"></section>
@@ -1890,6 +1910,7 @@ html[data-theme="light"] .aktia-kpi,html[data-theme="light"] .aktia-owner-switch
       <button type="button" class="mobile-more-item" data-mobile-dest="portfolioanalytics"><span class="mi">⌗</span><span><b>Портфели: прогноз</b><small>История и прогноз портфелей</small></span><span class="arrow">›</span></button>
       <button type="button" class="mobile-more-item" data-mobile-dest="insights"><span class="mi">◎</span><span><b>Дополнительно</b><small>Exit, налоги и структура</small></span><span class="arrow">›</span></button>
       <button type="button" class="mobile-more-item" data-mobile-dest="settings"><span class="mi">⚙</span><span><b>Настройки</b><small>Параметры и резервные копии</small></span><span class="arrow">›</span></button>
+      <button type="button" class="mobile-more-item" id="mobileFullModeMoreBtn"><span class="mi">▣</span><span><b>Полная версия сайта</b><small>Все разделы и функции</small></span><span class="arrow">›</span></button>
       <a class="mobile-more-item" href="./hrt/"><span class="mi">♥</span><span><b>HRT Health Studio</b><small>Private Suite</small></span><span class="arrow">›</span></a>
       <a class="mobile-more-item" href="./fitness/"><span class="mi">↗</span><span><b>Fitness Studio</b><small>Private Suite</small></span><span class="arrow">›</span></a>
     </div>
@@ -1897,6 +1918,7 @@ html[data-theme="light"] .aktia-kpi,html[data-theme="light"] .aktia-owner-switch
   </aside>
   <div id="mobileChartTooltip" class="mobile-chart-tooltip" role="tooltip"></div>
 </div>
+<button type="button" class="phone-return-mobile" id="desktopReturnMobileBtn" aria-label="Вернуться в мобильную версию">▤ Мобильная версия</button>
 
 <div class="ambient a1"></div><div class="ambient a2"></div><div class="ambient a3"></div>
 
@@ -6625,12 +6647,40 @@ function detectPhoneMode(env){
  return phonePhysical&&(android||Math.min(Number(env?.innerWidth||sw),Number(env?.innerHeight||sh))<=500);
 }
 function currentDeviceEnv(){return{innerWidth:window.innerWidth,innerHeight:window.innerHeight,screenWidth:window.screen?.width||window.innerWidth,screenHeight:window.screen?.height||window.innerHeight,maxTouchPoints:navigator.maxTouchPoints||0,userAgent:navigator.userAgent||''}}
+const PHONE_VIEW_PREFERENCE_KEY='vm_private_capital_phone_view_v1';
+let phoneViewSessionChoice=null;
+function preferredPhoneView(){
+ if(phoneViewSessionChoice)return phoneViewSessionChoice;
+ try{return localStorage.getItem(PHONE_VIEW_PREFERENCE_KEY)==='full'?'full':'mobile'}
+ catch(_error){return'mobile'}
+}
 function applyDeviceMode(){
- mobilePhoneMode=detectPhoneMode(currentDeviceEnv());
+ const isPhone=detectPhoneMode(currentDeviceEnv());
+ mobilePhoneMode=isPhone&&preferredPhoneView()!=='full';
  document.body.classList.toggle('phone-mode',mobilePhoneMode);
+ document.body.classList.toggle('phone-full-mode',isPhone&&!mobilePhoneMode);
  const shell=q('mobileAppShell');if(shell)shell.setAttribute('aria-hidden',mobilePhoneMode?'false':'true');
  if(mobilePhoneMode)renderMobileApp();
  return mobilePhoneMode;
+}
+function switchPhoneView(mode){
+ if(!detectPhoneMode(currentDeviceEnv()))return;
+ const next=mode==='full'?'full':'mobile';
+ if(preferredPhoneView()===next)return;
+ phoneViewSessionChoice=next;
+ try{localStorage.setItem(PHONE_VIEW_PREFERENCE_KEY,next)}catch(_error){}
+ const wasMobile=mobilePhoneMode;
+ applyDeviceMode();
+ if(next==='full'&&wasMobile){
+  const destinations={home:'dashboard',portfolio:'portfolios',withdrawals:'withdrawals',analytics:'reports',nordea:'nordea',aktia:'aktia',crypto:'crypto',scenarios:'forecast',history:'history',portfolioanalytics:'portfolioanalytics',insights:'insights',settings:'settings'};
+  switchView(destinations[mobileCurrentView]||'dashboard');
+  closeMobileMoreSheet();
+  window.scrollTo(0,0);
+  requestAnimationFrame(()=>rerenderVisibleCharts());
+ }else if(next==='mobile'&&mobilePhoneMode){
+  const destinations={dashboard:'home',portfolios:'portfolio',withdrawals:'withdrawals',reports:'analytics',nordea:'nordea',aktia:'aktia',crypto:'crypto',forecast:'scenarios',history:'history',portfolioanalytics:'portfolioanalytics',insights:'insights',settings:'settings'};
+  mobileNavigate(destinations[currentView]||mobileCurrentView||'home');
+ }
 }
 function mobileTitleFor(view){return({home:'PRIVATE WEALTH',portfolio:'ПОРТФЕЛЬ',withdrawals:'ПЛАН ВЫВОДА',analytics:'АНАЛИТИКА',scenarios:'СЦЕНАРИИ',history:'ИСТОЧНИКИ',portfolioanalytics:'ПОРТФЕЛИ · ПРОГНОЗ',insights:'ДОПОЛНИТЕЛЬНО',nordea:'NORDEA',aktia:'AKTIA',crypto:'BTC / CRYPTO',settings:'НАСТРОЙКИ'})[view]||'PRIVATE WEALTH'}
 function mobileNavigate(view){
@@ -6652,6 +6702,9 @@ function bindMobileShellEvents(){
  document.querySelectorAll('#mobileAppShell [data-mobile-dest]').forEach(b=>b.addEventListener('click',()=>mobileNavigate(b.dataset.mobileDest)));
  q('mobileMoreBackdrop')?.addEventListener('click',closeMobileMoreSheet);q('mobileMoreClose')?.addEventListener('click',closeMobileMoreSheet);
  q('mobileThemeBtn')?.addEventListener('click',()=>toggleTheme());
+ q('mobileFullModeBtn')?.addEventListener('click',()=>switchPhoneView('full'));
+ q('mobileFullModeMoreBtn')?.addEventListener('click',()=>switchPhoneView('full'));
+ q('desktopReturnMobileBtn')?.addEventListener('click',()=>switchPhoneView('mobile'));
  window.addEventListener('resize',()=>{clearTimeout(window.__vmMobileResize);window.__vmMobileResize=setTimeout(()=>{const before=mobilePhoneMode;applyDeviceMode();if(mobilePhoneMode&&before)renderMobileApp()},120)},{passive:true});
 }
 
