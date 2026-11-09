@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HRT Health Studio v3.8.3 — VM Private Suite UI</title>
+<title>HRT Health Studio v3.8.4 — VM Private Suite UI</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -309,7 +309,7 @@ html[data-theme="light"] .note{color:var(--muted)}html[data-theme="light"] .note
 <div id="hrtAuthGate">
   <div class="hrt-auth-card">
     <div class="hrt-auth-brand">VM PRIVATE SUITE</div>
-    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.8.3</span></div>
+    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.8.4</span></div>
     <div class="hrt-auth-sub">Используйте тот же аккаунт, что и в Планировании капитала</div>
     <label>Email<input id="hrtGateEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
     <label>Пароль<input id="hrtGatePassword" type="password" autocomplete="current-password" placeholder="Введите пароль"></label>
@@ -321,10 +321,10 @@ html[data-theme="light"] .note{color:var(--muted)}html[data-theme="light"] .note
   </div>
 </div>
 <div id="hrtAppShell" class="auth-hidden">
-<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.8.3</div>
+<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.8.4</div>
 <div class="app">
 <aside>
-  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.8.3</small></div>
+  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.8.4</small></div>
   <div class="hrt-theme-sidebar"><button class="theme-toggle" type="button" onclick="toggleHrtTheme()" title="Переключить светлую/тёмную тему"><span class="theme-icon" id="hrtThemeIcon">☾</span><span class="theme-label" id="hrtThemeLabel">Тёмная тема</span></button></div>
   <nav>
     <button class="nav active" data-view="dashboard">Главная</button>
@@ -727,7 +727,7 @@ state.goals=state.goals||[];
 state.labPlans=state.labPlans||[];
 state.settings=state.settings||{};
 state.settings.primaryGoal=state.settings.primaryGoal||'';
-state.settings.appVersion='3.8.3';
+state.settings.appVersion='3.8.4';
 state.withings=state.withings||{measurements:[],activity:[],sleep:[],workouts:[],lastSyncAt:'',autoSync:true,syncDays:365};
 state.withings.measurements=state.withings.measurements||[];state.withings.activity=state.withings.activity||[];state.withings.sleep=state.withings.sleep||[];state.withings.workouts=state.withings.workouts||[];
 if(state.withings.autoSync===undefined)state.withings.autoSync=true;if(!state.withings.syncDays)state.withings.syncDays=365;
@@ -779,6 +779,7 @@ function scheduleHrtCloudSave(){
 const save=()=>{persistHrtLocal();renderAll();scheduleHrtCloudSave()};
 
 const medName=id=>state.meds.find(x=>x.id===id)?.name||'Неизвестный препарат';
+const protocolStartText=(p,lang='ru')=>p.startDateConfirmed===false?(lang==='fi'?'Vahvistettu '+doctorFmtDate(p.start,lang):'Подтверждено '+fmtDate(p.start)):(lang==='fi'?doctorFmtDate(p.start,lang):fmtDate(p.start));
 
 function hrtCloudSetStatus(kind,title,sub=''){
   const dot=$('hrtCloudDot'),t=$('hrtCloudTitle'),ss=$('hrtCloudSub');
@@ -800,7 +801,7 @@ function migrateHrtState(x){
   x.meds=x.meds||[];x.protocols=x.protocols||[];x.deviations=x.deviations||[];x.labs=x.labs||[];
   x.wellbeing=x.wellbeing||[];x.aliasMap=x.aliasMap||{};x.customAnalytes=x.customAnalytes||[];
   x.goals=x.goals||[];x.labPlans=x.labPlans||[];x.settings=x.settings||{};
-  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.8.3';
+  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.8.4';
   x.settings.chartKeys=Array.isArray(x.settings.chartKeys)?x.settings.chartKeys:['testosterone','free_testosterone','shbg','estradiol','hematocrit','hemoglobin'];
   x.settings.comparisonKeys=Array.isArray(x.settings.comparisonKeys)?x.settings.comparisonKeys:['withings:weight','lab:testosterone','lab:free_testosterone'];
   x.settings.comparisonMode=x.settings.comparisonMode||'auto';
@@ -1782,6 +1783,7 @@ function openProtocolModal(id=''){
     <label id="weekdayLabel" style="display:none">День недели<select id="pWeekday" class="smart-select"><option value="1">Пн</option><option value="2">Вт</option><option value="3">Ср</option><option value="4">Чт</option><option value="5">Пт</option><option value="6">Сб</option><option value="0">Вс</option></select></label>
     <label>Обычное время<select id="pTime" class="smart-select">${timePresetOptions(p?.time||'')}</select></label>
     <label>Действует с<input id="pStart" type="date" value="${p?.start||today()}"></label>
+    <label class="wide" style="display:flex;align-items:center;gap:9px"><input id="pStartConfirmed" type="checkbox" style="width:auto" ${p?.startDateConfirmed===false?'':'checked'}>Дата начала подтверждена (иначе это первая известная дата; срок стабильности не рассчитывается)</label>
     <label>Действует до<input id="pEnd" type="date" value="${p?.end||''}"></label>
     <label class="wide">Комментарий<textarea id="pComment" placeholder="Необязательно"></textarea></label>
   </div><input type="hidden" id="pEditId" value="${p?.id||''}">
@@ -1800,7 +1802,7 @@ function saveProtocol(){
   const medId=$('pMed').value,dose=Number($('pDose').value),start=$('pStart').value,id=$('pEditId')?.value||'';
   if(!medId||!Number.isFinite(dose)||!start)return alert('Проверьте препарат, дозу и дату');
   let unit=$('pUnit').value.trim();if(unit==='__custom__')unit=prompt('Введите единицу дозы')||'';unit=unit||state.meds.find(m=>m.id===medId)?.unit||'';
-  const data={medId,dose,unit,frequency:$('pFreq').value,interval:Number($('pInterval')?.value||1),weekday:$('pWeekday')?.value??'',time:$('pTime').value,start,end:$('pEnd')?.value||'',comment:$('pComment').value.trim()};
+  const data={medId,dose,unit,frequency:$('pFreq').value,interval:Number($('pInterval')?.value||1),weekday:$('pWeekday')?.value??'',time:$('pTime').value,start,end:$('pEnd')?.value||'',startDateConfirmed:!!$('pStartConfirmed')?.checked,comment:$('pComment').value.trim()};
   if(id){
     const i=state.protocols.findIndex(x=>x.id===id);if(i>=0)state.protocols[i]={...state.protocols[i],...data};
   }else{
@@ -3178,7 +3180,7 @@ function renderLatestChanges(){
   }
   box.innerHTML=cards.length?`<div class="change-grid">${cards.join('')}</div>`:`<div class="empty">Пока недостаточно повторных анализов для сравнения.</div>`;
 }
-const APP_VERSION='3.8.3';
+const APP_VERSION='3.8.4';
 
 function normalizedHctPercent(marker){
   if(!marker)return null;
@@ -3740,7 +3742,7 @@ function downloadDoctorReportPdf(lang='ru',from='',to=''){
   content.push(doctorPdfSectionTitle(doctorText(lang,'overview')));
   content.push({text:doctorText(lang,'goal'),style:'h2'});content.push({text:state.settings.primaryGoal||doctorText(lang,'goalMissing'),style:'box'});
   content.push({text:doctorText(lang,'currentTreatment'),style:'h2',margin:[0,7,0,3]});
-  const activeAtEnd=activeProtocols(to);if(activeAtEnd.length)content.push({table:{headerRows:1,widths:[120,'*',72],body:[[doctorText(lang,'medicine'),doctorText(lang,'scheme'),doctorText(lang,'date')],...activeAtEnd.map(p=>[medName(p.medId),doctorScheduleText(p,lang),doctorFmtDate(p.start,lang)])]},layout:'lightHorizontalLines',fontSize:8});else content.push(doctorPdfMuted(doctorText(lang,'noActiveTreatment')));
+  const activeAtEnd=activeProtocols(to);if(activeAtEnd.length)content.push({table:{headerRows:1,widths:[120,'*',72],body:[[doctorText(lang,'medicine'),doctorText(lang,'scheme'),doctorText(lang,'date')],...activeAtEnd.map(p=>[medName(p.medId),doctorScheduleText(p,lang),protocolStartText(p,lang)])]},layout:'lightHorizontalLines',fontSize:8});else content.push(doctorPdfMuted(doctorText(lang,'noActiveTreatment')));
   if(last){content.push({text:doctorText(lang,'lastLab'),style:'h2',margin:[0,7,0,3]});content.push({text:`${doctorFmtDate(last.date,lang)}${last.time?' · '+last.time:''} · ${last.lab||doctorText(lang,'lab')}\n${doctorText(lang,'protocolAtDate')}: ${doctorProtocolSummaryAt(last.date,lang)}\n${doctorText(lang,'doseContext')}: ${doctorDoseContextText(last,lang)}`,style:'box'});}
   content.push({text:doctorText(lang,'dataQuality'),style:'h2',margin:[0,7,0,3]});content.push({text:readiness.label,bold:true,fontSize:9});for(const r of readiness.reasons)content.push({text:'• '+r,fontSize:8,margin:[6,1,0,0]});
   content.push({text:doctorText(lang,'safety'),style:'h2',margin:[0,7,0,3]});
@@ -3799,7 +3801,7 @@ function renderAll(){
     ['Отклонений',state.deviations.length,'Пропуски, переносы, другие дозы']
   ].map(x=>`<div class="card"><div class="klabel">${x[0]}</div><div class="kval">${x[1]}</div><div class="ksub">${x[2]}</div></div>`).join('');
 
-  $('activeProtocols').innerHTML=aps.length?`<div class="timeline">${aps.map(p=>`<div class="event"><b>${medName(p.medId)} · ${scheduleText(p)}</b><small>с ${fmtDate(p.start)}${p.comment?' · '+p.comment:''}</small></div>`).join('')}</div>`:`<div class="empty">Нет действующих протоколов.</div>`;
+  $('activeProtocols').innerHTML=aps.length?`<div class="timeline">${aps.map(p=>`<div class="event"><b>${medName(p.medId)} · ${scheduleText(p)}</b><small>${p.startDateConfirmed===false?protocolStartText(p):'с '+fmtDate(p.start)}${p.comment?' · '+p.comment:''}</small></div>`).join('')}</div>`:`<div class="empty">Нет действующих протоколов.</div>`;
 
   const last=[...state.labs].sort((a,b)=>b.date.localeCompare(a.date))[0];
   if($('dashboardReadiness'))$('dashboardReadiness').innerHTML=readinessHtml(last);
