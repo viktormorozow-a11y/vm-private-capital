@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HRT Health Studio v3.8.0 — VM Private Suite UI</title>
+<title>HRT Health Studio v3.8.2 — VM Private Suite UI</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -309,7 +309,7 @@ html[data-theme="light"] .note{color:var(--muted)}html[data-theme="light"] .note
 <div id="hrtAuthGate">
   <div class="hrt-auth-card">
     <div class="hrt-auth-brand">VM PRIVATE SUITE</div>
-    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.8.0</span></div>
+    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.8.2</span></div>
     <div class="hrt-auth-sub">Используйте тот же аккаунт, что и в Планировании капитала</div>
     <label>Email<input id="hrtGateEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
     <label>Пароль<input id="hrtGatePassword" type="password" autocomplete="current-password" placeholder="Введите пароль"></label>
@@ -321,7 +321,7 @@ html[data-theme="light"] .note{color:var(--muted)}html[data-theme="light"] .note
   </div>
 </div>
 <div id="hrtAppShell" class="auth-hidden">
-<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.8.0</div>
+<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.8.2</div>
 <div class="app">
 <aside>
   <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.8.0</small></div>
@@ -708,7 +708,8 @@ const DEFAULT_MEDS=[
   {id:'med_atorvastatin',name:'Atorvastatin',form:'Таблетка',unit:'mg',comment:''},
   {id:'med_sildenafil',name:'Sildenafil',form:'Таблетка',unit:'mg',comment:''},
   {id:'med_testosterone_undecanoate',name:'Testosterone Undecanoate',form:'Инъекция',unit:'mg',comment:''},
-  {id:'med_testavan',name:'Testavan',form:'Гель',unit:'нажатий',comment:'20 mg/g transdermal gel'},
+  {id:'med_testavan',name:'Testavan',form:'Гель',unit:'нажатий',comment:'20 mg/g; 23 mg testosterone per full press'},
+  {id:'med_tostran',name:'Tostran',form:'Гель',unit:'нажатий',comment:'20 mg/g; 0.5 g gel = 10 mg testosterone per press'},
   {id:'med_testosterone_enanthate',name:'Testosterone Enanthate',form:'Инъекция',unit:'mg',comment:'250 mg/ml · Hilma Biocare'}
 ];
 let state=JSON.parse(localStorage.getItem(KEY)||'null')||{
@@ -725,7 +726,7 @@ state.goals=state.goals||[];
 state.labPlans=state.labPlans||[];
 state.settings=state.settings||{};
 state.settings.primaryGoal=state.settings.primaryGoal||'';
-state.settings.appVersion='3.8.0';
+state.settings.appVersion=APP_VERSION;
 state.withings=state.withings||{measurements:[],activity:[],sleep:[],workouts:[],lastSyncAt:'',autoSync:true,syncDays:365};
 state.withings.measurements=state.withings.measurements||[];state.withings.activity=state.withings.activity||[];state.withings.sleep=state.withings.sleep||[];state.withings.workouts=state.withings.workouts||[];
 if(state.withings.autoSync===undefined)state.withings.autoSync=true;if(!state.withings.syncDays)state.withings.syncDays=365;
@@ -798,7 +799,7 @@ function migrateHrtState(x){
   x.meds=x.meds||[];x.protocols=x.protocols||[];x.deviations=x.deviations||[];x.labs=x.labs||[];
   x.wellbeing=x.wellbeing||[];x.aliasMap=x.aliasMap||{};x.customAnalytes=x.customAnalytes||[];
   x.goals=x.goals||[];x.labPlans=x.labPlans||[];x.settings=x.settings||{};
-  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.8.0';
+  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion=APP_VERSION;
   x.settings.chartKeys=Array.isArray(x.settings.chartKeys)?x.settings.chartKeys:['testosterone','free_testosterone','shbg','estradiol','hematocrit','hemoglobin'];
   x.settings.comparisonKeys=Array.isArray(x.settings.comparisonKeys)?x.settings.comparisonKeys:['withings:weight','lab:testosterone','lab:free_testosterone'];
   x.settings.comparisonMode=x.settings.comparisonMode||'auto';
@@ -1484,7 +1485,7 @@ function latestWellbeing(){
   return [...(state.wellbeing||[])].sort((a,b)=>b.date.localeCompare(a.date))[0]||null;
 }
 function activeTrtProtocols(date=isoTodayLocal()){
-  const keys=['testogel','testavan','testosterone enanthate','testosterone undecanoate'];
+  const keys=['testogel','testavan','tostran','testosterone enanthate','testosterone undecanoate'];
   return activeProtocols(date).filter(p=>keys.some(k=>medName(p.medId).toLowerCase().includes(k)));
 }
 function protocolAtDate(date){
@@ -1596,6 +1597,8 @@ function doseContextFromForm(prefix,labDate='',labTime=''){
   let lastDoseAt=$(prefix+'LastDoseAt')?.value||'';
   const relation=$(prefix+'DoseRelation')?.value||'unknown';
   const adherence=$(prefix+'Adherence')?.value||'unknown';
+  const rawHours=$(prefix+'HoursAfterDose')?.value??'';
+  const hoursAfterDose=rawHours===''?null:Number(rawHours);
   if(lastDoseAt&&labDate){
     const labDt=combineDateTime(labDate,labTime||'23:59');
     const doseDt=new Date(lastDoseAt);
@@ -1604,7 +1607,7 @@ function doseContextFromForm(prefix,labDate='',labTime=''){
       hrtCloudToast('Последняя доза позже даты анализа — значение очищено');
     }
   }
-  return {medId,lastDoseAt,relation,adherence};
+  return {medId,lastDoseAt,relation,adherence,hoursAfterDose:Number.isFinite(hoursAfterDose)&&hoursAfterDose>=0&&hoursAfterDose<=168?hoursAfterDose:null};
 }
 function doseContextFields(prefix,lab={}){
   const p=trtProtocolForDate(lab.date||today());
@@ -1612,6 +1615,7 @@ function doseContextFields(prefix,lab={}){
   const lastDoseAt=lab.doseContext?.lastDoseAt||expectedLastDoseAt(lab.date||today(),lab.time||'');
   const relation=lab.doseContext?.relation||'unknown';
   const adherence=lab.doseContext?.adherence||'unknown';
+  const hoursAfterDose=lab.doseContext?.hoursAfterDose;
   return `<div class="dose-context wide">
     <div class="dose-context-title">Контекст анализа относительно тестостерона ${helpDot('chart','Эти данные помогают понять, насколько корректно сравнивать результат с предыдущими анализами и текущей дозировкой.')}</div>
     <div class="form-grid">
@@ -1624,6 +1628,7 @@ function doseContextFields(prefix,lab={}){
         <option value="peak" ${relation==='peak'?'selected':''}>Ожидаемый пик</option>
         <option value="random" ${relation==='random'?'selected':''}>Случайное время</option>
       </select></label>
+      <label>Интервал от последней дозы до анализа, часы<input id="${prefix}HoursAfterDose" type="number" min="0" max="168" step="0.25" placeholder="Например 2" value="${hoursAfterDose??''}"></label>
       <label>Соблюдение схемы<select id="${prefix}Adherence">
         <option value="unknown" ${adherence==='unknown'?'selected':''}>Не указано</option>
         <option value="yes" ${adherence==='yes'?'selected':''}>Да, без отклонений</option>
@@ -1647,7 +1652,7 @@ function doseContextSummary(lab){
   return {
     med,
     lastDoseAt:c.lastDoseAt||'',
-    hours,
+    hours:hours===null&&c.hoursAfterDose!==null&&c.hoursAfterDose!==undefined&&c.hoursAfterDose!==''&&Number.isFinite(Number(c.hoursAfterDose))?Number(c.hoursAfterDose):hours,
     relation:relLabels[c.relation]||c.relation||'не указано',
     adherence:adhLabels[c.adherence]||c.adherence||'не указано'
   };
@@ -1669,14 +1674,14 @@ function assessLabReadiness(lab){
   const stableDays=Math.max(0,daysBetween(p.start,lab.date)||0);
   const deviations=recentDeviationsForProtocol(p,lab.date,14);
   const c=lab.doseContext||{};
-  const timingKnown=!!c.lastDoseAt || (c.relation&&c.relation!=='unknown');
+  const timingKnown=!!c.lastDoseAt || (c.hoursAfterDose!==null&&c.hoursAfterDose!==undefined&&c.hoursAfterDose!==''&&Number.isFinite(Number(c.hoursAfterDose))) || (c.relation&&c.relation!=='unknown');
   let score=0,reasons=[];
   if(stableDays>=42){score+=2;reasons.push(`Протокол не менялся ${stableDays} дней.`)}
   else if(stableDays>=21){score+=1;reasons.push(`Протокол не менялся ${stableDays} дней; это промежуточный срок.`)}
   else reasons.push(`Протокол действует только ${stableDays} дней — тренд может ещё отражать недавнее изменение.`);
   if(timingKnown){score+=2;reasons.push('Контекст последней дозы относительно анализа указан.')}
   else reasons.push('Не указано время/тип точки относительно последней дозы.');
-  if(!deviations.length && c.adherence!=='no'){score+=2;reasons.push('За последние 14 дней в журнале нет отклонений от этого протокола.')}
+  if(!deviations.length && c.adherence==='yes'){score+=2;reasons.push('Соблюдение схемы подтверждено; за последние 14 дней нет зарегистрированных отклонений.')}else if(!deviations.length && c.adherence!=='no'){reasons.push('За последние 14 дней нет записей об отклонениях; фактическое соблюдение схемы не подтверждено.')}
   else reasons.push(`За последние 14 дней найдено отклонений: ${deviations.length}${c.adherence==='no'?' · отмечено существенное несоблюдение схемы':''}.`);
   if(c.adherence==='yes')score+=1;
   if(c.adherence==='no')score=Math.max(0,score-2);
@@ -1711,7 +1716,7 @@ function lastDeviationBefore(medId,date){
 function openMedModal(id=''){
   const m=state.meds.find(x=>x.id===id)||null;
   openModal(`<h3>${m?'Редактировать препарат':'Новый препарат'}</h3><div class="form-grid">
-    <label>Название<input id="mName" placeholder="Например Testavan"></label>
+    <label>Название<input id="mName" placeholder="Например Tostran"></label>
     <label>Форма<select id="mForm"><option>Гель</option><option>Инъекция</option><option>Таблетка</option><option>Капсула</option><option>Другое</option></select></label>
     <label>Единица дозы<input id="mUnit" placeholder="нажатий, mg, IU..."></label>
     <label>Комментарий<input id="mComment"></label>
@@ -3139,7 +3144,7 @@ function renderLatestChanges(){
   }
   box.innerHTML=cards.length?`<div class="change-grid">${cards.join('')}</div>`:`<div class="empty">Пока недостаточно повторных анализов для сравнения.</div>`;
 }
-const APP_VERSION='3.8.1';
+const APP_VERSION='3.8.2';
 
 function normalizedHctPercent(marker){
   if(!marker)return null;
@@ -3392,6 +3397,7 @@ function doctorDoseContextText(lab,lang='ru'){
   if(!lab)return '—';const c=lab.doseContext||{};const parts=[];
   if(c.medId)parts.push(`${lang==='fi'?'Lääke':'Препарат'}: ${medName(c.medId)}`);
   if(c.lastDoseAt)parts.push(`${doctorText(lang,'lastDose')}: ${doctorFmtDateTime(c.lastDoseAt,lang)}`);
+  if(c.hoursAfterDose!==null&&c.hoursAfterDose!==undefined&&c.hoursAfterDose!==''&&Number.isFinite(Number(c.hoursAfterDose)))parts.push(lang==='fi'?`Näyte ${c.hoursAfterDose} tuntia annoksen jälkeen`:`Анализ через ${c.hoursAfterDose} ч после последней дозы`);
   if(c.relation)parts.push(`${doctorText(lang,'relation')}: ${doctorRelationLabel(c.relation,lang)}`);
   if(c.adherence)parts.push(`${doctorText(lang,'adherence')}: ${doctorAdherenceLabel(c.adherence,lang)}`);
   return parts.join(' · ')||'—';
@@ -3586,8 +3592,8 @@ function doctorReadinessSummary(lab,lang='ru'){
   const reasons=[],stable=a.stableDays||0,c=lab.doseContext||{};
   if(lang==='fi'){
     if(stable>=42)reasons.push(`Protokolla oli muuttumatta ${stable} päivää.`);else if(stable>=21)reasons.push(`Protokolla oli muuttumatta ${stable} päivää; kyseessä on vielä välivaihe.`);else reasons.push(`Protokolla oli ollut käytössä vain ${stable} päivää — tulos voi vielä heijastaa tuoretta muutosta.`);
-    if(c.lastDoseAt||(c.relation&&c.relation!=='unknown'))reasons.push('Viimeisen annoksen ajankohta/suhde näytteenottoon on kirjattu.');else reasons.push('Viimeisen annoksen ajankohtaa tai suhdetta näytteenottoon ei ole ilmoitettu.');
-    if(!(a.deviations||[]).length&&c.adherence!=='no')reasons.push('Edeltävän 14 päivän aikana ei ole kirjattuja poikkeamia tästä protokollasta.');else reasons.push(`Edeltävän 14 päivän aikana kirjattuja poikkeamia: ${(a.deviations||[]).length}${c.adherence==='no'?' · hoidon toteutumisessa on merkitty merkittäviä poikkeamia':''}.`);
+    if(c.lastDoseAt||(c.hoursAfterDose!==null&&c.hoursAfterDose!==undefined&&Number.isFinite(Number(c.hoursAfterDose)))||(c.relation&&c.relation!=='unknown'))reasons.push('Viimeisen annoksen ajankohta/suhde näytteenottoon on kirjattu.');else reasons.push('Viimeisen annoksen ajankohtaa tai suhdetta näytteenottoon ei ole ilmoitettu.');
+    if(!(a.deviations||[]).length&&c.adherence!=='no')reasons.push(c.adherence==='yes'?'Hoidon toteutuminen vahvistettu; ei kirjattuja poikkeamia edeltävän 14 päivän aikana.':'Edeltävän 14 päivän aikana ei ole kirjattuja poikkeamia; tämä ei vahvista hoidon toteutumista.');else reasons.push(`Edeltävän 14 päivän aikana kirjattuja poikkeamia: ${(a.deviations||[]).length}${c.adherence==='no'?' · hoidon toteutumisessa on merkitty merkittäviä poikkeamia':''}.`);
   }else reasons.push(...a.reasons);
   const label=lang==='fi'?(a.level==='good'?'Hyvä arvioitavuus':a.level==='warn'?'Kohtalainen arvioitavuus':'Heikko arvioitavuus'):a.label;
   return {level:a.level,label,reasons};
@@ -3636,6 +3642,8 @@ function doctorClinicalSummary(lang='ru',from=doctorReportBounds().min,to=today(
   const inRange=(key,x)=>x&&goalFor(key)?goalStatus(key,x.marker.value):null;
   const pushHormone=(key,x,ruName,fiName)=>{if(!x)return;const st=inRange(key,x);if(!st)return;const name=lang==='fi'?fiName:ruName,val=`${x.marker.value} ${x.marker.unit||''}`.trim();
     if(st.status==='ok')observations.push(lang==='fi'?`${name} on henkilökohtaisella tavoitealueella.`:`${name} находится в вашем целевом диапазоне.`);
+    const refMax=x.marker?.max;const measured=Number(x.marker?.value);
+    if(refMax!==null&&refMax!==undefined&&refMax!==''&&Number.isFinite(Number(refMax))&&Number.isFinite(measured)&&measured>Number(refMax))warnings.push(lang==='fi'?`${name} ${val} ylittää laboratorion viitearvon ylärajan ${refMax} henkilökohtaisesta tavoitteesta riippumatta.`:`${name} ${val} выше лабораторного референса ${refMax}, независимо от личной цели.`);
     if(st.status==='low')actions.push(lang==='fi'?`${name} ${val} on henkilökohtaisen tavoitealueen alapuolella. Tulos tulee tulkita suhteessa näytteenottoajankohtaan, annostukseen ja hoidon toteutumiseen ennen hoidon muuttamista.`:`${name} ${val} ниже вашей цели. Перед изменением схемы сопоставьте результат со временем анализа относительно дозы и фактическим соблюдением протокола.`);
     if(st.status==='high')actions.push(lang==='fi'?`${name} ${val} on henkilökohtaisen tavoitealueen yläpuolella. Keskustele lääkärin kanssa kokonaisaltistuksesta, annoksesta ja annosvälistä.`:`${name} ${val} выше вашей цели. Обсудите с врачом общую экспозицию, дозу и интервал, учитывая время анализа относительно последней дозы.`);
   };
@@ -3950,7 +3958,7 @@ function protocolEventsForChart(points){
   const minDate=points[0].date,maxDate=points.at(-1).date;
   return state.protocols
     .filter(p=>p.start>=minDate&&p.start<=maxDate)
-    .filter(p=>['testogel','testavan','testosterone enanthate','testosterone undecanoate'].some(k=>medName(p.medId).toLowerCase().includes(k)))
+    .filter(p=>['testogel','testavan','tostran','testosterone enanthate','testosterone undecanoate'].some(k=>medName(p.medId).toLowerCase().includes(k)))
     .sort((a,b)=>a.start.localeCompare(b.start));
 }
 function drawMiniMetricChart(canvas,key,index){
@@ -4315,7 +4323,7 @@ function clinicalAdvice(){
 }
 function protocolPerformance(){
   const candidates=[];
-  const trtNames=['testogel','testavan','testosterone enanthate','testosterone undecanoate'];
+  const trtNames=['testogel','testavan','tostran','testosterone enanthate','testosterone undecanoate'];
   for(const med of state.meds||[]){
     if(!trtNames.some(k=>med.name.toLowerCase().includes(k)))continue;
     const relatedLabs=(state.labs||[]).filter(l=>{
