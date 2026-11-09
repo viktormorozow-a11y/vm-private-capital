@@ -3636,6 +3636,16 @@ function doctorSafetyState(item,lang='ru'){
   }
   return doctorText(lang,'latestValue');
 }
+function doctorLabQualityWarnings(lab,lang='ru'){
+  const issues=[],seen=new Set();
+  for(const m of lab?.markers||[]){
+    const name=String(m.name||'').trim(),unit=String(m.unit||'').trim(),key=String(m.canonicalKey||name).toLowerCase()+'|'+unit.toLowerCase();
+    if(key!=='|' && seen.has(key))issues.push(lang==='fi'? `Mahdollinen päällekkäinen tulos: ${name} (${unit}); tarkista alkuperäinen laboratoriotulos.`:`Возможный дубль показателя «${name}» (${unit}); проверьте оригинальный бланк.`);
+    seen.add(key);
+    if(Number.isFinite(Number(m.value))&&Number(m.value)<0)issues.push(lang==='fi'? `Epätavallinen negatiivinen arvo ${name}: ${m.value} ${unit}; tarkista lähde.`:`Необычное отрицательное значение «${name}»: ${m.value} ${unit}; проверьте первоисточник.`);
+  }
+  return [...new Set(issues)];
+}
 function doctorClinicalSummary(lang='ru',from=doctorReportBounds().min,to=today()){
   const T=doctorLatestMarker('testosterone',from,to),FT=doctorLatestMarker('free_testosterone',from,to),Hct=doctorLatestMarker('hematocrit',from,to),PSA=doctorLatestMarker('psa',from,to),E2=doctorLatestMarker('estradiol',from,to);
   const latestLab=[...(state.labs||[])].filter(l=>withinReportPeriod(l.date,from,to)).sort((a,b)=>b.date.localeCompare(a.date))[0]||null,observations=[],actions=[],warnings=[];
@@ -3652,7 +3662,7 @@ function doctorClinicalSummary(lang='ru',from=doctorReportBounds().min,to=today(
   if(!PSA)actions.push(lang==='fi'?'PSA-arvoa ei löytynyt tietokannasta. Prostatan seurannan tarve kannattaa arvioida lääkärin kanssa.':'PSA пока не найден в базе. Вопрос мониторинга простаты следует обсудить с врачом.');
   if(E2&&goalFor('estradiol')){const st=goalStatus('estradiol',E2.marker.value);if(st.status==='high'||st.status==='low')actions.push(lang==='fi'?`Estradioli ${E2.marker.value} ${E2.marker.unit||''} on henkilökohtaisen tavoitealueen ulkopuolella. Arvoa ei pidä tulkita erillään oireista ja koko hoitokokonaisuudesta.`:`Эстрадиол ${E2.marker.value} ${E2.marker.unit||''} вне вашей личной цели. Его не следует интерпретировать изолированно от симптомов и всей схемы.`)}
   if(!T&&!FT)warnings.push(lang==='fi'?'Kokonais- ja vapaan testosteronin tietoja ei ole riittävästi hoidon päätavoitteen arviointiin.':'Недостаточно данных по общему и свободному тестостерону для оценки основной цели ГЗТ.');
-  if(latestLab){const trt=activeTrtProtocols(latestLab.date);observations.push(trt.length?(lang==='fi'?`Viimeisimmän näytteenottopäivän kirjattu protokolla: ${doctorProtocolSummaryAt(latestLab.date,lang)}.`:`На дату последнего анализа записан протокол: ${doctorProtocolSummaryAt(latestLab.date,lang)}.`):(lang==='fi'?'Viimeisimmän laboratoriokokeen päivälle ei löytynyt aktiivista kirjattua testosteroniprotokollaa.':'К последнему анализу не найден активный протокол тестостерона.'))}
+  if(latestLab){for(const issue of doctorLabQualityWarnings(latestLab,lang))warnings.push(issue);const trt=activeTrtProtocols(latestLab.date);observations.push(trt.length?(lang==='fi'?`Viimeisimmän näytteenottopäivän kirjattu protokolla: ${doctorProtocolSummaryAt(latestLab.date,lang)}.`:`На дату последнего анализа записан протокол: ${doctorProtocolSummaryAt(latestLab.date,lang)}.`):(lang==='fi'?'Viimeisimmän laboratoriokokeen päivälle ei löytynyt aktiivista kirjattua testosteroniprotokollaa.':'К последнему анализу не найден активный протокол тестостерона.'))}
   return {observations,actions,warnings};
 }
 function doctorLabRowsForReport(lab,lang='ru'){
@@ -3721,7 +3731,7 @@ function downloadDoctorReportPdf(lang='ru',from='',to=''){
   if(!trendSeries.length)content.push(doctorPdfMuted(doctorText(lang,'noLabTrends')));else for(const s of trendSeries){const ch=doctorPdfChartFromSets([{label:doctorAnalyteLabel(s.key,s.label,lang),unit:s.unit,points:s.points,color:HRT_SERIES_COLORS[0]}],from,to,{mode:'raw',events,lang,xMode:'tight',tickMode:'labs'});if(ch.hasData){content.push({text:`${doctorAnalyteLabel(s.key,s.label,lang)}${s.unit?' · '+s.unit:''}`,style:'h3',margin:[0,6,0,2]});content.push({image:ch.image,width:515,margin:[0,0,0,7]})}}
 
   content.push(doctorPdfSectionTitle(doctorText(lang,'labs')));
-  if(!labs.length)content.push(doctorPdfMuted(doctorText(lang,'noData')));else for(const l of labs){content.push({text:`${doctorFmtDate(l.date,lang)}${l.time?' · '+l.time:''} · ${l.lab||doctorText(lang,'lab')}`,style:'h2',margin:[0,8,0,2]});content.push({text:`${doctorText(lang,'protocolAtDate')}: ${doctorProtocolSummaryAt(l.date,lang)}\n${doctorText(lang,'doseContext')}: ${doctorDoseContextText(l,lang)}`,style:'small',margin:[0,0,0,4]});content.push({table:{headerRows:1,widths:['*',85,105,125],body:[[doctorText(lang,'analyte'),doctorText(lang,'result'),doctorText(lang,'reference'),doctorText(lang,'personalTarget')],...doctorLabRowsForReport(l,lang)]},layout:'lightHorizontalLines',fontSize:7.2})}
+  if(!labs.length)content.push(doctorPdfMuted(doctorText(lang,'noData')));else for(const l of labs){content.push({text:`${doctorFmtDate(l.date,lang)}${l.time?' · '+l.time:''} · ${l.lab||doctorText(lang,'lab')}`,style:'h2',margin:[0,8,0,2]});for(const issue of doctorLabQualityWarnings(l,lang))content.push({text:'⚠ '+issue,fontSize:7.6,color:'#9b3d28',margin:[2,1,0,2]});content.push({text:`${doctorText(lang,'protocolAtDate')}: ${doctorProtocolSummaryAt(l.date,lang)}\n${doctorText(lang,'doseContext')}: ${doctorDoseContextText(l,lang)}`,style:'small',margin:[0,0,0,4]});content.push({table:{headerRows:1,widths:['*',85,105,125],body:[[doctorText(lang,'analyte'),doctorText(lang,'result'),doctorText(lang,'reference'),doctorText(lang,'personalTarget')],...doctorLabRowsForReport(l,lang)]},layout:'lightHorizontalLines',fontSize:7.2})}
 
   content.push(doctorPdfSectionTitle(doctorText(lang,'withings')));
   content.push({text:lang==='fi'?'Paino — kuukausikeskiarvot':'Вес — среднемесячные значения',style:'h2'});
