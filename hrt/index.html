@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HRT Health Studio v3.8.4 — VM Private Suite UI</title>
+<title>HRT Health Studio v3.8.5 — VM Private Suite UI</title>
 <style>
 :root{
   --bg:#071019;--panel:#0d1824;--panel2:#101f2d;--text:#f4f5f7;--muted:#8ea0b1;
@@ -303,13 +303,26 @@ html[data-theme="light"] .note{color:var(--muted)}html[data-theme="light"] .note
 .doctor-report-scope{margin-top:12px;padding:11px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.018);font-size:10px;color:var(--muted);line-height:1.5}
 @media(max-width:650px){.doctor-report-actions{width:100%}.doctor-report-actions .btn{flex:1 1 150px}.doctor-report-modal-grid{grid-template-columns:1fr}}
 
+
+/* Protocol comments must wrap inside their own column. */
+#protocolList table{table-layout:fixed;min-width:820px}
+#protocolList th:nth-child(1){width:90px}
+#protocolList th:nth-child(2){width:195px}
+#protocolList th:nth-child(3){width:200px}
+#protocolList th:nth-child(5){width:192px}
+#protocolList td{white-space:normal;overflow-wrap:anywhere;vertical-align:top;max-width:none}
+#protocolList td:nth-child(4){line-height:1.55}
+#protocolList td:last-child .actions{justify-content:flex-start;align-items:flex-start;flex-wrap:wrap}
+.hrt-recovery-notice{padding:12px 16px;margin-bottom:14px;border:1px solid var(--gold);border-radius:12px;line-height:1.5;font-size:12px}
+.hrt-recovery-notice .btn{margin-top:8px}
+
 </style>
 </head>
 <body class="hrt-auth-locked">
 <div id="hrtAuthGate">
   <div class="hrt-auth-card">
     <div class="hrt-auth-brand">VM PRIVATE SUITE</div>
-    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.8.4</span></div>
+    <div class="hrt-auth-title">HRT Health Studio <span style="font-size:12px;color:#8ea0b1">v3.8.5</span></div>
     <div class="hrt-auth-sub">Используйте тот же аккаунт, что и в Планировании капитала</div>
     <label>Email<input id="hrtGateEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
     <label>Пароль<input id="hrtGatePassword" type="password" autocomplete="current-password" placeholder="Введите пароль"></label>
@@ -321,10 +334,10 @@ html[data-theme="light"] .note{color:var(--muted)}html[data-theme="light"] .note
   </div>
 </div>
 <div id="hrtAppShell" class="auth-hidden">
-<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.8.4</div>
+<div class="site-version-badge" title="Версия HRT Health Studio">HRT Health Studio · v3.8.5</div>
 <div class="app">
 <aside>
-  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.8.4</small></div>
+  <div class="brand"><b>HRT HEALTH STUDIO</b><small>Анализы · Протоколы · Самочувствие</small><small style="margin-top:8px;color:#d6ad62;font-weight:750">Версия 3.8.5</small></div>
   <div class="hrt-theme-sidebar"><button class="theme-toggle" type="button" onclick="toggleHrtTheme()" title="Переключить светлую/тёмную тему"><span class="theme-icon" id="hrtThemeIcon">☾</span><span class="theme-label" id="hrtThemeLabel">Тёмная тема</span></button></div>
   <nav>
     <button class="nav active" data-view="dashboard">Главная</button>
@@ -727,7 +740,7 @@ state.goals=state.goals||[];
 state.labPlans=state.labPlans||[];
 state.settings=state.settings||{};
 state.settings.primaryGoal=state.settings.primaryGoal||'';
-state.settings.appVersion='3.8.4';
+state.settings.appVersion='3.8.5';
 state.withings=state.withings||{measurements:[],activity:[],sleep:[],workouts:[],lastSyncAt:'',autoSync:true,syncDays:365};
 state.withings.measurements=state.withings.measurements||[];state.withings.activity=state.withings.activity||[];state.withings.sleep=state.withings.sleep||[];state.withings.workouts=state.withings.workouts||[];
 if(state.withings.autoSync===undefined)state.withings.autoSync=true;if(!state.withings.syncDays)state.withings.syncDays=365;
@@ -801,7 +814,7 @@ function migrateHrtState(x){
   x.meds=x.meds||[];x.protocols=x.protocols||[];x.deviations=x.deviations||[];x.labs=x.labs||[];
   x.wellbeing=x.wellbeing||[];x.aliasMap=x.aliasMap||{};x.customAnalytes=x.customAnalytes||[];
   x.goals=x.goals||[];x.labPlans=x.labPlans||[];x.settings=x.settings||{};
-  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.8.4';
+  x.settings.primaryGoal=x.settings.primaryGoal||'';x.settings.appVersion='3.8.5';
   x.settings.chartKeys=Array.isArray(x.settings.chartKeys)?x.settings.chartKeys:['testosterone','free_testosterone','shbg','estradiol','hematocrit','hemoglobin'];
   x.settings.comparisonKeys=Array.isArray(x.settings.comparisonKeys)?x.settings.comparisonKeys:['withings:weight','lab:testosterone','lab:free_testosterone'];
   x.settings.comparisonMode=x.settings.comparisonMode||'auto';
@@ -831,6 +844,7 @@ async function saveHrtCloudState(showToast=false){
   try{
     const payload=JSON.parse(JSON.stringify(state));
     const snapshot=JSON.stringify(payload);
+    if(hrtCloudVersion)payload._cloudBaseUpdatedAt=hrtCloudVersion;
     const stamp=new Date().toISOString();
     let result;
     if(hrtCloudVersion){
@@ -865,39 +879,71 @@ async function saveHrtCloudState(showToast=false){
     console.error('HRT cloud save error',e);
     localStorage.setItem(HRT_CLOUD_DIRTY_KEY,'1');
     const code=String(e?.code||'');
-    if(code==='23505')hrtCloudConflictNotice('Запись уже создана в облаке на другом устройстве.');
+    if(code==='PT409')hrtCloudConflictNotice('Сервер отклонил устаревшую запись. Обновите страницу: новая облачная копия будет загружена после резервного сохранения локальной.');
+    else if(code==='23505')hrtCloudConflictNotice('Запись уже создана в облаке на другом устройстве.');
     else hrtCloudSetStatus('err','Ошибка синхронизации',e?.message||'Проверьте интернет');
     if(showToast)hrtCloudToast('Не удалось сохранить в облако');
     return false;
   }finally{hrtCloudBusy=false}
 }
 
-async function loadHrtCloudState({force=false,showToast=false}={}){
+function hrtRecoveryKey(){return 'hrt_recovery_v1:'+String(hrtCloudUser?.id||'unassigned')}
+function backupHrtLocalForRecovery(reason){
+  const key=hrtRecoveryKey(),raw=localStorage.getItem(key);
+  const previous=raw?JSON.parse(raw):[];
+  if(!Array.isArray(previous))throw new Error('Повреждён список резервных копий; автоматическая замена отменена.');
+  const payload=JSON.parse(JSON.stringify(state));
+  if(previous.some(x=>JSON.stringify(x.payload)===JSON.stringify(payload)))return;
+  const entry={capturedAt:new Date().toISOString(),reason,cloudUserId:hrtCloudUser?.id||null,payload};
+  const encoded=JSON.stringify([...previous,entry]);
+  localStorage.setItem(key,encoded);
+  if(localStorage.getItem(key)!==encoded)throw new Error('Не удалось проверить резервную копию. Локальные данные не заменены.');
+}
+function showHrtRecoveryNotice(){
+  const main=document.querySelector('main');if(!main||!localStorage.getItem(hrtRecoveryKey()))return;
+  let box=document.getElementById('hrtRecoveryNotice');
+  if(!box){box=document.createElement('div');box.id='hrtRecoveryNotice';box.className='hrt-recovery-notice';main.prepend(box);}
+  box.innerHTML='<b>Загружена актуальная облачная копия.</b><br>Предыдущие локальные данные сохранены отдельно, без перезаписи облака. Их можно скачать для сверки.<br><button class="btn" type="button" onclick="exportHrtRecovery()">Скачать сохранённые локальные данные</button>';
+}
+function exportHrtRecovery(){
+  const raw=localStorage.getItem(hrtRecoveryKey());if(!raw)return;
+  const blob=new Blob([raw],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');
+  link.href=url;link.download='HRT_local_recovery_'+today()+'.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+async function loadHrtCloudState({force=false,showToast=false,recover=false}={}){
   if(!hrtSupabase||!hrtCloudUser||hrtCloudBusy)return false;
-  if(localStorage.getItem(HRT_CLOUD_DIRTY_KEY)==='1'){
-    if(!force){hrtCloudConflictNotice('Локальные изменения не сохранены; автоматическая загрузка не выполнена.');return false;}
-    if(!confirm('Есть локальные изменения. Сначала используйте «Экспорт данных» для резервной копии. Загрузка из облака заменит локальную копию. Продолжить?'))return false;
-  }
+  const wasDirty=localStorage.getItem(HRT_CLOUD_DIRTY_KEY)==='1';
+  if(wasDirty&&!force&&!recover){hrtCloudConflictNotice('Есть локальные изменения. Нажмите «Загрузить» для безопасной загрузки с резервной копией.');return false;}
+  if(wasDirty&&force&&!recover&&!confirm('Локальные изменения будут сохранены в отдельную резервную копию, затем загрузятся актуальные облачные данные. Продолжить?'))return false;
+  const before=JSON.stringify(state),userId=hrtCloudUser.id;
   hrtCloudBusy=true;hrtCloudSetStatus('busy','Загружаю из облака…',hrtCloudUser.email||'');
   try{
-    const {data,error}=await hrtSupabase.from('hrt_user_data').select('payload,updated_at').eq('user_id',hrtCloudUser.id).maybeSingle();
+    const {data,error}=await hrtSupabase.from('hrt_user_data').select('payload,updated_at').eq('user_id',userId).maybeSingle();
     if(error)throw error;
+    if(hrtCloudUser?.id!==userId)return false;
     if(!data){
       hrtCloudVersion=null;hrtCloudConflict=false;
-      hrtCloudSetStatus('busy','Облако пока пустое','Подготавливаю первую копию');
       if(hrtCloudHasMeaningfulData(state)){hrtCloudBusy=false;return await saveHrtCloudState(showToast)}
       hrtCloudSetStatus('ok','Облако подключено','Пока нет данных HRT');return true;
     }
-    hrtSuppressCloudSave=true;
-    state=migrateHrtState(data.payload||{});
-    persistHrtLocal({markDirty:false});localStorage.removeItem(HRT_CLOUD_DIRTY_KEY);
-    hrtSuppressCloudSave=false;renderAll();
-    const stamp=data.updated_at||new Date().toISOString();hrtCloudVersion=stamp;hrtCloudConflict=false;localStorage.setItem(HRT_CLOUD_LAST_SYNC_KEY,stamp);
+    const editedDuringLoad=JSON.stringify(state)!==before;
+    if(editedDuringLoad&&!recover){hrtCloudConflictNotice('Во время загрузки появились новые локальные изменения; они не заменены.');return false;}
+    if(wasDirty||editedDuringLoad||localStorage.getItem(HRT_CLOUD_DIRTY_KEY)==='1')backupHrtLocalForRecovery('before_loading_newer_cloud');
+    const incoming=migrateHrtState(JSON.parse(JSON.stringify(data.payload||{})));
+    // Persist first: if storage is full, the currently displayed state is left unchanged.
+    localStorage.setItem(KEY,JSON.stringify(incoming));
+    state=incoming;hrtSuppressCloudSave=true;
+    localStorage.setItem(HRT_LOCAL_UPDATED_KEY,new Date().toISOString());
+    localStorage.removeItem(HRT_CLOUD_DIRTY_KEY);
+    const stamp=data.updated_at;hrtCloudVersion=stamp;hrtCloudConflict=false;
+    localStorage.setItem(HRT_CLOUD_LAST_SYNC_KEY,stamp);
+    hrtSuppressCloudSave=false;renderAll();showHrtRecoveryNotice();
     hrtCloudSetStatus('ok','Облако синхронизировано',`${hrtCloudUser.email||''} · ${new Date(stamp).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}`);
-    if(showToast)hrtCloudToast('HRT данные загружены из облако');
+    if(showToast)hrtCloudToast('Актуальные HRT данные загружены');
     return true;
   }catch(e){
-    hrtSuppressCloudSave=false;console.error('HRT cloud load error',e);hrtCloudSetStatus('err','Ошибка облака',e?.message||'Проверьте интернет');
+    hrtSuppressCloudSave=false;console.error('HRT cloud load error',e);
+    hrtCloudSetStatus('err','Загрузка не выполнена',e?.message||'Локальная копия сохранена');
     if(showToast)hrtCloudToast('Не удалось загрузить облачные данные');return false;
   }finally{hrtCloudBusy=false}
 }
@@ -939,8 +985,7 @@ async function handleHrtCloudSession(session,{initial=false}={}){
     if(dirty&&hrtCloudHasMeaningfulData(state)){
       const lastSync=localStorage.getItem(HRT_CLOUD_LAST_SYNC_KEY)||'';
       if(!lastSync || lastSync!==hrtCloudVersion){
-        hrtCloudConflictNotice('После последней синхронизации облачная запись изменилась. Ни одна копия не удалена.');
-        return {redirected:false,conflict:true};
+        return await loadHrtCloudState({recover:true,showToast:false});
       }
       return {redirected:false,saved:await saveHrtCloudState(false)};
     }
@@ -3180,7 +3225,7 @@ function renderLatestChanges(){
   }
   box.innerHTML=cards.length?`<div class="change-grid">${cards.join('')}</div>`:`<div class="empty">Пока недостаточно повторных анализов для сравнения.</div>`;
 }
-const APP_VERSION='3.8.4';
+const APP_VERSION='3.8.5';
 
 function normalizedHctPercent(marker){
   if(!marker)return null;
@@ -3819,7 +3864,7 @@ function renderAll(){
 
   $('medList').innerHTML=state.meds.length?`<div class="table-wrap"><table><thead><tr><th>Название</th><th>Форма</th><th>Единица</th><th>Комментарий</th><th></th></tr></thead><tbody>${state.meds.map(m=>`<tr><td><b>${m.name}</b></td><td>${m.form}</td><td>${m.unit||'—'}</td><td>${m.comment||'—'}</td><td><div class="actions" style="margin:0"><button class="btn" onclick="openMedModal('${m.id}')">Изменить</button><button class="btn danger" onclick="del('meds','${m.id}')">Удалить</button></div></td></tr>`).join('')}</tbody></table></div>`:`<div class="empty">Добавьте препараты, которые хотите учитывать.</div>`;
 
-  $('protocolList').innerHTML=state.protocols.length?`<div class="table-wrap"><table><thead><tr><th>Препарат</th><th>Период</th><th>Схема</th><th>Комментарий</th><th></th></tr></thead><tbody>${[...state.protocols].sort((a,b)=>b.start.localeCompare(a.start)).map(p=>`<tr><td><b>${medName(p.medId)}</b></td><td>${fmtDate(p.start)} → ${p.end?fmtDate(p.end):'сейчас'}</td><td>${scheduleText(p)}</td><td>${p.comment||'—'}</td><td><div class="actions" style="margin:0"><button class="btn" onclick="openProtocolModal('${p.id}')">Изменить</button><button class="btn danger" onclick="del('protocols','${p.id}')">Удалить</button></div></td></tr>`).join('')}</tbody></table></div>`:`<div class="empty">История протоколов пока пустая.</div>`;
+  $('protocolList').innerHTML=state.protocols.length?`<div class="table-wrap"><table><thead><tr><th>Препарат</th><th>Период</th><th>Схема</th><th>Комментарий</th><th></th></tr></thead><tbody>${[...state.protocols].sort((a,b)=>b.start.localeCompare(a.start)).map(p=>`<tr><td><b>${medName(p.medId)}</b></td><td>${protocolStartText(p)} → ${p.end?fmtDate(p.end):'сейчас'}</td><td>${scheduleText(p)}</td><td>${safeHtml(p.comment||'—')}</td><td><div class="actions" style="margin:0"><button class="btn" onclick="openProtocolModal('${p.id}')">Изменить</button><button class="btn danger" onclick="del('protocols','${p.id}')">Удалить</button></div></td></tr>`).join('')}</tbody></table></div>`:`<div class="empty">История протоколов пока пустая.</div>`;
 
   $('deviationList').innerHTML=state.deviations.length?`<div class="table-wrap"><table><thead><tr><th>Дата</th><th>Препарат</th><th>Тип</th><th>Факт</th><th>Комментарий</th><th></th></tr></thead><tbody>${[...state.deviations].sort((a,b)=>b.date.localeCompare(a.date)).map(d=>`<tr><td>${fmtDate(d.date)}</td><td>${medName(d.medId)}</td><td>${d.type}</td><td>${d.dose??'—'} ${d.unit||''}${d.time?' · '+d.time:''}</td><td>${d.comment||'—'}</td><td><div class="actions" style="margin:0"><button class="btn" onclick="openQuickDeviation('${d.id}')">Изменить</button><button class="btn danger" onclick="del('deviations','${d.id}')">Удалить</button></div></td></tr>`).join('')}</tbody></table></div>`:`<div class="empty">Отклонений пока нет.</div>`;
 
